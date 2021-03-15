@@ -1,0 +1,29 @@
+<svg width="109.8mm" height="202.4mm" version="1.1" viewBox="0 0 109.8 202.4" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <linearGradient id="linearGradient2909" x1="63.33" x2="81.85" y1="210.5" y2="260.4" gradientTransform="translate(-5.88,-58.55)" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#fbf5da" offset="0"/>
+   <stop stop-color="#fffdf5" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient2920" x1="115.7" x2="35.22" y1="202.6" y2="163.6" gradientTransform="translate(-5.88,-58.55)" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#fff" offset="0"/>
+   <stop stop-color="#fff" stop-opacity="0" offset="1"/>
+  </linearGradient>
+ </defs>
+ <g stroke-linecap="round" stroke-linejoin="round" stroke-opacity=".5367">
+  <rect x="1.144e-7" y="-7.629e-7" width="109.8" height="144" fill="#fff" stroke-width="1.183" style="paint-order:stroke markers fill"/>
+  <g stroke-width=".9074">
+   <rect x="3.063" y="-7.629e-7" width="5.723" height="144.4" fill="#d7f0f5" style="paint-order:stroke markers fill"/>
+   <rect x="13.08" y="-7.629e-7" width="5.723" height="144.4" fill="#e3f8f3" style="paint-order:stroke markers fill"/>
+   <rect x="24.24" y="-7.629e-7" width="5.723" height="144.4" fill="#e3f8f3" style="paint-order:stroke markers fill"/>
+   <rect x="35.4" y="-7.629e-7" width="5.723" height="144.4" fill="#c9f1e8" style="paint-order:stroke markers fill"/>
+   <rect x="46.13" y="-7.629e-7" width="5.723" height="144.4" fill="#e3f8f3" style="paint-order:stroke markers fill"/>
+   <rect x="57.47" y="-7.629e-7" width="5.723" height="144.4" fill="#e2f9f4" style="paint-order:stroke markers fill"/>
+   <rect x="67.49" y="-7.629e-7" width="5.723" height="144.4" fill="#c4f0e6" style="paint-order:stroke markers fill"/>
+   <rect x="78.64" y="-7.629e-7" width="5.723" height="144.4" fill="#e3f8f3" style="paint-order:stroke markers fill"/>
+   <rect x="89.8" y="-7.629e-7" width="5.723" height="144.4" fill="#e3f8f3" style="paint-order:stroke markers fill"/>
+   <rect x="100.5" y="-7.629e-7" width="5.723" height="144.4" fill="#e3f8ec" style="paint-order:stroke markers fill"/>
+  </g>
+  <rect x="1.144e-7" y="140.8" width="109.8" height="61.56" fill="url(#linearGradient2909)" stroke-width=".7732" style="paint-order:stroke markers fill"/>
+  <path d="m109.8 79.25v61.56h-109.8c64.36-36.01 66.06-36.99 109.8-61.56z" fill="url(#linearGradient2920)" stroke-width="1.663" style="paint-order:stroke markers fill"/>
+ </g>
+</svg>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="SVGRoot" width="24px" height="24px" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <linearGradient id="linearGradient1531" x1="8.9732" x2="7.4988" y1="9.6296" y2="6.8434" gradientTransform="matrix(1.7692 0 0 1.9314 -3.338 -5.1055)" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#59c4dd" offset="0"/>
+   <stop stop-color="#599bdd" stop-opacity="0" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient1541" x1="12.178" x2="7.6076" y1="8.9451" y2="9.4116" gradientTransform="matrix(1.7692 0 0 1.9314 -3.338 -5.1055)" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#59cfdd" offset="0"/>
+   <stop stop-color="#599bdd" stop-opacity="0" offset="1"/>
+  </linearGradient>
+ </defs>
+ <metadata>
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g transform="matrix(1.1654 0 0 1.202 -.66258 -1.0684)">
+  <path d="m3.7307 9.4623c1.8341 1.5011 10.135 8.2773 10.135 8.2773l-6.5499-0.82724s-3.45-6.4232-3.5849-7.4501z" fill="#a2c8ee" fill-opacity=".69804"/>
+  <path d="m14.694 4.6452 3.5143 7.5257-4.3423 5.5686z" fill="url(#linearGradient1541)"/>
+  <path d="m3.7307 9.4623 10.963-4.8171-0.82807 13.094z" fill="url(#linearGradient1531)"/>
+  <path d="m7.3156 16.912 1.8622-12.719s-5.3995 4.4179-5.4471 5.2685c-0.047558 0.85064 3.5849 7.4501 3.5849 7.4501z" fill="#7ec1cf" fill-opacity=".81523"/>
+  <path d="m9.1778 4.1938s5.0334 0.022091 5.5158 0.45144c0.48236 0.42935 3.5143 7.5257 3.5143 7.5257z" fill="#daf1f7"/>
+  <path d="m7.3156 16.912 10.892-4.7414s-3.7231 5.2272-4.3423 5.5686c-0.61919 0.34146-6.5499-0.82724-6.5499-0.82724z" fill="#5aa4b6" fill-opacity=".96863"/>
+ </g>
+</svg>

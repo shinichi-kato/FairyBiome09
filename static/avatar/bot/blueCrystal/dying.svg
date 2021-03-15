@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="SVGRoot" width="24px" height="24px" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <metadata>
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g transform="matrix(.091229 0 0 .091229 24.08 .93408)">
+  <g transform="translate(-133.29,72.25)">
+   <path d="m-55.185 108.77 41.577-7.5595 19.655 79.375z" fill="#ccc"/>
+   <path d="m-13.607-26.548 48.381-2.2679 1.5119 129.27-49.893 0.75595z" fill="#85bcc9" fill-opacity=".96863"/>
+   <path d="m32.506 122.38-26.458 58.208 62.367-73.027z" fill="none"/>
+   <path d="m-55.185-13.696 27.97 24.946-2e-6 114.15-27.97-16.631z" fill="#fff" fill-opacity=".609"/>
+   <path d="m-55.185 108.77 61.232 71.815-33.262-55.185z" fill="#ccc"/>
+   <path d="m-27.214 11.25 61.232-4.5357-1.5119 115.66-59.72 3.0238z" fill="none"/>
+   <path d="m32.506 122.38-26.458 58.208 62.367-73.027z" fill="#c7f4ff" fill-opacity=".76471"/>
+   <path d="m34.018 6.7143-61.232 4.5357 20.053-68.342 9.7028 1.3567 12.229 8.622z" fill="#a4c2c9" fill-opacity=".84429"/>
+   <path d="m-55.185-13.696 41.577-12.851 15.119-55.94z" fill="none"/>
+   <path d="m-13.607-26.548 48.381-2.2679-33.262-53.673z" fill="none"/>
+   <path d="m-55.185 108.77 41.577-7.5595v-127.76l-41.577 12.851z" fill="#88b2bb" fill-opacity=".42907"/>
+   <path d="m36.286 100.45-30.238 80.131-19.655-79.375z" fill="#5aa4b6" fill-opacity=".96863"/>
+   <path d="m34.774-28.815 33.262 13.607-50.416-51.807-10.427-3.4716z" fill="#5aa4b6" fill-opacity=".34948"/>
+   <path d="m36.286 100.45 32.129 7.1036-62.367 73.027z" fill="#cadde1" fill-opacity=".42907"/>
+   <path d="m-27.214 11.25 20.053-68.342-4.5199-9.6314-43.503 53.028z" fill="#f9f9f9"/>
+   <path d="m34.018 6.7143 34.018-21.923 0.37929 122.76-35.909 14.819z" fill="#e6e6e6" fill-opacity=".7474"/>
+   <path d="m32.506 122.38-59.72 3.0238 33.262 55.185z" fill="#c7f4ff" fill-opacity=".96863"/>
+   <path d="m34.018 6.7143-19.247-53.828 0.16191-13.583 2.6878-6.318 50.416 51.807z" fill="#e6e6e6" fill-opacity=".57785"/>
+  </g>
+ </g>
+ <path d="m10.033 18.791 4.3504-1.988 1.9591-2.3046 1.8148-3.4864-2.6217 2.1897 1.2391-0.86412-0.97997 1.8151-2.0165 1.0944-0.97997 1.5849-2.1608 0.63385z" fill="#fff"/>
+ <path d="m6.892 13.49 2.3626 2.0454 2.0165-1.4405 2.5356-5.791-2.8808 5.6757-1.5843 1.1528z" fill="#fff"/>
+ <path d="m10.854 1.4382 1.7218-0.34329 0.95127 0.31671-0.2452 0.57638-1.1304 0.45262-0.88517-0.12377z" fill="#e6e6e6" fill-opacity=".57785"/>
+</svg>

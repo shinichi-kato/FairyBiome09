@@ -1,0 +1,22 @@
+<svg width="161.2mm" height="94.22mm" version="1.1" viewBox="0 0 161.2 94.22" xmlns="http://www.w3.org/2000/svg">
+ <g fill="#0f7609" fill-opacity=".4859" stroke-width=".6444">
+  <path d="m82.98 34.7s47.6-22.48 59.95-25.63c12.36-3.145 11.29-1.068 11.29-1.068s-22.21 22.64-33.72 28.22-32.04 6.715-32.04 6.715z"/>
+  <path d="m82.98 34.7 1.526 11.75s21.41 5.37 28.84 5.035c7.423-0.3362 18.61-2.288 18.61-2.288s4.66-2.726-4.424-7.933-44.55-6.56-44.55-6.56z"/>
+  <path d="m82.98 34.7 5.95 2.288s17.03 24.18 19.53 27.16c2.502 2.971-8.087-2.746-8.087-2.746l-15.72-15.41z"/>
+  <path d="m78.26 34.7s-47.6-22.48-59.95-25.63c-12.37-3.146-11.29-1.068-11.29-1.068s22.21 22.64 33.72 28.22 32.04 6.715 32.04 6.715z"/>
+  <path d="m78.26 34.7-1.525 11.75s-21.41 5.37-28.84 5.035c-7.423-0.3362-18.61-2.288-18.61-2.288s-4.66-2.726 4.424-7.933c9.086-5.207 44.55-6.56 44.55-6.56z"/>
+  <path d="m78.26 34.7-5.95 2.288s-17.03 24.18-19.53 27.16c-2.502 2.971 8.087-2.746 8.087-2.746l15.72-15.41z"/>
+ </g>
+ <g stroke="#fff" stroke-opacity=".5367" stroke-width="1.663">
+  <path d="m51.93 72.3h-3.298v5.368h3.036v1.13h-3.036v6.533h-1.256v-14.14h4.554z" style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal;paint-order:stroke markers fill"/>
+  <path d="m58.49 85.3h-1.184v-0.244q-0.7139 0.0994-1.428 0.1898-0.8856 0.1084-1.419 0.1084-0.985 0-0.985-0.9759v-3.208q0-1.012 1.021-1.012h2.828v-2.648h-2.584v1.5h-1.166v-1.482q0-1.021 1.012-1.021h2.892q1.012 0 1.012 1.021zm-1.166-1.093v-3.109h-2.684v3.163z" style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal;paint-order:stroke markers fill"/>
+  <path d="m61.73 74.6h-1.22v-1.518h1.22zm-0.01807 10.72h-1.184v-8.792h1.184z" style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal;paint-order:stroke markers fill"/>
+  <path d="m68.36 79.4h-1.184v-1.816l-2.214 0.0723v7.645h-1.202v-8.792h1.202v0.244q0.5964-0.0904 1.202-0.1898 0.7229-0.1084 1.202-0.1084 0.994 0 0.994 0.985z" style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal;paint-order:stroke markers fill"/>
+  <path d="m74.88 76.5-2.115 8.72-0.8765 3.407h-1.184l0.8856-3.407-2.169-8.72h1.238l1.5 6.922 1.518-6.922z" style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal;paint-order:stroke markers fill"/>
+  <path d="m85.78 84.3q0 0.4428-0.2801 0.7229t-0.7229 0.2801h-4.663v-14.14h4.627q0.4428 0 0.7229 0.2801t0.2801 0.7229v4.202q0 0.5603-0.506 0.9398-0.497 0.2982-0.994 0.5964l1.066 0.6868q0.4699 0.2892 0.4699 0.9036zm-1.301-7.771v-4.256h-3.109v5.106h1.852zm0.0362 7.663v-4.889l-1.274-0.8314h-1.871v5.72z" style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal;paint-order:stroke markers fill"/>
+  <path d="m89.08 74.6h-1.22v-1.518h1.22zm-0.0181 10.72h-1.184v-8.792h1.184z" style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal;paint-order:stroke markers fill"/>
+  <path d="m96.18 84.3q0 1.021-1.021 1.021h-3.018q-1.012 0-1.012-1.021v-6.75q0-1.021 1.012-1.021h3.018q1.021 0 1.021 1.021zm-1.202-0.0361v-6.678h-2.648v6.678z" style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal;paint-order:stroke markers fill"/>
+  <path d="m107 85.3h-1.202v-7.717l-2.621 0.0723v7.645h-1.193v-7.717l-2.621 0.0723v7.645h-1.202v-8.792h1.202v0.244q0.7048-0.0904 1.41-0.1898 0.8585-0.1084 1.419-0.1084 0.5512 0 0.8133 0.3344 0.7591-0.0994 1.509-0.2078 0.985-0.1265 1.491-0.1265 0.994 0 0.994 0.985z" style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal;paint-order:stroke markers fill"/>
+  <path d="m113.8 84.3q0 1.021-1.012 1.021h-2.892q-1.012 0-1.012-1.021v-6.75q0-1.021 1.012-1.021h2.892q1.012 0 1.012 1.021v3.163l-0.4066 0.4247h-3.343v3.181h2.584v-1.608h1.166zm-1.166-4.121v-2.648h-2.584v2.648z" style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal;paint-order:stroke markers fill"/>
+ </g>
+</svg>

@@ -1,0 +1,19 @@
+<svg id="SVGRoot" width="24px" height="24px" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <linearGradient id="linearGradient3424">
+   <stop stop-color="#050" offset="0"/>
+   <stop stop-color="#217844" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient3416" x1="6.479" x2="17.59" y1="4.733" y2="16.41" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3424"/>
+ </defs>
+ <g>
+  <g transform="matrix(.7377 0 0 .7279 3.125 5.291)" fill="#ffd18f">
+   <ellipse cx="11.46" cy="15.29" rx="7.5" ry="7.716"/>
+   <circle cx="4.247" cy="15.29" r="2"/>
+   <circle cx="18.94" cy="15.3" r="2"/>
+  </g>
+  <path d="m9.34 19.27a0.327 0.327 0 0 0-0.1699 0.04297 0.327 0.327 0 0 0-0.1211 0.4473c0.3555 0.6211 0.8065 0.9704 1.266 1.137s0.9073 0.1602 1.285 0.1602c0.368 0 0.8444 0.02632 1.326-0.1309 0.4818-0.1572 0.9553-0.5276 1.242-1.201a0.327 0.327 0 0 0-0.1738-0.4297 0.327 0.327 0 0 0-0.4277 0.1738c-0.225 0.5282-0.5089 0.7248-0.8438 0.834-0.3348 0.1092-0.7354 0.09961-1.123 0.09961-0.3778 0-0.7392-0.003974-1.062-0.1211-0.3233-0.1171-0.6285-0.335-0.9219-0.8477a0.327 0.327 0 0 0-0.2754-0.1641z" color="#000000" color-rendering="auto" dominant-baseline="auto" image-rendering="auto" shape-rendering="auto" solid-color="#000000" stop-color="#000000" style="font-feature-settings:normal;font-variant-alternates:normal;font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal;font-variant-position:normal;font-variation-settings:normal;inline-size:0;isolation:auto;mix-blend-mode:normal;shape-margin:0;shape-padding:0;text-decoration-color:#000000;text-decoration-line:none;text-decoration-style:solid;text-indent:0;text-orientation:mixed;text-transform:none;white-space:normal"/>
+  <path d="m6.217 12.47 2.783 1.313 5 1.222 3.392-2.203c-0.8456-1.606-1.608-5.991-1.608-5.991s2.965 2.652 4.217 2.083l-4-6.111s-3.897-0.7059-6-1.222c-1.43 3.769-3.783 10.91-3.783 10.91z" fill="url(#linearGradient3416)"/>
+  <path d="m11 17s11 0 12-2c0-1-8-3-8-3l-7-1s-5 1-7 3c1 1 7 2.5 7 2.5l3-0.5z" fill="url(#linearGradient3416)"/>
+ </g>
+</svg>

@@ -1,0 +1,32 @@
+<svg width="109.8mm" height="202.4mm" version="1.1" viewBox="0 0 109.8 202.4" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <linearGradient id="linearGradient2920" x1="90.98" x2="94.69" y1="118.4" y2="230.2" gradientTransform="translate(-35.99 -116.9)" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#fff3bb" offset="0"/>
+   <stop stop-color="#fff" stop-opacity="0" offset="1"/>
+  </linearGradient>
+  <filter id="filter903" x="-1.944e-5" y="-1.897e-5" width="1" height="1" color-interpolation-filters="sRGB">
+   <feGaussianBlur stdDeviation="0.00071872469"/>
+  </filter>
+  <radialGradient id="radialGradient923" cx="54.9" cy="117.8" r="54.9" gradientTransform="matrix(1 0 0 .5607 0 75.36)" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#efe6c7" offset="0"/>
+   <stop stop-color="#dea682" offset="1"/>
+  </radialGradient>
+ </defs>
+ <g stroke-linecap="round" stroke-linejoin="round" stroke-opacity=".5367">
+  <rect x="1.144e-7" y="-7.629e-7" width="109.8" height="144" fill="#fefae3" stroke-width="1.183" style="paint-order:stroke markers fill"/>
+  <g stroke-width=".9074">
+   <rect x="3.063" y="-7.629e-7" width="5.723" height="144.4" fill="#aff2c7" style="paint-order:stroke markers fill"/>
+   <rect x="13.08" y="-7.629e-7" width="5.723" height="144.4" fill="#e3f8c7" style="paint-order:stroke markers fill"/>
+   <rect x="24.24" y="-7.629e-7" width="5.723" height="144.4" fill="#e3f8c7" style="paint-order:stroke markers fill"/>
+   <rect x="35.4" y="-7.629e-7" width="5.723" height="144.4" fill="#d2f2c7" style="paint-order:stroke markers fill"/>
+   <rect x="46.13" y="-7.629e-7" width="5.723" height="144.4" fill="#e3f8c7" style="paint-order:stroke markers fill"/>
+   <rect x="57.47" y="-7.629e-7" width="5.723" height="144.4" fill="#e3f8c7" style="paint-order:stroke markers fill"/>
+   <rect x="67.49" y="-7.629e-7" width="5.723" height="144.4" fill="#d2f2c7" style="paint-order:stroke markers fill"/>
+   <rect x="78.64" y="-7.629e-7" width="5.723" height="144.4" fill="#e3f8c7" style="paint-order:stroke markers fill"/>
+   <rect x="89.8" y="-7.629e-7" width="5.723" height="144.4" fill="#e3f8c7" style="paint-order:stroke markers fill"/>
+   <rect x="100.5" y="-7.629e-7" width="5.723" height="144.4" fill="#bef2bd" style="paint-order:stroke markers fill"/>
+  </g>
+  <rect x="1.144e-7" y="140.8" width="109.8" height="61.56" fill="url(#radialGradient923)" stroke-width=".7732" style="paint-order:stroke markers fill"/>
+ </g>
+ <path d="m49.37-0.1875 13.83 0.1875s38.4 82.97 41.48 87.07c-24.09 26.62-72.32 23.39-88.51-1.958 9.514-25.6 33.2-85.3 33.2-85.3z" fill="url(#linearGradient2920)" filter="url(#filter903)" stroke-linecap="round" stroke-linejoin="round" stroke-opacity=".5367" stroke-width="1.663" style="paint-order:stroke markers fill"/>
+</svg>

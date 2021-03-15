@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="SVGRoot" width="24px" height="24px" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <g fill="#808080" fill-opacity=".5727" stroke-width="1.09">
+  <path d="m12.007 15.083a7.5068 8.0693 0 0 0-7.3444 6.4059 12.001 12.001 0 0 0 7.3444 2.5081 12.001 12.001 0 0 0 7.3444-2.5103 7.5068 8.0693 0 0 0-7.3444-6.4038z"/>
+  <circle cx="12.007" cy="8.8178" r="4.4963"/>
+  <circle cx="12.007" cy="11.998" r="12.001"/>
+ </g>
+ <path d="m19.48 14a4.5 4.5 0 0 0-4.481 4.501 4.5 4.5 0 0 0 4.5 4.499 4.5 4.5 0 0 0 4.5-4.499 4.5 4.5 0 0 0-4.5-4.501 4.5 4.5 0 0 0-0.01902 0zm-0.4981 1.273h1.034v2.711h2.712v1.034h-2.712v2.711h-1.034v-2.711h-2.712v-1.034h2.712z"/>
+</svg>
