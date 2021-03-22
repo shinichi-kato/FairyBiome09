@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useCallback } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import IconButton from '@material-ui/core/IconButton';
@@ -10,11 +10,12 @@ import FairyPanel from '../Panel/FairyPanel';
 import UserPanel from '../Panel/UserPanel';
 
 import { BotContext } from '../Bot/BotProvider';
-import {FirebaseContext} from "../Firebase/FirebaseProvider";
-
+import { FirebaseContext } from "../Firebase/FirebaseProvider";
 import { EcosystemContext } from '../Ecosystem/EcosystemProvider';
-
+import { LogViewer } from "./LogViewer";
+import { Message } from "../../biomebot/message";
 import Dexie from "dexie";
+import { InfoSharp } from '@material-ui/icons';
 
 var undefined;
 let db = null;
@@ -48,7 +49,7 @@ const useStyles = makeStyles(theme => ({
   },
   mainView: {
     height: "calc ( 100vh - 48px - 256px);",
-    overflowY: "scroll", 
+    overflowY: "scroll",
   },
   textInput: {
     position: 'relative',
@@ -82,8 +83,11 @@ export default function Main(props) {
   /* 
     チャットボットのメイン画面
     現在の場所(森、家、公園）はEcosystemから供給される。
-    ユーザやecosystemからの入力をbotにわたし、
+    ユーザやecosystemからの入力をbotに渡し、
     botから得た返答を表示する。
+    
+    props.config.logViewLengthで表示されるlogの長さ、
+    props.config.logStoreLengthでdb.logに保持されるlogの長さを指定する。
 
     家ではユーザとユーザの妖精が1:1で会話する。
     森では森にいる妖精に声をかけたりランダムに出会い、会話する。
@@ -100,15 +104,19 @@ export default function Main(props) {
   const bot = useContext(BotContext);
   const fb = useContext(FirebaseContext);
   const ecosystem = useContext(EcosystemContext);
-  const [handleSubmit,setHandleSubmit] = useState();
+  const [handleSubmit, setHandleSubmit] = useState();
   const [userInput, setUserInput] = useState("");
+  const [busy, setBusy] = useState();
+  const [log, setLog] = useState([]);
+
+  const {logViewLength,logStoreLength} = props.config;
 
   useEffect(() => {
     if (!db && window !== undefined) {
       db = new Dexie('Log');
       db.version(1).stores({
-        home: "++id,uid,timestamp",  // id,timestamp,uid,name,line...
-        forest: "++id,uid,timestamp",// id,timestamp,uid,name,line...
+        home: "++id,uid,timestamp",  // id,timestamp,uid,name,text...
+        forest: "++id,uid,timestamp",// id,timestamp,uid,name,text...
       });
     }
   }, [db]);
@@ -116,35 +124,37 @@ export default function Main(props) {
   useEffect(() => {
     let cancelled = false;
     if (!cancelled) {
-      bot.deploy(ecosystem.site).then(site => {
-        switch (site) {
-          case 'room':{
+      bot.deploy(ecosystem.site).then(() => {
+        switch (ecosystem.site) {
+          case 'room': {
 
             // indexedDBにログを開始
-            setHandleSubmit(()=>(event)=>handleLocalWrite(event));
+            setHandleSubmit(() => (event) => handleLocalWrite(event));
+
+            // botからの出力を受けるリスナーはonEffect()
+            break;
+          }
+
+          case 'forest': {
 
             break;
           }
 
-          case 'forest':{
+          case 'park': {
 
             break;
           }
 
-          case 'park':{
-
+          case false: {
             break;
           }
 
-          case false:{
-            break;
-          }
-          
           default:
-            throw new Error(`invalid site "${site}"`);
+            throw new Error(`invalid site "${ecosystem.site}"`);
         }
       });
     }
+
 
     return (() => {
       cancelled = true;
@@ -152,22 +162,73 @@ export default function Main(props) {
 
   }, [ecosystem.site]);
 
+  useEffect(() => {
+    // チャットボットからの発言をlistenしてログに書き込む
+    (async () => {
+      const message = bot.output.message;
+      if (message !== null) {
+
+        await db.home.add({
+          text: messaga.text,
+          name: messaga.name,
+          person: messaga.person,
+          site: messaga.site,
+          timestamp: messaga.timestamp
+        });
+        writeLog(message);
+      }
+    })();
+  }, [bot.output]);
+
   function handleLocalWrite(event) {
     // formのユーザ入力をDBに書き込む
-    db.home.add({ 
-      name: fb.displayName,
-      line: userInput,
-      timestamp:new Date(),
-      pressure:ecosystem.pressure,
-      weather:ecosystem.weather,
-      nightOrday:ecosystem.nightOrDay,
-      site:ecosystem.site
-    });
-    setUserInput("");
+    if (!busy) {
+      setBusy(true);
+      const input = new Message("speech", {
+        text: userInput,
+        name: fb.displayName,
+        person: 'user',
+        ecosystem: {
+          weather: ecosystem.weather,
+          nightOrday: ecosystem.nightOrDay,
+        },
+        site: ecosystem.site
+      });
+      setUserInput("");
+
+      (async () => {
+        await db.home.add({
+          text: input.text,
+          name: input.name,
+          person: input.person,
+          site: input.site,
+          timestamp: input.timestamp
+        });
+        // ここでレンダリング
+        await bot.reply(input);
+      })();
+      setBusy(false);
+    }
 
     event.preventDefault();
+  }
 
-    // botの入力はどうする？
+  function writeLog(message){
+    /*  ログにmessageを書き込む。
+        表示するログはlogに格納され最大長がprops.config.logViewLengthで定義される。
+        必要に応じてtruncateする。
+        同時にログはdb.logに保存される。ログの内容はチャットボットの学習にも
+        使われ、長さはprops.config.logStoreLengthで定義される。
+
+    */
+    setLog(prev=>{
+      prev.push(message);
+      if(prev.length > logViewLength){
+        prev.slice(0,logViewLength);
+      }
+      return prev;
+    });
+
   }
 
   function handleChangeUserInput(event) {
@@ -185,14 +246,16 @@ export default function Main(props) {
         className={classes.mainView}
         flexGrow={1}
       >
-
+        <LogViewer
+          log={log}
+        />
       </Box>
       <Box>
         <form onSubmit={handleSubmit}>
           <Box
             display="flex"
             flexDirection="row"
-          >
+          > 
             <Box
               flexGrow={1}
             >
@@ -205,7 +268,7 @@ export default function Main(props) {
                     root: classes.inputRoot,
                     input: classes.inputInput,
                   }}
-                  inputProps={{'aria-label': 'text'}}
+                  inputProps={{ 'aria-label': 'text' }}
                 />
               </div>
             </Box>
@@ -213,7 +276,7 @@ export default function Main(props) {
               <IconButton
                 color="primary"
               >
-                <SendIcon/>
+                <SendIcon />
               </IconButton>
             </Box>
           </Box>
@@ -238,7 +301,7 @@ export default function Main(props) {
         top={0}
         left="50%"
       >
-        <AppMenu 
+        <AppMenu
           toTitlePage={props.toTitlePage}
         />
       </Box>

@@ -1,10 +1,25 @@
 import React, {useState, useEffect} from "react";
+import { useStaticQuery, graphql } from "gatsby";
 
 import FirebaseProvider from "../components/Firebase/FirebaseProvider";
 import EcosystemProvider from '../components/Ecosystem/EcosystemProvider';
 import BotProvider from "../components/Bot/BotProvider";
 import Landing from "../components/Landing/Landing";
 import Main from '../components/Main/Main';
+
+
+const query = graphql`
+query j {
+  site {
+    siteMetadata {
+      chatbot {
+        logViewLength
+        logStoreLength
+      }
+    }
+  }
+}
+`
 
 export default function Index({ location }) {
   /*
@@ -24,6 +39,8 @@ export default function Index({ location }) {
     firestoreの初期
 
   */
+  const data = useStaticQuery(query);
+  const config = data.site.siteMetadata.chatbot;
   const [state, setState] = useState(
     location.search === "?create" ? "create" : "title");
 
@@ -52,6 +69,7 @@ export default function Index({ location }) {
           <EcosystemProvider>
             <Main 
               toTitlePage={handleToTitlePage}
+              config={config}
             />
           </EcosystemProvider>
         </Landing>

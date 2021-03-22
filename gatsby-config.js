@@ -3,12 +3,16 @@ require("dotenv").config();
 module.exports = {
   siteMetadata: {
     title: `FairyBiome`,
-    description: `ed.`,
+    description: `Small community chat with Ecosystem + Chatbot `,
     author: `skato21r@iris.eonet.ne.jp`,
     ecosystem: {
       randomSeed: 22563, // 1-65563
       changeRate: 0.000001, // 天候変化の速度
       updateInterval: 3000, // msec, 天候表示のアップデート周期
+    },
+    chatbot: {
+      logViewLength: 100, // 表示するログの長さ
+      logStoreLength: 10000, // 保存するログの長さ
     }
   },
   plugins: [

@@ -28,6 +28,8 @@
     "main": {
         "NAME": "ティピカ",
         "CREATOR_NAME": "system",
+        "POSITIVE_LABEL": ["いいね","おっけー"],
+        "NEGATIVE_LABEL": "死ね",
         "START_DECK": "",
         "END_DECK": ""
     },

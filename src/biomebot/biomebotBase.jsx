@@ -52,6 +52,7 @@ firestore.collection("Biomebot")
         out
 })
 
+
 */
 
 import Dexie from "dexie";
@@ -77,9 +78,13 @@ export default class BiomebotBase {
     this.firestore = null;
     this.uid = null;
     this.botId = null;
+    this.estimater = {
+      negatives: [],
+      positives: []
+    }
   }
 
-  async connect(firestore,botId, uid){
+  async connect(firestore, botId, uid) {
     /* 
       indexedDB上にデータあればそれを読む
     */
@@ -89,15 +94,18 @@ export default class BiomebotBase {
 
     config = await db.config.where({ botId: botId }).first();
     if (config) {
-      state = await db.state.where({botId: botId}).first();
-      dispName = await db.main.where({botId:botId,key: 'NAME'}).first();
-      
+      state = await db.state.where({ botId: botId }).first();
+      dispName = await db.main.where({ botId: botId, key: 'NAME' }).first();
+
       this.botId = botId;
+      this.config = config;
+      this.state = state;
+      this.displayNameCache = dispName;
 
       return {
-        botId: botId,        
+        botId: botId,
         config: config,
-        state:state,
+        state: state,
         displayName: dispName
       }
     }
@@ -117,7 +125,7 @@ export default class BiomebotBase {
     if (obj.botId === undefined && this.uid === null) {
       throw new Error('biomebot.generate(): no botId supplied')
     }
-    console.log("uid=",this.uid)
+    console.log("uid=", this.uid)
 
     let config, state;
     this.botId = obj.botId || this.uid;
@@ -136,7 +144,7 @@ export default class BiomebotBase {
       precision: data.precision,
       retention: data.retention,
     };
-    state = {...obj.state};
+    state = { ...obj.state };
 
     /* config */
     await db.config.put({
@@ -146,18 +154,34 @@ export default class BiomebotBase {
 
     /* state */
     await db.state.put({ botId: this.botId, state: obj.state });
-    
+
     /* main "[id+botId],key" */
     await db.main
       .where('[id+botId]')
-      .between([Dexie.minKey,this.botId],[Dexie.maxKey,this.botId])
+      .between([Dexie.minKey, this.botId], [Dexie.maxKey, this.botId])
       .delete();
 
     let dictKeys = Object.keys(obj.main);
-    await db.main.bulkAdd(
-      dictKeys.map((key,i) => (
-        {id: i, botId: this.botId, key: key, val: obj.main[key] }
-      )));
+    let mainData = [];
+    let i = 0;
+    for(let key of dictKeys){
+      let val = obj.main[key];
+
+      if(typeof val === 'string'){
+        mainData.push(
+          { id: ++i, botId: this.botId, key: key, val: val }
+        );
+      }
+      else if(Array.isArray(val)){
+        for (let v of val){
+          mainData.push(
+            { id: ++i, botId: this.botId, key: key, val: v }
+          )
+        }
+      }
+    }
+    await db.main.bulkAdd(mainData);
+
 
     /* parts "[name+botId]", // name,config */
     dictKeys = Object.keys(obj.parts);
@@ -198,7 +222,7 @@ export default class BiomebotBase {
     /* scriptはidをこちらで与え、next,prevも設定する */
 
     for (let partName of Object.keys(obj.parts)) {
-      console.log("partName",partName)
+      console.log("partName", partName)
       data = [];
       const script = obj.parts[partName].script;
       let i;
@@ -214,24 +238,53 @@ export default class BiomebotBase {
       }
       data[0] = { ...data[0], prev: null };
       data[i] = { ...data[i], next: null };
-      console.log("data:",data)
+      console.log("data:", data)
       await db.scripts.bulkAdd(data);
     }
 
     return {
-      botId:this.botId,
-      config:config,
-      state:state,
-      displayNameCache:obj.main['NAME']
+      botId: this.botId,
+      config: config,
+      state: state,
+      displayNameCache: obj.main['NAME']
     };
   }
 
   async rename(displayName) {
     await db.main
-      .where({botId:this.botId, key:'NAME'})
-      .modify({val:displayName});
-      
+      .where({ botId: this.botId, key: 'NAME' })
+      .modify({ val: displayName });
+
     this.displayNameCache = displayName;
+  }
+
+  async readEstimator() {
+    /*  main辞書から入力文字列評価用の NEGATIVE_LABEL, POSITIVE_LABELを
+        取得し、辞書を生成。 */
+
+    let negatives = await db.main
+      .where({ botId: this.botId, key: 'NEGATIVE_LABEL' })
+      .toArray();
+
+    negatives = negatives.reduce((obj,data)=>{
+        
+        obj[data.val] = true;
+        return obj;
+      }, {});
+    
+    let positives = await db.main
+      .where({ botId: this.botId, key: 'POSITIVE_LABEL' })
+      .toArray();
+
+    positives = positives.reduce((obj, data)=>{
+        obj[data.val] = true;
+        return obj;
+      }, {});
+
+    this.estimater = {
+      negatives: negatives,
+      positives: positives,
+    }
   }
 }
 

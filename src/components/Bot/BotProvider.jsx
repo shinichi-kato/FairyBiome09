@@ -38,7 +38,7 @@ export default function BiomebotProvider(props) {
   const [config, setConfig] = useState(initialState.config);
   const [state, setState] = useState(initialState.state);
   const [displayNameCache, setDisplayNameCache] = useState("");
-
+  const [output, setOutput] = useState({key:0,message:null});
   const fb = useContext(FirebaseContext);
 
 
@@ -93,6 +93,22 @@ export default function BiomebotProvider(props) {
     return bot.deploy(site);
   }
 
+  function handleReply(inMessage) {
+    /* inSpeech {
+      text: 入力文字列
+      name: 発言者名
+      person: 発言者('chatbot'|'buddy'|'friend'|'other')
+      trigger: 環境の変化
+      }
+    */
+    bot.reply(inMessage).then(outMessage=>{
+      setOutput(prev=>({
+        key:prev.key + 1,
+        message: outMessage,
+      }))
+    })
+  }
+
   return (
     <BotContext.Provider
       value={{
@@ -102,7 +118,9 @@ export default function BiomebotProvider(props) {
         rename: handleRename,
         generate: handleGenerate,
         deploy: handleDeploy,
+        reply: handleReply,
         mode: bot.mode,
+        output: output,
       }}
     >
       { props.children }
