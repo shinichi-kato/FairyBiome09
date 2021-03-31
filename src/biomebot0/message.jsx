@@ -11,6 +11,7 @@
     name: "しまりす",
     person: "user",
     mood: "peace", // 省略可, デフォルト "peace"
+    avatarPath: "/avatar/person.svg"
   });
 
   発言時刻は自動で付与される。
@@ -21,6 +22,7 @@
     name: "しずく",
     person: "bot",
     mood: "cheer", // 省略可, デフォルト "peace"
+    avatarPath: "/chatbot/shizuku/"
   });
 
   ## ecosystemが生成する環境の変化
@@ -51,6 +53,7 @@ export class Message {
         this.estimate = 0;
         this.site = data.site;
         this.timestamp = new Date();
+        this.avatarPath = data.avatarPath;
         if(data.ecosystem){
           this.ecosystem = {...data.ecosystem}
         }

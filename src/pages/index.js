@@ -9,7 +9,7 @@ import Main from '../components/Main/Main';
 
 
 const query = graphql`
-query j {
+query indexq {
   site {
     siteMetadata {
       chatbot {

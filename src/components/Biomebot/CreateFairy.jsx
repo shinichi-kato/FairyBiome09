@@ -107,6 +107,8 @@ function CreateFairyComponent(props) {
       })
   }, [bot, dir]);
 
+  const photoURL = `/chatbot/${bot.avatarPath}/${bot.mood}.svg`;
+
   return (
     <Box
       display="flex"
@@ -138,7 +140,7 @@ function CreateFairyComponent(props) {
         </Button>
       </Box>
       <Box>
-        <FairyPanel photoURL={bot.photoURL}/>
+        <FairyPanel photoURL={photoURL}/>
       </Box>
     </Box>
   )

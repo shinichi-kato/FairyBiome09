@@ -169,11 +169,11 @@ export default function Main(props) {
       if (message !== null) {
 
         await db.home.add({
-          text: messaga.text,
-          name: messaga.name,
-          person: messaga.person,
-          site: messaga.site,
-          timestamp: messaga.timestamp
+          text: message.text,
+          name: message.name,
+          person: message.person,
+          site: message.site,
+          timestamp: message.timestamp
         });
         writeLog(message);
       }
@@ -220,6 +220,8 @@ export default function Main(props) {
         同時にログはdb.logに保存される。ログの内容はチャットボットの学習にも
         使われ、長さはprops.config.logStoreLengthで定義される。
 
+        チャットボットにはmoodがあり
+
     */
     setLog(prev=>{
       prev.push(message);
@@ -248,6 +250,7 @@ export default function Main(props) {
       >
         <LogViewer
           log={log}
+          
         />
       </Box>
       <Box>

@@ -41,7 +41,7 @@ export default function FairyPanel(props) {
       >
         <img
         className={classes.portrait}
-          src={`/chatbot/${props.photoURL}.svg`}
+          src={`/chatbot/${props.photoURL}`}
           alt={props.photoURL} />
       </Box>
 

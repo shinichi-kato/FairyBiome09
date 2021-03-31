@@ -27,7 +27,7 @@ const initialState = {
     partOrder: [],
     mentalLevel: 10,
     moment: 0,
-    mode: "peace",
+    mood: "peace",
     queue: [],
     timerPostings: []
   }
@@ -114,12 +114,12 @@ export default function BiomebotProvider(props) {
       value={{
         id: botId,
         displayName: displayNameCache,
-        photoURL: `${config.botDir}/${state.mode}`,
+        avatarPath: config.botDir,
         rename: handleRename,
         generate: handleGenerate,
         deploy: handleDeploy,
         reply: handleReply,
-        mode: bot.mode,
+        mood: bot.state.mood,
         output: output,
       }}
     >
