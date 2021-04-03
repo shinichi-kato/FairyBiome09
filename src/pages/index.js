@@ -3,7 +3,7 @@ import { useStaticQuery, graphql } from "gatsby";
 
 import FirebaseProvider from "../components/Firebase/FirebaseProvider";
 import EcosystemProvider from '../components/Ecosystem/EcosystemProvider';
-import BotProvider from "../components/Bot/BotProvider";
+import BotProvider from "../components/Biomebot/BotProvider";
 import Landing from "../components/Landing/Landing";
 import Main from '../components/Main/Main';
 

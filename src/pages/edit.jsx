@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from "react";
 import { navigate } from 'gatsby';
 import FirebaseProvider from "../components/Firebase/FirebaseProvider";
-import BotProvider from "../components/Bot/BotProvider";
+import BotProvider from "../components/Biomebot/BotProvider";
 import TitlePage from '../components/Landing/TitlePage';
 import Editor from '../components/Editor/Editor';
 

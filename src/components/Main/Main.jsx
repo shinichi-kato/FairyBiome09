@@ -9,11 +9,11 @@ import AppMenu from './AppMenu';
 import FairyPanel from '../Panel/FairyPanel';
 import UserPanel from '../Panel/UserPanel';
 
-import { BotContext } from '../Bot/BotProvider';
+import { BotContext } from '../Biomebot/BotProvider';
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
 import { EcosystemContext } from '../Ecosystem/EcosystemProvider';
 import { LogViewer } from "./LogViewer";
-import { Message } from "../../biomebot/message";
+import { Message } from "../Biomebot/message";
 import Dexie from "dexie";
 import { InfoSharp } from '@material-ui/icons';
 

@@ -1,8 +1,8 @@
 import React, {useContext} from "react";
 import loadable from '@loadable/component';
-import {BotContext} from "../Bot/BotProvider";
+import {BotContext} from "../Biomebot/BotProvider";
 import TitlePage from './TitlePage';
-const CreateFairy = loadable(() => import('../Bot/CreateFairy'));
+const CreateFairy = loadable(() => import('../Biomebot/CreateFairy'));
 
 export default function Landing(props){
   /* 

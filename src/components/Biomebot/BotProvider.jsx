@@ -1,18 +1,3 @@
-import React, {
-  useState, useContext,
-  createContext, useEffect, useReducer
-} from 'react';
-import Dexie from "dexie";
-
-import { FirebaseContext } from "../Firebase/FirebaseProvider";
-
-import {textToInternalRepr, dictToInternalRepr} from "./internalRepr";
-import {TinySegmenter} from "./tinysegmenter";
-import * as dev from "part/dev";
-
-export const BotContext = createContext();
-
-
 /*
 BiomebotProvider
 チャットボットコンテキスト＆I/O
@@ -58,7 +43,26 @@ awaiit xxxReciever(state, work, message, callback)
 
 */
 
+import React, {
+  useState, useContext,
+  createContext, useEffect, useReducer
+} from 'react';
 
+import Dexie from "dexie";
+
+import { FirebaseContext } from "../Firebase/FirebaseProvider";
+
+import { textToInternalRepr, dictToInternalRepr } from "./internalRepr";
+import { TinySegmenter } from "./tinysegmenter";
+import * as dev from "./engine/dev";
+
+export const BotContext = createContext();
+
+const segmenter = new TinySegmenter();
+
+// estimate()でポジティブ・ネガティブな単語がなかった場合、
+// len(nodes) ^ ESTIMATOR_LEENGTH_FACTORをスコアとする 
+const ESTIMATOR_LENGTH_FACTOR = 0.6;
 let db = null;
 
 // indexedDBに保持されるチャットボットのデータ
@@ -104,7 +108,7 @@ const initialState = {
   displayName: null,
   config: defaultSettings.config,
   parts: defaultSettings.parts,
-  estimater: {
+  estimator: {
     positive: [],
     negative: [],
   }
@@ -112,11 +116,11 @@ const initialState = {
 
 function reducer(state, action) {
   switch (action.type) {
-    case 'init':{
+    case 'init': {
       return initialState;
     }
 
-    case 'connect':{
+    case 'connect': {
       const snap = action.snap;
       return {
         botId: snap.botId,
@@ -124,18 +128,18 @@ function reducer(state, action) {
         displayName: snap.displayName,
         config: snap.config,
         parts: snap.parts,
-        estimater: snap.estimater
+        estimator: snap.estimator
       }
     }
 
     default:
-      throw new Error( `invalid action ${action}`);
+      throw new Error(`invalid action ${action}`);
   }
 }
 
 export default function BiomebotProvider(props) {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [work, setWork] = useState({key:0,work:defaultSettings.work});
+  const [work, setWork] = useState({ key: 0, work: defaultSettings.work });
   const [reciever, setReciever] = useState();
 
   const fb = useContext(FirebaseContext);
@@ -160,8 +164,8 @@ export default function BiomebotProvider(props) {
       load(fb.firestore, fb.uid, fb.uid)
         .then(snap => {
           if (snap) {
-            dispatch({type:'connect',snap:snap})
-            setWork(prev=>({key:prev.key+1,work:snap.work}));
+            dispatch({ type: 'connect', snap: snap })
+            setWork(prev => ({ key: prev.key + 1, work: snap.work }));
             // setParts()
             props.toMainPage();
 
@@ -178,28 +182,54 @@ export default function BiomebotProvider(props) {
       siteごとのreplierをセット
     */
     const reciever = dev.deploy();
-    setReciever(()=> 
-      async (st,wk,msg) => reciever);
+    setReciever(() =>
+      async (st, wk, msg) => reciever);
   }
 
-  function recieve(message){
-    const nodes = segmenter.segment(msg.text);
-    msg.text = textToInternalRepr(nodes);
+  function recieve(message) {
+    const nodes = segmenter.segment(message.text);
+    message.text = textToInternalRepr(nodes);
 
-    reciever(state,work,message)
-    .then(snap=>{
-      setWork(prev=>({key:prev.key+1,work:snap.work}));
-    });
+    message.estimation = estimate(message.text);
+
+    reciever(state, work, message, sendMessage)
+      .then(snap => {
+        setWork(prev => ({ key: prev.key + 1, work: snap.work }));
+      });
   }
 
-  function send(message){
+  function estimate(text) {
+    /* 内部表現化されたテキストに含まれるネガティブ/ポジティブワードを
+      見つけてスコアを与える。
+      テキストに含まれたポジティブなワードを優先して評価し、
+      ポジティブなワードが見つからない場合ネガティブなワードの数を評価する。
+      どちらも含まない場合は長い文字列ほどポジティブとし、文字列の長さをlと
+      したとき、以下の式で与えられる。
 
+      score = text.length^ESTIMATOR_LENGTH_FACTOR
+      */
+    let score = 0;
+    const pos = state.estimator.positives;
+    const neg = state.estimator.negatives;
+
+    score = text.reduce((score, word) => (score + word in pos ? 1 : 0), 0);
+    if (score !== 0) return score;
+
+    score = text.reduce((score, word) => (score + word in neg ? -1 : 0), 0);
+    if (score !== 0) return score;
+
+    return Math.round(text.length ^ ESTIMATOR_LENGTH_FACTOR);
+  }
+
+  function sendMessage(message) {
+    props.sendMessage(message)
+    //学習用のログにも追記
   }
 
   return (
     <BotContext.Provider
       value={{
-        displayName:state.displayName,
+        displayName: state.displayName,
         deploy: deploy,
         recieve: recieve,
       }}
@@ -219,7 +249,7 @@ export default function BiomebotProvider(props) {
 
 async function load(db, botId, uid) {
 
-  let botId, config, state, displayName;
+  let config, state, displayName;
   config = await db.config.where({ botId: botId }).first();
   if (config) {
     state = await db.state.where({ botId: botId }).first();
@@ -228,16 +258,16 @@ async function load(db, botId, uid) {
     return {
       botId: botId,
       config: config,
-      work: work,
+      work: defaultSettings.work,
       displayName: displayName,
-      estimater: await readEstimater(db)
+      estimator: await readestimator(db)
     }
   }
 
   return null;
 }
 
-async function readEstimater(db) {
+async function readestimator(db) {
   /*  main辞書から入力文字列評価用の NEGATIVE_LABEL, POSITIVE_LABELを
       取得し、辞書を生成。 */
 
@@ -245,20 +275,20 @@ async function readEstimater(db) {
     .where({ botId: this.botId, key: 'NEGATIVE_LABEL' })
     .toArray();
 
-  negatives = negatives.reduce((obj,data)=>{
-      
-      obj[data.val] = true;
-      return obj;
-    }, {});
-  
+  negatives = negatives.reduce((obj, data) => {
+
+    obj[data.val] = true;
+    return obj;
+  }, {});
+
   let positives = await db.main
     .where({ botId: this.botId, key: 'POSITIVE_LABEL' })
     .toArray();
 
-  positives = positives.reduce((obj, data)=>{
-      obj[data.val] = true;
-      return obj;
-    }, {});
+  positives = positives.reduce((obj, data) => {
+    obj[data.val] = true;
+    return obj;
+  }, {});
 
   return {
     negatives: negatives,
