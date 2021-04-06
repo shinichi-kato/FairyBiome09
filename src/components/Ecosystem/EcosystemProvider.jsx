@@ -3,7 +3,7 @@ import { Noise } from 'noisejs';
 import { useStaticQuery, graphql } from "gatsby";
 import useInterval from 'use-interval';
 
-import { getDateRad, getHourRad } from '../../calendar-rad.jsx';
+import { getDateRad, getHourRad } from '../calendar-rad.jsx';
 
 
 void undefined; /* for detect undefind */

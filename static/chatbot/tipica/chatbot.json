@@ -1,7 +1,8 @@
 {
     "botId": null,
     "config": {
-        "description": "妖精の育て方を教える年長妖精",
+        "description": "妖精の育て方を教えるお姉さん妖精",
+        "backgroundColor": "#EEEE44",
         "initialMentalLevel": 100,
         "startPartOrder": [
             "greeting",

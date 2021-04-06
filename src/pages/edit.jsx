@@ -1,51 +1,59 @@
-import React, { useEffect, useContext } from "react";
-import { navigate } from 'gatsby';
+import React from "react";
+import { graphql,Link } from "gatsby"
 import FirebaseProvider from "../components/Firebase/FirebaseProvider";
-import BotProvider from "../components/Biomebot/BotProvider";
-import TitlePage from '../components/Landing/TitlePage';
-import Editor from '../components/Editor/Editor';
 
-
-export default function EditorPage({ location }) {
-  /*
-   * bot.idがnullの場合、まだbotの読み込みが終わっていない→TitlePage表示
-   * bot.idが空文字列→編集可能なボットが生成されていない
-   * bot.idが文字列→編集へ 
-   * 
-
-   */
-
-  const bot = useContext(BotProvider);
-  function handleToMainPage() {
-    
+export const query = graphql`
+  {
+    allJson {
+      nodes {
+        main {
+          NAME
+          CREATOR_NAME
+        }
+        parent {
+          ... on File {
+            relativeDirectory
+          }
+        }
+        config {
+          backgroundColor
+          description
+        }
+      }
+    }
   }
+`
+
+export default function EditPage({ location, data }) {
+  /*
+    チャットボット編集ページ   
+{
+  "data": {
+    "allJson": {
+      "nodes": [
+        {
+          "main": {
+            "NAME": "ティピカ",
+            "CREATOR_NAME": "system"
+          },
+          "parent": {
+            "relativeDirectory": "tipica"
+          },
+          "config": {
+            "backgoundColor": "#EE0000",
+            "description": "説明"
+          }
+        }
+      ]
+    }
+  }
+  
+  */
 
   return (
     <FirebaseProvider>
-      <BotProvider
-        toMainPage={handleToMainPage}
-      >
-        <>
-          {bot.id === null
-            ?
-            <TitlePage />
-            :
-            (bot.id === ""
-              ?
-              <NoBots />
-              :
-              <Editor />
-            )
-          }
-        </>
-      </BotProvider>
+      chatbot 編集ページ
+      <Link to="/">チャットルームに戻る</Link>
     </FirebaseProvider>
   )
-}
-
-function NoBots(){
-  useEffect(()=>{
-    navigate('/content/no-bot/')
-  })
-  return (<div></div>);
 }

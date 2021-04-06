@@ -2,6 +2,19 @@
   Messageクラス
   ==================================
   発言や環境の変化など学習対象の情報を格納するクラス
+    text ::= string // メッセージ本体 
+    name ::= string // 発信者名 
+    person ::= 'bot'|'user'|'other'|'system' // 発信者の種類
+    mood ::= 'peace'|'cheer'|'down'|'absent'|'sleep' // 表情
+    trigger ::= string // ecosystemの変化など
+    estimation ::= int // textが好意的なら＋、否定的ならーのスコア
+    timestamp ::= Date() // メッセージが生成された時刻
+    avatarPath ::= string // アバターのディレクトリ
+    site ::= 'room'|'forest'|'park' // 現在地
+    weather ::= '台風'|'大雨'|'雨'|'曇'|'晴'|'快晴'|'夏晴'|'吹雪'|'雪'| 
+    season ::= '春'|'夏'|'秋'|'冬'
+    dayPart ::= '昼'|'夜'
+
 
   使用法
 
@@ -39,25 +52,24 @@
 
 */
 
-import {getHourRad, getDateRad} from "../calendar-rad";
+import { getHourRad, getDateRad } from "./calendar-rad";
 
 export class Message {
-  constructor(mode, data){
-    switch(mode){
+  constructor(mode, data) {
+    switch (mode) {
       case 'speech': {
         this.text = data.text;
         this.name = data.name;
         this.person = data.person;
         this.mood = data.mood || "peace";
         this.trigger = null;
-        this.estimate = 0;
-        this.site = data.site;
+        this.estimation = 0;
         this.timestamp = new Date();
         this.avatarPath = data.avatarPath;
-        if(data.ecosystem){
-          this.ecosystem = {...data.ecosystem}
-        }
-
+        this.site = data.site;
+        this.weather = data.ecosystem?.weather || "";
+        this.season = data.ecosystem?.season || "";
+        this.dayPart = data.ecosystem?.dayPart || "";
         break;
       }
 
@@ -66,41 +78,40 @@ export class Message {
         this.name = null;
         this.person = null;
         this.mood = null;
-        this.trigger = {kind: data.kind, value: data.value};
+        this.trigger = { kind: data.kind, value: data.value };
         this.site = data.site;
         this.estimate = 0;
         this.timestamp = new Date();
-        if(data.ecosystem){
-          this.ecosystem = {...data.ecosystem}
-        }
+        this.weather = data.ecosystem?.weather || "";
+        this.season = data.ecosystem?.season || "";
+        this.dayPart = data.ecosystem?.dayPart || "";
 
         break;
       }
 
-      case 'system': {
+      default:  {
         this.text = data.text;
-        this.name = null;
+        this.name = mode;
         this.person = null;
         this.mood = null;
         this.trigger = null;
         this.site = data.site;
         this.estimate = 0;
         this.timestamp = new Date();
-
-        break;       
+        this.weather = "";
+        this.season = "";
+        this.dayPart = "";
+        break;
       }
-
-      default:
-        throw new Error(`invalid message mode ${mode}`);
     }
 
   }
 
-  get hourRad(){
+  get hourRad() {
     return getHourRad(this.timestamp);
   }
 
-  get dateRad(){
+  get dateRad() {
     return getDateRad(this.timestamp);
   }
 }

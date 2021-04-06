@@ -32,6 +32,7 @@
     "gatsby-plugin-sharp": "^3.1.1",
     "gatsby-source-filesystem": "^3.1.0",
     "gatsby-theme-material-ui": "^1.0.13",
+    "gatsby-transformer-json": "^3.2.0",
     "gatsby-transformer-sharp": "^3.1.0",
     "mathjs": "^9.3.0",
     "noisejs": "^2.1.0",

@@ -1,14 +1,15 @@
-import React, {useState, useEffect} from "react";
-import { useStaticQuery, graphql } from "gatsby";
+import React, { useState, useEffect } from "react";
+import { graphql, navigate } from "gatsby";
 
-import FirebaseProvider from "../components/Firebase/FirebaseProvider";
+import Landing from '../components/Landing/Landing';
+import ChatRoom from '../components/ChatRoom/ChatRoom';
+import FirebaseProvider from '../components/Firebase/FirebaseProvider';
 import EcosystemProvider from '../components/Ecosystem/EcosystemProvider';
-import BotProvider from "../components/Biomebot/BotProvider";
-import Landing from "../components/Landing/Landing";
-import Main from '../components/Main/Main';
+import BiomebotProvider from '../components/Biomebot/BiomebotProvider';
 
+import Dexie from "dexie";
 
-const query = graphql`
+export const query = graphql`
 query indexq {
   site {
     siteMetadata {
@@ -18,62 +19,151 @@ query indexq {
       }
     }
   }
-}
-`
+}`
 
-export default function Index({ location }) {
-  /*
-    アプリの基本構造。
+let db = null;
 
-    state
-    ---------------------------------------------------------------
-    "continue"      indexedDBからのロードを試み、成功したらMainに引き継ぐ。
-                    失敗したら"title"に移行
-    "title"         title表示。「はじめから」、「つづき」を選択。それぞれ
-                    選択されたらプロローグページ or continueに移行
-    "main"          Mainへ
+export default function IndexPage({ data }) {
+  /* 
+    チャットルームアプリのフレームワーク
 
-    "create"        プロローグページから戻ってくる場合にcreateが指定される。
-                    botの新規作成に 移行
+    アプリ基幹部分の状態遷移を管理。
 
-    firestoreの初期
-
-  */
-  const data = useStaticQuery(query);
-  const config = data.site.siteMetadata.chatbot;
-  const [state, setState] = useState(
-    location.search === "?create" ? "create" : "title");
-
-  useEffect(()=>{
-    setState(location.search === "?create" ? "create" : "title");
-  },[location.search]);
+    appState
+    ---------------------------------------------------------
+    'landing'       起動時はlanding状態。
+    'authOk'        firebaseのauthが完了するとauthOkになり、ローカルの
+                    チャットボットを探す。
+    'new'           チャットボットが見つからない場合、タイトルページに「はじめから」が
+                    表示される
+    'continue'      チャットボットが見つかり、タイトルページに「はじめから」と
+                   「チャットルームに入る」が表示された状態
+    'chatroom'      チャットルームが実行中
   
-  function handleToTitlePage() {
-    setState("title");
+    IndexPageコンポーネントではroomおよびforestのログを管理し、
+    他のコンポーネントがログにアクセスする手段を提供する。
+  */
+
+  const [appState, setAppState] = useState('Landing');
+  const [roomLog, setRoomLog] = useState([]);
+  const [forestLog, setForestLog] = useState([]);
+
+  const logs = { room: roomLog, forest: forestLog };
+  const setLogs = {room: setRoomLog, forest: setForestLog };
+
+  const config = data.site.siteMetadata.chatbot;
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    if (!db && !isCancelled) {
+      db = new Dexie('Log');
+      db.version(1).stores({
+        room: "id,timestamp", // id, timestamp, message
+        forest: "id,timestamp", // id, timestamp, message
+      });
+
+      (async () => {
+        setForestLog(await readLog('forest'));
+        setRoomLog(await readLog('room'));
+      })();
+    }
+
+    return () => { isCancelled = true };
+  }, []);
+
+
+  async function writeLog(message) {
+    const site = message.site;
+    if(site === 'forest' || site === 'room'){
+
+      const id = await db[site].add({
+        timestamp: message.timestamp,
+        message: message
+      });
+  
+      setLogs[site](prev => prev.push({ id: id, ...message }));
+  
+      /*
+      const count = db[site].count();
+      const exceeded = count - config.logStoreLength;
+      ここで古いログを削除
+      */
+    
+    } else if (site === 'park'){
+
+      /* firebaseへの書き込み*/
+
+    } else {
+      throw new Error(`invalid site ${site}`);
+    }
   }
 
-  function handleToMainPage() {
-    setState("main")
+  async function readLog(site, startId, number) {
+    /* siteのログをstartIdからnumber件読み出す */
+    number ||= config.logViewLength;
+    let payload = [];
+    const siteDb = 'room' ? db.room : db.forest;
+
+    if (startId) {
+
+      const start = await siteDb
+        .where({ id: startId })
+        .first();
+      payload = await siteDb
+        .where("timestamp")
+        .below(start.timestamp)
+        .sortBy("timestamp")
+        .limit(number)
+        .toArray()
+
+    } else {
+
+      payload = await siteDb
+        .orderBy("timestamp")
+        .limit(number)
+        .toArray()
+    }
+
+    return payload;
   }
 
+  function handleBotFound() { setAppState('continue'); }
+  function handleBotNotFound() { setAppState('new'); }
+  function handleContinue() { setAppState('chatroom'); }
+  function handleExitRoom() { setAppState('continue'); }
+
+  function handleNew() {
+    setAppState('authOk');
+    navigate('/create/');
+  }
+  
   return (
     <FirebaseProvider>
-      <BotProvider
-        toMainPage={handleToMainPage}
+      <EcosystemProvider
+        writeLog={writeLog}
       >
-        <Landing
-          toTitlePage={handleToTitlePage}
-          toMainPage={handleToMainPage}
-          state={state}
+        <BiomebotProvider
+          appState={appState}
+          writeLog={writeLog}
+          handleBotNotFound={handleBotNotFound}
+          handleBotFound={handleBotFound}
         >
-          <EcosystemProvider>
-            <Main 
-              toTitlePage={handleToTitlePage}
-              config={config}
+          {appState === 'chatroom' ?
+            <ChatRoom
+              writeLog={writeLog}
+              logs={logs}
+              handleExitRoom={handleExitRoom}
             />
-          </EcosystemProvider>
-        </Landing>
-      </BotProvider>
+            :
+            <Landing
+              appState={appState}
+              handleNew={handleNew}
+              handleContinue={handleContinue}
+            />
+          }
+        </BiomebotProvider>
+      </EcosystemProvider>
     </FirebaseProvider>
   )
 }

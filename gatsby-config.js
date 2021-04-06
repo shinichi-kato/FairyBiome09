@@ -17,9 +17,14 @@ module.exports = {
   },
   plugins: [
     `gatsby-theme-material-ui`,
-    `gatsby-plugin-workerize-loader`,
     `gatsby-plugin-remove-serviceworker`,
     `gatsby-plugin-react-helmet`,
+    {
+      resolve: `gatsby-transformer-json`,
+      options: {
+        typeName: `Json`,
+      },
+    },
     {
       resolve: `gatsby-plugin-mdx`,
       options: {
@@ -31,6 +36,13 @@ module.exports = {
       options: {
         name: `images`,
         path: `${__dirname}/static/images`,
+      },
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `chatbot`,
+        path: `${__dirname}/static/chatbot`,
       },
     },
     {
@@ -49,14 +61,14 @@ module.exports = {
         ignore: ["**/\.*"],
       },
     },
-    {
-      resolve: "gatsby-source-filesystem",
-      options: {
-        path: `${__dirname}/static/chatbot`,
-        name: "chatbot",
-        ignore: ["**/\.*"],
-      },
-    },
+    // {
+    //   resolve: "gatsby-source-filesystem",
+    //   options: {
+    //     path: `${__dirname}/static/chatbot`,
+    //     name: "chatbot",
+    //     ignore: ["**/\.*"],
+    //   },
+    // },
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
     {

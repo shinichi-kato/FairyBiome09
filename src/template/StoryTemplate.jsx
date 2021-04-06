@@ -32,7 +32,7 @@ export default function StoryTemplate({ data: { mdx } }) {
   const classes = useStyles();
 
   function handleClick(){
-    navigate('/?create');
+    navigate('/create/?exec');
   }
 
   return (
