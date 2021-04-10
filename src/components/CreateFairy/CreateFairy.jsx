@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {navigate} from "gatsby";
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -10,7 +10,6 @@ import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
-import GetAppIcon from '@material-ui/icons/GetApp';
 
 import { BiomebotContext } from '../Biomebot/BiomebotProvider';
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
@@ -23,6 +22,7 @@ const useStyles= makeStyles(theme=>({
     justifyContent: 'space-around',
     overflow: 'hidden',
     backgroundColor: theme.palette.background.paper,
+    width: '100%',
   },
   gridList: {
     flexWrap: 'nowrap',
@@ -71,6 +71,9 @@ export default function CreateFairy(props){
   const bot = useContext(BiomebotContext);
   const appState = STATE_TABLE[props.appState];
 
+  const [currentDirectory,setCurrentDirectory] = useState(null);
+  const [currentDescription, setCurrentDescription] = useState(null);
+
   useEffect(()=>{
     if(appState === 0){
       navigate('/content/prologue1/');
@@ -79,6 +82,18 @@ export default function CreateFairy(props){
 
   function handleAccept(){
     navigate('/content/prologue1/');
+  }
+
+  function handleClickTile(directory, description){
+    setCurrentDirectory(directory)
+    setCurrentDescription(description);
+  }
+
+  function handleClickLoad(){
+    fetch(`../../chatbot/${currentDirectory}/chatbot.json`)
+      .then(res=>res.json())
+      .then(obj=>bot.generate(obj,currentDirectory))
+      .then(navigate('/'));    
   }
 
   return (
@@ -132,9 +147,14 @@ export default function CreateFairy(props){
                 cols={2.5}
               >
                 {props.chatbots.map(bot=>(
-                  <GridListTile key={bot.name}>
-                    <img src={`/chatbot/${bot.directory}/peace.svg}`} 
-                      style={{backgroundColor: bot.backgroundColor}}
+                  <GridListTile key={bot.name}
+                    onClick={()=>handleClickTile(bot.directory)}
+                  >
+                    <img src={`../../chatbot/${bot.directory}/peace.svg`} 
+                      style={{
+                        backgroundColor: bot.backgroundColor,
+                        width: 400,
+                      }}
                       alt={bot.directory}
                     />
                     <GridListTileBar
@@ -143,16 +163,25 @@ export default function CreateFairy(props){
                         root:classes.titleBar,
                         title:classes.title,
                       }}
-                      actionIcon={
-                        <IconButton aria-label={`bot ${bot.directory}`}>
-                          <GetAppIcon className={classes.title}/>
-                        </IconButton>
-                      }
                     />
                   </GridListTile>
                 ))}
 
               </GridList>
+            </Box>
+            <Box>
+              {currentDescription}
+            </Box>
+            <Box>
+              <Button
+                color="primary"
+                variant="contained"
+                fullWidth
+                onClick={handleClickLoad}
+                disabled={currentDirectory === null}
+              >
+                この妖精と仲間になる
+              </Button>
             </Box>
           </>
         }

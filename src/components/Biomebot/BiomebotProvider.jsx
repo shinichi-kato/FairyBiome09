@@ -7,7 +7,7 @@ import Dexie from "dexie";
 import { textToInternalRepr, dictToInternalRepr } from "./internalRepr";
 import { TinySegmenter } from "./tinysegmenter";
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
-import {Message} from "../message";
+import { Message } from "../message";
 
 export const BiomebotContext = createContext();
 const segmenter = new TinySegmenter();
@@ -30,7 +30,8 @@ const defaultSettings = {
       momentLower: 0,
       precision: 1,
       retention: 0
-    }
+    },
+    dir: "", // dirはjsonファイルのパスで、fetchしたjsonファイル内には記述しない
   },
   main: {
     "NAME": "uninitialized",
@@ -54,7 +55,7 @@ const defaultSettings = {
   },
 };
 
-// メモリ中のみで管理するデータ。キャッシュ含む
+// state: メモリ中のみで管理するデータ。キャッシュ含む
 const initialState = {
   botId: null,
   site: "room",
@@ -92,20 +93,20 @@ function reducer(state, action) {
 }
 
 
-export default function BiomebotProvider(props){
+export default function BiomebotProvider(props) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [work, setWork] = useState({ key: 0, work: defaultSettings.work });
   const fb = useContext(FirebaseContext);
 
   const [reciever, setReciever] = useState(
-    ()=> async (st, wk, msg,callback) => {
+    () => async (st, wk, msg, callback) => {
       /* reciever モック関数 
         st: state
         wk: work
         msg: msg.textを内部表現に変換した状態のmessage
         callback: async callback(message) 返答を送信するのに使用
       */
-      const reply = new Message('system',{
+      const reply = new Message('system', {
         text: `est=${msg.estimation}`,
         site: 'room',
       });
@@ -114,9 +115,9 @@ export default function BiomebotProvider(props){
 
     }
   );
-  
+
   const appState = props.appState;
-  useEffect(()=>{
+  useEffect(() => {
     let isCancelled = false;
 
     if (!db) {
@@ -130,9 +131,9 @@ export default function BiomebotProvider(props){
       });
     }
 
-    if(appState === 'authOk' && fb.uid && !isCancelled){
+    if (appState === 'authOk' && fb.uid && !isCancelled) {
 
-      loadDB(fb.firestore, fb.uid, fb.uid)
+      loadDB(db, fb.uid, fb.uid)
         .then(snap => {
           if (snap) {
             dispatch({ type: 'connect', snap: snap })
@@ -141,7 +142,7 @@ export default function BiomebotProvider(props){
 
             props.handleBotNotFound();
 
-          } else{
+          } else {
 
             props.handleBotFound();
           }
@@ -149,9 +150,132 @@ export default function BiomebotProvider(props){
         });
     }
 
-  },[appState,db,fb.uid]);
+  }, [appState, db, fb.uid]);
 
-  function deploy(site){
+  async function generate(obj, dir) {
+    /* 
+      objの内容をindexDBとstateに書き込む。
+      チャットボットデータはobj.botIdが定義されているものと未定義のものがあり、
+      obj.botIdが定義されているのはNPCチャットボット。
+      未定義のものはユーザ用のチャットボットでbotIdにはfb.uidを用いる。
+      ユーザ用のチャットボットはユーザにつき同時に一つしか持てない。
+    */
+
+    const snap = {
+      botId: obj.botId || fb.uid,
+      site: 'room',
+      config: {
+        ...obj.config,
+        dir: dir,
+      },
+
+      estimator: {}, // estimatorはdeploy時に生成
+    };
+
+    /* config */
+    await db.config.put({
+      botId: snap.botId,
+      config: snap.config
+    });
+
+    /* work */
+    await db.work.put({
+      botId: snap.botId,
+      work: snap.work,
+    });
+
+    /* parts "[name+botId]", // name,config */
+    let dictKeys = Object.keys(obj.parts);
+
+    await db.parts.bulkPut(
+      dictKeys.map(key => {
+        const part = obj.parts[key];
+        return {
+          name: key,
+          botId: snap.botId,
+          config: {
+            momentBand: {
+              upper: part.momentBand.upper,
+              lower: part.momentBand.lower,
+            },
+            precision: part.precision,
+            retention: part.retention,
+          }
+        }
+      }));
+
+    /* main "[id+botId],key" */
+    await db.main
+      .where('[id+botId]')
+      .between([Dexie.minKey, snap.botId], [Dexie.maxKey, snap.botId])
+      .delete();
+
+    dictKeys = Object.keys(obj.main);
+    let mainData = [];
+    let i = 0;
+    for (let key of dictKeys) {
+      let val = obj.main[key];
+
+      if (typeof val === 'string') {
+        mainData.push(
+          { id: ++i, botId: snap.botId, key: key, val: val }
+        );
+      }
+      else if (Array.isArray(val)) {
+        for (let v of val) {
+          mainData.push(
+            { id: ++i, botId: snap.botId, key: key, val: v }
+          )
+        }
+      }
+    }
+    await db.main.bulkAdd(mainData);
+
+    /* scripts "[id+botId],partName,next,prev" */
+    await db.scripts.where('[botId+partName+id]')
+      .between(
+        [this.botId, Dexie.minKey, Dexie.minKey],
+        [this.botId, Dexie.maxKey, Dexie.maxKey])
+      .delete();
+
+    /* scriptはidをこちらで与え、next,prevも設定する */
+
+    for (let partName of Object.keys(obj.parts)) {
+      console.log("partName", partName)
+      let data = [];
+      const script = obj.parts[partName].script;
+      let i;
+      for (i in script) {
+        data.push({
+          id: i,
+          botId: this.botId, // compound key
+          partName: partName,
+          in: script[i].in, out: script[i].out,
+          next: i + 1,
+          prev: i - 1,
+        });
+      }
+      data[0] = { ...data[0], prev: null };
+      data[i] = { ...data[i], next: null };
+      console.log("data:", data)
+      await db.scripts.bulkAdd(data);
+    }
+
+    setWork({
+      updatedAt: "",
+      partOrder: obj.config.initialPartOrder,
+      mentalLevel: obj.config.initialMentalLevel,
+      moment: 0,
+      mood: "peace",
+      queue: [],
+      futurePostings: []
+    });
+
+    dispatch('connect', snap);
+
+  }
+
+  function deploy(site) {
 
   }
 
@@ -194,8 +318,9 @@ export default function BiomebotProvider(props){
   return (
     <BiomebotContext.Provider
       value={{
-        recieve:recieve,
-        deploy:deploy,
+        recieve: recieve,
+        generate: generate,
+        deploy: deploy,
       }}
     >
       {props.children}
@@ -213,16 +338,16 @@ export default function BiomebotProvider(props){
 
 async function loadDB(db, botId, uid) {
 
-  let config, state, displayName;
+  let config, work, displayName;
   config = await db.config.where({ botId: botId }).first();
   if (config) {
-    state = await db.state.where({ botId: botId }).first();
+    work = await db.work.where({ botId: botId }).first();
     displayName = await db.main.where({ botId: botId, key: 'NAME' }).first();
 
     return {
       botId: botId,
       config: config,
-      work: defaultSettings.work,
+      work: work || defaultSettings.work,
       displayName: displayName,
       estimator: await readEstimator(db)
     }

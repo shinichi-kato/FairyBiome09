@@ -128,6 +128,7 @@ export default function IndexPage({ data }) {
     return payload;
   }
 
+  function handleAuthOk() {setAppState('authOk'); }
   function handleBotFound() { setAppState('continue'); }
   function handleBotNotFound() { setAppState('new'); }
   function handleContinue() { setAppState('chatroom'); }
@@ -139,7 +140,9 @@ export default function IndexPage({ data }) {
   }
   
   return (
-    <FirebaseProvider>
+    <FirebaseProvider
+      handleAuthOk={handleAuthOk}
+    >
       <EcosystemProvider
         writeLog={writeLog}
       >

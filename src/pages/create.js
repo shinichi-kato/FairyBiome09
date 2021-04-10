@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useEffect, useState} from "react";
 import { graphql } from "gatsby"
 
 import FirebaseProvider from '../components/Firebase/FirebaseProvider';
@@ -20,8 +20,7 @@ export default function CreatePage({location, data}){
     'continue'      既存チャットボットがある場合、上書き    
     'exec'        プロローグページで「チャットボットを作る」をクリックした
   */
-  const [appState, setAppState] = useState(
-    location.search === '?select' ? 'select' : 'landing');
+  const [appState, setAppState] = useState('landing');
 
   const chatbots = data.allJson.nodes.map(node=>({
     name: node.main.NAME,
@@ -31,11 +30,21 @@ export default function CreatePage({location, data}){
     description: node.config.descrition
   }));
 
+  useEffect(()=>{
+    if(location.search === '?exec'){
+      setAppState('exec');
+    }
+  },[location.search]);
+
+  console.log(appState);
   function handleBotFound() { setAppState('continue'); }
   function handleBotNotFound() { setAppState('new'); }
+  function handleAuthOk() {setAppState('authOk'); }
 
   return (
-    <FirebaseProvider>
+    <FirebaseProvider
+      handleAuthOk={handleAuthOk}
+    >
       <BiomebotProvider
         appState={appState}
         handleBotNotFound={handleBotNotFound}

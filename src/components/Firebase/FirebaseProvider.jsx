@@ -145,6 +145,7 @@ export default function FirebaseProvider(props) {
       firebaseApp.auth().onAuthStateChanged(user=>{
         if(user){
           dispatch({ type: "ok", user:user});
+          props.handleAuthOk();
         } else {
           dispatch({ type: "error",message:"ユーザが認証されていません"});
         }
