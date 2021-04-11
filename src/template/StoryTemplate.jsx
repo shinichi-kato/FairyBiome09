@@ -27,6 +27,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+export const pageQuery = graphql`
+  query StoryQuery($id: String) {
+      mdx(id: { eq: $id }) {
+          id
+          body
+      }
+  }
+`
 
 export default function StoryTemplate({ data: { mdx } }) {
   const classes = useStyles();
@@ -60,12 +68,3 @@ export default function StoryTemplate({ data: { mdx } }) {
       </Box>
   )
 }
-
-export const pageQuery = graphql`
-  query StoryQuery($id: String) {
-      mdx(id: { eq: $id }) {
-          id
-          body
-      }
-  }
-`

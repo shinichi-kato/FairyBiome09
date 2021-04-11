@@ -96,6 +96,7 @@ export default function LogViewer(props) {
 		ユーザは右側、bot,othersは左側、それら以外は環境やシステムのメッセージで
 		吹き出しではない表示
 	*/
+	console.log("log:",props.log)
 	const messages = props.log.map((message,index)=>{
 		switch(message.person) {
 			case 'user' : return <RightBalloon message={message} index={index}/>

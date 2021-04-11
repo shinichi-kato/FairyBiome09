@@ -59,8 +59,8 @@ export default function IndexPage({ data }) {
     if (!db && !isCancelled) {
       db = new Dexie('Log');
       db.version(1).stores({
-        room: "id,timestamp", // id, timestamp, message
-        forest: "id,timestamp", // id, timestamp, message
+        room: "++id,timestamp", // id, timestamp, message
+        forest: "++id,timestamp", // id, timestamp, message
       });
 
       (async () => {
@@ -77,12 +77,9 @@ export default function IndexPage({ data }) {
     const site = message.site;
     if(site === 'forest' || site === 'room'){
 
-      const id = await db[site].add({
-        timestamp: message.timestamp,
-        message: message
-      });
+      const id = await db[site].add(message);
   
-      setLogs[site](prev => prev.push({ id: id, ...message }));
+      setLogs[site](prev => ([...prev,{id:id,...message}]));
   
       /*
       const count = db[site].count();

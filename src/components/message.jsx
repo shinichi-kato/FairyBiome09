@@ -78,7 +78,7 @@ export class Message {
         this.name = null;
         this.person = null;
         this.mood = null;
-        this.trigger = { kind: data.kind, value: data.value };
+        this.trigger = `${data.kind},${data.value}`;
         this.site = data.site;
         this.estimate = 0;
         this.timestamp = new Date();

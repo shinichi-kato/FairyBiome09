@@ -105,6 +105,8 @@ export default function BiomebotProvider(props) {
         wk: work
         msg: msg.textを内部表現に変換した状態のmessage
         callback: async callback(message) 返答を送信するのに使用
+
+        チャットボットの状態を維持する必要があるため、この関数は変更後のworkを返す
       */
       const reply = new Message('system', {
         text: `est=${msg.estimation}`,
@@ -113,6 +115,7 @@ export default function BiomebotProvider(props) {
 
       await callback(reply)
 
+      return {work:wk}
     }
   );
 
@@ -125,7 +128,7 @@ export default function BiomebotProvider(props) {
       db.version(1).stores({
         config: "botId", // botId,config
         work: "botId", // id,work
-        main: "[id+botId],key",  // id,botId,key,val 
+        main: "++id,[botId+key]",  // id,botId,key,val 
         parts: "[name+botId]", // name,config,cache
         scripts: "[botId+partName+id],partName,next,prev", // id,name,in,out,next,prev
       });
@@ -203,27 +206,26 @@ export default function BiomebotProvider(props) {
           }
         }
       }));
-    /* main "[id+botId],key" */
+    /* main "id,[botId+key]" */
     await db.main
-      .where('[id+botId]')
-      .between([Dexie.minKey, snap.botId], [Dexie.maxKey, snap.botId])
+      .where('[botId+key]')
+      .between([snap.botId,Dexie.minKey], [snap.botId,Dexie.maxKey])
       .delete();
 
     dictKeys = Object.keys(obj.main);
     let mainData = [];
-    let i = 0;
     for (let key of dictKeys) {
       let val = obj.main[key];
 
       if (typeof val === 'string') {
         mainData.push(
-          { id: ++i, botId: snap.botId, key: key, val: val }
+          { botId: snap.botId, key: key, val: val }
         );
       }
       else if (Array.isArray(val)) {
         for (let v of val) {
           mainData.push(
-            { id: ++i, botId: snap.botId, key: key, val: v }
+            { botId: snap.botId, key: key, val: v }
           )
         }
       }
@@ -356,10 +358,11 @@ async function loadDB(db, botId) {
 
 async function readEstimator(db,botId) {
   /*  main辞書から入力文字列評価用の NEGATIVE_LABEL, POSITIVE_LABELを
-      取得し、辞書を生成。 */
+      取得し、辞書を生成。 
+      mainのスキームは id,[botId+key] なのでコンパウンドキー */
 
   let negatives = await db.main
-    .where({ botId: botId, key: 'NEGATIVE_LABEL' })
+    .where('[botId+key]').equals([botId,'NEGATIVE_LABEL'])
     .toArray();
 
   negatives = negatives.reduce((obj, data) => {
@@ -369,7 +372,7 @@ async function readEstimator(db,botId) {
   }, {});
 
   let positives = await db.main
-    .where({ botId: botId, key: 'POSITIVE_LABEL' })
+    .where('[botId+key]').equals([botId,'POSITIVE_LABEL'])
     .toArray();
 
   positives = positives.reduce((obj, data) => {

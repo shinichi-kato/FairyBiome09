@@ -11,7 +11,7 @@ import LogViewer from './LogViewer';
 import { BiomebotContext } from '../Biomebot/BiomebotProvider';
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
 import { EcosystemContext } from '../Ecosystem/EcosystemProvider';
-import { Message } from '@material-ui/icons';
+import { Message } from '../message';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -70,8 +70,6 @@ const useStyles = makeStyles(theme => ({
 
 }));
 
-let db = null;
-
 export default function ChatRoom(props) {
   /*
     チャットルーム
@@ -95,13 +93,13 @@ export default function ChatRoom(props) {
   function handleSubmit(event) {
     const message = new Message('speech', {
       text: userInput,
-      person: 'user',
       name: fb.displayName,
-      ecosystem: ecosystem,
+      person: 'user',
       mood: '',
-      avatarPath: db.photoURL,
+      avatarPath: fb.photoURL,
       site: ecosystem.site,
     });
+    console.log("submit",message)
     props.writeLog(message);
     bot.recieve(message);
 
