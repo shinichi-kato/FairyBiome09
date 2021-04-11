@@ -1,5 +1,5 @@
-import React, { useEffect, useState} from "react";
-import { graphql } from "gatsby"
+import React, {  useState} from "react";
+import { graphql, navigate } from "gatsby"
 
 import FirebaseProvider from '../components/Firebase/FirebaseProvider';
 import BiomebotProvider from '../components/Biomebot/BiomebotProvider';
@@ -27,20 +27,20 @@ export default function CreatePage({location, data}){
     creator: node.main.CREATOR_NAME,
     directory: node.parent.relativeDirectory,
     backgroundColor:node.config.backgroundColor,
-    description: node.config.descrition
+    description: node.config.description
   }));
 
-  useEffect(()=>{
-    if(location.search === '?exec'){
-      setAppState('exec');
-    }
-  },[location.search]);
+  if(location.search === '?exec' && appState !== 'exec'){
+    setAppState('exec');
+  }
 
-  console.log(appState);
   function handleBotFound() { setAppState('continue'); }
-  function handleBotNotFound() { setAppState('new'); }
   function handleAuthOk() {setAppState('authOk'); }
-
+  function handleBotNotFound() {
+    setAppState('new');
+    navigate('/content/prologue1/');
+  }
+  
   return (
     <FirebaseProvider
       handleAuthOk={handleAuthOk}

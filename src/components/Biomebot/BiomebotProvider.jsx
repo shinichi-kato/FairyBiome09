@@ -120,7 +120,7 @@ export default function BiomebotProvider(props) {
   useEffect(() => {
     let isCancelled = false;
 
-    if (!db) {
+    if (!db && !isCancelled) {
       db = new Dexie('Biomebot');
       db.version(1).stores({
         config: "botId", // botId,config
@@ -133,18 +133,18 @@ export default function BiomebotProvider(props) {
 
     if (appState === 'authOk' && fb.uid && !isCancelled) {
 
-      loadDB(db, fb.uid, fb.uid)
+      loadDB(db, fb.uid)
         .then(snap => {
           if (snap) {
             dispatch({ type: 'connect', snap: snap })
             setWork(prev => ({ key: prev.key + 1, work: snap.work }));
             // setParts()
 
-            props.handleBotNotFound();
+            props.handleBotFound();
 
           } else {
 
-            props.handleBotFound();
+            props.handleBotNotFound();
           }
 
         });
@@ -203,7 +203,6 @@ export default function BiomebotProvider(props) {
           }
         }
       }));
-
     /* main "[id+botId],key" */
     await db.main
       .where('[id+botId]')
@@ -234,10 +233,10 @@ export default function BiomebotProvider(props) {
     /* scripts "[id+botId],partName,next,prev" */
     await db.scripts.where('[botId+partName+id]')
       .between(
-        [this.botId, Dexie.minKey, Dexie.minKey],
-        [this.botId, Dexie.maxKey, Dexie.maxKey])
+        [snap.botId, Dexie.minKey, Dexie.minKey],
+        [snap.botId, Dexie.maxKey, Dexie.maxKey])
       .delete();
-
+      
     /* scriptはidをこちらで与え、next,prevも設定する */
 
     for (let partName of Object.keys(obj.parts)) {
@@ -248,7 +247,7 @@ export default function BiomebotProvider(props) {
       for (i in script) {
         data.push({
           id: i,
-          botId: this.botId, // compound key
+          botId: snap.botId, // compound key
           partName: partName,
           in: script[i].in, out: script[i].out,
           next: i + 1,
@@ -257,7 +256,6 @@ export default function BiomebotProvider(props) {
       }
       data[0] = { ...data[0], prev: null };
       data[i] = { ...data[i], next: null };
-      console.log("data:", data)
       await db.scripts.bulkAdd(data);
     }
 
@@ -271,7 +269,7 @@ export default function BiomebotProvider(props) {
       futurePostings: []
     });
 
-    dispatch('connect', snap);
+    dispatch({type: 'connect', snap:snap});
 
   }
 
@@ -336,7 +334,7 @@ export default function BiomebotProvider(props) {
 
 ---------------------------------------------------------- */
 
-async function loadDB(db, botId, uid) {
+async function loadDB(db, botId) {
 
   let config, work, displayName;
   config = await db.config.where({ botId: botId }).first();
@@ -349,19 +347,19 @@ async function loadDB(db, botId, uid) {
       config: config,
       work: work || defaultSettings.work,
       displayName: displayName,
-      estimator: await readEstimator(db)
+      estimator: await readEstimator(db, botId)
     }
   }
 
   return null;
 }
 
-async function readEstimator(db) {
+async function readEstimator(db,botId) {
   /*  main辞書から入力文字列評価用の NEGATIVE_LABEL, POSITIVE_LABELを
       取得し、辞書を生成。 */
 
   let negatives = await db.main
-    .where({ botId: this.botId, key: 'NEGATIVE_LABEL' })
+    .where({ botId: botId, key: 'NEGATIVE_LABEL' })
     .toArray();
 
   negatives = negatives.reduce((obj, data) => {
@@ -371,7 +369,7 @@ async function readEstimator(db) {
   }, {});
 
   let positives = await db.main
-    .where({ botId: this.botId, key: 'POSITIVE_LABEL' })
+    .where({ botId: botId, key: 'POSITIVE_LABEL' })
     .toArray();
 
   positives = positives.reduce((obj, data) => {

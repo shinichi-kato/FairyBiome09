@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useState} from "react";
 import {navigate} from "gatsby";
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -74,11 +74,11 @@ export default function CreateFairy(props){
   const [currentDirectory,setCurrentDirectory] = useState(null);
   const [currentDescription, setCurrentDescription] = useState(null);
 
-  useEffect(()=>{
-    if(appState === 0){
-      navigate('/content/prologue1/');
-    }
-  },[appState]);
+  // useEffect(()=>{
+  //   if(appState === 0){
+  //     navigate('/content/prologue1/');
+  //   }
+  // },[appState]);
 
   function handleAccept(){
     navigate('/content/prologue1/');
