@@ -54,6 +54,43 @@
 
 import { getHourRad, getDateRad } from "./calendar-rad";
 
+export const featuresDict = {
+  // person
+  'bot': 1,
+  'user': 2,
+  'other': 3,
+  'system': 4,
+  //mood
+  'peace': 5,
+  'cheer':6,
+  'down':7,
+  'absent':8,
+  'sleepy':9,
+  'sleep':10,
+  // site
+  'room': 11,
+  'forest': 12,
+  'park': 13,
+  // weather
+  '台風':14,
+  '大雨':15,
+  '雨':16,
+  '曇':17,
+  '晴':18,
+  '快晴':19,
+  '夏晴':20,
+  '吹雪':21,
+  '雪':22,
+  // season
+  '春':23,
+  '夏':24,
+  '秋':25,
+  '冬':26,
+  //dayPart
+  '昼':27,
+  '夜':28,
+};
+
 export class Message {
   constructor(mode, data) {
     switch (mode) {

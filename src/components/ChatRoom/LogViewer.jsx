@@ -92,9 +92,11 @@ function SystemMessage(props){
 
 export default function LogViewer(props) {
 	/*
-		props.logの内容を吹き出しにレンダリング
+		props.logの内容をレンダリング
+		ユーザ本人：右側の吹き出し
+		ほかのユーザ・チャットボット：左側の吹き出し
 		ユーザは右側、bot,othersは左側、それら以外は環境やシステムのメッセージで
-		吹き出しではない表示
+		吹き出しではない表示.
 	*/
 	console.log("log:",props.log)
 	const messages = props.log.map((message,index)=>{
