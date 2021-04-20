@@ -54,17 +54,13 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
   },
   inputRoot: {
-    color: 'inherit',
+    color: '#FFFFFFCC',
   },
   inputInput: {
     padding: theme.spacing(1),
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-    transition: theme.transitions.create('width'),
     width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: '20ch',
-    },
   },
 
 
@@ -122,39 +118,7 @@ export default function ChatRoom(props) {
           log={props.logs[ecosystem.site]}
         />
       </Box>
-      <Box>
-        <form onSubmit={handleSubmit}>
-          <Box
-            display="flex"
-            flexDirection="row"
-          >
-            <Box
-              flexGrow={1}
-            >
-              <div className={classes.textInput}>
-                <InputBase
-                  value={userInput}
-                  onChange={handleChangeUserInput}
-                  fullWidth
-                  classes={{
-                    root: classes.inputRoot,
-                    input: classes.inputInput,
-                  }}
-                  inputProps={{ 'aria-label': 'text' }}
-                />
-              </div>
-            </Box>
-            <Box>
-              <IconButton
-                color="primary"
-              >
-                <SendIcon />
-              </IconButton>
-            </Box>
-          </Box>
 
-        </form>
-      </Box>
       <Box
         display="flex"
         flexDirection="row"
@@ -167,6 +131,33 @@ export default function ChatRoom(props) {
           <UserPanel />
         </Box>
 
+      </Box>
+      <Box
+        position="absolute"
+        bottom={0}
+      >
+        <form onSubmit={handleSubmit}>
+          <div className={classes.textInput}>
+            <InputBase
+              value={userInput}
+              onChange={handleChangeUserInput}
+              fullWidth
+              classes={{
+                root: classes.inputRoot,
+                input: classes.inputInput,
+              }}
+              inputProps={{ 'aria-label': 'text' }}
+              endAdornment={
+                <IconButton
+                  color="primary"
+                  onClick={handleSubmit}
+                >
+                  <SendIcon/>
+                </IconButton>
+              }
+            />
+          </div>
+        </form>
       </Box>
     </Box>
   )

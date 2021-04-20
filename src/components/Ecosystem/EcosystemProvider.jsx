@@ -1,7 +1,7 @@
 import React, { useState, createContext, useRef } from 'react';
 import { Noise } from 'noisejs';
 import { useStaticQuery, graphql } from "gatsby";
-import useInterval from 'use-interval';
+import useInterval from './use-interval';
 
 import { getDateRad, getHourRad } from '../calendar-rad.jsx';
 

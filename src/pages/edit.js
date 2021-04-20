@@ -1,59 +1,52 @@
-import React from "react";
-import { graphql,Link } from "gatsby"
-import FirebaseProvider from "../components/Firebase/FirebaseProvider";
+import React, { useState } from "react";
+import { navigate } from "gatsby";
+import Editor from '../components/Editor/Editor';
 
-export const query = graphql`
-  {
-    allJson {
-      nodes {
-        main {
-          NAME
-          CREATOR_NAME
-        }
-        parent {
-          ... on File {
-            relativeDirectory
-          }
-        }
-        config {
-          backgroundColor
-          description
-        }
-      }
-    }
-  }
-`
+import FirebaseProvider from "../components/Firebase/FirebaseProvider";
+import BiomebotProvider from '../components/Biomebot/BiomebotProvider';
 
 export default function EditPage({ location, data }) {
-  /*
-    チャットボット編集ページ   
-{
-  "data": {
-    "allJson": {
-      "nodes": [
-        {
-          "main": {
-            "NAME": "ティピカ",
-            "CREATOR_NAME": "system"
-          },
-          "parent": {
-            "relativeDirectory": "tipica"
-          },
-          "config": {
-            "backgoundColor": "#EE0000",
-            "description": "説明"
-          }
-        }
-      ]
-    }
-  }
+  /* 
+    チャットルームアプリのフレームワーク
+
+    アプリ基幹部分の状態遷移を管理。
+
+    appState
+    ---------------------------------------------------------
+    'landing'       起動時はlanding状態。
+    'authOk'        firebaseのauthが完了するとauthOkになり、ローカルの
+                    チャットボットを探す。
+    'new'           チャットボットが見つからない場合はロジック上は発生しない
+                    発生しないはずだがフェイルセーフとしてcreateページに飛ぶ
+    'edit    '      チャットボットが見つかり、タイトルページに「はじめから」と
+                   「チャットルームに入る」が表示された状態
+    'chatroom'      チャットルームが実行中
   
+    IndexPageコンポーネントではroomおよびforestのログを管理し、
+    他のコンポーネントがログにアクセスする手段を提供する。
   */
 
+
+  const [appState, setAppState] = useState('Landing');
+
+  function handleAuthOk() {setAppState('authOk'); }
+  function handleBotFound() { setAppState('continue'); }
+  function handleBotNotFound() { 
+    setAppState('authOk');
+    navigate('/create/');
+  }
+
   return (
-    <FirebaseProvider>
-      chatbot 編集ページ
-      <Link to="/">チャットルームに戻る</Link>
+    <FirebaseProvider
+      handleAuthOk={handleAuthOk}
+    >
+      <BiomebotProvider
+        appState={appState}
+        handleBotNotFound={handleBotNotFound}
+        handleBotFound={handleBotFound}
+      >
+        {appState==='continue' && <Editor /> }
+      </BiomebotProvider>
     </FirebaseProvider>
   )
 }

@@ -5,6 +5,28 @@ import FirebaseProvider from '../components/Firebase/FirebaseProvider';
 import BiomebotProvider from '../components/Biomebot/BiomebotProvider';
 import CreateFairy from '../components/CreateFairy/CreateFairy';
 
+export const query = graphql`
+  {
+    allJson {
+      nodes {
+        main {
+          NAME
+          CREATOR_NAME
+        }
+        parent {
+          ... on File {
+            relativeDirectory
+          }
+        }
+        config {
+          backgroundColor
+          description
+        }
+      }
+    }
+  }
+`
+
 export default function CreatePage({location, data}){
   /* 
     チャットボット新規作成ページ 
@@ -59,24 +81,3 @@ export default function CreatePage({location, data}){
   )
 }
 
-export const query = graphql`
-  {
-    allJson {
-      nodes {
-        main {
-          NAME
-          CREATOR_NAME
-        }
-        parent {
-          ... on File {
-            relativeDirectory
-          }
-        }
-        config {
-          backgroundColor
-          description
-        }
-      }
-    }
-  }
-`

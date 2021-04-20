@@ -11,6 +11,52 @@ import { Message } from "../message";
 
 export const BiomebotContext = createContext();
 const segmenter = new TinySegmenter();
+/*
+  Biomebot
+  ======================
+
+  複数の「心のパート」が競争的に動作して会話を生成するチャットボット
+
+  ## 「心のパート」
+  人の心の中には立場や働きの異なる様々な「パート」が同時に存在し、それらが
+  競争的に作動して発話を行っている。これをモデルとして、Biomebotも複数の
+  返答モジュール「Part」を集めてチャットボット全体を構成する。
+
+  パートのタイプ
+  ----------------------------------------------------------
+  Episode     ユーザやチャットボットの発言を記憶し、評価の高いものを
+              自動で辞書化する。この方法で作った辞書で返答する。       
+  Curiousity  辞書にない言葉をユーザが発言した場合、その言葉が何かを聞いて
+              その返答を辞書に追加する。
+  Response    辞書を使ってユーザのセリフに応答する。    
+
+  ## チャットボットの状態
+
+  チャットボットには
+  'peace'|'cheer'|'down'|'absent'|'wake'|'sleepy'|'asleep'
+  という状態があり、それぞれに対応するアバター画像によりそれをユーザに表現する。
+  peaceは平常状態で、cheer/downは元気な状態、落ち込んだ状態である。
+  absentは不在でチャットボットは応答しない。sleepyは眠くなった状態でasleepは
+  睡眠中を示す。状態と同名のパートが存在した場合、そのパートはパート順が常に先頭になる。
+  パートの中ではコマンド{SETMOOD_PEACE}などにより他の状態に遷移することができる。
+  
+  睡眠/覚醒は
+  circadian:{
+    wake: number(24hour),
+    sleep: number(24hour)
+  }
+  で定義し、下記のような台形の覚醒確率を持つ。
+
+    　      -1h wake  +1h       -1h sleep +1h
+  --------------------------------------------------------
+  覚醒確率    0%  50%  100%      100% 50%  0%
+  
+  deploy時にrand(1.0)が覚醒確率よりも小さければ覚醒状態で、そうでなければ睡眠状態で
+  起動する。また覚醒中は10分おきに覚醒チェックを行い、失敗すると状態がsleepyに遷移する。
+  
+
+*/
+
 
 // estimate()でポジティブ・ネガティブな単語がなかった場合、
 // len(nodes) ^ ESTIMATOR_LEENGTH_FACTORをスコアとする 
@@ -97,6 +143,9 @@ export default function BiomebotProvider(props) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [work, setWork] = useState({ key: 0, work: defaultSettings.work });
   const fb = useContext(FirebaseContext);
+  /*
+    props.
+  */
 
   const [reciever, setReciever] = useState(
     () => async (st, wk, msg, callback) => {
@@ -321,6 +370,7 @@ export default function BiomebotProvider(props) {
         recieve: recieve,
         generate: generate,
         deploy: deploy,
+        state: state,
       }}
     >
       {props.children}

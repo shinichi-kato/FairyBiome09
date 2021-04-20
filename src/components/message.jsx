@@ -5,7 +5,7 @@
     text ::= string // メッセージ本体 
     name ::= string // 発信者名 
     person ::= 'bot'|'user'|'other'|'system' // 発信者の種類
-    mood ::= 'peace'|'cheer'|'down'|'absent'|'sleep' // 表情
+    mood ::= 'peace'|'cheer'|'down'|'absent'|'wake'|'sleepy'|'asleep' // 表情
     trigger ::= string // ecosystemの変化など
     estimation ::= int // textが好意的なら＋、否定的ならーのスコア
     timestamp ::= Date() // メッセージが生成された時刻
@@ -64,31 +64,32 @@ export const featuresDict = {
   'peace': 5,
   'cheer':6,
   'down':7,
-  'absent':8,
-  'sleepy':9,
-  'sleep':10,
+  'wake':8,
+  'absent':9,
+  'sleepy':10,
+  'asleep':11,
   // site
-  'room': 11,
-  'forest': 12,
-  'park': 13,
+  'room': 12,
+  'forest': 13,
+  'park': 14,
   // weather
-  '台風':14,
-  '大雨':15,
-  '雨':16,
-  '曇':17,
-  '晴':18,
-  '快晴':19,
-  '夏晴':20,
-  '吹雪':21,
-  '雪':22,
+  '台風':15,
+  '大雨':16,
+  '雨':17,
+  '曇':18,
+  '晴':19,
+  '快晴':20,
+  '夏晴':21,
+  '吹雪':22,
+  '雪':23,
   // season
-  '春':23,
-  '夏':24,
-  '秋':25,
-  '冬':26,
+  '春':24,
+  '夏':25,
+  '秋':26,
+  '冬':27,
   //dayPart
-  '昼':27,
-  '夜':28,
+  '昼':28,
+  '夜':29,
 };
 
 export class Message {
