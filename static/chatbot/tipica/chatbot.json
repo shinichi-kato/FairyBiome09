@@ -3,16 +3,18 @@
     "config": {
         "description": "妖精の育て方を教えるお姉さん妖精",
         "backgroundColor": "#EEEE44",
+        "circadian": {
+            "wake": 6,
+            "sleep": 21
+        },
         "initialMentalLevel": 100,
-        "startPartOrder": [
+        "initialPartOrder": [
             "greeting",
             "faq"
         ],
         "hubBehavior": {
-            "momentBand": {
-                "upper": 10,
-                "lower": 0
-            },
+            "momentUpper": 10,
+            "momentLower": 0,
             "precision": 0.5,
             "retention": 0.4
         }
@@ -29,19 +31,22 @@
     "main": {
         "NAME": "ティピカ",
         "CREATOR_NAME": "system",
-        "POSITIVE_LABEL": ["いいね","おっけー"],
+        "POSITIVE_LABEL": [
+            "いいね",
+            "おっけー"
+        ],
         "NEGATIVE_LABEL": "死ね",
         "START_DECK": "",
         "END_DECK": ""
     },
     "parts": {
         "greeting": {
-            "momentBand": {
-                "upper": 5,
-                "lower": 0
-            },
+            "kind": "response",
+            "momentUpper": 5,
+            "momentLower": 0,
             "precision": 0.6,
             "retention": 0.2,
+            "scriptTimestamp": null,
             "script": [
                 {
                     "in": [
@@ -74,28 +79,44 @@
             ]
         },
         "faq": {
-            "momentBand": {
-                "upper": 100,
-                "lower": 0
-            },
+            "kind": "response",
+            "momentUpper": 100,
+            "momentLower": 0,
             "precision": 0.5,
             "retention": 0.2,
+            "scriptTimestamp": null,
             "script": [
                 {
-                    "in": ["名前は変えられるの"],
-                    "out": ["妖精の名前は一度決めたら変えられないよ。"]
+                    "in": [
+                        "名前は変えられるの"
+                    ],
+                    "out": [
+                        "妖精の名前は一度決めたら変えられないよ。"
+                    ]
                 },
                 {
-                    "in": ["元気がなくて心配"],
-                    "out": ["元気づけるような言葉をかけてみて。"]
+                    "in": [
+                        "元気がなくて心配"
+                    ],
+                    "out": [
+                        "元気づけるような言葉をかけてみて。"
+                    ]
                 },
                 {
-                    "in": ["返事してくれない"],
-                    "out": ["言葉を覚えさせてみて"]
+                    "in": [
+                        "返事してくれない"
+                    ],
+                    "out": [
+                        "言葉を覚えさせてみて"
+                    ]
                 },
                 {
-                    "in": ["レベルアップするにはどうしたらいいの"],
-                    "out": ["たくさんお話したり、言葉を覚えさせたりして"]
+                    "in": [
+                        "レベルアップするにはどうしたらいいの"
+                    ],
+                    "out": [
+                        "たくさんお話したり、言葉を覚えさせたりして"
+                    ]
                 }
             ]
         }

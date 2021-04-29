@@ -39,10 +39,14 @@
   });
 
   ## ecosystemが生成する環境の変化
-  const msg = new Message("eco",{
+  const msg = new Message("trigger",{
     text: "天気が晴れになった", // 省略可
-    kind: "weather",
-    value: "晴"
+    trigger: "weather:晴",
+  })
+
+  ## チャットボットの内的状態の変化
+  const msg = new Message("trigger",{
+    trigger: "WAKEUP"
   })
 
   ## システムメッセージ
@@ -67,7 +71,7 @@ export const featuresDict = {
   'wake':8,
   'absent':9,
   'sleepy':10,
-  'asleep':11,
+  'sleep':11,
   // site
   'room': 12,
   'forest': 13,
@@ -90,6 +94,9 @@ export const featuresDict = {
   //dayPart
   '昼':28,
   '夜':29,
+  // timestamp
+  'hourRad': 30,
+  'dateRad': 31,
 };
 
 export class Message {
@@ -111,12 +118,12 @@ export class Message {
         break;
       }
 
-      case 'eco': {
+      case 'trigger': {
         this.text = data.text || "";
         this.name = null;
         this.person = null;
         this.mood = null;
-        this.trigger = `${data.kind},${data.value}`;
+        this.trigger = `${data.trigger}`;
         this.site = data.site;
         this.estimate = 0;
         this.timestamp = new Date();

@@ -3,8 +3,8 @@ import {
   zeros, divide, apply, sum,
   diag, multiply, isPositive, map, norm
 } from "mathjs";
-import { Message, featuresDict } from '../message.jsx';
-import { getHourRad,getDateRad} from '../calendar-rad';
+import { Message, featuresDict } from '../../message.jsx';
+import { getHourRad,getDateRad} from '../../calendar-rad';
 
 export async function matrixize(script){
   /*
@@ -89,54 +89,51 @@ export async function matrixize(script){
   /* 
     messageのうち、
     person, mood, site, weather, season, dayPart,
-    は one-hotベクターにする。これをfeatureVector (fv)と呼ぶ。
+    は one-hotベクターにする。dateRad,hourRadはradian値にする
+    これらをまとめてfeatureVector (fv)と呼ぶ。
     
   */
 
   //fv - featureVectorの生成
   let fv = zeros(squeezedDict.length, featuresDict.length);
   for (let i = 0, l = script.length; i < l; i++) {
-    let x = script[i].person;
+    const node = script[i];
+    let x = node.person;
     if(x in featuresDict){
       fv[i][featuresDict[x]] = 1;
     }
 
-    x = script[i].mood;
+    x = node.mood;
     if(x in featuresDict){
       fv[i][featuresDict[x]] = 1;
     }
 
-    x = script[i].site;
+    x = node.site;
     if(x in featuresDict){
       fv[i][featuresDict[x]] = 1;
     }
 
-    x = script[i].weather;
+    x = node.weather;
     if(x in featuresDict){
       fv[i][featuresDict[x]] = 1;
     }
 
-    x = script[i].season;
+    x = node.season;
     if(x in featuresDict){
       fv[i][featuresDict[x]] = 1;
     }
     
-    x = script[i].dayPart;
+    x = node.dayPart;
     if(x in featuresDict){
       fv[i][featuresDict[x]] = 1;
     }   
+
+    x = node.timestamp;
+    if(x) {
+      fv[i][featureDict['dateRad']] = getDateRad(x);
+      fv[i][featureDict['hourRad']] = getHourRad(x);
+    }
   }
-
-  /* 
-    timestamp値から dateRadとhourRadを計算し、これを
-    featureRadianと呼ぶ。
-  */
-  // fr- feature radianの生成
-
-  let fr = zeros(squeezedDict.length, featuresDict.length);
-  
-
-
 
   // matrixは直に渡すとObject型になってしまうのでシリアライズ
   // 受け取る側で
@@ -144,5 +141,13 @@ export async function matrixize(script){
   // const x = JSON.parse(v.idf,reviver);
   // とすると復元できる。
 
+  return {
+    vocab: vocab,
+    wv: JSON.stringify(wv),
+    idf: JSON.stringify(idf),
+    tfidf: JSON.stringify(tfidf),
+    index: JSON.stringify(index),
+    fv: JSON.stringify(fv),
+  };
 }
 

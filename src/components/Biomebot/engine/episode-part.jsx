@@ -1,7 +1,8 @@
 /*
-  part
+  episode part
   ===========================
-  
+  エピソード記憶を作り、エピソード記憶で返答するパート
+
   ## partの遅延コンパイル
   partがdeployされたとき、webworkerを用いた別スレッドで辞書のコンパイルを実行する。
   コンパイル完了前にreplier()が実行された場合は NOT_READYを返す。
@@ -14,3 +15,7 @@
 
 export const NOT_READY = -1;
 export const NOT_FOUND = 0;
+
+async function deploy(){
+  
+}
