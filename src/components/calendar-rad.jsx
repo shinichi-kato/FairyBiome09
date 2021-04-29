@@ -1,9 +1,9 @@
 
 export const getDateRad = (arg0,arg1) => {
   /* 一年を2*PIに変換した値を返す 
-    getYearRad() ... 現在日時のrad値
-    getYearRad(date) ... dateオブジェクトが格納する日時のrad値
-    getYearRad(month,day) ... 今年のmonth月day日のrad値
+    getDateRad() ... 現在日時のrad値
+    getDateRad(date) ... dateオブジェクトが格納する日時のrad値
+    getDateRad(month,day) ... 今年のmonth月day日のrad値
   */
   let target;
   const now = new Date();
@@ -25,9 +25,9 @@ export const getDateRad = (arg0,arg1) => {
 
 export const getHourRad = (arg0,arg1) => {
   /* 一日を2*PIに変換した値を返す。
-    getDayRad() ... 現在時刻のrad値
-    getDayRad(date) ... dateオブジェクトが格納する時刻のrad値
-    getDayRad(hour,min) ... hour,minで指定した時刻のrad値
+    getHourRad() ... 現在時刻のrad値
+    getHourRad(date) ... dateオブジェクトが格納する時刻のrad値
+    getHourRad(hour,min) ... hour,minで指定した時刻のrad値
   */
 
   let h,m;

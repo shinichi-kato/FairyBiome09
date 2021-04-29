@@ -1,16 +1,3 @@
-import React, {
-  useState, useContext,
-  createContext, useEffect, useReducer
-} from 'react';
-
-import Dexie from "dexie";
-import { textToInternalRepr, dictToInternalRepr } from "./internalRepr";
-import { TinySegmenter } from "./tinysegmenter";
-import { FirebaseContext } from "../Firebase/FirebaseProvider";
-import { Message } from "../message";
-
-export const BiomebotContext = createContext();
-const segmenter = new TinySegmenter();
 /*
   Biomebot
   ======================
@@ -24,16 +11,18 @@ const segmenter = new TinySegmenter();
 
   パートのタイプ
   ----------------------------------------------------------
-  Episode     ユーザやチャットボットの発言を記憶し、評価の高いものを
+  episode     ユーザやチャットボットの発言を記憶し、評価の高いものを
               自動で辞書化する。この方法で作った辞書で返答する。       
-  Curiousity  辞書にない言葉をユーザが発言した場合、その言葉が何かを聞いて
+  curiousity  辞書にない言葉をユーザが発言した場合、その言葉が何かを聞いて
               その返答を辞書に追加する。
-  Response    辞書を使ってユーザのセリフに応答する。    
+  response    辞書を使ってユーザのセリフに応答する。    
 
   ## チャットボットの状態
 
   チャットボットには
+  
   'peace'|'cheer'|'down'|'absent'|'wake'|'sleepy'|'asleep'
+
   という状態があり、それぞれに対応するアバター画像によりそれをユーザに表現する。
   peaceは平常状態で、cheer/downは元気な状態、落ち込んだ状態である。
   absentは不在でチャットボットは応答しない。sleepyは眠くなった状態でasleepは
@@ -43,19 +32,42 @@ const segmenter = new TinySegmenter();
   睡眠/覚醒は
   circadian:{
     wake: number(24hour),
-    sleep: number(24hour)
+    sleep: number(24hour),
+    delta: number(min)
   }
   で定義し、下記のような台形の覚醒確率を持つ。
 
-    　      -1h wake  +1h       -1h sleep +1h
+    　        -delta wake +delta     -delta sleep +delta
   --------------------------------------------------------
-  覚醒確率    0%  50%  100%      100% 50%  0%
+  覚醒状態確率    0%   50%  100%        100%   50%    0%
   
-  deploy時にrand(1.0)が覚醒確率よりも小さければ覚醒状態で、そうでなければ睡眠状態で
-  起動する。また覚醒中は10分おきに覚醒チェックを行い、失敗すると状態がsleepyに遷移する。
+  deploy時に覚醒チェックを行い、覚醒/睡眠の状態を決める。
+  このときwake状態であれば{WAKEUP}がトリガされる。
+  覚醒中は10分おきに覚醒チェックを行い、失敗すると{SLEEPY}がトリガされる。
+  SLEEPYでは発言ごとに覚醒チェックが行われ、失敗すると{ASLEEP}がトリガされる。
+  
+  deploy時にsleep状態であればユーザ発言を受け取るごとに覚醒チェックを行い、
+  成功したら{WAKEUP}がトリガされる。
   
 
 */
+
+import React, {
+  useState, useContext,
+  createContext, useEffect, useReducer
+} from 'react';
+
+import Dexie from "dexie";
+import { textToInternalRepr, dictToInternalRepr } from "./internalRepr";
+import { TinySegmenter } from "./tinysegmenter";
+import { FirebaseContext } from "../Firebase/FirebaseProvider";
+import { Message } from "../message";
+import useInterval from '../use-interval';
+import checkWake from './circadian';
+import * as room from "./engine/room";
+
+export const BiomebotContext = createContext();
+const segmenter = new TinySegmenter();
 
 
 // estimate()でポジティブ・ネガティブな単語がなかった場合、
@@ -69,6 +81,12 @@ const defaultSettings = {
   botId: null,
   config: {
     description: "",
+    backgroundColor: "#eeeeee",
+    circadian: {
+      wake: 6,
+      sleep: 21,
+      delta: 60,
+    },
     initialMentalLevel: 10,
     initialPartOrder: [],
     hubBehavior: {
@@ -246,10 +264,8 @@ export default function BiomebotProvider(props) {
           name: key,
           botId: snap.botId,
           config: {
-            momentBand: {
-              upper: part.momentBand.upper,
-              lower: part.momentBand.lower,
-            },
+            momentUpper: part.momentUpper,
+            momentLower: part.momentLower,
             precision: part.precision,
             retention: part.retention,
           }
@@ -324,8 +340,58 @@ export default function BiomebotProvider(props) {
 
   }
 
-  function deploy(site) {
+  function deploy(site,callback) {
+    /* 
+      チャットボットの起動
+    */
 
+    switch(site) {
+      case 'room':
+        room.deploy(state.parts,db);
+
+        setReciever( () => async (st, wk, msg, callback) => {
+          /* reciever モック関数 
+            st: state
+            wk: work
+            msg: msg.textを内部表現に変換した状態のmessage
+            callback: async callback(message) 返答を送信するのに使用
+    
+            チャットボットの状態を維持する必要があるため、この関数は変更後のworkを返す
+          */
+          const reply = new Message('system', {
+            text: `est=${msg.estimation}`,
+            site: 'room',
+          });
+    
+          await callback(reply)
+    
+          return {work:wk}
+        });
+      
+    }
+
+    /*// 覚醒・睡眠サイクルの起動
+    const isWake = checkWake(state.config.circadian);
+    if(isWake){
+      // 覚醒状態だったら{WAKEUP}をトリガ
+      const msg = new Message('trigger',{trigger:"{WAKEUP}"})
+      reciever(state, work, msg, props.writeLog)
+      .then(snap => {
+        setWork(prev => ({ key: prev.key + 1, work: snap.work }));
+      });
+      // 以降10分ごとに覚醒チェック
+      // 失敗したらsleepyに移行
+      useInterval(()=>{
+        const isWake = checkWake(state.config.circadian);
+        if(!isWake){
+          const msg = new Message('trigger',{trigger:"{SLEEPY}"});
+          reciever(state, work, msg, props.writeLog)
+          .then(snap => {
+            setWork(prev => ({ key: prev.key + 1, work: snap.work }));
+          });
+        }
+      },10*60*1000)
+    }*/
   }
 
   function recieve(message) {
