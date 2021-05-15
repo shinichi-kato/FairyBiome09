@@ -1,34 +1,60 @@
 /*
   Biomebot
-  ======================
+  ===============
 
   複数の「心のパート」が競争的に動作して会話を生成するチャットボット
 
   ## 「心のパート」
-  人の心の中には立場や働きの異なる様々な「パート」が同時に存在し、それらが
-  競争的に作動して発話を行っている。これをモデルとして、Biomebotも複数の
-  返答モジュール「Part」を集めてチャットボット全体を構成する。
-
-  パートのタイプ
-  ----------------------------------------------------------
-  episode     ユーザやチャットボットの発言を記憶し、評価の高いものを
-              自動で辞書化する。この方法で作った辞書で返答する。       
-  curiousity  辞書にない言葉をユーザが発言した場合、その言葉が何かを聞いて
-              その返答を辞書に追加する。
-  response    辞書を使ってユーザのセリフに応答する。    
-
-  ## チャットボットの状態
-
-  チャットボットには
+  人の心には好奇心、共感、承認欲求、持っている知識を話したい、親密になりたい、
+  労り、怒り、上機嫌、意気消沈、眠い状態、など様々なパートが共存している。
+  これらのパートを表現するためにそれぞれに対して辞書を用意するが、これらに
+  利用する返答アルゴリズムは以下の数種類にまとめることができる。
   
-  'peace'|'cheer'|'down'|'absent'|'wake'|'sleepy'|'asleep'
-
-  という状態があり、それぞれに対応するアバター画像によりそれをユーザに表現する。
-  peaceは平常状態で、cheer/downは元気な状態、落ち込んだ状態である。
-  absentは不在でチャットボットは応答しない。sleepyは眠くなった状態でasleepは
-  睡眠中を示す。状態と同名のパートが存在した場合、そのパートはパート順が常に先頭になる。
-  パートの中ではコマンド{SETMOOD_PEACE}などにより他の状態に遷移することができる。
+  パートの種類
+  --------------------------------------------------------------
+  episode   ユーザやチャットボット自身の発言を記憶し、評価が低くないものを
+            自動で辞書化する。この方法で作った辞書で返答する。
   
+  curiosity 辞書にない言葉をユーザが発言した場合、その言葉が何かを聞いて
+            返答を辞書に追加する。
+  
+  knowledge あらかじめ用意した辞書を使ってユーザのセリフに応答する。
+  --------------------------------------------------------------
+
+  ## パートリストの動作機序
+  チャットボットはメッセージを受け取るとpartOrder配列に格納された順番に
+  別途part.jsxで説明する方法により評価を行う。成功したら返答が生成され、返答を
+  行ったパートをpartOrder先頭または末尾に移動してパート評価から抜ける。
+  失敗したら順次次のパートの評価を試みる。
+  
+  パート評価がすべて失敗だった場合はpartOrder配列に格納された順番に辞書の
+  NOT_FOUND出力を試みる。
+  
+  最後にチャットボットのmoodと同名のパートが存在する場合はそれをpartOrderの
+  先頭に移動する。
+  
+
+  ## 状態
+  チャットボットには以下の状態(mood)があり、それぞれ対応するアバターを
+  表示してユーザに状態を通知する。状態間の遷移は発言文字列中の{ENTER_PEACE}
+  などで生じ、これによりmoodがpeaceに変化し、peaceという名前のパートがあれば
+  それがpartOrder先頭に移動するとともに{ENTER_PEACE}をトリガ値とする
+  messageがチャットボットのキューに乗ってpart評価が最初から再実行される。
+  辞書の中に{ENTER_PEACE}トリガに対応する記憶を与えておくことで状態が
+  変わったことで生じる自発的な応答を生成できる。
+
+  チャットボットの状態
+  -----------------------------
+  peace    平常
+  cheer    盛り上がっている
+  down     落ち込んでいる
+  wake     起床した
+  sleepy   眠い
+  sleep    睡眠中
+  absent   不在
+  -----------------------------
+
+  ### チャットボットの覚醒/睡眠
   睡眠/覚醒は
   circadian:{
     wake: number(24hour),
@@ -37,51 +63,44 @@
   }
   で定義し、下記のような台形の覚醒確率を持つ。
 
-    　        -delta wake +delta     -delta sleep +delta
+             -delta wake +delta     -delta sleep +delta
   --------------------------------------------------------
   覚醒状態確率    0%   50%  100%        100%   50%    0%
   
   deploy時に覚醒チェックを行い、覚醒/睡眠の状態を決める。
   このときwake状態であれば{WAKEUP}がトリガされる。
-  覚醒中は10分おきに覚醒チェックを行い、失敗すると{SLEEPY}がトリガされる。
-  SLEEPYでは発言ごとに覚醒チェックが行われ、失敗すると{ASLEEP}がトリガされる。
+  覚醒中は10分おきに覚醒チェックを行い、失敗すると{ENTER_SLEEPY}がトリガされる。
+  SLEEPYでは発言ごとに覚醒チェックが行われ、失敗すると{ENTER_SLEEP}がトリガされる。
   
   deploy時にsleep状態であればユーザ発言を受け取るごとに覚醒チェックを行い、
-  成功したら{WAKEUP}がトリガされる。
-  
+  成功したら{ENTER_WAKE}がトリガされる。
+
+  ## トリガ
+  すでに一部説明しているが、トリガとはmessageクラスをtriggerモードで作成する
+  ことで得られる。これをチャットボットに渡すとこのメッセージがキューの先頭に乗り、
+  partOrderにしたがって評価される。トリガにはmoodの変化に対応する{ENTER_PEACE}
+  などや入室{ENTER_ROOM}など、天候の変化{ENTER_晴}、{EXIT_雨}などがある。
 
 */
 
-import React, {
-  useState, useContext,
-  createContext, useEffect, useReducer
-} from 'react';
-
+import React, { useContext, createContext, useEffect, useReducer, useState } from 'react';
+import * as dbio from './dbio';
 import Dexie from "dexie";
-import { textToInternalRepr, dictToInternalRepr } from "./internalRepr";
-import { TinySegmenter } from "./tinysegmenter";
+
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
-import { Message } from "../message";
-import useInterval from '../use-interval';
-import checkWake from './circadian';
-import * as room from "./engine/room";
 
 export const BiomebotContext = createContext();
-const segmenter = new TinySegmenter();
-
-
-// estimate()でポジティブ・ネガティブな単語がなかった場合、
-// len(nodes) ^ ESTIMATOR_LEENGTH_FACTORをスコアとする 
-const ESTIMATOR_LENGTH_FACTOR = 0.6;
 
 let db = null;
+let workers = {};
 
-// indexedDBに保持されるチャットボットのデータ
+// チャットボットデータの初期値
 const defaultSettings = {
   botId: null,
   config: {
     description: "",
     backgroundColor: "#eeeeee",
+    estimatorLengthFactor: 0.6,
     circadian: {
       wake: 6,
       sleep: 21,
@@ -95,7 +114,6 @@ const defaultSettings = {
       precision: 1,
       retention: 0
     },
-    dir: "", // dirはjsonファイルのパスで、fetchしたjsonファイル内には記述しない
   },
   main: {
     "NAME": "uninitialized",
@@ -105,9 +123,6 @@ const defaultSettings = {
     "START_DECK": "",
     "END_DECK": "",
   },
-  parts: [],
-  // workはチャットボットの動作ごとに状態が変わる変数群で、
-  // これを初期値としたsetStateで管理する
   work: {
     updatedAt: "",
     partOrder: [],
@@ -117,21 +132,24 @@ const defaultSettings = {
     queue: [],
     futurePostings: []
   },
-};
 
-// state: メモリ中のみで管理するデータ。キャッシュ含む
+  // 
+  part: {
+
+  },
+}
+
+// 更新頻度が低いデータ
 const initialState = {
   botId: null,
-  site: "room",
-  displayName: null,
-  config: defaultSettings.config,
-  parts: defaultSettings.parts,
+  displayName: "",
+  config: {},
+  parts: {},
   estimator: {
     positive: [],
     negative: [],
   }
 };
-
 
 function reducer(state, action) {
   switch (action.type) {
@@ -143,7 +161,6 @@ function reducer(state, action) {
       const snap = action.snap;
       return {
         botId: snap.botId,
-        site: "room",
         displayName: snap.displayName,
         config: snap.config,
         parts: snap.parts,
@@ -156,279 +173,84 @@ function reducer(state, action) {
   }
 }
 
-
 export default function BiomebotProvider(props) {
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const [work, setWork] = useState({ key: 0, work: defaultSettings.work });
   const fb = useContext(FirebaseContext);
-  /*
-    props.
-  */
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const [work, setWork] = useState({
+    key: 0,
+    work: defaultSettings.work
+  });
 
-  const [reciever, setReciever] = useState(
-    () => async (st, wk, msg, callback) => {
-      /* reciever モック関数 
-        st: state
-        wk: work
-        msg: msg.textを内部表現に変換した状態のmessage
-        callback: async callback(message) 返答を送信するのに使用
-
-        チャットボットの状態を維持する必要があるため、この関数は変更後のworkを返す
-      */
-      const reply = new Message('system', {
-        text: `est=${msg.estimation}`,
-        site: 'room',
-      });
-
-      await callback(reply)
-
-      return {work:wk}
-    }
-  );
-
-  const appState = props.appState;
   useEffect(() => {
     let isCancelled = false;
 
-    if (!db && !isCancelled) {
-      db = new Dexie('Biomebot');
-      db.version(1).stores({
-        config: "botId", // botId,config
-        work: "botId", // id,work
-        main: "++id,[botId+key]",  // id,botId,key,val 
-        parts: "[name+botId]", // name,config,cache
-        scripts: "[botId+partName+id],partName,next,prev", // id,name,in,out,next,prev
-      });
+    if (!isCancelled) {
+      if (!db) {
+        db = new Dexie('Biomebot');
+        dbio.initialize(db);
+      }
+
+      if (props.appState === 'authOk' && fb.uid) {
+        dbio.load(db, fb.uid)
+          .then(snap => {
+            if (snap) {
+              dispatch({ type: 'connect', snap: snap })
+              setWork(prev => ({ key: prev.key + 1, work: snap.work }));
+              props.handleBotFound();
+            }
+            else {
+              props.handleBotNotFound();
+            }
+          });
+      }
     }
 
-    if (appState === 'authOk' && fb.uid && !isCancelled) {
+    return ()=>{isCancelled = true}
+  }, [props.appState, db, fb.uid]);
 
-      loadDB(db, fb.uid)
-        .then(snap => {
-          if (snap) {
-            dispatch({ type: 'connect', snap: snap })
-            setWork(prev => ({ key: prev.key + 1, work: snap.work }));
-            // setParts()
+  async function generate(obj) {
+    // indexDBへの書き込み
+    await dbio.generate(db, obj, fb.uid);
 
-            props.handleBotFound();
-
-          } else {
-
-            props.handleBotNotFound();
-          }
-
-        });
-    }
-
-  }, [appState, db, fb.uid]);
-
-  async function generate(obj, dir) {
-    /* 
-      objの内容をindexDBとstateに書き込む。
-      チャットボットデータはobj.botIdが定義されているものと未定義のものがあり、
-      obj.botIdが定義されているのはNPCチャットボット。
-      未定義のものはユーザ用のチャットボットでbotIdにはfb.uidを用いる。
-      ユーザ用のチャットボットはユーザにつき同時に一つしか持てない。
-    */
-
-    const snap = {
-      botId: obj.botId || fb.uid,
-      site: 'room',
-      config: {
-        ...obj.config,
-        dir: dir,
-      },
-
-      estimator: {}, // estimatorはdeploy時に生成
-    };
-
-    /* config */
-    await db.config.put({
-      botId: snap.botId,
-      config: snap.config
-    });
-
-    /* work */
-    await db.work.put({
-      botId: snap.botId,
-      work: snap.work,
-    });
-
-    /* parts "[name+botId]", // name,config */
-    let dictKeys = Object.keys(obj.parts);
-
-    await db.parts.bulkPut(
-      dictKeys.map(key => {
-        const part = obj.parts[key];
-        return {
-          name: key,
-          botId: snap.botId,
-          config: {
-            momentUpper: part.momentUpper,
-            momentLower: part.momentLower,
-            precision: part.precision,
-            retention: part.retention,
-          }
+    // stateへの書き込み
+    dispatch({ type: 'connect', snap: obj });
+    setWork(prev => (
+      {
+        key: prev.key + 1,
+        work: {
+          updatedAt: "",
+          partOrder: obj.config.initialPartOrder,
+          mentalLevel: obj.config.initialMentalLevel,
+          moment: 0,
+          mood: "peace",
+          queue: [],
+          futurePostings: []
         }
       }));
-    /* main "id,[botId+key]" */
-    await db.main
-      .where('[botId+key]')
-      .between([snap.botId,Dexie.minKey], [snap.botId,Dexie.maxKey])
-      .delete();
+  }
 
-    dictKeys = Object.keys(obj.main);
-    let mainData = [];
-    for (let key of dictKeys) {
-      let val = obj.main[key];
+  async function deploy() {
+    // 各パートのscriptを読んでcacheに変換
 
-      if (typeof val === 'string') {
-        mainData.push(
-          { botId: snap.botId, key: key, val: val }
-        );
+    for (let partName of state.config.initialPartOrder) {
+      if (!(partName in workers)) {
+        workers[partName] = new Worker(
+          new URL('./engine/matrixize-worker.js', import.meta.url));
       }
-      else if (Array.isArray(val)) {
-        for (let v of val) {
-          mainData.push(
-            { botId: snap.botId, key: key, val: v }
-          )
+      const worker = workers[partName];
+
+      worker.onmessage = ({ data: { result } }) => {
+        if (result) {
+          dbio.loadCache(db, state.botId, partName)
+            .then(cache => {
+              dispatch({ type: 'writeCache', cache: cache });
+            })
         }
-      }
+      };
+
+      worker.postMessage({ data: { db, botId:state.botId, partName } });
     }
-    await db.main.bulkAdd(mainData);
-
-    /* scripts "[id+botId],partName,next,prev" */
-    await db.scripts.where('[botId+partName+id]')
-      .between(
-        [snap.botId, Dexie.minKey, Dexie.minKey],
-        [snap.botId, Dexie.maxKey, Dexie.maxKey])
-      .delete();
-      
-    /* scriptはidをこちらで与え、next,prevも設定する */
-
-    for (let partName of Object.keys(obj.parts)) {
-      console.log("partName", partName)
-      let data = [];
-      const script = obj.parts[partName].script;
-      let i;
-      for (i in script) {
-        data.push({
-          id: i,
-          botId: snap.botId, // compound key
-          partName: partName,
-          in: script[i].in, out: script[i].out,
-          next: i + 1,
-          prev: i - 1,
-        });
-      }
-      data[0] = { ...data[0], prev: null };
-      data[i] = { ...data[i], next: null };
-      await db.scripts.bulkAdd(data);
-    }
-
-    setWork({
-      updatedAt: "",
-      partOrder: obj.config.initialPartOrder,
-      mentalLevel: obj.config.initialMentalLevel,
-      moment: 0,
-      mood: "peace",
-      queue: [],
-      futurePostings: []
-    });
-
-    dispatch({type: 'connect', snap:snap});
-
   }
-
-  function deploy(site,callback) {
-    /* 
-      チャットボットの起動
-    */
-
-    switch(site) {
-      case 'room':
-        room.deploy(state.parts,db);
-
-        setReciever( () => async (st, wk, msg, callback) => {
-          /* reciever モック関数 
-            st: state
-            wk: work
-            msg: msg.textを内部表現に変換した状態のmessage
-            callback: async callback(message) 返答を送信するのに使用
-    
-            チャットボットの状態を維持する必要があるため、この関数は変更後のworkを返す
-          */
-          const reply = new Message('system', {
-            text: `est=${msg.estimation}`,
-            site: 'room',
-          });
-    
-          await callback(reply)
-    
-          return {work:wk}
-        });
-      
-    }
-
-    /*// 覚醒・睡眠サイクルの起動
-    const isWake = checkWake(state.config.circadian);
-    if(isWake){
-      // 覚醒状態だったら{WAKEUP}をトリガ
-      const msg = new Message('trigger',{trigger:"{WAKEUP}"})
-      reciever(state, work, msg, props.writeLog)
-      .then(snap => {
-        setWork(prev => ({ key: prev.key + 1, work: snap.work }));
-      });
-      // 以降10分ごとに覚醒チェック
-      // 失敗したらsleepyに移行
-      useInterval(()=>{
-        const isWake = checkWake(state.config.circadian);
-        if(!isWake){
-          const msg = new Message('trigger',{trigger:"{SLEEPY}"});
-          reciever(state, work, msg, props.writeLog)
-          .then(snap => {
-            setWork(prev => ({ key: prev.key + 1, work: snap.work }));
-          });
-        }
-      },10*60*1000)
-    }*/
-  }
-
-  function recieve(message) {
-    const nodes = segmenter.segment(message.text);
-    message.text = textToInternalRepr(nodes);
-
-    message.estimation = estimate(message.text);
-
-    reciever(state, work, message, props.writeLog)
-      .then(snap => {
-        setWork(prev => ({ key: prev.key + 1, work: snap.work }));
-      });
-  }
-
-  function estimate(text) {
-    /* 内部表現化されたテキストに含まれるネガティブ/ポジティブワードを
-      見つけてスコアを与える。
-      テキストに含まれたポジティブなワードを優先して評価し、
-      ポジティブなワードが見つからない場合ネガティブなワードの数を評価する。
-      どちらも含まない場合は長い文字列ほどポジティブとし、文字列の長さをlと
-      したとき、以下の式で与えられる。
-
-      score = text.length^ESTIMATOR_LENGTH_FACTOR
-      */
-    let score = 0;
-    const pos = state.estimator.positives;
-    const neg = state.estimator.negatives;
-
-    score = text.reduce((score, word) => (score + word in pos ? 1 : 0), 0);
-    if (score !== 0) return score;
-
-    score = text.reduce((score, word) => (score + word in neg ? -1 : 0), 0);
-    if (score !== 0) return score;
-
-    return Math.round(text.length ^ ESTIMATOR_LENGTH_FACTOR);
-  }
-
 
   return (
     <BiomebotContext.Provider
@@ -441,63 +263,5 @@ export default function BiomebotProvider(props) {
     >
       {props.children}
     </BiomebotContext.Provider>
-  )
-}
-
-/* ----------------------------------------------------------
-
-
-  I/O関数
-
-
----------------------------------------------------------- */
-
-async function loadDB(db, botId) {
-
-  let config, work, displayName;
-  config = await db.config.where({ botId: botId }).first();
-  if (config) {
-    work = await db.work.where({ botId: botId }).first();
-    displayName = await db.main.where({ botId: botId, key: 'NAME' }).first();
-
-    return {
-      botId: botId,
-      config: config,
-      work: work || defaultSettings.work,
-      displayName: displayName,
-      estimator: await readEstimator(db, botId)
-    }
-  }
-
-  return null;
-}
-
-async function readEstimator(db,botId) {
-  /*  main辞書から入力文字列評価用の NEGATIVE_LABEL, POSITIVE_LABELを
-      取得し、辞書を生成。 
-      mainのスキームは id,[botId+key] なのでコンパウンドキー */
-
-  let negatives = await db.main
-    .where('[botId+key]').equals([botId,'NEGATIVE_LABEL'])
-    .toArray();
-
-  negatives = negatives.reduce((obj, data) => {
-
-    obj[data.val] = true;
-    return obj;
-  }, {});
-
-  let positives = await db.main
-    .where('[botId+key]').equals([botId,'POSITIVE_LABEL'])
-    .toArray();
-
-  positives = positives.reduce((obj, data) => {
-    obj[data.val] = true;
-    return obj;
-  }, {});
-
-  return {
-    negatives: negatives,
-    positives: positives,
-  }
+  );
 }
