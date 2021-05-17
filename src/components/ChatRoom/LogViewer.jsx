@@ -80,7 +80,7 @@ function SystemMessage(props){
 		<Box
 			display="flex"
 			flexDirection="row"
-			alignItem="center"
+			alignItems="center"
 			key={props.index}
 		>
 			<Box>
@@ -101,9 +101,9 @@ export default function LogViewer(props) {
 	console.log("log:",props.log)
 	const messages = props.log.map((message,index)=>{
 		switch(message.person) {
-			case 'user' : return <RightBalloon message={message} index={index}/>
+			case 'user' : return <RightBalloon message={message} index={index} key={index}/>
 			case 'bot' :
-			case 'other': return <LeftBalloon message={message} index={index}/>
+			case 'other': return <LeftBalloon message={message} index={index} key={index}/>
 			default: return <SystemMessage message={message} index={index}/>
 		}
 	})

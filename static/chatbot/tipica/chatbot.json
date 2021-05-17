@@ -47,6 +47,7 @@
             "precision": 0.6,
             "retention": 0.2,
             "scriptTimestamp": null,
+            "cacheTimestamp": null,
             "script": [
                 {
                     "in": [

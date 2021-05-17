@@ -7,15 +7,11 @@
   
   1. 覚醒/睡眠サイクル
   deploy時、チャットボットの状態は覚醒確率により決まる。
-  覚醒チェックに成功した場合peace状態でスタートし、startトリガがセットされる。
-  実行中は5分ごとに覚醒チェックを行い、失敗したらsleepyトリガがセットされる。
-  sleepy状態で覚醒チェックにしいっぱいしたらsleepトリガがセットされる。
-  deploy時に覚醒チェックに失敗したらsleep状態でスタートする。
-  実行中はユーザから声をかけられるたびに覚醒チェックを行い、
-  成功したらwakeupトリガがセットされる。
-
+  
   2. START_DECK
   startトリガを受け取ったらstart_deckからランダムに選んだ一つの動作を行う。
+
+
 
   3. パートの優先順位
   初期のパート順位はinitialPartOrderで定義される。
@@ -26,7 +22,9 @@
 */
 
 import Dexie from "dexie";
-import { matrixize } from './matrixize';
+import {reviver} from 'mathjs';
+import Message from '../../message';
+import * as semantic from './semantic';
 
 export async function deploy(parts,db,botId){
   /* 
@@ -42,24 +40,53 @@ export async function deploy(parts,db,botId){
         [botId,partName,Dexie.minKey],
         [botId,partName,Dexie.maxKey])
       .toArray();
-    const result = matrixize(script);
     
+      // inスクリプトとoutスクリプトに分離
+
+    const worker = new Worker(new URL('./matrixize.js',import.meta.url));
+    worker.postMessage({ script:script });
+    worker.onmessage = ({data: cache}) => {
+      const vocab= cache.vocab;
+      const wv = JSON.parse(cache.wv);
+      const idf = JSON.parse(cache.idf);
+      const tfidf = JSON.parse(cache.tfidf);
+      const index = JSON.parse(cache.index);
+      const fv = JSON.parse(cache.fv);
+
+      // dexiejsへ書き込み。timestampを付与する
+    }
+    
+    // partのdeployを実行
+
+    switch(partName){
+      case 'semantic':
+        semantic.deploy();
+        break;
+      defalut: 
+        throw new Error('invalid partName')
+    }
   }
 }
 
-export async function reciever(st, wk, msg, callback){
+export async function reciever(state, work, message, callback){
   /* reciever 関数
-    st: state
-    wk: work
     msg: msg.textを内部表現に変換した状態のmessage
     callback: async callback(message) 返答を送信するのに使用
 
     チャットボットの状態を維持する必要があるため、この関数は変更後のworkを返す
   */
-  const reply = new Message('system', {
+  let reply = new Message('system', {
     text: `est=${msg.estimation}`,
     site: 'room',
   });
+
+  // partOrder順に返答するか決める
+  let partOrder = [...work.partOrder];
+  for (let partName of partOrder){
+    
+  }
+
+  // {NOT_FOUND}をpartOrder順で探す
 
   await callback(reply)
 

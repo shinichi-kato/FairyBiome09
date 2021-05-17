@@ -41,7 +41,7 @@
   ## ecosystemが生成する環境の変化
   const msg = new Message("trigger",{
     text: "天気が晴れになった", // 省略可
-    trigger: "weather:晴",
+    trigger: "{WEATHER_晴}",
   })
 
   ## チャットボットの内的状態の変化
@@ -59,44 +59,47 @@
 import { getHourRad, getDateRad } from "./calendar-rad";
 
 export const featuresDict = {
-  // person
-  'bot': 1,
-  'user': 2,
-  'other': 3,
-  'system': 4,
-  //mood
-  'peace': 5,
-  'cheer':6,
-  'down':7,
-  'wake':8,
-  'absent':9,
-  'sleepy':10,
-  'sleep':11,
-  // site
-  'room': 12,
-  'forest': 13,
-  'park': 14,
-  // weather
-  '台風':15,
-  '大雨':16,
-  '雨':17,
-  '曇':18,
-  '晴':19,
-  '快晴':20,
-  '夏晴':21,
-  '吹雪':22,
-  '雪':23,
-  // season
-  '春':24,
-  '夏':25,
-  '秋':26,
-  '冬':27,
-  //dayPart
-  '昼':28,
-  '夜':29,
+  // text
+  'text': 0,
   // timestamp
-  'hourRad': 30,
-  'dateRad': 31,
+  'hourRad': 1,
+  'dateRad': 2,
+  // person
+  'bot': 3,
+  'user': 4,
+  'other': 5,
+  'system': 6,
+  //mood
+  'peace': 7,
+  'cheer':8,
+  'down':9,
+  'wake':10,
+  'absent':11,
+  'sleepy':12,
+  'sleep':13,
+  // site
+  'room': 14,
+  'forest': 15,
+  'park': 16,
+  // weather
+  '台風':17,
+  '大雨':18,
+  '雨':19,
+  '曇':20,
+  '晴':21,
+  '快晴':22,
+  '夏晴':23,
+  '吹雪':24,
+  '雪':25,
+  // season
+  '春':26,
+  '夏':27,
+  '秋':28,
+  '冬':29,
+  //dayPart
+  '昼':30,
+  '夜':31,
+
 };
 
 export class Message {
@@ -158,5 +161,12 @@ export class Message {
 
   get dateRad() {
     return getDateRad(this.timestamp);
+  }
+
+  get featVector() {
+    const fv = [
+      0,
+      
+    ];
   }
 }

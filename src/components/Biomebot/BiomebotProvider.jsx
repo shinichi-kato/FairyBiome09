@@ -88,6 +88,7 @@ import * as dbio from './dbio';
 import Dexie from "dexie";
 
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
+import { Message } from '@material-ui/icons';
 
 export const BiomebotContext = createContext();
 
@@ -181,6 +182,27 @@ export default function BiomebotProvider(props) {
     work: defaultSettings.work
   });
 
+  const [postMessageToBot, setPostMessageToBot] = useState(
+    ()=> async (st,wk,msg,onmessage) => {
+      /* postMessageToBot 関数
+        st: state
+        wk: work
+        msg: Message型データ
+        onmessage: ({message}) => チャットボットからのメッセージを発信するのに使用
+
+        初期状態はecho
+      */
+      const reply = new Message('system', {
+        text: `est=${msg.estimation}`,
+        site: 'room',
+      });
+
+      // setWork
+
+      await onmessage({message:reply})
+    }
+  )
+
   useEffect(() => {
     let isCancelled = false;
 
@@ -229,7 +251,7 @@ export default function BiomebotProvider(props) {
       }));
   }
 
-  async function deploy() {
+  async function deploy(site) {
     // 各パートのscriptを読んでcacheに変換
 
     for (let partName of state.config.initialPartOrder) {
@@ -255,7 +277,7 @@ export default function BiomebotProvider(props) {
   return (
     <BiomebotContext.Provider
       value={{
-        recieve: recieve,
+        postMessageToBot: postMessageToBot,
         generate: generate,
         deploy: deploy,
         state: state,

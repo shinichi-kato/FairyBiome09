@@ -3,7 +3,7 @@ import {
   zeros, divide, apply, sum,
   diag, multiply, isPositive, map, norm
 } from "mathjs";
-import { Message, featuresDict } from '../../message.jsx';
+import { featuresDict } from '../../message.jsx';
 import { getHourRad,getDateRad} from '../../calendar-rad';
 
 export async function matrixize(script){
@@ -130,8 +130,8 @@ export async function matrixize(script){
 
     x = node.timestamp;
     if(x) {
-      fv[i][featureDict['dateRad']] = getDateRad(x);
-      fv[i][featureDict['hourRad']] = getHourRad(x);
+      fv[i][featuresDict['dateRad']] = getDateRad(x);
+      fv[i][featuresDict['hourRad']] = getHourRad(x);
     }
   }
 

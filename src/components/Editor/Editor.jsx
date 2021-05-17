@@ -43,6 +43,7 @@ export default function Editor() {
   const bot = useContext(BiomebotContext);
 
   const [currentPart, setCurrentPart] = useState('');
+  const [page, setPage] = useState('root')
 
   function handleChangePage(newPage,newPart) {
     if(newPart){
