@@ -26,10 +26,11 @@ import {
 import { featuresDict } from '../../message.jsx';
 import { getHourRad,getDateRad} from '../../calendar-rad';
 
-window.self.onmessage = ({ data: { db, botId, partName } }) => {
-  
+/* eslint-disable-next-line no-restricted-globals */
+self.onmessage = ({ data: { botId, partName } }) => {
+  console.log("matrixize-",partName);
   (async () => {
-    const script = await dbio.readScript(db,botId,partName);
+    const script = await dbio.readScript(botId,partName);
     // inスクリプトとoutスクリプトに分割
     let inScript = [];
     let outScript = [];
@@ -113,37 +114,21 @@ window.self.onmessage = ({ data: { db, botId, partName } }) => {
   let fv = zeros(squeezedDict.length, featuresDict.length);
   for (let i = 0, l = script.length; i < l; i++) {
     const node = script[i];
-    let x = node.person;
-    if(x in featuresDict){
-      fv[i][featuresDict[x]] = 1;
+
+    for(const x of [
+      node.person,
+      node.mood,
+      node.site,
+      node.weather,
+      node.season,
+      node.dayPart
+    ]) {
+      if(x in featuresDict){
+        fv[i][featuresDict[x]] = 1;
+      }
     }
 
-    x = node.mood;
-    if(x in featuresDict){
-      fv[i][featuresDict[x]] = 1;
-    }
-
-    x = node.site;
-    if(x in featuresDict){
-      fv[i][featuresDict[x]] = 1;
-    }
-
-    x = node.weather;
-    if(x in featuresDict){
-      fv[i][featuresDict[x]] = 1;
-    }
-
-    x = node.season;
-    if(x in featuresDict){
-      fv[i][featuresDict[x]] = 1;
-    }
-    
-    x = node.dayPart;
-    if(x in featuresDict){
-      fv[i][featuresDict[x]] = 1;
-    }   
-
-    x = node.timestamp;
+    const x = node.timestamp;
     if(x) {
       fv[i][featuresDict['dateRad']] = getDateRad(x);
       fv[i][featuresDict['hourRad']] = getHourRad(x);
@@ -152,7 +137,7 @@ window.self.onmessage = ({ data: { db, botId, partName } }) => {
 
   // 書き込み
 
-  await dbio.saveCache(db,botId,partName,
+  await dbio.saveCache(botId,partName,
     {
       outScript: outScript,
       vocab: vocab,
@@ -165,7 +150,8 @@ window.self.onmessage = ({ data: { db, botId, partName } }) => {
 
   })();
 
-  window.self.postMessage({
+  /* eslint-disable-next-line no-restricted-globals */
+  self.postMessage({
     partName: partName,
   });
 };

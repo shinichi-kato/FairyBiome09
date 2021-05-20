@@ -164,9 +164,19 @@ export class Message {
   }
 
   get featVector() {
-    const fv = [
-      0,
-      
-    ];
+    let fv = Array(featuresDict).fill(0);
+    for(const x of [
+      this.person,
+      this.mood,
+      this.site,
+      this.weather,
+      this.season,
+      this.dayPart
+    ]) {
+      if(x in featuresDict){
+        fv[featuresDict[x]] = 1;
+      }
+    }
+    return fv;
   }
 }

@@ -9,6 +9,7 @@ import Avatar from '@material-ui/core/Avatar';
 import ArrowBackIcon from '@material-ui/icons/ArrowBackIos';
 
 import RootEditor from './RootEditor';
+import ConfigEditor from './ConfigEditor';
 
 import { BiomebotContext } from '../Biomebot/BiomebotProvider';
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
@@ -91,9 +92,11 @@ export default function Editor() {
           handleChangePage={handleChangePage}
         />
       }
-      {/* // { page === 'config' && <ConfigEditor /> }
-        // { page === 'state' && <StateEditor />}
-        // { page === 'main' && <MainEditor />} */}
+      { page === 'config' && 
+        <ConfigEditor 
+          config={botState.config}
+        /> 
+      }
     </>
   )
 }

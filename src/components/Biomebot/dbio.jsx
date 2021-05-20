@@ -30,18 +30,23 @@ import Dexie from "dexie";
   },
 */
 
-export const initialize = (db) => {
-  db.version(1).stores({
-    config: "botId", // botId,description,...
-    work: "botId", // id,
-    main: "++id,[botId+key]",  // id,botId,key,val 
-    parts: "[name+botId]", // name,config,cache
-    scripts: "[botId+partName+id],partName,next,prev", // id,name,in,out,next,prev
-    caches: "[botId+partName]", // scriptをコンパイルした結果を格納
-  });
+let db = null;
+
+export const initialize = () => {
+  if(!db){
+    db = new Dexie('Biomebot');
+    db.version(1).stores({
+      config: "botId", // botId,description,...
+      work: "botId", // id,
+      main: "++id,[botId+key]",  // id,botId,key,val 
+      parts: "[name+botId]", // name,config,cache
+      scripts: "[botId+partName+id],partName,next,prev", // id,name,in,out,next,prev
+      caches: "[botId+partName]", // scriptをコンパイルした結果を格納
+    });
+  }
 }
 
-export const generate = async (db, obj, uid) => {
+export const generate = async (obj, uid) => {
   /* 
     chatbot.jsonから読み込んだobjの内容をindexDBとstateに書き込む。
     チャットボットデータはobj.botIdが定義されているものと未定義のものがあり、
@@ -51,7 +56,7 @@ export const generate = async (db, obj, uid) => {
    */
 
   const botId = obj.botId || uid;
-
+  console.log("generate")
   /* config */
   await db.config.put({
     ...obj.config,
@@ -147,7 +152,7 @@ export const generate = async (db, obj, uid) => {
   }
 }
 
-export const load = async (db,botId) => {
+export const load = async (botId) => {
   /* indexedDBからチャットボットのデータを読み込む。
     存在しなかった場合はnullを返す。
   */
@@ -163,15 +168,16 @@ export const load = async (db,botId) => {
       config: config,
       work: work,
       displayName: displayName,
-      estimator: await readEstimator(db, botId)
+      estimator: await readEstimator(botId)
     }
   }
 
   return null;
 }
 
-export const readScript = async (db,botId,partName) => {
+export const readScript = async (botId,partName) => {
   /* botId,partNameで指定されたscriptを読んで配列化して返す */
+  console.log("readScript")
 
   return await db.scripts.where('[botId+partName+id]')
     .between(
@@ -181,7 +187,7 @@ export const readScript = async (db,botId,partName) => {
 
 }
 
-export const saveCache = async (db,botId,partName,payload) => {
+export const saveCache = async (botId,partName,payload) => {
   /* payloadをcacheに書き込む */
   await db.cache.put({
     botId: botId,
@@ -191,18 +197,18 @@ export const saveCache = async (db,botId,partName,payload) => {
 
 }
 
-export const loadCache = async (db,botId,partName) => {
+export const loadCache = async (botId,partName) => {
   /* botId,partNameで指定されたcacheを読んで返す */
+  console.log("loadCache")
   return await db.cache
     .where({botId:botId,partName:partName})
     .first();
 }
 
-export const readEstimator = async (db,botId) => {
+export const readEstimator = async (botId) => {
   /*  main辞書から入力文字列評価用の NEGATIVE_LABEL, POSITIVE_LABELを
       取得し、辞書を生成。 
       mainのスキームは id,[botId+key] なのでコンパウンドキー */
-
   let negatives = await db.main
     .where('[botId+key]').equals([botId,'NEGATIVE_LABEL'])
     .toArray();

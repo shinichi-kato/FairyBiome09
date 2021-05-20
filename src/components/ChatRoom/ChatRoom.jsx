@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useMemo } from 'react';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import IconButton from '@material-ui/core/IconButton';
@@ -102,6 +102,13 @@ export default function ChatRoom(props) {
     setUserInput("");
     event.preventDefault();
   }
+  const currentLog = props.logs[ecosystem.site];
+
+  const memorizedLogViewer = useMemo(()=>
+    <LogViewer
+    log={currentLog}
+    />
+  ,[currentLog]);
 
   return (
     <Box
@@ -114,9 +121,7 @@ export default function ChatRoom(props) {
         className={classes.mainView}
         flexGrow={1}
       >
-        <LogViewer
-          log={props.logs[ecosystem.site]}
-        />
+        {memorizedLogViewer}
       </Box>
 
       <Box

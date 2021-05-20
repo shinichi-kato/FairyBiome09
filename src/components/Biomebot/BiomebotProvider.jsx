@@ -85,14 +85,12 @@
 
 import React, { useContext, createContext, useEffect, useReducer, useState } from 'react';
 import * as dbio from './dbio';
-import Dexie from "dexie";
 
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
 import { Message } from '@material-ui/icons';
 
 export const BiomebotContext = createContext();
 
-let db = null;
 let workers = {};
 
 // チャットボットデータの初期値
@@ -207,13 +205,10 @@ export default function BiomebotProvider(props) {
     let isCancelled = false;
 
     if (!isCancelled) {
-      if (!db) {
-        db = new Dexie('Biomebot');
-        dbio.initialize(db);
-      }
+      dbio.initialize();
 
       if (props.appState === 'authOk' && fb.uid) {
-        dbio.load(db, fb.uid)
+        dbio.load(fb.uid)
           .then(snap => {
             if (snap) {
               dispatch({ type: 'connect', snap: snap })
@@ -228,11 +223,11 @@ export default function BiomebotProvider(props) {
     }
 
     return ()=>{isCancelled = true}
-  }, [props.appState, db, fb.uid]);
+  }, [props.appState, fb.uid]);
 
   async function generate(obj) {
     // indexDBへの書き込み
-    await dbio.generate(db, obj, fb.uid);
+    await dbio.generate(obj, fb.uid);
 
     // stateへの書き込み
     dispatch({ type: 'connect', snap: obj });
@@ -256,6 +251,7 @@ export default function BiomebotProvider(props) {
 
     for (let partName of state.config.initialPartOrder) {
       if (!(partName in workers)) {
+        console.log("new Worker",partName)
         workers[partName] = new Worker(
           new URL('./engine/matrixize-worker.js', import.meta.url));
       }
@@ -263,14 +259,14 @@ export default function BiomebotProvider(props) {
 
       worker.onmessage = ({ data: { result } }) => {
         if (result) {
-          dbio.loadCache(db, state.botId, partName)
+          dbio.loadCache(state.botId, result.partName)
             .then(cache => {
               dispatch({ type: 'writeCache', cache: cache });
             })
         }
       };
 
-      worker.postMessage({ data: { db, botId:state.botId, partName } });
+      worker.postMessage({ data: { botId:state.botId, partName } });
     }
   }
 
