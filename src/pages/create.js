@@ -2,7 +2,7 @@ import React, {  useState} from "react";
 import { graphql, navigate } from "gatsby"
 
 import FirebaseProvider from '../components/Firebase/FirebaseProvider';
-import BiomebotProvider from '../components/Biomebot/BiomebotProvider';
+import BiomebotProvider from '../components/biomebot/BiomebotProvider';
 import CreateFairy from '../components/CreateFairy/CreateFairy';
 
 export const query = graphql`

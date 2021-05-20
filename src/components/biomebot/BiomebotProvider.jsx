@@ -84,14 +84,16 @@
 */
 
 import React, { useContext, createContext, useEffect, useReducer, useState } from 'react';
-import * as dbio from './dbio';
-
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
-import { Message } from '@material-ui/icons';
+import Message from '@material-ui/icons/Message';
+
+import { db } from './dbio';
+import matrixizeWorker from "./engine/matrixize.worker";
 
 export const BiomebotContext = createContext();
 
 let workers = {};
+
 
 // チャットボットデータの初期値
 const defaultSettings = {
@@ -181,7 +183,7 @@ export default function BiomebotProvider(props) {
   });
 
   const [postMessageToBot, setPostMessageToBot] = useState(
-    ()=> async (st,wk,msg,onmessage) => {
+    () => async (st, wk, msg, onmessage) => {
       /* postMessageToBot 関数
         st: state
         wk: work
@@ -197,7 +199,7 @@ export default function BiomebotProvider(props) {
 
       // setWork
 
-      await onmessage({message:reply})
+      await onmessage({ message: reply })
     }
   )
 
@@ -205,10 +207,8 @@ export default function BiomebotProvider(props) {
     let isCancelled = false;
 
     if (!isCancelled) {
-      dbio.initialize();
-
       if (props.appState === 'authOk' && fb.uid) {
-        dbio.load(fb.uid)
+        db.load(fb.uid)
           .then(snap => {
             if (snap) {
               dispatch({ type: 'connect', snap: snap })
@@ -222,12 +222,12 @@ export default function BiomebotProvider(props) {
       }
     }
 
-    return ()=>{isCancelled = true}
+    return () => { isCancelled = true }
   }, [props.appState, fb.uid]);
 
   async function generate(obj) {
     // indexDBへの書き込み
-    await dbio.generate(obj, fb.uid);
+    await db.generate(obj, fb.uid);
 
     // stateへの書き込み
     dispatch({ type: 'connect', snap: obj });
@@ -248,25 +248,25 @@ export default function BiomebotProvider(props) {
 
   async function deploy(site) {
     // 各パートのscriptを読んでcacheに変換
+    console.log("parts", state.config.initialPartOrder)
 
     for (let partName of state.config.initialPartOrder) {
       if (!(partName in workers)) {
-        console.log("new Worker",partName)
-        workers[partName] = new Worker(
-          new URL('./engine/matrixize-worker.js', import.meta.url));
+        console.log("new Worker", partName)
+        workers[partName] = new matrixizeWorker();
       }
       const worker = workers[partName];
 
       worker.onmessage = ({ data: { result } }) => {
         if (result) {
-          dbio.loadCache(state.botId, result.partName)
+          db.loadCache(state.botId, result.partName)
             .then(cache => {
               dispatch({ type: 'writeCache', cache: cache });
             })
         }
       };
 
-      worker.postMessage({ data: { botId:state.botId, partName } });
+      worker.postMessage({ botId: state.botId, partName });
     }
   }
 

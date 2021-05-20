@@ -11,7 +11,7 @@ import Button from '@material-ui/core/Button';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 
-import { BiomebotContext } from '../Biomebot/BiomebotProvider';
+import { BiomebotContext } from '../biomebot/BiomebotProvider';
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
 import { GridListTileBar } from "@material-ui/core";
 

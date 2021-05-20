@@ -3,7 +3,7 @@ import { navigate } from "gatsby";
 import Editor from '../components/Editor/Editor';
 
 import FirebaseProvider from "../components/Firebase/FirebaseProvider";
-import BiomebotProvider from '../components/Biomebot/BiomebotProvider';
+import BiomebotProvider from '../components/biomebot/BiomebotProvider';
 
 export default function EditPage({ location, data }) {
   /* 

@@ -11,7 +11,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBackIos';
 import RootEditor from './RootEditor';
 import ConfigEditor from './ConfigEditor';
 
-import { BiomebotContext } from '../Biomebot/BiomebotProvider';
+import { BiomebotContext } from '../biomebot/BiomebotProvider';
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
 
 const useStyles = makeStyles((theme) => ({

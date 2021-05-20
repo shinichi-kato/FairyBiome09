@@ -8,7 +8,7 @@ import SendIcon from '@material-ui/icons/Send';
 import UserPanel from '../Panel/UserPanel';
 import FairyPanel from '../Panel/FairyPanel';
 import LogViewer from './LogViewer';
-import { BiomebotContext } from '../Biomebot/BiomebotProvider';
+import { BiomebotContext } from '../biomebot/BiomebotProvider';
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
 import { EcosystemContext } from '../Ecosystem/EcosystemProvider';
 import { Message } from '../message';

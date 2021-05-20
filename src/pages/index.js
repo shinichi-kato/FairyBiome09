@@ -5,7 +5,7 @@ import Landing from '../components/Landing/Landing';
 import ChatRoom from '../components/ChatRoom/ChatRoom';
 import FirebaseProvider from '../components/Firebase/FirebaseProvider';
 import EcosystemProvider from '../components/Ecosystem/EcosystemProvider';
-import BiomebotProvider from '../components/Biomebot/BiomebotProvider';
+import BiomebotProvider from '../components/biomebot/BiomebotProvider';
 
 import Dexie from "dexie";
 
