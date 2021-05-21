@@ -68,7 +68,5 @@ exports.onCreateWebpackConfig = ({ actions: { replaceWebpackConfig }, getConfig 
       use: { loader: 'worker-loader' }
     })
   
-    config.output.globalObject = 'this'
-  
     replaceWebpackConfig(config)
   }

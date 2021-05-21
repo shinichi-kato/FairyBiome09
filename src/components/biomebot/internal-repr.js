@@ -17,6 +17,10 @@
   ["{_Mother_}","<{_Mother_}:が>","怒ら","れ","た"]
 */
 
+// workaround for fast refresh error (Gatsby v3)
+global.$RefreshReg$ = () => {};
+global.$RefreshSig$ = () => type => type;
+
 export function textToInternalRepr(nodes) {
   // テキストを分かち書きしたリストを受け取り、内部表現に変換
   return parse(nodes);

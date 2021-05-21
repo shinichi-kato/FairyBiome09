@@ -25,7 +25,12 @@ import {
 } from "mathjs";
 import { featuresDict } from '../../message.jsx';
 import { getHourRad, getDateRad } from '../../calendar-rad';
-import { textToInternalRepr } from '../internalRepr';
+import { textToInternalRepr } from '../internal-repr';
+import {TinySegmenter} from '../tinysegmenter';
+
+let segmenter = new TinySegmenter();
+
+
 
 onmessage = function (event) {
   const { botId, partName } = event.data;
@@ -41,7 +46,6 @@ onmessage = function (event) {
       inScript.push(script[i].in);
       outScript.push(script[i].out);
     }
-
     // indexの生成
     // 単語のsqueeze
     let index = [];
@@ -49,8 +53,9 @@ onmessage = function (event) {
     let vocab = {};
     let line;
 
-    for (let i = 0, l = script.length; i < l; i++) {
-      line = textToInternalRepr(script[i].text);
+    for (let i = 0, l = inScript.length; i < l; i++) {
+      console.log("s",inScript[i])
+      line = textToInternalRepr(segmenter.segment(inScript[i].text));
 
       squeezedDict.push(...line);
 
