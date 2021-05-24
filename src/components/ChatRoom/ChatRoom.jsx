@@ -80,7 +80,7 @@ export default function ChatRoom(props) {
 
   useEffect(()=>{
     bot.deploy(ecosystem.site);
-  },[bot, ecosystem.site]);
+  },[ecosystem.site]);
 
   function handleChangeUserInput(event) {
     setUserInput(event.target.value);

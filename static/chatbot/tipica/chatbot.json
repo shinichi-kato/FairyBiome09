@@ -41,13 +41,15 @@
     },
     "parts": {
         "greeting": {
-            "kind": "response",
+            "kind": "knowledge",
             "momentUpper": 5,
             "momentLower": 0,
             "precision": 0.6,
             "retention": 0.2,
             "scriptTimestamp": null,
             "cacheTimestamp": null,
+            "featureWights": null,
+            "featureBiases": null,
             "script": [
                 {
                     "in": [
@@ -86,6 +88,9 @@
             "precision": 0.5,
             "retention": 0.2,
             "scriptTimestamp": null,
+            "cacheTimestamp": null,
+            "featureWights": null,
+            "featureBiases": null,
             "script": [
                 {
                     "in": [

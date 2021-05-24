@@ -2,11 +2,21 @@
   Messageクラス
   ==================================
   発言や環境の変化など学習対象の情報を格納するクラス
+  Messageの内容はtext、タイムスタンプ、特徴量からなる。
+  textはユーザやチャットボットの発言かecosystemの変化などによって
+  生じるトリガー文字列で、トリガーは {TRIGGER_ENTER_xx}のように表す。
+  
+    テキスト
     text ::= string // メッセージ本体 
+
+    タイムスタンプ
+    hourRad :: = rad // 24hを2πに換算したラジアン
+    dateRad :: = rad // 1年を2πに換算したラジアン
+    
+    その他特徴量
     name ::= string // 発信者名 
     person ::= 'bot'|'user'|'other'|'system' // 発信者の種類
     mood ::= 'peace'|'cheer'|'down'|'absent'|'wake'|'sleepy'|'asleep' // 表情
-    trigger ::= string // ecosystemの変化など
     estimation ::= int // textが好意的なら＋、否定的ならーのスコア
     timestamp ::= Date() // メッセージが生成された時刻
     avatarPath ::= string // アバターのディレクトリ
@@ -39,10 +49,7 @@
   });
 
   ## ecosystemが生成する環境の変化
-  const msg = new Message("trigger",{
-    text: "天気が晴れになった", // 省略可
-    trigger: "{WEATHER_晴}",
-  })
+  const msg = new Message("trigger","{TRIGGER_WEATHER_晴}"})
 
   ## チャットボットの内的状態の変化
   const msg = new Message("trigger",{
@@ -54,6 +61,10 @@
     text: "シマリスが退室しました"
   }
 
+  # chatbot.jsonへの格納方法
+
+  chatbot.jsonに格納する際に生のオブジェクトだと煩雑なので、以下の表記に変換する
+  text\ttimestamp文字列,特徴量,特徴量, ... ,
 */
 
 import { getHourRad, getDateRad } from "./calendar-rad";
@@ -71,88 +82,146 @@ export const featuresDict = {
   'system': 6,
   //mood
   'peace': 7,
-  'cheer':8,
-  'down':9,
-  'wake':10,
-  'absent':11,
-  'sleepy':12,
-  'sleep':13,
+  'cheer': 8,
+  'down': 9,
+  'wake': 10,
+  'absent': 11,
+  'sleepy': 12,
+  'sleep': 13,
   // site
   'room': 14,
   'forest': 15,
   'park': 16,
   // weather
-  '台風':17,
-  '大雨':18,
-  '雨':19,
-  '曇':20,
-  '晴':21,
-  '快晴':22,
-  '夏晴':23,
-  '吹雪':24,
-  '雪':25,
+  '台風': 17,
+  '大雨': 18,
+  '雨': 19,
+  '曇': 20,
+  '晴': 21,
+  '快晴': 22,
+  '夏晴': 23,
+  '吹雪': 24,
+  '雪': 25,
   // season
-  '春':26,
-  '夏':27,
-  '秋':28,
-  '冬':29,
+  '春': 26,
+  '夏': 27,
+  '秋': 28,
+  '冬': 29,
   //dayPart
-  '昼':30,
-  '夜':31,
+  '昼': 30,
+  '夜': 31,
 
 };
 
+const indexToFeature = [
+  // person
+  'bot',
+  'user',
+  'other',
+  'system',
+  //mood
+  'peace',
+  'cheer',
+  'down',
+  'wake',
+  'absent',
+  'sleepy',
+  'sleep',
+  // site
+  'room',
+  'forest',
+  'park',
+  // weather
+  '台風',
+  '大雨',
+  '雨',
+  '曇',
+  '晴',
+  '快晴',
+  '夏晴',
+  '吹雪',
+  '雪',
+  // season
+  '春',
+  '夏',
+  '秋',
+  '冬',
+  //dayPart
+  '昼',
+  '夜',
+];
+
 export class Message {
+  // Messageクラスの様々な生成法
+  // msg = new Message('speech',{text:"こんにちは",name:"アレス", ...})
+  // msg = new Message('trigger','{TRIGGER_ENTER_SLEEP}');
+  // msg = new Message('system','{})
+  // msg = new Message('こんにちは\tbot,room,台風') 
+
   constructor(mode, data) {
-    switch (mode) {
-      case 'speech': {
-        this.text = data.text;
-        this.name = data.name;
-        this.person = data.person;
-        this.mood = data.mood || "peace";
-        this.trigger = null;
-        this.estimation = 0;
-        this.timestamp = new Date();
-        this.avatarPath = data.avatarPath;
-        this.site = data.site;
-        this.weather = data.ecosystem?.weather || "";
-        this.season = data.ecosystem?.season || "";
-        this.dayPart = data.ecosystem?.dayPart || "";
-        break;
+
+    this.features = zeros(featuresDict.length);
+    this.estimation = 0;
+
+    if (data === undefined) {
+      // 第一引数だけ与えられた場合は辞書から取得した文字列をMessageに復元。
+      // 辞書にはタイムスタンプは記載せずseasonやdayPartに射影した情報を利用する。
+      const data = mode.split('\t');
+      this.text = data[0];
+      this.name = ""
+      this.timestamp = null;
+      this.avatarPath = "";
+
+      if (data.length > 1) {
+        const feats = data[1].split(',');
+        for (let feat of feats) {
+          if (feat in featuresDict) {
+            this.features[featuresDict[feat]] = 1;
+          }
+        }
       }
+      
+    } else {
+      switch (mode) {
+        case 'speech': {
+          this.text = data.text;
+          this.name = data.name;
+          this.timestamp = new Date();
+          this.avatarPath = data.avatarPath;
 
-      case 'trigger': {
-        this.text = data.text || "";
-        this.name = null;
-        this.person = null;
-        this.mood = null;
-        this.trigger = `${data.trigger}`;
-        this.site = data.site;
-        this.estimate = 0;
-        this.timestamp = new Date();
-        this.weather = data.ecosystem?.weather || "";
-        this.season = data.ecosystem?.season || "";
-        this.dayPart = data.ecosystem?.dayPart || "";
+          this.setFeature(data.person);
+          this.setFeature(data.mood || "peace");
+          this.setFeature(data.site);
+          this.setFeature(data.ecosystem?.weather);
+          this.setFeature(data.ecosystem?.dayPart);
+          break;
+        }
 
-        break;
-      }
+        case 'trigger': {
+          this.text = data;
+          this.name = null;
+          this.timestamp = new Date();
+          this.avatarPath = "";
 
-      default:  {
-        this.text = data.text;
-        this.name = mode;
-        this.person = null;
-        this.mood = null;
-        this.trigger = null;
-        this.site = data.site;
-        this.estimate = 0;
-        this.timestamp = new Date();
-        this.weather = "";
-        this.season = "";
-        this.dayPart = "";
-        break;
+          this.setFeature(data.person);
+          this.setFeature(data.mood);
+          this.setFeature(data.site);
+          this.setFeature(data.ecosystem?.weather);
+          this.setFeature(data.ecosystem?.dayPart);
+
+          break;
+        }
+
+        default: {
+          this.text = data.text;
+          this.name = mode;
+          this.timestamp = new Date();
+          this.avatarPath = "";
+
+          break;
+        }
       }
     }
-
   }
 
   get hourRad() {
@@ -163,20 +232,33 @@ export class Message {
     return getDateRad(this.timestamp);
   }
 
-  get featVector() {
-    let fv = Array(featuresDict).fill(0);
-    for(const x of [
-      this.person,
-      this.mood,
-      this.site,
-      this.weather,
-      this.season,
-      this.dayPart
-    ]) {
-      if(x in featuresDict){
-        fv[featuresDict[x]] = 1;
-      }
+  getFeature(start,end){
+    const pos = this.features.indexOf(1,start);
+    if(start<=pos && pos<=end){
+      return indexToFeature[pos]
     }
-    return fv;
+    return "";
   }
+
+  setFeature(feat){
+    if (feat){
+      this.features[featuresDict[feat]] = 1;
+    }
+  }
+
+  get person() { return this.getFeature(3,6); }
+  get mood(){ return this.getFeature(7,13); }
+  get site(){ return this.getFeature(14,16); }
+  get weather(){ return this.getFeature(17,25); }
+  get season(){ return this.getFeature(26,29); }
+  get dayPart(){ return this.getFeature(30,31); }
+
+}
+
+function zeros(size){
+  let a = Array(size);
+  for(let i=0;i<size;i++){
+    a[i] = 0;
+  }
+  return a;
 }

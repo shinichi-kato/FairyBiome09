@@ -2,40 +2,55 @@
   スクリプトをmatrixに変換
   botId,partNameで指定されたスクリプトをdbから読み込む。
   スクリプトは
-  [{in:[],out:[],prev,next}...]
-  という形式で与えられ、
+  [{in:[inputs],out:[],prev,next}...]
   という形式で与えられ、inputsは文字列またはmessage型データが有効である。
   Message型データは以下のようにコーディングする
   Message {
-    text: 内部表現が渡され、それをベクトル化
+    text: 内部表現化
     person, mood, site, weather, season, dayPart : one-hotベクター化
   }
-  
+
+  textは行ごとに正規化されたtfidf行列に変換する。
+  retrieve関数ではMessage.textに対して類似度(内積)を計算し、得られた1次元のスコアベクターに
+  特徴量行列をconcatする。
+  得られた全体のスコア行列について score = score*weights + biases という重み付け計算を行って
+  その中でscoreが最大のものを選出する。
+
   この関数は以下の計算結果を返す
   {
     index:　スクリプトの
   }
 */
 
-import { db } from '../dbio';
-
 import {
   zeros, divide, apply, sum,
   diag, multiply, isPositive, map, norm
 } from "mathjs";
+
+import { db } from '../dbio';
+import { Message } from '../../message';
 import { featuresDict } from '../../message.jsx';
 import { getHourRad, getDateRad } from '../../calendar-rad';
 import { textToInternalRepr } from '../internal-repr';
-import {TinySegmenter} from '../tinysegmenter';
+import { TinySegmenter } from '../tinysegmenter';
 
 let segmenter = new TinySegmenter();
 
 
+function appendValidNode(array, node) {
+  if (typeof node === 'string') {
+    array.push([new Message(node)]);
+  }
+  else if (Array.isArray(node) && node.length !== 0) {
+    array.push(...node.map(n => new Message(n)));
+  }
+  return;
+}
 
 onmessage = function (event) {
   const { botId, partName } = event.data;
 
-  console.log("matrixize-", botId, partName);
+  console.log("matrixize-start: ", botId, partName);
   (async () => {
     const script = await db.readScript(botId, partName);
     // inスクリプトとoutスクリプトに分割
@@ -43,8 +58,12 @@ onmessage = function (event) {
     let outScript = [];
 
     for (let i = 0, len = script.length; i < len; i++) {
-      inScript.push(script[i].in);
-      outScript.push(script[i].out);
+      if ('in' in script[i] && 'out' in script[i]) {
+        appendValidNode(inScript, script[i].in);
+        appendValidNode(outScript, script[i].out);
+      }
+
+
     }
     // indexの生成
     // 単語のsqueeze
@@ -54,9 +73,7 @@ onmessage = function (event) {
     let line;
 
     for (let i = 0, l = inScript.length; i < l; i++) {
-      console.log("s",inScript[i])
       line = textToInternalRepr(segmenter.segment(inScript[i].text));
-
       squeezedDict.push(...line);
 
       for (let j = 0, m = line.length; j < m; j++) {
@@ -66,7 +83,6 @@ onmessage = function (event) {
         }
       }
     }
-
     // vocabの生成
 
     vocab = Object.keys(vocab)
@@ -113,34 +129,14 @@ onmessage = function (event) {
     /* 
       messageのうち、
       person, mood, site, weather, season, dayPart,
-      は one-hotベクターにする。dateRad,hourRadはradian値にする
-      これらをまとめてfeatureVector (fv)と呼ぶ。
+      は one-hotベクターにする。これらをまとめてfeatureVector (fv)と呼ぶ。
       
     */
 
     //fv - featureVectorの生成
-    let fv = zeros(squeezedDict.length, featuresDict.length);
+    let fv = zeros(squeezedDict.length, Object.keys(featuresDict).length);
     for (let i = 0, l = script.length; i < l; i++) {
-      const node = script[i];
-
-      for (const x of [
-        node.person,
-        node.mood,
-        node.site,
-        node.weather,
-        node.season,
-        node.dayPart
-      ]) {
-        if (x in featuresDict) {
-          fv[i][featuresDict[x]] = 1;
-        }
-      }
-
-      const x = node.timestamp;
-      if (x) {
-        fv[i][featuresDict['dateRad']] = getDateRad(x);
-        fv[i][featuresDict['hourRad']] = getHourRad(x);
-      }
+      fv[i] = 
     }
 
     // 書き込み
@@ -157,6 +153,8 @@ onmessage = function (event) {
       });
 
   })();
+
+  console.log("matrixize-end: ", botId, partName)
 
   postMessage({
     onmessage: true,

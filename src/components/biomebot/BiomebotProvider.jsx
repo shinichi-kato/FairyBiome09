@@ -81,14 +81,42 @@
   partOrderにしたがって評価される。トリガにはmoodの変化に対応する{ENTER_PEACE}
   などや入室{ENTER_ROOM}など、天候の変化{ENTER_晴}、{EXIT_雨}などがある。
 
+
+  # 辞書の検索
+  ユーザ、チャットボット、システム間の情報はすべてMessage型インスタンスを介して
+  行っている。Messageにはテキスト、タイムスタンプ、ユーザ名の他に様々なfeatureが
+  格納されており、テキスト部分はtfidfによりcos類似度計算を行ってスコアとする。
+  その他のfeatureはいずれもone-hotベクターであり、weights、biasesで与えられる
+  重み付けを行ってスコアを計算し、text、fvの合計を全体のスコアとする。
+  wieghtsとbiasesの初期値はchatbot.jsonに格納する。なお、指定しない場合は
+  weights=1,biases=0とする。
+
+  ## [将来]機械学習
+  weightsとbiasesの値は機械学習により最適化が可能である。
+  
+  
+
+
 */
 
-import React, { useContext, createContext, useEffect, useReducer, useState } from 'react';
+import React, {
+  useContext,
+  createContext,
+  useEffect,
+  useReducer,
+  useState
+} from 'react';
+import { 
+  ones,
+  zeros,
+  reviver
+} from "mathjs";
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
-import Message from '@material-ui/icons/Message';
+import Message, {featuresDict} from '@material-ui/icons/Message';
 
 import { db } from './dbio';
 import matrixizeWorker from "./engine/matrixize.worker";
+import * as room from "./engine/room";
 
 export const BiomebotContext = createContext();
 
@@ -134,10 +162,6 @@ const defaultSettings = {
     futurePostings: []
   },
 
-  // 
-  part: {
-
-  },
 }
 
 // 更新頻度が低いデータ
@@ -146,6 +170,7 @@ const initialState = {
   displayName: "",
   config: {},
   parts: {},
+  cache: {},
   estimator: {
     positive: [],
     negative: [],
@@ -160,12 +185,38 @@ function reducer(state, action) {
 
     case 'connect': {
       const snap = action.snap;
+      
+      // featureWeights,featureBiasesがなければ
+      // featureWeights=[1,0.2,0.2...],featureBiases=0で初期化
+      for(let partName in snap.parts){
+        if(!snap.parts[partName].featureWeights){
+          let newWeights = ones(featuresDict.length) * 0.2;
+          newWeights[1] = 1; // ※先頭は1番
+          snap.parts[partName].featureWeights =　newWeights; 
+        }
+        if(!snap.parts[partName].featureBiases){
+          snap.parts[partName].featureBiases = zeros(featuresDict.length);
+        }
+      }
+
       return {
         botId: snap.botId,
         displayName: snap.displayName,
         config: snap.config,
         parts: snap.parts,
         estimator: snap.estimator
+      }
+    }
+
+    case 'readCache': {
+      const cache = action.cache;
+      const partName = action.partName;
+      return {
+        ...state,
+        cache: {
+          ...state.cache,
+          [partName]: cache
+        }
       }
     }
 
@@ -182,13 +233,14 @@ export default function BiomebotProvider(props) {
     work: defaultSettings.work
   });
 
-  const [postMessageToBot, setPostMessageToBot] = useState(
-    () => async (st, wk, msg, onmessage) => {
+  const [execute, setExecute] = useState(
+    () => async (st, wk, msg, sendMessage) => {
       /* postMessageToBot 関数
         st: state
         wk: work
         msg: Message型データ
-        onmessage: ({message}) => チャットボットからのメッセージを発信するのに使用
+        sendMessage: ({message}) => {}
+          チャットボットからのメッセージを発信するcallback関数
 
         初期状態はecho
       */
@@ -199,9 +251,19 @@ export default function BiomebotProvider(props) {
 
       // setWork
 
-      await onmessage({ message: reply })
+      // await sendMessage({ message: reply })
     }
   )
+
+  function handleExecute(message){
+    execute(state,work,message,sendMessageFromBot)
+      .then(workSnap=>{
+        setWork(prev=>({
+          prev,
+          ...workSnap
+        }));
+      })
+  }
 
   useEffect(() => {
     let isCancelled = false;
@@ -246,34 +308,48 @@ export default function BiomebotProvider(props) {
       }));
   }
 
-  async function deploy(site) {
-    // 各パートのscriptを読んでcacheに変換
-    console.log("parts", state.config.initialPartOrder)
-
+  async function deploy(site,handleRecieveMessageFromBot) {
+  
     for (let partName of state.config.initialPartOrder) {
+
+      // 各パートのscriptを読んでcacheに変換
+      // webWorkerが別スレッドで処理し、結果をstateに読み込む
       if (!(partName in workers)) {
-        console.log("new Worker", partName)
         workers[partName] = new matrixizeWorker();
       }
       const worker = workers[partName];
 
-      worker.onmessage = ({ data: { result } }) => {
+      worker.onmessage = function (event) {
+        const result = event.data;
         if (result) {
           db.loadCache(state.botId, result.partName)
             .then(cache => {
-              dispatch({ type: 'writeCache', cache: cache });
+              dispatch({ 
+                type: 'readCache',
+                partName: result.partName,
+                cache: cache
+              });
             })
         }
       };
 
       worker.postMessage({ botId: state.botId, partName });
+
+    }
+
+    // siteごとのモジュール切り替え
+    switch(site){
+      case 'room': 
+        setExecute(()=>async (st,wk,msg,sm) => room.execute);
     }
   }
+
+
 
   return (
     <BiomebotContext.Provider
       value={{
-        postMessageToBot: postMessageToBot,
+        submit: handleSubmit,
         generate: generate,
         deploy: deploy,
         state: state,
