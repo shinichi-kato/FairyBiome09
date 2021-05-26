@@ -1,7 +1,7 @@
 /* 類似度計算
   retrieve関数ではMessage.textに対して類似度(内積)を計算し、得られた1次元のスコアベクターに
   特徴量行列をconcatする。
-  得られた全体のスコア行列について score = score*weights + biases という重み付け計算を行って
+  得られた全体のスコア行列について score = score*weights という重み付け計算を行って
   その中でscoreが最大のものを選出する。
 
 */
@@ -60,27 +60,28 @@ export function retrieve(message, cache, coeffs) {
   //
   // messageに含まれるその他の特徴量の類似度
   //
-  // 特徴量のone-hot vectorとする行列にたいして weights*fv + biasesで重み付け
-  // 計算を行って
+  // 特徴量のone-hot vectorとする行列に対して入力メッセージとの内積を取り、
+  // 重み付けした後合計 
 
   let fmtx = apply(cache.fv, 1, x=>dot(x,message.features)).valueOf();
-
-  const tfv = apply(cache.fv,1,x=>dotMultiply(x,coeffs.weights) + coeffs.biases);
+  let totalScore = concat(textScore,fmtx)
+  let totalScore = apply(totalScore,1,x=>dotMultiply(x,coeffs.weights));
+  totalScore = apply(totalScore,1,x=>sum(x));
   
-  const score = apply(tfv)
-  /*
+
+  
   // 最も類似度が高かった行のindexとその類似度を返す。
   // 同点一位が複数あった場合はランダムに一つを選ぶ
-  const max = Math.max(...s);
+  const max = Math.max(...totalScore);
 
   let cand = [];
-  for (let i = 0, l = s.length; i < l; i++) {
-    let score = s[i];
+  for (let i = 0, l = TotalScore.length; i < l; i++) {
+    let score = TotalScore[i];
     if (score === max) {
-      cand.push(inDict.index[i]);
+      cand.push(inScript.index[i]);
     }
   }
-  */
+  
   return {
     score: max,
     index: cand[randomInt(cand.length)]

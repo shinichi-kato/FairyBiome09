@@ -53,7 +53,7 @@ const WEATHER_ICONS = {
   '雪': 'wi-snow.svg',
 }
 
-const SUNRAISE = {
+const sunrise = {
   summer: {
     dateRad: getDateRad(6, 15),
     hourRad: getHourRad(5, 0),
@@ -87,7 +87,12 @@ export default function EcosystemProvider(props) {
 
     ** 夜/昼の変化 dayPart
     日本の平均的な日没・日の出を大雑把に近似した時刻を用いて
-    夜／昼を切り替える。夜／昼により背景画像は切り替える
+    昼夜を切り替える。朝/昼/夕/夜により背景画像は切り替える。 
+      morning '朝', // 日の出前59分間から日の出240分まで
+      noon '昼', // 日の出241分後〜日没前120分まで
+      evening '夕', // 日没前121分〜日没後60分
+      night '夜', // 日没後61分〜日の出前60分まで
+    
 
     ** 天気 weather
     季節と乱数を用いて天気を生成する。
@@ -156,11 +161,11 @@ export default function EcosystemProvider(props) {
   }, config.updateInterval);
 
   function nightOrDay() {
-    /* nightOrDay() ... 現時刻が夜なら"night",現時刻が昼なら"day"を返す。
+    /* nightOrDay() ... 現時点のmorning/noon/evening/ninghtを返す。
       
       年間を通して日の出、日没の時間は周期的に変化する。これをsinカーブで近似して
       仮想的な昼夜を生成する。
-      日の出はSUNRAISE.summer.hourRadを最小値とした一年周期のサインカーブ、
+      日の出はsunrise.summer.hourRadを最小値とした一年周期のサインカーブ、
       日没はSUNSET.winter.hourRadを最小値とした一年周期のサインカーブとする。
     */
     let l, e, grad, intc;
@@ -170,15 +175,33 @@ export default function EcosystemProvider(props) {
     e = SUNSET.summer.getHourRad;
     grad = (l - e) / 2;
     intc = (e + l) / 2;
-    let sunset = grad * Math.cos(now + SUNSET.winter.dateRad) + intc;
+    const sunset = grad * Math.cos(now + SUNSET.winter.dateRad) + intc;
 
-    l = SUNRAISE.summer.getHourRad;
-    e = SUNRAISE.winter.getHourRad;
+    l = sunrise.summer.getHourRad;
+    e = sunrise.winter.getHourRad;
     grad = (l - e) / 2;
     intc = (e + l) / 2;
-    let sunraise = grad * Math.cos(now + SUNRAISE.summer.dateRad) + intc;
+    const sunrise = grad * Math.cos(now + sunrise.summer.dateRad) + intc;
+    
+    // morning '朝', // 日の出前59分間から日の出240分まで
+    // noon '昼', // 日の出241分後〜日没前120分まで
+    // evening '夕', // 日没前121分〜日没後60分
+    // night '夜', // 日没後61分〜日の出前60分まで
 
-    return (sunraise < now && now < sunset) ? "day" : "night";
+    // 1hをhourRadに換算すると = 1 / 24 * 2 * Math.PI = 1 / 12 * Math.PI 
+    
+    const morningStart = sunrise - Math.PI / 12;
+    const morningEnd = sunrise + Math.PI / 3;
+    const noonEnd = sunset - Math.PI / 6;
+    const eveningEnd = sunset + Math.PI / 12;
+    // const nightStart = eveningEnd;
+    // const nightEnd = morningStart; 
+
+    if(now < morningStart) return "night";
+    if(now < morningEnd) return "morning";
+    if(now < noonEnd) return "noon";
+    if(now < eveningEnd) return "evening";
+    return "night";
 
   }
 

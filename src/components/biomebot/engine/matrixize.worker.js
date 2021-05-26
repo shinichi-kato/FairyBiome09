@@ -24,13 +24,11 @@
 
 import {
   zeros, divide, apply, sum,
-  diag, multiply, isPositive, map, norm
+  diag, multiply, isPositive, map, norm, matrixFromColumns
 } from "mathjs";
 
 import { db } from '../dbio';
 import { Message } from '../../message';
-import { featuresDict } from '../../message.jsx';
-import { getHourRad, getDateRad } from '../../calendar-rad';
 import { textToInternalRepr } from '../internal-repr';
 import { TinySegmenter } from '../tinysegmenter';
 
@@ -133,11 +131,7 @@ onmessage = function (event) {
       
     */
 
-    //fv - featureVectorの生成
-    let fv = zeros(squeezedDict.length, Object.keys(featuresDict).length);
-    for (let i = 0, l = script.length; i < l; i++) {
-      fv[i] = 
-    }
+    fv = matrixFromColumns(inScript.map(i=>i.features));
 
     // 書き込み
 

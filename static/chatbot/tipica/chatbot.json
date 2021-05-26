@@ -49,7 +49,6 @@
             "scriptTimestamp": null,
             "cacheTimestamp": null,
             "featureWights": null,
-            "featureBiases": null,
             "script": [
                 {
                     "in": [
@@ -90,7 +89,6 @@
             "scriptTimestamp": null,
             "cacheTimestamp": null,
             "featureWights": null,
-            "featureBiases": null,
             "script": [
                 {
                     "in": [

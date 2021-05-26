@@ -23,7 +23,7 @@
     site ::= 'room'|'forest'|'park' // 現在地
     weather ::= '台風'|'大雨'|'雨'|'曇'|'晴'|'快晴'|'夏晴'|'吹雪'|'雪'| 
     season ::= '春'|'夏'|'秋'|'冬'
-    dayPart ::= '昼'|'夜'
+    dayPart ::= '朝'|'昼'|'夕'|'夜'
 
 
   使用法
@@ -69,7 +69,7 @@
 
 import { getHourRad, getDateRad } from "./calendar-rad";
 
-export const featuresDict = {
+export const featureDict = {
   // text
   'text': 0,
   // timestamp
@@ -108,12 +108,18 @@ export const featuresDict = {
   '秋': 28,
   '冬': 29,
   //dayPart
-  '昼': 30,
-  '夜': 31,
-
+  'morning': 30,
+  '朝':30,
+  'noon': 31,
+  '昼': 31,
+  'evening': 32,
+  '夕': 32,
+  'night': 33,
+  '夜': 33,
 };
 
-const indexToFeature = [
+export const featureIndex = [
+  'text',
   // person
   'bot',
   'user',
@@ -147,8 +153,10 @@ const indexToFeature = [
   '秋',
   '冬',
   //dayPart
-  '昼',
-  '夜',
+  'morning', // 日の出から240分間
+  'noon', // 日の出240分後〜日没まで
+  'evening', // 日没前120分〜日没後120分
+  'night', // 日没後121分〜日の出まで
 ];
 
 export class Message {
@@ -156,11 +164,11 @@ export class Message {
   // msg = new Message('speech',{text:"こんにちは",name:"アレス", ...})
   // msg = new Message('trigger','{TRIGGER_ENTER_SLEEP}');
   // msg = new Message('system','{})
-  // msg = new Message('こんにちは\tbot,room,台風') 
+  // msg = new Message('こんにちは\tbot room 台風') 
 
   constructor(mode, data) {
 
-    this.features = zeros(featuresDict.length);
+    this.features = zeros(featureIndex.length);
     this.estimation = 0;
 
     if (data === undefined) {
@@ -173,10 +181,10 @@ export class Message {
       this.avatarPath = "";
 
       if (data.length > 1) {
-        const feats = data[1].split(',');
+        const feats = data[1].split(' ');
         for (let feat of feats) {
-          if (feat in featuresDict) {
-            this.features[featuresDict[feat]] = 1;
+          if (feat in featureDict) {
+            this.features[featureDict[feat]] = 1;
           }
         }
       }
@@ -242,7 +250,7 @@ export class Message {
 
   setFeature(feat){
     if (feat){
-      this.features[featuresDict[feat]] = 1;
+      this.features[featureDict[feat]] = 1;
     }
   }
 

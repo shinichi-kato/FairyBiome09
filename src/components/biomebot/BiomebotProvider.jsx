@@ -84,15 +84,22 @@
 
   # 辞書の検索
   ユーザ、チャットボット、システム間の情報はすべてMessage型インスタンスを介して
-  行っている。Messageにはテキスト、タイムスタンプ、ユーザ名の他に様々なfeatureが
-  格納されており、テキスト部分はtfidfによりcos類似度計算を行ってスコアとする。
-  その他のfeatureはいずれもone-hotベクターであり、weights、biasesで与えられる
-  重み付けを行ってスコアを計算し、text、fvの合計を全体のスコアとする。
-  wieghtsとbiasesの初期値はchatbot.jsonに格納する。なお、指定しない場合は
-  weights=1,biases=0とする。
+  行っており、Messageにはテキスト、タイムスタンプ、ユーザ名の他に様々なfeatureが
+  格納されている。
+  テキスト部分は正規化したtfidfにより0~1の類似度が計算され、その他のfeatureはone-hot
+  ベクターであり、ユーザ入力のfeatureとの内積が計算される。
+  得られたスコアscoreはscore[0]がテキストの類似度、score[1...]がfeatureの内積である。
+  すべて0~1の値が格納されている。これに対して重みWeightsを乗じて合計したものを
+  全体のスコアとし、値は0〜1の範囲になるものとする。
+
+  weightsのデフォルト値は、テキストがその他特徴量(6種)の2倍の重みを持つようにする。そのため
+  text = 2/8
+  person,mood,site,weather,season,daypart = 1/8
+  という初期値を与える。
+  
 
   ## [将来]機械学習
-  weightsとbiasesの値は機械学習により最適化が可能である。
+  weightsの値は機械学習により最適化が可能である。
   
   
 
@@ -109,10 +116,10 @@ import React, {
 import { 
   ones,
   zeros,
-  reviver
+  reviver,
 } from "mathjs";
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
-import Message, {featuresDict} from '@material-ui/icons/Message';
+import Message from '@material-ui/icons/Message';
 
 import { db } from './dbio';
 import matrixizeWorker from "./engine/matrixize.worker";
@@ -161,7 +168,19 @@ const defaultSettings = {
     queue: [],
     futurePostings: []
   },
-
+  part: {
+    "untitledPart" :{
+      kind: "knowledge",
+      momentUpper: 5,
+      momentLower: 0,
+      precision: 0.6,
+      retention: 0.2,
+      scriptTimestamp: null,
+      cacheTimestamp: null,
+      featureWeights: null,
+      script: []   
+    }
+  }
 }
 
 // 更新頻度が低いデータ
@@ -186,16 +205,16 @@ function reducer(state, action) {
     case 'connect': {
       const snap = action.snap;
       
-      // featureWeights,featureBiasesがなければ
-      // featureWeights=[1,0.2,0.2...],featureBiases=0で初期化
+      // featureWeightsがなければ
+      // featureWeights=[0.2,0.2...],featureBiases=0で初期化
       for(let partName in snap.parts){
         if(!snap.parts[partName].featureWeights){
-          let newWeights = ones(featuresDict.length) * 0.2;
-          newWeights[1] = 1; // ※先頭は1番
+          let newWeights = ones(featureIndex.length) * (1 /8);
+          newWeights[1] = 2/8 ; // ※先頭は1番
           snap.parts[partName].featureWeights =　newWeights; 
         }
         if(!snap.parts[partName].featureBiases){
-          snap.parts[partName].featureBiases = zeros(featuresDict.length);
+          snap.parts[partName].featureBiases = zeros(featureIndex.length);
         }
       }
 
