@@ -116,7 +116,6 @@ import React, {
 import { 
   ones,
   zeros,
-  reviver,
 } from "mathjs";
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
 import Message from '@material-ui/icons/Message';
@@ -165,8 +164,8 @@ const defaultSettings = {
     mentalLevel: 100,
     moment: 0,
     mood: "peace",
-    queue: [],
-    futurePostings: []
+    queue: [], // 複数にわけた出力を保持
+    futurePostings: [], // 
   },
   part: {
     "untitledPart" :{
@@ -209,8 +208,8 @@ function reducer(state, action) {
       // featureWeights=[0.2,0.2...],featureBiases=0で初期化
       for(let partName in snap.parts){
         if(!snap.parts[partName].featureWeights){
-          let newWeights = ones(featureIndex.length) * (1 /8);
-          newWeights[1] = 2/8 ; // ※先頭は1番
+          let newWeights = ones(featureIndex.length) * (1 /10);
+          newWeights[1] = 4/10 ; // ※先頭は1番
           snap.parts[partName].featureWeights =　newWeights; 
         }
         if(!snap.parts[partName].featureBiases){
@@ -222,6 +221,7 @@ function reducer(state, action) {
         botId: snap.botId,
         displayName: snap.displayName,
         config: snap.config,
+        main: snap.main,
         parts: snap.parts,
         estimator: snap.estimator
       }

@@ -8,13 +8,19 @@
 
 */
 
+import { Message } from "@material-ui/icons";
 import { randomInt } from "mathjs";
 
-export function execute(work){
-  // 起動チェック
-  // moment値+0~9のランダム値がmomentUpperとmomentLowerの
-  // 間に入っていたらOK
+export function reply(state,work,message){
+  // 返答生成
   
 
-  // 辞書を検索し、scoreが　precisionよりも高ければ採用
+  return {}
+}
+
+export function render(message){
+  // triggerやコマンドを展開して返す
+  
+  let reply = new Message();
+  return reply
 }

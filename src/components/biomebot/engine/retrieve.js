@@ -61,7 +61,7 @@ export function retrieve(message, cache, coeffs) {
   // messageに含まれるその他の特徴量の類似度
   //
   // 特徴量のone-hot vectorとする行列に対して入力メッセージとの内積を取り、
-  // 重み付けした後合計 
+  // 重み付けした後合計。重みの合計値は１なのでtotalScoreの最大値も1
 
   let fmtx = apply(cache.fv, 1, x=>dot(x,message.features)).valueOf();
   let totalScore = concat(textScore,fmtx)
