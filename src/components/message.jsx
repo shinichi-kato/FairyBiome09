@@ -243,7 +243,7 @@ export class Message {
   getFeature(start,end){
     const pos = this.features.indexOf(1,start);
     if(start<=pos && pos<=end){
-      return indexToFeature[pos]
+      return featureIndex[pos]
     }
     return "";
   }

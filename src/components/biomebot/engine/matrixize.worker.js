@@ -20,6 +20,12 @@
   {
     index:　スクリプトの
   }
+
+  ## タグの処理
+  {ENTER_MOOD_PEACE}のように /^{[a-zA-Z][a-zA-Z0-9_]*}$/ に一致するin文字列を
+  見つけた場合、それはtfidfで処理せずtagDictを用いる。現バージョンでは該当した行の
+  tfidfはすべて0とする。
+
 */
 
 import {
@@ -32,17 +38,21 @@ import { Message } from '../../message';
 import { textToInternalRepr } from '../internal-repr';
 import { TinySegmenter } from '../tinysegmenter';
 
+const RE_TAG = /^{[a-zA-Z][a-zA-Z0-9_]*}$/;
+
 let segmenter = new TinySegmenter();
 
 
-function appendValidNode(array, node) {
+
+
+function getValidNode(node) {
   if (typeof node === 'string') {
-    array.push([new Message(node)]);
+    return [new Message(node)];
   }
   else if (Array.isArray(node) && node.length !== 0) {
-    array.push(...node.map(n => new Message(n)));
+    return node.map(n => new Message(n));
   }
-  return;
+  return [];
 }
 
 onmessage = function (event) {
@@ -54,14 +64,18 @@ onmessage = function (event) {
     // inスクリプトとoutスクリプトに分割
     let inScript = [];
     let outScript = [];
+    let tagDict = {};
+    let tags;
 
     for (let i = 0, len = script.length; i < len; i++) {
       if ('in' in script[i] && 'out' in script[i]) {
-        appendValidNode(inScript, script[i].in);
-        appendValidNode(outScript, script[i].out);
+        if((tags = RE_TAG.exec(script[i].in)) !== null){
+          tagDict[tags[0]]=getValidNode(script[i].out);
+        }else{
+          inScript.push(...getValidNode(script[i].in));
+          outScript.push(...getValidNode(script[i].out));
+        }
       }
-
-
     }
     // indexの生成
     // 単語のsqueeze
@@ -71,6 +85,7 @@ onmessage = function (event) {
     let line;
 
     for (let i = 0, l = inScript.length; i < l; i++) {
+      // 
       line = textToInternalRepr(segmenter.segment(inScript[i].text));
       squeezedDict.push(...line);
 
@@ -131,8 +146,9 @@ onmessage = function (event) {
       
     */
 
-    fv = matrixFromColumns(inScript.map(i=>i.features));
+    let fv = matrixFromColumns(inScript.map(i=>i.features));
 
+    
     // 書き込み
 
     await db.saveCache(botId, partName,
@@ -144,6 +160,7 @@ onmessage = function (event) {
         tfidf: JSON.stringify(tfidf),
         index: index,
         fv: fv,
+        tagDict: tagDict,
       });
 
   })();

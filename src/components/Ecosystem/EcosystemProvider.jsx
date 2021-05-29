@@ -53,7 +53,7 @@ const WEATHER_ICONS = {
   '雪': 'wi-snow.svg',
 }
 
-const sunrise = {
+const SUNRISE = {
   summer: {
     dateRad: getDateRad(6, 15),
     hourRad: getHourRad(5, 0),
@@ -177,11 +177,11 @@ export default function EcosystemProvider(props) {
     intc = (e + l) / 2;
     const sunset = grad * Math.cos(now + SUNSET.winter.dateRad) + intc;
 
-    l = sunrise.summer.getHourRad;
-    e = sunrise.winter.getHourRad;
+    l = SUNRISE.summer.getHourRad;
+    e = SUNRISE.winter.getHourRad;
     grad = (l - e) / 2;
     intc = (e + l) / 2;
-    const sunrise = grad * Math.cos(now + sunrise.summer.dateRad) + intc;
+    const sunrise = grad * Math.cos(now + SUNRISE.summer.dateRad) + intc;
     
     // morning '朝', // 日の出前59分間から日の出240分まで
     // noon '昼', // 日の出241分後〜日没前120分まで

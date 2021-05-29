@@ -115,10 +115,9 @@ import React, {
 } from 'react';
 import { 
   ones,
-  zeros,
 } from "mathjs";
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
-import Message from '@material-ui/icons/Message';
+import Message, {featureIndex} from '@material-ui/icons/Message';
 
 import { db } from './dbio';
 import matrixizeWorker from "./engine/matrixize.worker";
@@ -127,6 +126,8 @@ import * as room from "./engine/room";
 export const BiomebotContext = createContext();
 
 let workers = {};
+
+
 
 
 // チャットボットデータの初期値
@@ -212,9 +213,6 @@ function reducer(state, action) {
           newWeights[1] = 4/10 ; // ※先頭は1番
           snap.parts[partName].featureWeights =　newWeights; 
         }
-        if(!snap.parts[partName].featureBiases){
-          snap.parts[partName].featureBiases = zeros(featureIndex.length);
-        }
       }
 
       return {
@@ -253,7 +251,7 @@ export default function BiomebotProvider(props) {
   });
 
   const [execute, setExecute] = useState(
-    () => async (st, wk, msg, sendMessage) => {
+    () => async (st, wk, msg, emitter) => {
       /* postMessageToBot 関数
         st: state
         wk: work
@@ -263,19 +261,19 @@ export default function BiomebotProvider(props) {
 
         初期状態はecho
       */
-      const reply = new Message('system', {
+      const replyMessage = new Message('system', {
         text: `est=${msg.estimation}`,
         site: 'room',
       });
 
       // setWork
 
-      // await sendMessage({ message: reply })
+      await emitter(replyMessage)
     }
   )
 
-  function handleExecute(message){
-    execute(state,work,message,sendMessageFromBot)
+  function handleExecute(message,emitter){
+    execute(state,work,message,emitter)
       .then(workSnap=>{
         setWork(prev=>({
           prev,
@@ -368,7 +366,7 @@ export default function BiomebotProvider(props) {
   return (
     <BiomebotContext.Provider
       value={{
-        submit: handleSubmit,
+        execute: handleExecute,
         generate: generate,
         deploy: deploy,
         state: state,

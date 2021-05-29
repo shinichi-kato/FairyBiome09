@@ -1,6 +1,3 @@
-import Dexie from "dexie";
-import { null } from "mathjs";
-
 /*
   チャットボットデータI/O
 
@@ -31,9 +28,11 @@ import { null } from "mathjs";
   },
 */
 
+import Dexie from "dexie";
+import { reviver } from 'mathjs';
 
 class dbio {
-  constructor(){
+  constructor() {
     this.db = new Dexie('Biomebot');
     this.db.version(1).stores({
       config: "botId", // botId,description,...
@@ -53,7 +52,7 @@ class dbio {
 
   }
 
-  async generate (obj, uid){
+  async generate(obj, uid) {
     // 
     //  chatbot.jsonから読み込んだobjの内容をindexDBとstateに書き込む。
     //  チャットボットデータはobj.botIdが定義されているものと未定義のものがあり、
@@ -61,7 +60,7 @@ class dbio {
     //  未定義のものはユーザ用のチャットボットでbotIdにはuidを用いる。
     //  ユーザ用のチャットボットはユーザにつき同時に一つしか持てない。
     //
-  
+
     const botId = obj.botId || uid;
     console.log("generate")
     /* config */
@@ -71,45 +70,45 @@ class dbio {
       site: 'room',
       estimater: {}
     });
-  
+
     /* work */
     await this.db.work.put({
       botId: botId,
       ...obj.work
     });
-  
+
     /* main "id,[botId+key]" */
     await this.db.main
-    .where('[botId+key]')
-    .between([botId,Dexie.minKey], [botId,Dexie.maxKey])
-    .delete();
-  
+      .where('[botId+key]')
+      .between([botId, Dexie.minKey], [botId, Dexie.maxKey])
+      .delete();
+
     let dictKeys = Object.keys(obj.main);
     let mainData = [];
     for (let key of dictKeys) {
-    let val = obj.main[key];
-  
-    if (typeof val === 'string') {
-      mainData.push(
-        { botId: botId, key: key, val: val }
-      );
-    }
-    else if (Array.isArray(val)) {
-      for (let v of val) {
+      let val = obj.main[key];
+
+      if (typeof val === 'string') {
         mainData.push(
-          { botId: botId, key: key, val: v }
-        )
+          { botId: botId, key: key, val: val }
+        );
+      }
+      else if (Array.isArray(val)) {
+        for (let v of val) {
+          mainData.push(
+            { botId: botId, key: key, val: v }
+          )
+        }
       }
     }
-    }
-  
+
     await this.db.main.bulkAdd(mainData);
-  
+
     /* 各partのデータのうちscript以外を記憶
        scriptは以下で別途記憶
     */
     dictKeys = Object.keys(obj.parts);
-  
+
     await this.db.parts.bulkPut(
       dictKeys.map(key => {
         const part = obj.parts[key];
@@ -119,25 +118,25 @@ class dbio {
           config: {
             momentUpper: part.momentUpper,
             momentLower: part.momentLower,
-            precision:   part.precision,
+            precision: part.precision,
             retention: part.retention,
           },
           scriptTimestamp: part.scriptTimestamp,
           cacheTimestamp: part.cacheTimestamp,
         }
       }));
-  
-   
-  
+
+
+
     /* scripts "[id+botId],partName,next,prev" */
     await this.db.scripts.where('[botId+partName+id]')
       .between(
         [botId, Dexie.minKey, Dexie.minKey],
         [botId, Dexie.maxKey, Dexie.maxKey])
       .delete();
-      
+
     /* scriptはidをこちらで与え、next,prevも設定する */
-  
+
     for (let partName of Object.keys(obj.parts)) {
       console.log("partName", partName)
       let data = [];
@@ -158,18 +157,18 @@ class dbio {
       await this.db.scripts.bulkAdd(data);
     }
   }
-  
-  async load (botId) {
+
+  async load(botId) {
     // indexedDBからチャットボットのデータを読み込む。
     //  存在しなかった場合はnullを返す。
-    
-    
+
+
     let config, work, displayName;
     config = await this.db.config.where({ botId: botId }).first();
     if (config) {
       work = await this.db.work.where({ botId: botId }).first();
       displayName = await this.db.main.where({ botId: botId, key: 'NAME' }).first();
-  
+
       return {
         botId: botId,
         config: config,
@@ -178,39 +177,39 @@ class dbio {
         estimator: await this.readEstimator(botId)
       }
     }
-  
+
     return null;
   }
-  
-  async readScript (botId,partName) {
+
+  async readScript(botId, partName) {
     /* botId,partNameで指定されたscriptを読んで配列化して返す */
-  
+
     return await this.db.scripts.where('[botId+partName+id]')
       .between(
         [botId, partName, Dexie.minKey],
         [botId, partName, Dexie.maxKey])
       .toArray();
-  
+
   }
-  
-  async saveCache(botId,partName,payload){
+
+  async saveCache(botId, partName, payload) {
     /* payloadをcacheに書き込む */
     await this.db.caches.put({
       botId: botId,
       partName: partName,
-      payload:payload
+      payload: payload
     });
-  
+
   }
-  
-  async loadCache(botId,partName) {
+
+  async loadCache(botId, partName) {
     // botId,partNameで指定されたcacheを読んで返す
     // matrixizeWorkerが動作中でcacheがない場合は
     // デフォルト値を返す
     const cache = await this.db.caches
-      .where({botId:botId,partName:partName})
+      .where({ botId: botId, partName: partName })
       .first();
-    if(cache){
+    if (cache) {
       return {
         outScript: cache.outScript,
         vocab: cache.vocab,
@@ -219,7 +218,7 @@ class dbio {
         tfidf: JSON.parse(cache.tfidf, reviver),
         index: cache.index,
         fv: cache.fv,
-      }        
+      }
     }
     return {
       outScript: [],
@@ -231,36 +230,36 @@ class dbio {
       fv: null
     }
   }
-  
-  async readEstimator(botId){
+
+  async readEstimator(botId) {
     /*  main辞書から入力文字列評価用の NEGATIVE_LABEL, POSITIVE_LABELを
         取得し、辞書を生成。 
         mainのスキームは id,[botId+key] なのでコンパウンドキー */
     let negatives = await this.db.main
-      .where('[botId+key]').equals([botId,'NEGATIVE_LABEL'])
+      .where('[botId+key]').equals([botId, 'NEGATIVE_LABEL'])
       .toArray();
-  
+
     negatives = negatives.reduce((obj, data) => {
-  
+
       obj[data.val] = true;
       return obj;
     }, {});
-  
+
     let positives = await this.db.main
-      .where('[botId+key]').equals([botId,'POSITIVE_LABEL'])
+      .where('[botId+key]').equals([botId, 'POSITIVE_LABEL'])
       .toArray();
-  
+
     positives = positives.reduce((obj, data) => {
       obj[data.val] = true;
       return obj;
     }, {});
-  
+
     return {
       negatives: negatives,
       positives: positives,
     }
   }
-  
+
 }
 
 export const db = new dbio();

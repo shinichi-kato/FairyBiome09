@@ -3,15 +3,22 @@
   室内でのチャットボットの応答
 
   1. 時刻により睡眠・覚醒の状態が変化
-  ２．partOrderに従って
+  2. partOrderの順に返答生成ができるかチェック。
+     返答を生成したらpartはpartOrder先頭に移動。retentionチェックを
+     行い、drop判定になったらpartOrderの末尾に移動。
+  3. moodが切り替わったらmoodと同名のパートが先頭になる。
+     このパートはdrop/hoistの影響を受けない。 
+     それにより、mood名と違うパートが一時的に先頭になってもそれが
+     retentionチェックでdropしたらmood名と同じパートが再び先頭になる。
 
 */
-import { null, randomInt } from "mathjs";
+import { randomInt } from "mathjs";
 import { retrieve } from './retrieve';
 import * as knowledge from './knowledge-part'
 import { Message } from "@material-ui/icons";
 
-const RE_ENTER = /{ENTER_([A-Z][A-Z_]+[A-Z])}/;
+const RE_ENTER = /{ENTER_([A-Z][A-Z_]*)}/;
+const RE_TAG = /{[a-zA-Z][a-zA-Z0-9_]*}/g;
 
 const moodNames = {
   "MOOD_PEACE": "peace",
@@ -59,7 +66,7 @@ export function execute(state, work, message, sendMessage) {
 
     // スピーチの生成
     reply = {
-      text: repiler[part.kind](state, work, message),
+      text: replier[part.kind](partName,state, work, result),
       hoist: partName,
       drop: null,
     }
@@ -80,28 +87,33 @@ export function execute(state, work, message, sendMessage) {
 
     // 各種トリガー処理
     if (trigger !== "" && trigger in moodNames) {
+      // moodを変えるトリガーを検出したら、moodを変更するとともに
+      // moodと同名のpartを先頭にする
       work.mood = moodNames[trigger];
-      // 自己Message投下
-      // 
-      let msg = new Message(
-        'trigger',
-        `{TRIGGER_ENTER_${trigger}}`
-      );
+      hoist(work.mood,work.partOrder);
 
-      msg = renderer[part.kind](state, work, msg);
+      // 自己Message投下
+
+      let msg = renderer[part.kind](partName,state, work, 
+        `{TRIGGER_ENTER_${trigger}}`
+        );
       if (msg) {
         work.queue.push(msg)
       };
 
     }
 
-    break;
+    // hoist / drop
+    // moodと同名のパートは影響を受けない
+    if(work.mood !== partName){
+      drop(reply.drop, work.partOrder);
+      hoist(reply.hoist, work.partOrder);
+    }
 
+    break;
   }
 
-  // hoist / drop 
-  drop(reply.drop, work.partOrder);
-  hoist(reply.hoist, work.partOrder);
+
 
   if (reply.text === null) {
     // NOT_FOUNDの生成
@@ -110,32 +122,28 @@ export function execute(state, work, message, sendMessage) {
     // すべてのパートに見つからなければmainのNOT_FOUNDを
     // レンダリング
 
-    let msg = new Message('speech',{
-      text:"{NOT_FOUND}",
-    });
+    for (let partName of work.partOrder) {
+      const part = state.parts[partName];
 
-    loop1:
-    {
-      for (let partName of work.partOrder) {
-        const part = state.parts[partName];
+      reply.text = renderer[part.kind](partName,state,work,
+        "{NOT_FOUND}");
+    
+      if(reply.text !== "{NOT_FOUND}") break;
+    }
 
-        let nf = renderer[part.kind](state,work,msg);
-      
-        if(nf.text != null) break loop1;
-      }
-      let nf = state.main["NOT_FOUND"]
+    if(reply.text === "{NOT_FOUND}"){
+      reply.text = render("{NOT_FOUND}");
     }
 
   }
 
-  return new Measage(
+  return new Message(
     'speech',
     {
       text: reply.text,
       name: "",
       person: "bot",
       mood: work.mood,
-
     }
   )
 }
@@ -158,8 +166,16 @@ function drop(target, parts) {
   }
 }
 
-function renderMain(){
+function render(tag,dict){
   // main辞書の中でタグ展開
   // {[^}]+}はmain辞書内の同じ名前の内容で置き換える。
+  if (!(tag in dict)) return tag;
+
+  const items = dict[tag];
   
+  let item = items[Math.floor(Math.random() * items.length)];
+
+  item = item.replace(RE_TAG,(whole,tag)=>render(tag));
+
+  return item;
 }

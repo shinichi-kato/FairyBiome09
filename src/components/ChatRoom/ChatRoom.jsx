@@ -86,7 +86,7 @@ export default function ChatRoom(props) {
     setUserInput(event.target.value);
   }
 
-  function handleSubmit(event) {
+  function handleUserSubmit(event) {
     const message = new Message('speech', {
       text: userInput,
       name: fb.displayName,
@@ -97,11 +97,12 @@ export default function ChatRoom(props) {
     });
     console.log("submit",message)
     props.writeLog(message);
-    bot.recieve(message);
+    bot.execute(message,props.writelog);
 
     setUserInput("");
     event.preventDefault();
   }
+
   const currentLog = props.logs[ecosystem.site];
 
   const memorizedLogViewer = useMemo(()=>
@@ -141,7 +142,7 @@ export default function ChatRoom(props) {
         position="absolute"
         bottom={0}
       >
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleUserSubmit}>
           <div className={classes.textInput}>
             <InputBase
               value={userInput}
@@ -155,7 +156,7 @@ export default function ChatRoom(props) {
               endAdornment={
                 <IconButton
                   color="primary"
-                  onClick={handleSubmit}
+                  onClick={handleUserSubmit}
                 >
                   <SendIcon/>
                 </IconButton>
