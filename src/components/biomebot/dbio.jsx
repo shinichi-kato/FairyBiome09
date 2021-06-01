@@ -197,7 +197,16 @@ class dbio {
     await this.db.caches.put({
       botId: botId,
       partName: partName,
-      payload: payload
+      cache: {
+        outScript: payload.outScript,
+        vocab: payload.vocab,
+        wv: JSON.stringify(payload.wv),
+        idf: JSON.stringify(payload.idf),
+        tfidf: JSON.stringify(payload.tfidf),
+        index: payload.index,
+        fv:payload.fv,
+        tagDict: payload.tagDict
+      }
     });
 
   }
@@ -206,18 +215,20 @@ class dbio {
     // botId,partNameで指定されたcacheを読んで返す
     // matrixizeWorkerが動作中でcacheがない場合は
     // デフォルト値を返す
-    const cache = await this.db.caches
+    const data = await this.db.caches
       .where({ botId: botId, partName: partName })
       .first();
+    const cache = data.cache;
     if (cache) {
       return {
         outScript: cache.outScript,
         vocab: cache.vocab,
-        wv: cache.wv,
+        wv: JSON.parse(cache.wv, reviver),
         idf: JSON.parse(cache.idf, reviver),
         tfidf: JSON.parse(cache.tfidf, reviver),
         index: cache.index,
         fv: cache.fv,
+        tagDict: cache.tagDict
       }
     }
     return {

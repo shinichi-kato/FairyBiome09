@@ -1,4 +1,6 @@
 import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+
 import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
@@ -6,6 +8,14 @@ import Typography from '@material-ui/core/Typography';
 import MusicNoteIcon from '@material-ui/icons/MusicNote';
 import ClearIcon from '@material-ui/icons/Clear';
 import HotelIcon from '@material-ui/icons/Hotel';
+
+const useStyles = makeStyles(theme => ({
+  nonDotList: {
+    listStyle: "none",
+		margin: 0,
+		padding: 0,
+  },
+}));
 
 const moodBadgeIcon = {
 	peace: null,
@@ -98,13 +108,15 @@ export default function LogViewer(props) {
 		ユーザは右側、bot,othersは左側、それら以外は環境やシステムのメッセージで
 		吹き出しではない表示.
 	*/
-	console.log("log:",props.log)
+
+	const classes = useStyles();
+	
 	const messages = props.log.map((message,index)=>{
 		switch(message.person) {
-			case 'user' : return <RightBalloon message={message} index={index} key={index}/>
+			case 'user' : return <li><RightBalloon message={message} index={index} key={index}/></li>
 			case 'bot' :
-			case 'other': return <LeftBalloon message={message} index={index} key={index}/>
-			default: return <SystemMessage message={message} index={index}/>
+			case 'other': return <li><LeftBalloon message={message} index={index} key={index}/></li>
+			default: return <li><SystemMessage message={message} index={index}/></li>
 		}
 	})
 	return (
@@ -112,7 +124,9 @@ export default function LogViewer(props) {
 			display="flex"
 			flexDirection="column"
 		>
-			{messages}
+			<ul className={classes.nonDotList}>
+				{messages}
+			</ul>
 
 		</Box>
 	)

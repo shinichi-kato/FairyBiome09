@@ -131,7 +131,9 @@ export default function ChatRoom(props) {
         justify="space-between"
       >
         <Box>
-          <FairyPanel />
+          <FairyPanel 
+            photoURL={bot.photoURL}
+          />
         </Box>
         <Box>
           <UserPanel />

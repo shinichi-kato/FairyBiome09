@@ -30,7 +30,7 @@
 
 import {
   zeros, divide, apply, sum,
-  diag, multiply, isPositive, map, norm, matrixFromColumns
+  diag, multiply, isPositive, map, norm
 } from "mathjs";
 
 import { db } from '../dbio';
@@ -69,9 +69,9 @@ onmessage = function (event) {
 
     for (let i = 0, len = script.length; i < len; i++) {
       if ('in' in script[i] && 'out' in script[i]) {
-        if((tags = RE_TAG.exec(script[i].in)) !== null){
-          tagDict[tags[0]]=getValidNode(script[i].out);
-        }else{
+        if ((tags = RE_TAG.exec(script[i].in)) !== null) {
+          tagDict[tags[0]] = getValidNode(script[i].out);
+        } else {
           inScript.push(...getValidNode(script[i].in));
           outScript.push(...getValidNode(script[i].out));
         }
@@ -145,32 +145,32 @@ onmessage = function (event) {
       は one-hotベクターにする。これらをまとめてfeatureVector (fv)と呼ぶ。
       
     */
+    const fv = inScript.map(i => i.features);
 
-    let fv = matrixFromColumns(inScript.map(i=>i.features));
-
-    
     // 書き込み
+    
 
     await db.saveCache(botId, partName,
       {
         outScript: outScript,
         vocab: vocab,
         wv: wv,
-        idf: JSON.stringify(idf),
-        tfidf: JSON.stringify(tfidf),
+        idf: idf,
+        tfidf: tfidf,
         index: index,
         fv: fv,
         tagDict: tagDict,
       });
 
+      console.log("matrixize-end: ", botId, partName)
+
+      postMessage({
+        onmessage: true,
+        partName: partName,
+      });
+
   })();
 
-  console.log("matrixize-end: ", botId, partName)
-
-  postMessage({
-    onmessage: true,
-    partName: partName,
-  });
 };
 
 

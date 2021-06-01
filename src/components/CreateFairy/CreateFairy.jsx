@@ -92,8 +92,10 @@ export default function CreateFairy(props){
   function handleClickLoad(){
     fetch(`../../chatbot/${currentDirectory}/chatbot.json`)
       .then(res=>res.json())
-      .then(obj=>bot.generate(obj,currentDirectory))
-      .then(navigate('/'));    
+      .then(obj=>{
+        bot.generate(obj,currentDirectory)
+        .then(navigate('/'));
+      });
   }
 
   return (

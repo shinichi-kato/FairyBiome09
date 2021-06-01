@@ -249,7 +249,7 @@ export class Message {
   }
 
   setFeature(feat){
-    if (feat){
+    if (feat in featureDict){
       this.features[featureDict[feat]] = 1;
     }
   }

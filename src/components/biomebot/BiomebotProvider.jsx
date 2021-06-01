@@ -113,11 +113,11 @@ import React, {
   useReducer,
   useState
 } from 'react';
-import { 
+import {
   ones,
 } from "mathjs";
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
-import Message, {featureIndex} from '@material-ui/icons/Message';
+import { Message, featureIndex } from '../message';
 
 import { db } from './dbio';
 import matrixizeWorker from "./engine/matrixize.worker";
@@ -126,7 +126,28 @@ import * as room from "./engine/room";
 export const BiomebotContext = createContext();
 
 let workers = {};
+let execute = {
+  'room': room.execute,
+  'default': async (st, wk, msg, emitter) => {
+    /* postMessageToBot 関数
+      st: state
+      wk: work
+      msg: Message型データ
+      sendMessage: ({message}) => {}
+        チャットボットからのメッセージを発信するcallback関数
 
+      初期状態はecho
+    */
+    const replyMessage = new Message('system', {
+      text: `est=${msg.estimation}`,
+      site: 'room',
+    });
+
+    // setWork
+
+    await emitter(replyMessage)
+  }
+};
 
 
 
@@ -137,6 +158,7 @@ const defaultSettings = {
     description: "",
     backgroundColor: "#eeeeee",
     estimatorLengthFactor: 0.6,
+    avatarPath: "",
     circadian: {
       wake: 6,
       sleep: 21,
@@ -169,7 +191,7 @@ const defaultSettings = {
     futurePostings: [], // 
   },
   part: {
-    "untitledPart" :{
+    "untitledPart": {
       kind: "knowledge",
       momentUpper: 5,
       momentLower: 0,
@@ -178,7 +200,7 @@ const defaultSettings = {
       scriptTimestamp: null,
       cacheTimestamp: null,
       featureWeights: null,
-      script: []   
+      script: []
     }
   }
 }
@@ -204,14 +226,14 @@ function reducer(state, action) {
 
     case 'connect': {
       const snap = action.snap;
-      
+
       // featureWeightsがなければ
       // featureWeights=[0.2,0.2...],featureBiases=0で初期化
-      for(let partName in snap.parts){
-        if(!snap.parts[partName].featureWeights){
-          let newWeights = ones(featureIndex.length) * (1 /10);
-          newWeights[1] = 4/10 ; // ※先頭は1番
-          snap.parts[partName].featureWeights =　newWeights; 
+      for (let partName in snap.parts) {
+        if (!snap.parts[partName].featureWeights) {
+          let newWeights = ones(featureIndex.length) * (1 / 10);
+          newWeights[1] = 4 / 10; // ※先頭は1番
+          snap.parts[partName].featureWeights = newWeights;
         }
       }
 
@@ -247,35 +269,14 @@ export default function BiomebotProvider(props) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [work, setWork] = useState({
     key: 0,
-    work: defaultSettings.work
+    ...defaultSettings.work
   });
 
-  const [execute, setExecute] = useState(
-    () => async (st, wk, msg, emitter) => {
-      /* postMessageToBot 関数
-        st: state
-        wk: work
-        msg: Message型データ
-        sendMessage: ({message}) => {}
-          チャットボットからのメッセージを発信するcallback関数
 
-        初期状態はecho
-      */
-      const replyMessage = new Message('system', {
-        text: `est=${msg.estimation}`,
-        site: 'room',
-      });
-
-      // setWork
-
-      await emitter(replyMessage)
-    }
-  )
-
-  function handleExecute(message,emitter){
-    execute(state,work,message,emitter)
-      .then(workSnap=>{
-        setWork(prev=>({
+  function handleExecute(message, emitter) {
+    execute[work.site](state, work, message, emitter)
+      .then(workSnap => {
+        setWork(prev => ({
           prev,
           ...workSnap
         }));
@@ -291,7 +292,7 @@ export default function BiomebotProvider(props) {
           .then(snap => {
             if (snap) {
               dispatch({ type: 'connect', snap: snap })
-              setWork(prev => ({ key: prev.key + 1, work: snap.work }));
+              setWork(prev => ({ key: prev.key + 1, ...snap.work }));
               props.handleBotFound();
             }
             else {
@@ -304,7 +305,10 @@ export default function BiomebotProvider(props) {
     return () => { isCancelled = true }
   }, [props.appState, fb.uid]);
 
-  async function generate(obj) {
+  async function generate(obj, avatarPath) {
+    // avatarPathをobjに組み込む
+    obj.config.avatarPath = avatarPath;
+
     // indexDBへの書き込み
     await db.generate(obj, fb.uid);
 
@@ -325,8 +329,8 @@ export default function BiomebotProvider(props) {
       }));
   }
 
-  async function deploy(site,handleRecieveMessageFromBot) {
-  
+  async function deploy(site, handleRecieveMessageFromBot) {
+
     for (let partName of state.config.initialPartOrder) {
 
       // 各パートのscriptを読んでcacheに変換
@@ -341,7 +345,7 @@ export default function BiomebotProvider(props) {
         if (result) {
           db.loadCache(state.botId, result.partName)
             .then(cache => {
-              dispatch({ 
+              dispatch({
                 type: 'readCache',
                 partName: result.partName,
                 cache: cache
@@ -353,15 +357,9 @@ export default function BiomebotProvider(props) {
       worker.postMessage({ botId: state.botId, partName });
 
     }
-
-    // siteごとのモジュール切り替え
-    switch(site){
-      case 'room': 
-        setExecute(()=>async (st,wk,msg,sm) => room.execute);
-    }
   }
 
-
+  const photoURL = `/chatbot/${state.config.avatarPath}/${work.mood}.svg`;
 
   return (
     <BiomebotContext.Provider
@@ -370,6 +368,7 @@ export default function BiomebotProvider(props) {
         generate: generate,
         deploy: deploy,
         state: state,
+        photoURL: photoURL,
       }}
     >
       {props.children}

@@ -21,11 +21,12 @@ const useStyles = makeStyles(theme => ({
 export default function UserPanel(props){
   const fb = useContext(FirebaseContext);
   const classes = useStyles();
+  console.log("photourl",fb.photoURL)
 
   return (
 
     <div className={classes.container}>
-      <Avatar src={fb.photoURL} className={classes.avatar}/>
+      <Avatar alt={fb.photoURL} src={fb.photoURL} className={classes.avatar}/>
       <Typography>{fb.displayName}</Typography> 
     </div>
     
