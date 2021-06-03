@@ -113,10 +113,10 @@ export default function LogViewer(props) {
 	
 	const messages = props.log.map((message,index)=>{
 		switch(message.person) {
-			case 'user' : return <li><RightBalloon message={message} index={index} key={index}/></li>
+			case 'user' : return <li key={index}><RightBalloon message={message} index={index}/></li>
 			case 'bot' :
-			case 'other': return <li><LeftBalloon message={message} index={index} key={index}/></li>
-			default: return <li><SystemMessage message={message} index={index}/></li>
+			case 'other': return <li key={index}><LeftBalloon message={message} index={index}/></li>
+			default: return <li key={index}><SystemMessage message={message} index={index}/></li>
 		}
 	})
 	return (

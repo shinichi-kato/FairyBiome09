@@ -38,7 +38,7 @@
         "NEGATIVE_LABEL": "死ね",
         "START_DECK": "",
         "END_DECK": "",
-        "NOT_FOUND": ["そうなんですか？"]
+        "{NOT_FOUND}": ["そうなんですか？"]
     },
     "parts": {
         "greeting": {
@@ -124,6 +124,26 @@
                     ]
                 }
             ]
+        },
+        "cheer":{
+            "kind": "response",
+            "momentUpper": 100,
+            "momentLower": 20,
+            "precision": 0.5,
+            "retention": 0.2,
+            "scriptTimestamp": null,
+            "cacheTimestamp": null,
+            "featureWights": null,
+            "script": [
+                {
+                    "in": [
+                        "{NOT_FOUND}"
+                    ],
+                    "out": [
+                        "あはは！","面白い〜"
+                    ]
+                }
+            ]            
         }
     }
 }

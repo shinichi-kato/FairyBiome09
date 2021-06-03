@@ -72,50 +72,47 @@ import { getHourRad, getDateRad } from "./calendar-rad";
 export const featureDict = {
   // text
   'text': 0,
-  // timestamp
-  'hourRad': 1,
-  'dateRad': 2,
   // person
-  'bot': 3,
-  'user': 4,
-  'other': 5,
-  'system': 6,
+  'bot': 1,
+  'user': 2,
+  'other': 3,
+  'system': 4,
   //mood
-  'peace': 7,
-  'cheer': 8,
-  'down': 9,
-  'wake': 10,
-  'absent': 11,
-  'sleepy': 12,
-  'sleep': 13,
+  'peace': 5,
+  'cheer': 6,
+  'down': 7,
+  'wake': 8,
+  'absent': 9,
+  'sleepy': 10,
+  'sleep': 11,
   // site
-  'room': 14,
-  'forest': 15,
-  'park': 16,
+  'room': 12,
+  'forest': 13,
+  'park': 14,
   // weather
-  '台風': 17,
-  '大雨': 18,
-  '雨': 19,
-  '曇': 20,
-  '晴': 21,
-  '快晴': 22,
-  '夏晴': 23,
-  '吹雪': 24,
-  '雪': 25,
+  '台風': 15,
+  '大雨': 16,
+  '雨': 17,
+  '曇': 18,
+  '晴': 19,
+  '快晴': 20,
+  '夏晴': 21,
+  '吹雪': 22,
+  '雪': 23,
   // season
-  '春': 26,
-  '夏': 27,
-  '秋': 28,
-  '冬': 29,
+  '春': 24,
+  '夏': 25,
+  '秋': 26,
+  '冬': 27,
   //dayPart
-  'morning': 30,
-  '朝':30,
-  'noon': 31,
-  '昼': 31,
-  'evening': 32,
-  '夕': 32,
-  'night': 33,
-  '夜': 33,
+  'morning': 28,
+  '朝':28,
+  'noon': 29,
+  '昼': 29,
+  'evening': 30,
+  '夕': 30,
+  'night': 31,
+  '夜': 31,
 };
 
 export const featureIndex = [
@@ -254,12 +251,12 @@ export class Message {
     }
   }
 
-  get person() { return this.getFeature(3,6); }
-  get mood(){ return this.getFeature(7,13); }
-  get site(){ return this.getFeature(14,16); }
-  get weather(){ return this.getFeature(17,25); }
-  get season(){ return this.getFeature(26,29); }
-  get dayPart(){ return this.getFeature(30,31); }
+  get person() { return this.getFeature(1,4); }
+  get mood(){ return this.getFeature(5,11); }
+  get site(){ return this.getFeature(12,14); }
+  get weather(){ return this.getFeature(15,23); }
+  get season(){ return this.getFeature(24,27); }
+  get dayPart(){ return this.getFeature(28,31); }
 
 }
 

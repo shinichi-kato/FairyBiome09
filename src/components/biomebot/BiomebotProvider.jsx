@@ -117,6 +117,7 @@ import {
   ones,
 } from "mathjs";
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
+import { EcosystemContext} from "../Ecosystem/EcosystemProvider";
 import { Message, featureIndex } from '../message';
 
 import { db } from './dbio';
@@ -266,6 +267,8 @@ function reducer(state, action) {
 
 export default function BiomebotProvider(props) {
   const fb = useContext(FirebaseContext);
+  const ecosystem = useContext(EcosystemContext);
+  
   const [state, dispatch] = useReducer(reducer, initialState);
   const [work, setWork] = useState({
     key: 0,
@@ -274,13 +277,11 @@ export default function BiomebotProvider(props) {
 
 
   function handleExecute(message, emitter) {
-    execute[work.site](state, work, message, emitter)
-      .then(workSnap => {
-        setWork(prev => ({
+    let snap = execute[ecosystem.site](state, work, message, ecosystem, emitter)
+    setWork(prev => ({
           prev,
-          ...workSnap
+          ...snap
         }));
-      })
   }
 
   useEffect(() => {
@@ -329,7 +330,7 @@ export default function BiomebotProvider(props) {
       }));
   }
 
-  async function deploy(site, handleRecieveMessageFromBot) {
+  async function deploy(site) {
 
     for (let partName of state.config.initialPartOrder) {
 

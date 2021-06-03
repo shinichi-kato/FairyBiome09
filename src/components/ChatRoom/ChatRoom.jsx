@@ -12,6 +12,7 @@ import { BiomebotContext } from '../biomebot/BiomebotProvider';
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
 import { EcosystemContext } from '../Ecosystem/EcosystemProvider';
 import { Message } from '../message';
+import MenuIcon from '@material-ui/icons/Menu';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -28,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   rootWhoseChildUsesFlexGrow: {
-    width: "100%",
+    width: 480,
     height: "100vh",
   },
   icon: {
@@ -42,6 +43,9 @@ const useStyles = makeStyles(theme => ({
     height: "calc ( 100vh - 48px - 256px);",
     overflowY: "scroll",
   },
+  console:{
+    width: 480,
+  },
   textInput: {
     position: 'relative',
     borderRadius: "50vh",
@@ -51,7 +55,7 @@ const useStyles = makeStyles(theme => ({
     },
     marginRight: theme.spacing(2),
     marginLeft: 0,
-    width: '100%',
+    width: 400,
   },
   inputRoot: {
     color: '#FFFFFFCC',
@@ -61,6 +65,7 @@ const useStyles = makeStyles(theme => ({
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     width: '100%',
+    color: '#000000',
   },
 
 
@@ -91,13 +96,12 @@ export default function ChatRoom(props) {
       text: userInput,
       name: fb.displayName,
       person: 'user',
-      mood: '',
+      mood: 'peace',
       avatarPath: fb.photoURL,
       site: ecosystem.site,
     });
-    console.log("submit",message)
     props.writeLog(message);
-    bot.execute(message,props.writelog);
+    bot.execute(message,props.writeLog);
 
     setUserInput("");
     event.preventDefault();
@@ -111,6 +115,9 @@ export default function ChatRoom(props) {
     />
   ,[currentLog]);
 
+  const memorizedUserPanel = useMemo(()=>
+    <UserPanel />
+    ,[fb.user]);
   return (
     <Box
       display="flex"
@@ -128,7 +135,8 @@ export default function ChatRoom(props) {
       <Box
         display="flex"
         flexDirection="row"
-        justify="space-between"
+        justifyContent="space-between"
+        className={classes.console}
       >
         <Box>
           <FairyPanel 
@@ -136,7 +144,7 @@ export default function ChatRoom(props) {
           />
         </Box>
         <Box>
-          <UserPanel />
+          {memorizedUserPanel}
         </Box>
 
       </Box>
@@ -144,6 +152,7 @@ export default function ChatRoom(props) {
         position="absolute"
         bottom={0}
       >
+        <MenuIcon/>
         <form onSubmit={handleUserSubmit}>
           <div className={classes.textInput}>
             <InputBase

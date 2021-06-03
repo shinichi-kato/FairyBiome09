@@ -75,6 +75,7 @@ export default function IndexPage({ data }) {
 
   async function writeLog(message) {
     const site = message.site;
+    console.log("site",site,"msg",message)
     if(site === 'forest' || site === 'room'){
 
       const id = await db[site].add(message);

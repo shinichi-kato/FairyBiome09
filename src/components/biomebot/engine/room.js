@@ -14,8 +14,8 @@
 */
 import { randomInt } from "mathjs";
 import { retrieve } from './retrieve';
-import * as knowledge from './knowledge-part'
-import { Message } from "@material-ui/icons";
+import * as knowledge from './knowledge-part';
+import { Message } from '../../message';
 
 const RE_ENTER = /{ENTER_([A-Z][A-Z_]*)}/;
 const RE_TAG = /{[a-zA-Z][a-zA-Z0-9_]*}/g;
@@ -39,8 +39,7 @@ const renderer = {
 };
 
 
-export function execute(state, work, message, sendMessage) {
-
+export function execute(state, work, message, ecosystem, sendMessage) {
   let reply = { text: null };
 
   // moodと同名のpartがあればそれをpartOrder先頭に移動
@@ -77,7 +76,7 @@ export function execute(state, work, message, sendMessage) {
       reply.hoist = null;
     }
 
-    // トリガーをキャッチ
+    // トリガーを捕捉
     let trigger = ""
     reply.text = reply.text.replace(RE_ENTER, (dummy, p1) => {
       // arrowかfuncか？
@@ -137,15 +136,18 @@ export function execute(state, work, message, sendMessage) {
 
   }
 
-  return new Message(
+  sendMessage(new Message(
     'speech',
     {
       text: reply.text,
       name: "",
       person: "bot",
       mood: work.mood,
+      site: ecosystem.site,
     }
-  )
+  ));
+
+  return work
 }
 
 function hoist(target, parts) {

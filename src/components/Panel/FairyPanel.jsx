@@ -15,7 +15,8 @@ const useStyles = makeStyles(theme => ({
   },
   portrait: {
     width: 192,
-    height: 256
+    height: 256,
+    
   }
 }));
 
