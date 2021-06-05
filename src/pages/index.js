@@ -23,6 +23,34 @@ query indexq {
 
 let db = null;
 
+async function readLog(site, number, startId) {
+  /* siteのログをstartIdからnumber件読み出す */
+  let payload = [];
+  const siteDb = site === 'room' ? db.room : db.forest;
+
+  if (startId) {
+
+    const start = await siteDb
+      .where({ id: startId })
+      .first();
+    payload = await siteDb
+      .where("timestamp")
+      .below(start.timestamp)
+      .sortBy("timestamp")
+      .limit(number)
+      .toArray()
+
+  } else {
+
+    payload = await siteDb
+      .orderBy("timestamp")
+      .limit(number)
+      .toArray()
+  }
+
+  return payload;
+}
+
 export default function IndexPage({ data }) {
   /* 
     チャットルームアプリのフレームワーク
@@ -64,13 +92,13 @@ export default function IndexPage({ data }) {
       });
 
       (async () => {
-        setForestLog(await readLog('forest'));
-        setRoomLog(await readLog('room'));
+        setForestLog(await readLog('forest',config.logViewLength));
+        setRoomLog(await readLog('room',config.logViewLength));
       })();
     }
 
     return () => { isCancelled = true };
-  }, []);
+  }, [config.logViewLength]);
 
 
   async function writeLog(message) {
@@ -97,35 +125,8 @@ export default function IndexPage({ data }) {
     }
   }
 
-  async function readLog(site, startId, number) {
-    /* siteのログをstartIdからnumber件読み出す */
-    number ||= config.logViewLength;
-    let payload = [];
-    const siteDb = 'room' ? db.room : db.forest;
 
-    if (startId) {
-
-      const start = await siteDb
-        .where({ id: startId })
-        .first();
-      payload = await siteDb
-        .where("timestamp")
-        .below(start.timestamp)
-        .sortBy("timestamp")
-        .limit(number)
-        .toArray()
-
-    } else {
-
-      payload = await siteDb
-        .orderBy("timestamp")
-        .limit(number)
-        .toArray()
-    }
-
-    return payload;
-  }
-
+  
   function handleAuthOk() {setAppState('authOk'); }
   function handleBotFound() { setAppState('continue'); }
   function handleBotNotFound() { setAppState('new'); }

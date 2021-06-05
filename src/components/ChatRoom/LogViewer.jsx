@@ -37,7 +37,6 @@ function LeftBalloon(props) {
 			display="flex"
 			flexDirection="row"
 			alignItems="flex-start"
-			key={props.index}
 		>
 			<Box>
 				<Badge
@@ -66,7 +65,6 @@ function RightBalloon(props){
 			display="flex"
 			flexDirection="row"
 			alignItems="flex-end"
-			key={props.index}
 		>
 			<Box>
 				<Badge
@@ -91,7 +89,6 @@ function SystemMessage(props){
 			display="flex"
 			flexDirection="row"
 			alignItems="center"
-			key={props.index}
 		>
 			<Box>
 				<Typography>{message.text}</Typography>
@@ -108,15 +105,16 @@ export default function LogViewer(props) {
 		ユーザは右側、bot,othersは左側、それら以外は環境やシステムのメッセージで
 		吹き出しではない表示.
 	*/
-
 	const classes = useStyles();
 	
 	const messages = props.log.map((message,index)=>{
+		console.log("person",message.person,"feats",message.features)
+	
 		switch(message.person) {
-			case 'user' : return <li key={index}><RightBalloon message={message} index={index}/></li>
+			case 'user' : return <li key={index}><RightBalloon message={message}/></li>
 			case 'bot' :
-			case 'other': return <li key={index}><LeftBalloon message={message} index={index}/></li>
-			default: return <li key={index}><SystemMessage message={message} index={index}/></li>
+			case 'other': return <li key={index}><LeftBalloon message={message}/></li>
+			default: return <li key={index}><SystemMessage message={message}/></li>
 		}
 	})
 	return (

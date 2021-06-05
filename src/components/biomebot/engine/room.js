@@ -39,7 +39,7 @@ const renderer = {
 };
 
 
-export function execute(state, work, message, ecosystem, sendMessage) {
+export function execute(state, work, message, sendMessage) {
   let reply = { text: null };
 
   // moodと同名のpartがあればそれをpartOrder先頭に移動
@@ -143,7 +143,7 @@ export function execute(state, work, message, ecosystem, sendMessage) {
       name: "",
       person: "bot",
       mood: work.mood,
-      site: ecosystem.site,
+      site: work.site,
     }
   ));
 

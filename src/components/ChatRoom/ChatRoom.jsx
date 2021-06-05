@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useMemo } from 'react';
+import React, { useContext, useRef, useEffect, useState, useMemo } from 'react';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import IconButton from '@material-ui/core/IconButton';
@@ -80,11 +80,11 @@ export default function ChatRoom(props) {
   const classes = useStyles();
   const fb = useContext(FirebaseContext);
   const ecosystem = useContext(EcosystemContext);
-  const bot = useContext(BiomebotContext);
+  const bot = useRef(useContext(BiomebotContext));
   const [userInput, setUserInput] = useState("");
 
   useEffect(()=>{
-    bot.deploy(ecosystem.site);
+    bot.current.deploy(ecosystem.site);
   },[ecosystem.site]);
 
   function handleChangeUserInput(event) {
@@ -101,7 +101,7 @@ export default function ChatRoom(props) {
       site: ecosystem.site,
     });
     props.writeLog(message);
-    bot.execute(message,props.writeLog);
+    bot.current.execute(message,props.writeLog);
 
     setUserInput("");
     event.preventDefault();
@@ -116,8 +116,9 @@ export default function ChatRoom(props) {
   ,[currentLog]);
 
   const memorizedUserPanel = useMemo(()=>
-    <UserPanel />
+    <UserPanel user={fb.user}/>
     ,[fb.user]);
+    
   return (
     <Box
       display="flex"
@@ -140,7 +141,7 @@ export default function ChatRoom(props) {
       >
         <Box>
           <FairyPanel 
-            photoURL={bot.photoURL}
+            photoURL={bot.current.photoURL}
           />
         </Box>
         <Box>

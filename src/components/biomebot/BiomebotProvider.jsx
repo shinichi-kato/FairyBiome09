@@ -109,6 +109,7 @@
 import React, {
   useContext,
   createContext,
+  useRef,
   useEffect,
   useReducer,
   useState
@@ -117,7 +118,6 @@ import {
   ones,
 } from "mathjs";
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
-import { EcosystemContext} from "../Ecosystem/EcosystemProvider";
 import { Message, featureIndex } from '../message';
 
 import { db } from './dbio';
@@ -186,6 +186,7 @@ const defaultSettings = {
     updatedAt: "",
     partOrder: [],
     mentalLevel: 100,
+    site: "",
     moment: 0,
     mood: "peace",
     queue: [], // 複数にわけた出力を保持
@@ -206,7 +207,7 @@ const defaultSettings = {
   }
 }
 
-// 更新頻度が低いデータ
+// 更新頻度は低くdbには保存しないデータ
 const initialState = {
   botId: null,
   displayName: "",
@@ -267,44 +268,48 @@ function reducer(state, action) {
 
 export default function BiomebotProvider(props) {
   const fb = useContext(FirebaseContext);
-  const ecosystem = useContext(EcosystemContext);
-  
+
   const [state, dispatch] = useReducer(reducer, initialState);
   const [work, setWork] = useState({
     key: 0,
     ...defaultSettings.work
   });
 
+  const appState = props.appState;
+  const handleBotFound = useRef(props.handleBotFound);
+  const handleBotNotFound = useRef(props.handleBotNotFound);
+
+
 
   function handleExecute(message, emitter) {
-    let snap = execute[ecosystem.site](state, work, message, ecosystem, emitter)
+    let snap = execute[work.site](state, work, message, work.site, emitter)
     setWork(prev => ({
-          prev,
-          ...snap
-        }));
+      prev,
+      ...snap
+    }));
   }
 
   useEffect(() => {
     let isCancelled = false;
 
     if (!isCancelled) {
-      if (props.appState === 'authOk' && fb.uid) {
+      if (appState === 'authOk' && fb.uid) {
         db.load(fb.uid)
           .then(snap => {
             if (snap) {
               dispatch({ type: 'connect', snap: snap })
               setWork(prev => ({ key: prev.key + 1, ...snap.work }));
-              props.handleBotFound();
+              handleBotFound.current();
             }
             else {
-              props.handleBotNotFound();
+              handleBotNotFound.current();
             }
           });
       }
     }
 
     return () => { isCancelled = true }
-  }, [props.appState, fb.uid]);
+  }, [appState, fb.uid]);
 
   async function generate(obj, avatarPath) {
     // avatarPathをobjに組み込む
@@ -323,6 +328,7 @@ export default function BiomebotProvider(props) {
           partOrder: obj.config.initialPartOrder,
           mentalLevel: obj.config.initialMentalLevel,
           moment: 0,
+          site: "",
           mood: "peace",
           queue: [],
           futurePostings: []
@@ -331,8 +337,8 @@ export default function BiomebotProvider(props) {
   }
 
   async function deploy(site) {
-
-    for (let partName of state.config.initialPartOrder) {
+  
+        for (let partName of state.config.initialPartOrder) {
 
       // 各パートのscriptを読んでcacheに変換
       // webWorkerが別スレッドで処理し、結果をstateに読み込む
@@ -358,6 +364,14 @@ export default function BiomebotProvider(props) {
       worker.postMessage({ botId: state.botId, partName });
 
     }
+    
+    if(work.site === "") {
+      // スタートデッキの実行
+      // * 未実装 *
+    }
+
+    setWork(prev => ({...prev, site: site}));
+
   }
 
   const photoURL = `/chatbot/${state.config.avatarPath}/${work.mood}.svg`;

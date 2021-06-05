@@ -1,8 +1,7 @@
-import React, { useContext } from "react";
+import React from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 
-import { FirebaseContext } from '../Firebase/FirebaseProvider';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -28,9 +27,9 @@ const useStyles = makeStyles(theme => ({
 
 
 export default function UserPanel(props) {
-  const fb = useContext(FirebaseContext);
   const classes = useStyles();
-  console.log("photourl", fb.photoURL)
+  const user = props.user;
+  console.log("photourl", user.photoURL)
 
   return (
     <Box
@@ -49,8 +48,8 @@ export default function UserPanel(props) {
       >
         <img
           className={classes.portrait}
-          src={`/avatar/${fb.photoURL}`}
-          alt={fb.photoURL} />
+          src={`/avatar/${user.photoURL}`}
+          alt={user.photoURL} />
       </Box>
 
     </Box>

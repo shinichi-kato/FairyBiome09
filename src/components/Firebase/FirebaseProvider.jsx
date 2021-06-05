@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, createContext } from 'react';
+import React, { useEffect, useReducer, useRef, createContext } from 'react';
 import loadable from '@loadable/component';
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -108,7 +108,7 @@ function reducer(state, action) {
 export default function FirebaseProvider(props) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-
+  const handleAuthOk = useRef(props.handleAuthOk);
 
   // -----------------------------------------------
   //
@@ -116,8 +116,6 @@ export default function FirebaseProvider(props) {
   //
   //
   // -----------------------------------------------
-
-  const handleAuthOk = props.handleAuthOk;
 
   useEffect(() => {
     let isCancelled = false;
@@ -149,7 +147,7 @@ export default function FirebaseProvider(props) {
         firebaseApp.auth().onAuthStateChanged(user=>{
           if(user){
             dispatch({ type: "ok", user:user});
-            handleAuthOk();
+            handleAuthOk.current();
           } else {
             dispatch({ type: "error",message:"ユーザが認証されていません"});
           }
