@@ -38,7 +38,7 @@ class dbio {
       config: "botId", // botId,description,...
       work: "botId", // id,
       main: "++id,[botId+key]",  // id,botId,key,val 
-      parts: "[name+botId]", // name,config,cache
+      parts: "[botId+name]", // name,config,cache
       scripts: "[botId+partName+id],partName,next,prev", // id,name,in,out,next,prev
       caches: "[botId+partName]", // scriptをコンパイルした結果を格納
     });
@@ -113,16 +113,9 @@ class dbio {
       dictKeys.map(key => {
         const part = obj.parts[key];
         return {
-          name: key,
+          ...part,
           botId: botId,
-          config: {
-            momentUpper: part.momentUpper,
-            momentLower: part.momentLower,
-            precision: part.precision,
-            retention: part.retention,
-          },
-          scriptTimestamp: part.scriptTimestamp,
-          cacheTimestamp: part.cacheTimestamp,
+          name: key,
         }
       }));
 
@@ -146,7 +139,7 @@ class dbio {
         data.push({
           id: i,
           botId: botId, // compound key
-          partName: partName,
+          name: partName,
           in: script[i].in, out: script[i].out,
           next: i + 1,
           prev: i - 1,
@@ -162,17 +155,37 @@ class dbio {
     // indexedDBからチャットボットのデータを読み込む。
     //  存在しなかった場合はnullを返す。
 
+    let config, work, partList, displayName, main;
+    let parts = {};
 
-    let config, work, displayName;
     config = await this.db.config.where({ botId: botId }).first();
     if (config) {
       work = await this.db.work.where({ botId: botId }).first();
       displayName = await this.db.main.where({ botId: botId, key: 'NAME' }).first();
+      partList = await this.db.parts.where('[botId+name]')
+        .between([botId, Dexie.minKey], [botId, Dexie.maxKey])
+        .toArray();
+
+      for (let part of partList) {
+        // nameとbotIdはpartsに書き込まない
+        Object.defineProperty(part, 'name', { enumerable: false });
+        Object.defineProperty(part, 'botId', { enumerable: false });
+
+        parts[part.name] = { ...part }
+      };
+
+      await this.db.main.where('[botId+key]')
+        .between([botId, Dexie.minKey], [botId, Dexie.maxKey])
+        .each(item => {
+          main[item.key] = item.val
+        });
+
 
       return {
         botId: botId,
         config: config,
         work: work,
+        parts: parts,
         displayName: displayName,
         estimator: await this.readEstimator(botId)
       }
@@ -204,7 +217,7 @@ class dbio {
         idf: JSON.stringify(payload.idf),
         tfidf: JSON.stringify(payload.tfidf),
         index: payload.index,
-        fv:payload.fv,
+        fv: payload.fv,
         tagDict: payload.tagDict
       }
     });
