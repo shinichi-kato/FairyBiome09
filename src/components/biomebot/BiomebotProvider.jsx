@@ -7,8 +7,12 @@
   ## 「心のパート」
   人の心には好奇心、共感、承認欲求、持っている知識を話したい、親密になりたい、
   労り、怒り、上機嫌、意気消沈、眠い状態、など様々なパートが共存している。
-  これらのパートを表現するためにそれぞれに対して辞書を用意するが、これらに
-  利用する返答アルゴリズムは以下の数種類にまとめることができる。
+  それらは並列的・競争的に動作しており、その中の一つが優勢になって返答を生成して
+  いると考えられる。
+  Biomebotはこれらパートごとに単独でも動作しうるチャットボットを生成し、それらの
+  相互作用を通して一つの統合されたキャラクタを表現することを試みる。ここで各パートは
+  別個の働きを持っているが、そこで用いる返答アルゴリズムは以下の数種類にまとめることが
+  できる。
   
   パートの種類
   --------------------------------------------------------------
@@ -21,27 +25,9 @@
   knowledge あらかじめ用意した辞書を使ってユーザのセリフに応答する。
   --------------------------------------------------------------
 
-  ## パートリストの動作機序
-  チャットボットはメッセージを受け取るとpartOrder配列に格納された順番に
-  別途part.jsxで説明する方法により評価を行う。成功したら返答が生成され、返答を
-  行ったパートをpartOrder先頭または末尾に移動してパート評価から抜ける。
-  失敗したら順次次のパートの評価を試みる。
-  
-  パート評価がすべて失敗だった場合はpartOrder配列に格納された順番に辞書の
-  NOT_FOUND出力を試みる。
-  
-  最後にチャットボットのmoodと同名のパートが存在する場合はそれをpartOrderの
-  先頭に移動する。
-  
-
-  ## 状態
-  チャットボットには以下の状態(mood)があり、それぞれ対応するアバターを
-  表示してユーザに状態を通知する。状態間の遷移は発言文字列中の{ENTER_PEACE}
-  などで生じ、これによりmoodがpeaceに変化し、peaceという名前のパートがあれば
-  それがpartOrder先頭に移動するとともに{ENTER_PEACE}をトリガ値とする
-  messageがチャットボットのキューに乗ってpart評価が最初から再実行される。
-  辞書の中に{ENTER_PEACE}トリガに対応する記憶を与えておくことで状態が
-  変わったことで生じる自発的な応答を生成できる。
+  ## 「心の状態」
+  チャットボットには下記の「心の状態」があり、時刻や体調など会話の流れ以外の
+  要因によっても変化する
 
   チャットボットの状態
   -----------------------------
@@ -52,8 +38,8 @@
   sleepy   眠い
   sleep    睡眠中
   absent   不在
-  -----------------------------
-
+  ----------------------------- 
+  
   ### チャットボットの覚醒/睡眠
   睡眠/覚醒は
   circadian:{
@@ -75,11 +61,61 @@
   deploy時にsleep状態であればユーザ発言を受け取るごとに覚醒チェックを行い、
   成功したら{ENTER_WAKE}がトリガされる。
 
+
+
+  ## パートリストの動作機序
+  チャットボット起動時はwork.partOrderはstate.initialPartOrderをコピーした
+  内容になり、その先頭にあるpartの{enter_パート名}が自動的に実行される。
+
+  チャットボットはメッセージを受け取るとwork.partOrderに格納された順番に
+  別途part.jsxで説明する方法により評価を行う。成功したら返答が生成され、返答を
+  行ったパートをpartOrder先頭または末尾に移動してパート評価から抜ける。
+  失敗したら順次次のパートの評価を試みる。
+  
+  パート評価がすべて失敗だった場合はpartOrder配列に格納された順番に辞書の
+  NOT_FOUND出力を試みる。
+  
+
+  ## パートで表現するもの
+  
+  各パートはそれぞれ対応するアバターを表示してユーザに状態を通知する。
+  パート間の遷移は発言文字列中の{enter_peace}などで生じ、peaceという名前の
+  パートがpartOrder先頭に移動するとともに{enter_peace}をトリガ値とする
+  messageがチャットボットのキューに乗ってpart評価が最初から再実行される。
+  辞書の中に{enter_peace}トリガに対応する記憶を与えておくことで状態が
+  変わったことで生じる自発的な応答を生成できる。
+  
+  ### 状態パート
+
+  パートの相互作用や外的な要因により、チャットボットの「心の状態」が変化する場合がある。
+  心の状態にはそれらに固有のパートが別個に記述される。下記の状態と同名のパートが
+  トリガされた場合は自動的にmoodの値が状態名で上書きされる。
+
+  チャットボットの状態パート
+  -----------------------------
+  peace    平常
+  cheer    盛り上がっている
+  down     落ち込んでいる
+  wake     起床した
+  sleepy   眠い
+  sleep    睡眠中
+  absent   不在
+  -----------------------------
+
+  ### 行動パート
+
+  挨拶、問い合わせへの返答、思い出し話など、特定の話題に従った行動はそれぞれ
+  別のパートとして記述する。これらの行動パートにも「心の状態」が定義される。
+  行動パート{enter_greeting}などによりトリガされる。
+  またパートの設定の中にinitialMoodがあり、チャットボットのmoodはその値で
+  上書きされる。initialMoodが定義されていない場合はpeaceになる。
+
+
   ## トリガ
   すでに一部説明しているが、トリガとはmessageクラスをtriggerモードで作成する
   ことで得られる。これをチャットボットに渡すとこのメッセージがキューの先頭に乗り、
-  partOrderにしたがって評価される。トリガにはmoodの変化に対応する{ENTER_PEACE}
-  などや入室{ENTER_ROOM}など、天候の変化{ENTER_晴}、{EXIT_雨}などがある。
+  partOrderにしたがって評価される。トリガにはmoodの変化に対応する{enter_peace}
+  などや入室{enter_room}など、天候の変化{enter_晴}、{enter_雨}などがある。
 
 
   # 辞書の検索
@@ -94,7 +130,7 @@
 
   weightsのデフォルト値は、テキストがその他特徴量(6種)の2倍の重みを持つようにする。そのため
   text = 2/8
-  person,mood,site,weather,season,daypart = 1/8
+  person,part,site,weather,season,daypart = 1/8
   という初期値を与える。
   
 
@@ -166,7 +202,7 @@ const defaultSettings = {
       delta: 60,
     },
     initialMentalLevel: 10,
-    initialPartOrder: [],
+    initialPartOrder: ["peace"],
     hubBehavior: {
       momentUpper: 10,
       momentLower: 0,
@@ -184,7 +220,7 @@ const defaultSettings = {
   },
   work: {
     updatedAt: "",
-    partOrder: [],
+    partOrder: ["peace"],
     mentalLevel: 100,
     site: "",
     moment: 0,
@@ -193,8 +229,9 @@ const defaultSettings = {
     futurePostings: [], // 
   },
   part: {
-    "untitledPart": {
+    "peace": {
       kind: "knowledge",
+      initialMood: "peace",
       momentUpper: 5,
       momentLower: 0,
       precision: 0.6,
@@ -234,6 +271,7 @@ function reducer(state, action) {
       for (let partName in snap.parts) {
         if (!snap.parts[partName].featureWeights) {
           let newWeights = ones(featureIndex.length) * (1 / 10);
+          console.log("nw",newWeights,ones(4))
           newWeights[1] = 4 / 10; // ※先頭は1番
           snap.parts[partName].featureWeights = newWeights;
         }
@@ -325,7 +363,7 @@ export default function BiomebotProvider(props) {
         key: prev.key + 1,
         work: {
           updatedAt: "",
-          partOrder: obj.config.initialPartOrder,
+          partOrder: [...obj.config.initialPartOrder],
           mentalLevel: obj.config.initialMentalLevel,
           moment: 0,
           site: "",
@@ -338,7 +376,7 @@ export default function BiomebotProvider(props) {
 
   async function deploy(site) {
   
-        for (let partName of state.config.initialPartOrder) {
+    for (let partName in state.parts) {
 
       // 各パートのscriptを読んでcacheに変換
       // webWorkerが別スレッドで処理し、結果をstateに読み込む
@@ -373,8 +411,8 @@ export default function BiomebotProvider(props) {
     setWork(prev => ({...prev, site: site}));
 
   }
-
-  const photoURL = `/chatbot/${state.config.avatarPath}/${work.mood}.svg`;
+  console.log("work",work)
+  const photoURL = `/chatbot/${state.config.avatarPath}/${work.partOrder[0]}.svg`;
 
   return (
     <BiomebotContext.Provider

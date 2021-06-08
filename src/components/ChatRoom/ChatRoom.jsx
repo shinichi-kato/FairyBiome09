@@ -116,7 +116,7 @@ export default function ChatRoom(props) {
   ,[currentLog]);
 
   const memorizedUserPanel = useMemo(()=>
-    <UserPanel user={fb.user}/>
+    <UserPanel user={fb}/>
     ,[fb.user]);
     
   return (

@@ -17,17 +17,17 @@ import { retrieve } from './retrieve';
 import * as knowledge from './knowledge-part';
 import { Message } from '../../message';
 
-const RE_ENTER = /{ENTER_([A-Z][A-Z_]*)}/;
+const RE_ENTER = /{enter_([A-Za-z][a-zA-Z_]*)}/;
 const RE_TAG = /{[a-zA-Z][a-zA-Z0-9_]*}/g;
 
 const moodNames = {
-  "MOOD_PEACE": "peace",
-  "MOOD_CHEER": "cheer",
-  "MOOD_DOWN": "down",
-  "MOOD_WAKE": "wake",
-  "MOOD_SLEEPY": "sleepy",
-  "MOOD_SLEEP": "sleep",
-  "MOOD_ABSENT": "absent"
+  "peace": true,
+  "cheer": true,
+  "down": true,
+  "wake": true,
+  "sleepy": true,
+  "sleep": true,
+  "absent": true,
 };
 
 const replier = {
@@ -85,11 +85,20 @@ export function execute(state, work, message, sendMessage) {
     });
 
     // 各種トリガー処理
-    if (trigger !== "" && trigger in moodNames) {
-      // moodを変えるトリガーを検出したら、moodを変更するとともに
-      // moodと同名のpartを先頭にする
-      work.mood = moodNames[trigger];
-      hoist(work.mood,work.partOrder);
+    if (trigger !== "" && trigger in state.parts) {
+      // partと同名のトリガーを検出したら、そのpartを先頭にする。
+      // triggerがmoodのどれかと同じであったらmoodをその名前で上書きする。
+      // そうでなければpart.initialMoodにする。
+      hoist(trigger,work.partOrder);
+      if('initialMood' in work.parts[trigger]){
+        work.mood = work.parts[trigger].initialMood
+      }
+      else if(trigger in moodNames){
+        work.mood = trigger;
+      }
+      else{
+        work.mood = "peace"
+      }
 
       // 自己Message投下
 
@@ -103,11 +112,8 @@ export function execute(state, work, message, sendMessage) {
     }
 
     // hoist / drop
-    // moodと同名のパートは影響を受けない
-    if(work.mood !== partName){
-      drop(reply.drop, work.partOrder);
-      hoist(reply.hoist, work.partOrder);
-    }
+    drop(reply.drop, work.partOrder);
+    hoist(reply.hoist, work.partOrder);
 
     break;
   }
