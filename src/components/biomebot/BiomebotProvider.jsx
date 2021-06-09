@@ -150,9 +150,6 @@ import React, {
   useReducer,
   useState
 } from 'react';
-import {
-  ones,
-} from "mathjs";
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
 import { Message, featureIndex } from '../message';
 
@@ -265,24 +262,25 @@ function reducer(state, action) {
 
     case 'connect': {
       const snap = action.snap;
+      let newWeights;
 
       // featureWeightsがなければ
       // featureWeights=[0.2,0.2...],featureBiases=0で初期化
       for (let partName in snap.parts) {
         if (!snap.parts[partName].featureWeights) {
-          let newWeights = ones(featureIndex.length) * (1 / 10);
-          console.log("nw",newWeights,ones(4))
-          newWeights[1] = 4 / 10; // ※先頭は1番
+          newWeights = nums(featureIndex.length, 1/10);
+          newWeights[0] = 4 / 10; // ※先頭は1番
           snap.parts[partName].featureWeights = newWeights;
         }
       }
+      console.log("parts",snap.parts)
 
       return {
         botId: snap.botId,
         displayName: snap.displayName,
         config: snap.config,
         main: snap.main,
-        parts: snap.parts,
+        parts: {...snap.parts},
         estimator: snap.estimator
       }
     }
@@ -336,7 +334,18 @@ export default function BiomebotProvider(props) {
           .then(snap => {
             if (snap) {
               dispatch({ type: 'connect', snap: snap })
-              setWork(prev => ({ key: prev.key + 1, ...snap.work }));
+              const snapWork = snap.work;
+              console.log("useEffect setWork:",snapWork)
+              setWork(prev => ({
+                 key: prev.key + 1,
+                 mentalLevel: snapWork.mentalLevel,
+                 moment: snapWork.moment,
+                 mood: snapWork.mood,
+                 partOrder: [...snapWork.partOrder],
+                 queue:[...snapWork.queue],
+                 site: snapWork.site,
+                 updatedAt: snapWork.updatedAt
+              }));
               handleBotFound.current();
             }
             else {
@@ -358,19 +367,21 @@ export default function BiomebotProvider(props) {
 
     // stateへの書き込み
     dispatch({ type: 'connect', snap: obj });
+    console.log("generate-setWork")
     setWork(prev => (
       {
         key: prev.key + 1,
-        work: {
-          updatedAt: "",
-          partOrder: [...obj.config.initialPartOrder],
-          mentalLevel: obj.config.initialMentalLevel,
-          moment: 0,
-          site: "",
-          mood: "peace",
-          queue: [],
-          futurePostings: []
-        }
+        
+        updatedAt: "",
+        partOrder: [...obj.config.initialPartOrder],
+        mentalLevel: obj.config.initialMentalLevel,
+        moment: 0,
+        site: "room",
+        mood: "peace",
+        queue: [],
+        futurePostings: [],
+        botId: fb.uid,
+        
       }));
   }
 
@@ -411,7 +422,6 @@ export default function BiomebotProvider(props) {
     setWork(prev => ({...prev, site: site}));
 
   }
-  console.log("work",work)
   const photoURL = `/chatbot/${state.config.avatarPath}/${work.partOrder[0]}.svg`;
 
   return (
@@ -427,4 +437,12 @@ export default function BiomebotProvider(props) {
       {props.children}
     </BiomebotContext.Provider>
   );
+}
+
+function nums(len,num){
+  let x = Array(len);
+  for(let i=0; i<len; i++){
+    x[i]=num;
+  }
+  return x;
 }

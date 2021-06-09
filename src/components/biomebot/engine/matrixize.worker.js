@@ -26,6 +26,8 @@
   見つけた場合、それはtfidfで処理せずtagDictを用いる。現バージョンでは該当した行の
   tfidfはすべて0とする。
 
+  ※辞書がタグだけにならないようにすること
+  
 */
 
 import {
@@ -55,6 +57,10 @@ function getValidNode(node) {
   return [];
 }
 
+function isNonEmpty(node){
+  return node !== "" && (Array.isArray(node) && node.length !== 0)
+}
+
 onmessage = function (event) {
   const { botId, partName } = event.data;
 
@@ -67,11 +73,13 @@ onmessage = function (event) {
     let tagDict = {};
     let tags;
 
+    // 以下、空行を除外するロジックが重複していていまいち
     for (let i = 0, len = script.length; i < len; i++) {
       if ('in' in script[i] && 'out' in script[i]) {
         if ((tags = RE_TAG.exec(script[i].in)) !== null) {
           tagDict[tags[0]] = getValidNode(script[i].out);
-        } else {
+        } else if(isNonEmpty(script[i].in) && isNonEmpty(script[i].out)){
+
           inScript.push(...getValidNode(script[i].in));
           outScript.push(...getValidNode(script[i].out));
         }
@@ -106,6 +114,7 @@ onmessage = function (event) {
     */
 
     //wv
+    console.log("wv",squeezedDict.length,vocab.length)
     let wv = zeros(squeezedDict.length, vocab.length);
     for (let i = 0, l = squeezedDict.length; i < l; i++) {
       for (let word of squeezedDict[i]) {

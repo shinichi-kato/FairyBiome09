@@ -106,7 +106,7 @@ export const featureDict = {
   '冬': 27,
   //dayPart
   'morning': 28,
-  '朝':28,
+  '朝': 28,
   'noon': 29,
   '昼': 29,
   'evening': 30,
@@ -169,23 +169,50 @@ export class Message {
     this.estimation = 0;
 
     if (data === undefined) {
-      // 第一引数だけ与えられた場合は辞書から取得した文字列をMessageに復元。
-      // 辞書にはタイムスタンプは記載せずseasonやdayPartに射影した情報を利用する。
-      const data = mode.split('\t');
-      this.text = data[0];
-      this.name = ""
-      this.timestamp = null;
-      this.avatarPath = "";
+      if (typeof mode === 'string') {
+        // 第一引数に文字列だけを与えた場合
+        // 辞書から取得した文字列をmessage化
+        // 辞書にはタイムスタンプは記載せずseasonやdayPartに射影した情報を利用する。
+        const data = mode.split('\t');
+        this.text = data[0];
+        this.name = ""
+        this.timestamp = null;
+        this.avatarPath = "";
 
-      if (data.length > 1) {
-        const feats = data[1].split(' ');
-        for (let feat of feats) {
-          if (feat in featureDict) {
-            this.features[featureDict[feat]] = 1;
+        if (data.length > 1) {
+          const feats = data[1].split(' ');
+          for (let feat of feats) {
+            if (feat in featureDict) {
+              this.features[featureDict[feat]] = 1;
+            }
           }
         }
+      } else if (!Array.isArray(mode)) {
+        // 第一引数にオブジェクトを与えた場合、
+        // そのオブジェクトの値をコピー
+        this.text = mode.text;
+        this.name = mode.name;
+        this.timestamp = mode.timestamp;
+        this.avatarPath = mode.avatarPath;
+        if ("features" in mode) {
+          this.features = [...mode.features];
+        }
+        else {
+          if ("person" in mode) {
+            this.setFeature(mode.person);
+          }
+          if ("mood" in mode) {
+            this.setFeature(mode.mood);
+          }
+          if ("site" in mode) this.setFeature(mode.site);
+          if ("ecosystem" in mode) {
+            this.setFeature(data.ecosystem.weather);
+            this.setFeature(data.ecosystem.dayPart);
+          }
+
+        }
       }
-      
+
     } else {
       switch (mode) {
         case 'speech': {
@@ -237,32 +264,32 @@ export class Message {
     return getDateRad(this.timestamp);
   }
 
-  getFeature(start,end){
-    const pos = this.features.indexOf(1,start);
-    if(start<=pos && pos<=end){
+  getFeature(start, end) {
+    const pos = this.features.indexOf(1, start);
+    if (start <= pos && pos <= end) {
       return featureIndex[pos]
     }
     return "";
   }
 
-  setFeature(feat){
-    if (feat in featureDict){
+  setFeature(feat) {
+    if (feat in featureDict) {
       this.features[featureDict[feat]] = 1;
     }
   }
 
-  get person() { return this.getFeature(1,4); }
-  get mood(){ return this.getFeature(5,11); }
-  get site(){ return this.getFeature(12,14); }
-  get weather(){ return this.getFeature(15,23); }
-  get season(){ return this.getFeature(24,27); }
-  get dayPart(){ return this.getFeature(28,31); }
+  get person() { return this.getFeature(1, 4); }
+  get mood() { return this.getFeature(5, 11); }
+  get site() { return this.getFeature(12, 14); }
+  get weather() { return this.getFeature(15, 23); }
+  get season() { return this.getFeature(24, 27); }
+  get dayPart() { return this.getFeature(28, 31); }
 
 }
 
-function zeros(size){
+function zeros(size) {
   let a = Array(size);
-  for(let i=0;i<size;i++){
+  for (let i = 0; i < size; i++) {
     a[i] = 0;
   }
   return a;

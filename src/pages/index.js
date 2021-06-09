@@ -8,6 +8,7 @@ import EcosystemProvider from '../components/Ecosystem/EcosystemProvider';
 import BiomebotProvider from '../components/biomebot/BiomebotProvider';
 
 import Dexie from "dexie";
+import { Message } from '../components/message';
 
 export const query = graphql`
 query indexq {
@@ -48,7 +49,7 @@ async function readLog(site, number, startId) {
       .toArray()
   }
 
-  return payload;
+  return payload.map(msg => new Message(msg));
 }
 
 export default function IndexPage({ data }) {

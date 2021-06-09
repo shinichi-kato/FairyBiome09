@@ -39,7 +39,7 @@ class dbio {
       work: "botId", // id,
       main: "++id,[botId+key]",  // id,botId,key,val 
       parts: "[botId+name]", // name,config,cache
-      scripts: "[botId+partName+id],partName,next,prev", // id,name,in,out,next,prev
+      scripts: "[botId+partName+id],next,prev", // id,name,in,out,next,prev
       caches: "[botId+partName]", // scriptをコンパイルした結果を格納
     });
 
@@ -73,8 +73,10 @@ class dbio {
 
     /* work */
     await this.db.work.put({
+      ...obj.work,
       botId: botId,
-      ...obj.work
+      site: "room",
+      partOrder:[...obj.config.initialPartOrder],
     });
 
     /* main "id,[botId+key]" */
@@ -121,7 +123,7 @@ class dbio {
 
 
 
-    /* scripts "[id+botId],partName,next,prev" */
+    /* scripts "[botId],next,prev" */
     await this.db.scripts.where('[botId+partName+id]')
       .between(
         [botId, Dexie.minKey, Dexie.minKey],
@@ -139,7 +141,7 @@ class dbio {
         data.push({
           id: i,
           botId: botId, // compound key
-          name: partName,
+          partName: partName,
           in: script[i].in, out: script[i].out,
           next: i + 1,
           prev: i - 1,
