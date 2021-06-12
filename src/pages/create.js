@@ -1,4 +1,4 @@
-import React, {  useState} from "react";
+import React, { useState } from "react";
 import { graphql, navigate } from "gatsby"
 
 import FirebaseProvider from '../components/Firebase/FirebaseProvider';
@@ -27,7 +27,7 @@ export const query = graphql`
   }
 `
 
-export default function CreatePage({location, data}){
+export default function CreatePage({ location, data }) {
   /* 
     チャットボット新規作成ページ 
   
@@ -44,25 +44,27 @@ export default function CreatePage({location, data}){
   */
   const [appState, setAppState] = useState('landing');
 
-  const chatbots = data.allJson.nodes.map(node=>({
+  const chatbots = data.allJson.nodes.map(node => ({
     name: node.main.NAME,
     creator: node.main.CREATOR_NAME,
     directory: node.parent.relativeDirectory,
-    backgroundColor:node.config.backgroundColor,
+    backgroundColor: node.config.backgroundColor,
     description: node.config.description
   }));
 
-  if(location.search === '?exec' && appState !== 'exec'){
+  if (location.search === '?exec' && appState !== 'done' && appState !== 'exec') {
     setAppState('exec');
   }
 
   function handleBotFound() { setAppState('continue'); }
-  function handleAuthOk() {setAppState('authOk'); }
+  function handleAuthOk() { setAppState('authOk'); }
   function handleBotNotFound() {
     setAppState('new');
     navigate('/content/prologue1/');
   }
-  
+  function handleDone() { setAppState('done') }
+
+  console.log("appState", appState)
   return (
     <FirebaseProvider
       handleAuthOk={handleAuthOk}
@@ -72,8 +74,9 @@ export default function CreatePage({location, data}){
         handleBotNotFound={handleBotNotFound}
         handleBotFound={handleBotFound}
       >
-        <CreateFairy 
+        <CreateFairy
           appState={appState}
+          handleDone={handleDone}
           chatbots={chatbots}
         />
       </BiomebotProvider>

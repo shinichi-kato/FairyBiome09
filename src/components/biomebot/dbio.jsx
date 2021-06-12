@@ -184,9 +184,6 @@ class dbio {
         .each(item => {
           main[item.key] = item.val
         });
-      console.log("main",main)
-      
-
 
 
       return {

@@ -27,40 +27,39 @@ export function reply(partName, state, work, result) {
   // state.cache[partName]を利用して返答を生成する。
   // cache.outScriptのresult.index行を使用
 
-  const cache = state.cache[partName];
+  const tagDict = state.cache[partName].tagDict;
 
-  const cands = cache[result.index];
+  const cands = state.cache[result.index];
 
   let cand = cands[Math.floor(Math.random() * cands.length)];
 
   function _render(text) {
-    if (!(text in cache.tagDict)) return text;
+    if (!(text in tagDict)) return text;
 
-    const items = cache.tagDict[text];
+    const items = tagDict[text];
     let item = items[Math.floor(Math.random() * items.length)];
 
-    item.replace(RE_TAG, (whole, tag) => _render(text));
-
-    return item;
+    return item.text.replace(RE_TAG, (whole, tag) => _render(text));
   }
 
-  return _render(cache.outScript[cand])
+  return _render(state.cache.outScript[cand])
 }
 
 export function render(partName, state, work, text) {
   // 
   // tagを展開して返す
-  const cache = state.cache[partName];
+  const tagDict = state.cache[partName].tagDict;
 
   function _render(text) {
-    if (!(text in cache.tagDict)) return text;
+    if (!(text in tagDict)) return text;
 
-    const items = cache.tagDict[text];
+    const items = tagDict[text];
     let item = items[Math.floor(Math.random() * items.length)];
 
-    item.replace(RE_TAG, (whole, tag) => _render(text));
+    return item.text.replace(
+      RE_TAG, 
+      (whole, tag) => _render(text));
 
-    return item;
   }
 
   return _render(text);

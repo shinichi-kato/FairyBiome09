@@ -147,7 +147,7 @@ export function execute(state, work, message, sendMessage) {
     'speech',
     {
       text: reply.text,
-      name: "",
+      name: state.config.displayName,
       person: "bot",
       mood: work.mood,
       site: work.site,

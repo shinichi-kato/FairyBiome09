@@ -1,5 +1,5 @@
-import React, {useContext, useState} from "react";
-import {navigate} from "gatsby";
+import React, { useContext, useState } from "react";
+import { navigate } from "gatsby";
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -10,12 +10,13 @@ import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
+import WarningIcon from '@material-ui/icons/Warning';
 
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
 import { GridListTileBar } from "@material-ui/core";
 
-const useStyles= makeStyles(theme=>({
+const useStyles = makeStyles(theme => ({
   gridContainer: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -29,25 +30,35 @@ const useStyles= makeStyles(theme=>({
     // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
     transform: 'translateZ(0)',
   },
-  crest:{
+  crest: {
     width: "100%",
     padding: theme.spacing(1),
   },
   crestContainer: {
     width: "80%",
   },
-  button:{
+  button: {
     fontSize: 18,
-    padding:theme.spacing(2),
+    padding: theme.spacing(2),
   },
   title: {
     flexGrow: 1,
+  },
+  main: {
+    paddingTop: "3em",
   }
 }));
 
-const STATE_TABLE={'new':0,'landing':1,'authOk':2,'continue':3,'exec':4};
+const STATE_TABLE = {
+  'new': 0,
+  'landing': 1,
+  'authOk': 2,
+  'continue': 3,
+  'exec': 4,
+  'done': 5
+};
 
-export default function CreateFairy(props){
+export default function CreateFairy(props) {
   /* 
     アプリの状態がappStateで渡されてくる。
     props.appState        表示要素
@@ -55,8 +66,9 @@ export default function CreateFairy(props){
     'new'           プロローグにnavigate
     'landing'       タイトル
     'authOk'        タイトル ユーザアカウント
-    'continue'      タイトル　ユーザアカウント　上書き確認メッセージ
-    'exec'          タイトル　ユーザアカウント　チャットボット選択画面     
+    'continue'      タイトル ユーザアカウント 上書き確認メッセージ
+    'exec'          タイトル ユーザアカウント チャットボット選択画面    
+    'ready'          タイトル ユーザアカウント 戻るボタン
     
     props.chatbots = [
       {   name: string,
@@ -71,7 +83,7 @@ export default function CreateFairy(props){
   const bot = useContext(BiomebotContext);
   const appState = STATE_TABLE[props.appState];
 
-  const [currentDirectory,setCurrentDirectory] = useState(null);
+  const [currentDirectory, setCurrentDirectory] = useState(null);
   const [currentDescription, setCurrentDescription] = useState(null);
 
   // useEffect(()=>{
@@ -80,22 +92,28 @@ export default function CreateFairy(props){
   //   }
   // },[appState]);
 
-  function handleAccept(){
+  function handleAccept() {
     navigate('/content/prologue1/');
   }
 
-  function handleClickTile(directory, description){
+  function handleClickTile(directory, description) {
     setCurrentDirectory(directory)
     setCurrentDescription(description);
   }
 
-  function handleClickLoad(){
+  function handleClickLoad() {
     fetch(`../../chatbot/${currentDirectory}/chatbot.json`)
-      .then(res=>res.json())
-      .then(obj=>{
-        bot.generate(obj,currentDirectory)
-        .then(navigate('/'));
+      .then(res => res.json())
+      .then(obj => {
+        bot.generate(obj, currentDirectory)
+          .then(() => {
+            props.handleDone();
+          });
       });
+  }
+
+  function handleReturn() {
+    navigate('/');
   }
 
   return (
@@ -103,15 +121,15 @@ export default function CreateFairy(props){
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
-              新しい妖精
+            新しい妖精
           </Typography>
-          {appState> 0 &&
+          {appState > 0 &&
             <IconButton
               onClick={fb.openUpdateDialog}
             >
               <Avatar
                 aria-label="user"
-                src={`../../avatar/${fb.photoURL}`} alt={fb.photoURL}/>
+                src={`../../avatar/${fb.photoURL}`} alt={fb.photoURL} />
             </IconButton>
           }
 
@@ -121,12 +139,21 @@ export default function CreateFairy(props){
         display="flex"
         flexDirection="column"
         alignItems="center"
+        className={classes.main}
       >
         {props.appState === 'continue' &&
           <>
             <Box>
-            すでに妖精{bot.displayName}のデータがあります。<br/>
-            新しく妖精を作ると{bot.displayName}は消滅します。<br/>
+              <WarningIcon
+                style={{
+                  color: "#faa475",
+                  fontSize: 60
+                }}
+              />
+            </Box>
+            <Box>
+              すでに妖精{bot.displayName}のデータがあります。<br />
+            新しく妖精を作ると{bot.displayName}は消滅します。<br />
             よろしいですか？
             </Box>
             <Box>
@@ -135,6 +162,13 @@ export default function CreateFairy(props){
                 variant="contained"
                 onClick={handleAccept}>
                 今の妖精を消して新しい妖精を作る
+              </Button>
+            </Box>
+            <Box>
+              <Button
+                onClick={handleReturn}
+              >
+                中止
               </Button>
             </Box>
           </>
@@ -148,11 +182,11 @@ export default function CreateFairy(props){
                 className={classes.gridList}
                 cols={2.5}
               >
-                {props.chatbots.map(bot=>(
+                {props.chatbots.map(bot => (
                   <GridListTile key={bot.name}
-                    onClick={()=>handleClickTile(bot.directory)}
+                    onClick={() => handleClickTile(bot.directory)}
                   >
-                    <img src={`../../chatbot/${bot.directory}/peace.svg`} 
+                    <img src={`../../chatbot/${bot.directory}/peace.svg`}
                       style={{
                         backgroundColor: bot.backgroundColor,
                         width: 400,
@@ -162,8 +196,8 @@ export default function CreateFairy(props){
                     <GridListTileBar
                       title={bot.name}
                       classes={{
-                        root:classes.titleBar,
-                        title:classes.title,
+                        root: classes.titleBar,
+                        title: classes.title,
                       }}
                     />
                   </GridListTile>
@@ -184,6 +218,21 @@ export default function CreateFairy(props){
               >
                 この妖精と仲間になる
               </Button>
+            </Box>
+          </>
+        }
+        {props.appState === 'done' &&
+          <>
+            <Box>
+              {fb.state.config.displayName} が仲間になっています
+            </Box>
+            <Box>
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={handleReturn}>
+                戻る
+            </Button>
             </Box>
           </>
         }
