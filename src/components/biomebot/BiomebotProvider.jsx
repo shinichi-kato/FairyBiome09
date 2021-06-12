@@ -151,7 +151,7 @@ import React, {
   useState
 } from 'react';
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
-import { Message, featureIndex } from '../message';
+import { featureIndex } from '../message';
 
 import { db } from './dbio';
 import matrixizeWorker from "./engine/matrixize.worker";
@@ -160,30 +160,6 @@ import * as room from "./engine/room";
 export const BiomebotContext = createContext();
 
 let workers = {};
-let execute = {
-  'room': room.execute,
-  'default': async (st, wk, msg, emitter) => {
-    /* postMessageToBot 関数
-      st: state
-      wk: work
-      msg: Message型データ
-      sendMessage: ({message}) => {}
-        チャットボットからのメッセージを発信するcallback関数
-
-      初期状態はecho
-    */
-    const replyMessage = new Message('system', {
-      text: `est=${msg.estimation}`,
-      site: 'room',
-    });
-
-    // setWork
-
-    await emitter(replyMessage)
-  }
-};
-
-
 
 // チャットボットデータの初期値
 const defaultSettings = {
@@ -276,12 +252,13 @@ function reducer(state, action) {
       console.log("parts",snap.parts)
 
       return {
+        ...state,
         botId: snap.botId,
         displayName: snap.displayName,
         config: snap.config,
         main: snap.main,
         parts: {...snap.parts},
-        estimator: snap.estimator
+        estimator: snap.estimator,
       }
     }
 
@@ -292,7 +269,7 @@ function reducer(state, action) {
         ...state,
         cache: {
           ...state.cache,
-          [partName]: cache
+          [partName]: {...cache}
         }
       }
     }
@@ -314,16 +291,35 @@ export default function BiomebotProvider(props) {
   const appState = props.appState;
   const handleBotFound = useRef(props.handleBotFound);
   const handleBotNotFound = useRef(props.handleBotNotFound);
+  
+  // ----------------------------------------------
+  // stateが関数内関数（クロージャ）内で使われているためのworkaround
+  // stateが変わるごとにstateRefは最新の値を指すようにする
+  const stateRef = useRef(state);
+
+  useEffect(()=>{
+    stateRef.current = state;
+  },[state]);
+
+  // --------------------------------------------
 
 
-
-  function handleExecute(message, emitter) {
-    let snap = execute[work.site](state, work, message, work.site, emitter)
+  const handleExecute = (message, emitter) => {
+    let snap;
+    switch(work.site){
+      case 'room':
+        snap = room.execute(stateRef.current, work, message, emitter)
+        break;
+      default:
+        throw new Error(`invalid site ${work.site}`)
+    }
     setWork(prev => ({
       prev,
       ...snap
     }));
   }
+
+  
 
   useEffect(() => {
     let isCancelled = false;
@@ -333,7 +329,8 @@ export default function BiomebotProvider(props) {
         db.load(fb.uid)
           .then(snap => {
             if (snap) {
-              dispatch({ type: 'connect', snap: snap })
+              dispatch({ type: 'connect', snap: snap });
+
               const snapWork = snap.work;
               console.log("useEffect setWork:",snapWork)
               setWork(prev => ({
@@ -356,7 +353,7 @@ export default function BiomebotProvider(props) {
     }
 
     return () => { isCancelled = true }
-  }, [appState, fb.uid]);
+  }, [appState, fb.uid, state]);
 
   async function generate(obj, avatarPath) {
     // avatarPathをobjに組み込む
@@ -367,6 +364,7 @@ export default function BiomebotProvider(props) {
 
     // stateへの書き込み
     dispatch({ type: 'connect', snap: obj });
+
     console.log("generate-setWork")
     setWork(prev => (
       {

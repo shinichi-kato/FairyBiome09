@@ -157,13 +157,15 @@ class dbio {
     // indexedDBからチャットボットのデータを読み込む。
     //  存在しなかった場合はnullを返す。
 
-    let config, work, partList, displayName, main;
+    let config, work, partList, displayName;
     let parts = {};
+    let main = {};
 
     config = await this.db.config.where({ botId: botId }).first();
     if (config) {
       work = await this.db.work.where({ botId: botId }).first();
       displayName = await this.db.main.where({ botId: botId, key: 'NAME' }).first();
+      console.log("load:displayname",displayName,"config",config)
       partList = await this.db.parts.where('[botId+name]')
         .between([botId, Dexie.minKey], [botId, Dexie.maxKey])
         .toArray();
@@ -176,11 +178,15 @@ class dbio {
         parts[part.name] = { ...part }
       };
 
-      await this.db.main.where('[botId+key]')
+      await this.db.main
+        .where('[botId+key]')
         .between([botId, Dexie.minKey], [botId, Dexie.maxKey])
         .each(item => {
           main[item.key] = item.val
         });
+      console.log("main",main)
+      
+
 
 
       return {
@@ -188,7 +194,8 @@ class dbio {
         config: config,
         work: work,
         parts: parts,
-        displayName: displayName,
+        main: main,
+        displayName: displayName.val,
         estimator: await this.readEstimator(botId)
       }
     }

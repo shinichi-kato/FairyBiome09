@@ -41,6 +41,7 @@ const renderer = {
 
 export function execute(state, work, message, sendMessage) {
   let reply = { text: null };
+  console.log("state in e",state,work)
 
   // moodと同名のpartがあればそれをpartOrder先頭に移動
   hoist(work.mood, work.partOrder);
@@ -137,7 +138,7 @@ export function execute(state, work, message, sendMessage) {
     }
 
     if(reply.text === "{NOT_FOUND}"){
-      reply.text = render("{NOT_FOUND}");
+      reply.text = render("{NOT_FOUND}", state.main);
     }
 
   }
@@ -153,7 +154,7 @@ export function execute(state, work, message, sendMessage) {
     }
   ));
 
-  return work
+  return work;
 }
 
 function hoist(target, parts) {
@@ -183,7 +184,7 @@ function render(tag,dict){
   
   let item = items[Math.floor(Math.random() * items.length)];
 
-  item = item.replace(RE_TAG,(whole,tag)=>render(tag));
+  item = item.replace(RE_TAG,(whole,tag)=>render(tag,dict));
 
   return item;
 }

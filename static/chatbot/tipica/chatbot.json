@@ -10,7 +10,8 @@
         "initialMentalLevel": 100,
         "initialPartOrder": [
             "greeting",
-            "faq"
+            "faq",
+            "cheer"
         ],
         "hubBehavior": {
             "momentUpper": 10,
@@ -82,7 +83,7 @@
             ]
         },
         "faq": {
-            "kind": "response",
+            "kind": "knowledge",
             "momentUpper": 100,
             "momentLower": 0,
             "precision": 0.5,
@@ -126,7 +127,7 @@
             ]
         },
         "cheer":{
-            "kind": "response",
+            "kind": "knowledge",
             "momentUpper": 100,
             "momentLower": 20,
             "precision": 0.5,
