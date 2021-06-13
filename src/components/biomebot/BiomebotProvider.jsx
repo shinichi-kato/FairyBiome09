@@ -325,7 +325,7 @@ export default function BiomebotProvider(props) {
     let isCancelled = false;
 
     if (!isCancelled) {
-      if (appState === 'authOk' && fb.uid) {
+      if (appState === 'authOk' && fb.uid && !state.botId) {
         db.load(fb.uid)
           .then(snap => {
             if (snap) {

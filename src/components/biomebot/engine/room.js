@@ -41,7 +41,7 @@ const renderer = {
 
 export function execute(state, work, message, sendMessage) {
   let reply = { text: null };
-  console.log("state in e",state,work)
+  console.log("st,wk in e",state,work)
 
   // moodと同名のpartがあればそれをpartOrder先頭に移動
   hoist(work.mood, work.partOrder);
@@ -80,7 +80,7 @@ export function execute(state, work, message, sendMessage) {
     // トリガーを捕捉
     let trigger = ""
     reply.text = reply.text.replace(RE_ENTER, (dummy, p1) => {
-      // arrowかfuncか？
+      // ※クロージャ注意
       trigger = p1;
       return "";
     });
@@ -147,8 +147,9 @@ export function execute(state, work, message, sendMessage) {
     'speech',
     {
       text: reply.text,
-      name: state.config.displayName,
+      name: state.displayName,
       person: "bot",
+      avatarPath: state.config.avatarPath,
       mood: work.mood,
       site: work.site,
     }

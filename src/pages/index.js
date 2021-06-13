@@ -85,7 +85,7 @@ export default function IndexPage({ data }) {
   useEffect(() => {
     let isCancelled = false;
 
-    if (!db && !isCancelled) {
+    if (!db && !isCancelled ) {
       db = new Dexie('Log');
       db.version(1).stores({
         room: "++id,timestamp", // id, timestamp, message
@@ -104,13 +104,17 @@ export default function IndexPage({ data }) {
 
   async function writeLog(message) {
     const site = message.site;
-    console.log("site",site,"msg",message)
     if(site === 'forest' || site === 'room'){
 
-      const id = await db[site].add(message);
+      await db[site].add(message);
   
-      setLogs[site](prev => ([...prev,{id:id,...message}]));
-  
+      setLogs[site](prev => {
+        const newLog = [...prev,message];
+        console.log(newLog);
+        return newLog;
+      
+      });
+      
       /*
       const count = db[site].count();
       const exceeded = count - config.logStoreLength;
@@ -138,6 +142,8 @@ export default function IndexPage({ data }) {
     setAppState('authOk');
     navigate('/create/');
   }
+
+  console.log("appState",appState)
   
   return (
     <FirebaseProvider

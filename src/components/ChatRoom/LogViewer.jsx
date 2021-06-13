@@ -10,11 +10,26 @@ import ClearIcon from '@material-ui/icons/Clear';
 import HotelIcon from '@material-ui/icons/Hotel';
 
 const useStyles = makeStyles(theme => ({
-  nonDotList: {
-    listStyle: "none",
+	nonDotList: {
+		listStyle: "none",
 		margin: 0,
 		padding: 0,
-  },
+	},
+	conatiner:{
+		width: "100%"
+	},
+	leftBalloon: {
+		borderRadius: "15px 15px 15px 0px",
+		padding: "0.5em",
+		marginLeft: 4,
+		backgroundColor: theme.palette.secondary.light,
+	},
+	rightBalloon: {
+		borderRadius: " 15px 15px 0px 15px",
+		padding: "0.5em",
+		marginRight: 4,
+		backgroundColor: theme.palette.primary.light,
+	}
 }));
 
 const moodBadgeIcon = {
@@ -26,6 +41,7 @@ const moodBadgeIcon = {
 }
 
 function LeftBalloon(props) {
+	const classes = useStyles();
 	const message = props.message;
 	const avatarSrc = message.person === 'bot' ?
 		`${message.avatarPath}/${message.mood}.svg`
@@ -36,7 +52,7 @@ function LeftBalloon(props) {
 		<Box
 			display="flex"
 			flexDirection="row"
-			alignItems="flex-start"
+			alignSelf="flex-start"
 		>
 			<Box>
 				<Badge
@@ -46,14 +62,18 @@ function LeftBalloon(props) {
 					<Avatar alt={message.name} src={avatarSrc} />
 				</Badge>
 			</Box>
-			<Box>
-				<Typography>{message.text}</Typography>
+			<Box
+				className={classes.leftBalloon}
+			>
+				<Typography variant="body1">{message.text}</Typography>
+				<Typography variant="caption">{message.name}</Typography>
 			</Box>
 		</Box>
 	)
 }
 
-function RightBalloon(props){
+function RightBalloon(props) {
+	const classes = useStyles();
 	const message = props.message;
 	const avatarSrc = message.person === 'bot' ?
 		`${message.avatarPath}/${message.mood}.svg`
@@ -64,8 +84,16 @@ function RightBalloon(props){
 		<Box
 			display="flex"
 			flexDirection="row"
-			alignItems="flex-end"
+			alignSelf="flex-end"
 		>
+
+			<Box
+				className={classes.rightBalloon}
+			>
+				<Typography variant="body1">{message.text}</Typography>
+				<Typography variant="caption">{message.name}</Typography>
+
+			</Box>
 			<Box>
 				<Badge
 					badgeContent={moodBadgeIcon[message.mood]}
@@ -74,14 +102,11 @@ function RightBalloon(props){
 					<Avatar alt={message.name} src={avatarSrc} />
 				</Badge>
 			</Box>
-			<Box>
-				<Typography>{message.text}</Typography>
-			</Box>
 		</Box>
 	)
 }
 
-function SystemMessage(props){
+function SystemMessage(props) {
 	const message = props.message;
 
 	return (
@@ -105,16 +130,15 @@ export default function LogViewer(props) {
 		ユーザは右側、bot,othersは左側、それら以外は環境やシステムのメッセージで
 		吹き出しではない表示.
 	*/
-	const classes = useStyles();
-	
-	const messages = props.log.map((message,index)=>{
-		console.log("person",message.person,"feats",message.features)
-	
-		switch(message.person) {
-			case 'user' : return <li key={index}><RightBalloon message={message}/></li>
-			case 'bot' :
-			case 'other': return <li key={index}><LeftBalloon message={message}/></li>
-			default: return <li key={index}><SystemMessage message={message}/></li>
+
+	const messages = props.log.map((message, index) => {
+		console.log("avatar", message.avatarPath, "feats", message.features)
+
+		switch (message.person) {
+			case 'user': return <RightBalloon key={index} message={message} />
+			case 'bot':
+			case 'other': return <LeftBalloon key={index} message={message} />
+			default: return <SystemMessage key={index} message={message} />
 		}
 	})
 	return (
@@ -122,10 +146,7 @@ export default function LogViewer(props) {
 			display="flex"
 			flexDirection="column"
 		>
-			<ul className={classes.nonDotList}>
 				{messages}
-			</ul>
-
 		</Box>
 	)
 }
