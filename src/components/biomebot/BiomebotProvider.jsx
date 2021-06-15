@@ -160,6 +160,9 @@ import * as room from "./engine/room";
 export const BiomebotContext = createContext();
 
 let workers = {};
+let executes = {
+  'room': room.execute,
+}
 
 // チャットボットデータの初期値
 const defaultSettings = {
@@ -219,6 +222,7 @@ const defaultSettings = {
 
 // 更新頻度は低くdbには保存しないデータ
 const initialState = {
+  status: "unload", // unload->deploying->start->run
   botId: null,
   displayName: "",
   config: {},
@@ -244,12 +248,12 @@ function reducer(state, action) {
       // featureWeights=[0.2,0.2...],featureBiases=0で初期化
       for (let partName in snap.parts) {
         if (!snap.parts[partName].featureWeights) {
-          newWeights = nums(featureIndex.length, 1/10);
+          newWeights = nums(featureIndex.length, 1 / 10);
           newWeights[0] = 4 / 10; // ※先頭は1番
           snap.parts[partName].featureWeights = newWeights;
         }
       }
-      console.log("parts",snap.parts)
+      console.log("parts", snap.parts)
 
       return {
         ...state,
@@ -257,20 +261,35 @@ function reducer(state, action) {
         displayName: snap.displayName,
         config: snap.config,
         main: snap.main,
-        parts: {...snap.parts},
+        parts: { ...snap.parts },
         estimator: snap.estimator,
       }
     }
 
     case 'readCache': {
-      const cache = action.cache;
       const partName = action.partName;
+      const cache = {
+        ...state.cache,
+        [partName]: {...action.cache}
+      };
+
+      // キャッシュ計算中はstatusがdeploying, 計算終了時にstartになる
+      const cacheKeys = Object.keys(cache);
+      const partsKeys = Object.keys(state.parts);
+      const status = cacheKeys.length === partsKeys.length
+        ? "start" : "deploying";
+
+        return {
+        ...state,
+        cache,
+        status: status
+      }
+    }
+
+    case 'run':{
       return {
         ...state,
-        cache: {
-          ...state.cache,
-          [partName]: {...cache}
-        }
+        status: "run"
       }
     }
 
@@ -291,35 +310,39 @@ export default function BiomebotProvider(props) {
   const appState = props.appState;
   const handleBotFound = useRef(props.handleBotFound);
   const handleBotNotFound = useRef(props.handleBotNotFound);
-  
+
   // ----------------------------------------------
   // stateが関数内関数（クロージャ）内で使われているためのworkaround
   // stateが変わるごとにstateRefは最新の値を指すようにする
+  // またstateがわかるごとにqueueの監視を行い、queueが空でなければ
+  // handleExecuteを行う
+
   const stateRef = useRef(state);
 
-  useEffect(()=>{
+  useEffect(() => {
     stateRef.current = state;
-  },[state]);
+    
+    if(state.status === 'start'){
+      if(work.queue.length !== 0){
+        const top = work.queue[0];
+        const newWork = {
+          ...work,
+          queue:work.queue.slice(1)
+        };
+        let snap;
+        snap = executes[work.site](state,newWork,top.message, top.emitter)
+        setWork(prev => ({
+          ...prev,
+          ...snap
+        }));
+      }
+      dispatch({type:"run"});
+    }
+  }, [state, work, work.queue]);
 
   // --------------------------------------------
-
-
-  const handleExecute = (message, emitter) => {
-    let snap;
-    switch(work.site){
-      case 'room':
-        snap = room.execute(stateRef.current, work, message, emitter)
-        break;
-      default:
-        throw new Error(`invalid site ${work.site}`)
-    }
-    setWork(prev => ({
-      prev,
-      ...snap
-    }));
-  }
-
-  
+  // dbからデータをロード
+  //
 
   useEffect(() => {
     let isCancelled = false;
@@ -332,16 +355,16 @@ export default function BiomebotProvider(props) {
               dispatch({ type: 'connect', snap: snap });
 
               const snapWork = snap.work;
-              console.log("useEffect setWork:",snapWork)
+              console.log("useEffect setWork:", snapWork)
               setWork(prev => ({
-                 key: prev.key + 1,
-                 mentalLevel: snapWork.mentalLevel,
-                 moment: snapWork.moment,
-                 mood: snapWork.mood,
-                 partOrder: [...snapWork.partOrder],
-                 queue:[...snapWork.queue],
-                 site: snapWork.site,
-                 updatedAt: snapWork.updatedAt
+                key: prev.key + 1,
+                mentalLevel: snapWork.mentalLevel,
+                moment: snapWork.moment,
+                mood: snapWork.mood,
+                partOrder: [...snapWork.partOrder],
+                queue: [...snapWork.queue],
+                site: snapWork.site,
+                updatedAt: snapWork.updatedAt
               }));
               handleBotFound.current();
             }
@@ -354,6 +377,30 @@ export default function BiomebotProvider(props) {
 
     return () => { isCancelled = true }
   }, [appState, fb.uid, state]);
+
+
+
+  const handleExecute = (message, emitter) => {
+    // 外部からの入力を受付け、必要な場合返答を送出する。
+    // deploy完了前に呼び出された場合はqueueに積む
+    if(state.status!=='run'){
+      setWork(prev=>({
+        ...prev,
+        queue: [...prev.queue,
+          {message:message,emitter:emitter}
+        ],
+        
+      }));
+    }else{
+      let snap;
+      snap = executes[work.site](stateRef.current,work,message, emitter)
+      setWork(prev => ({
+        ...prev,
+        ...snap
+      }));
+    }
+  }
+
 
   async function generate(obj, avatarPath) {
     // avatarPathをobjに組み込む
@@ -369,7 +416,7 @@ export default function BiomebotProvider(props) {
     setWork(prev => (
       {
         key: prev.key + 1,
-        
+
         updatedAt: "",
         partOrder: [...obj.config.initialPartOrder],
         mentalLevel: obj.config.initialMentalLevel,
@@ -379,12 +426,12 @@ export default function BiomebotProvider(props) {
         queue: [],
         futurePostings: [],
         botId: fb.uid,
-        
+
       }));
   }
 
   async function deploy(site) {
-  
+
     for (let partName in state.parts) {
 
       // 各パートのscriptを読んでcacheに変換
@@ -405,19 +452,20 @@ export default function BiomebotProvider(props) {
                 cache: cache
               });
             })
+          
         }
       };
 
       worker.postMessage({ botId: state.botId, partName });
 
     }
-    
-    if(work.site === "") {
+
+    if (work.site === "") {
       // スタートデッキの実行
       // * 未実装 *
     }
 
-    setWork(prev => ({...prev, site: site}));
+    setWork(prev => ({ ...prev, site: site }));
 
   }
   const photoURL = `/chatbot/${state.config.avatarPath}/${work.partOrder[0]}.svg`;
@@ -437,10 +485,10 @@ export default function BiomebotProvider(props) {
   );
 }
 
-function nums(len,num){
+function nums(len, num) {
   let x = Array(len);
-  for(let i=0; i<len; i++){
-    x[i]=num;
+  for (let i = 0; i < len; i++) {
+    x[i] = num;
   }
   return x;
 }

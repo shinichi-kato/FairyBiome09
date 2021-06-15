@@ -41,7 +41,7 @@ const renderer = {
 
 export function execute(state, work, message, sendMessage) {
   let reply = { text: null };
-  console.log("st,wk in e",state,work)
+  console.log("st,wk in e", state, work)
 
   // moodと同名のpartがあればそれをpartOrder先頭に移動
   hoist(work.mood, work.partOrder);
@@ -50,6 +50,7 @@ export function execute(state, work, message, sendMessage) {
     const part = state.parts[partName];
     let reply = {};
 
+    // キャッシュがなければスキップ（起動中）
     // 起動チェック
     // moment値+0~9のランダム値がmomentUpperとmomentLowerの
     // 間に入っていたらOK
@@ -66,13 +67,13 @@ export function execute(state, work, message, sendMessage) {
 
     // スピーチの生成
     reply = {
-      text: replier[part.kind](partName,state, work, result),
+      text: replier[part.kind](partName, state, work, result),
       hoist: partName,
       drop: null,
     }
 
     // retentionチェック
-    if (part.retention < Math.random()){
+    if (part.retention < Math.random()) {
       reply.drop = partName;
       reply.hoist = null;
     }
@@ -90,22 +91,22 @@ export function execute(state, work, message, sendMessage) {
       // partと同名のトリガーを検出したら、そのpartを先頭にする。
       // triggerがmoodのどれかと同じであったらmoodをその名前で上書きする。
       // そうでなければpart.initialMoodにする。
-      hoist(trigger,work.partOrder);
-      if('initialMood' in work.parts[trigger]){
+      hoist(trigger, work.partOrder);
+      if ('initialMood' in work.parts[trigger]) {
         work.mood = work.parts[trigger].initialMood
       }
-      else if(trigger in moodNames){
+      else if (trigger in moodNames) {
         work.mood = trigger;
       }
-      else{
+      else {
         work.mood = "peace"
       }
 
       // 自己Message投下
 
-      let msg = renderer[part.kind](partName,state, work, 
+      let msg = renderer[part.kind](partName, state, work,
         `{TRIGGER_ENTER_${trigger}}`
-        );
+      );
       if (msg) {
         work.queue.push(msg)
       };
@@ -131,13 +132,16 @@ export function execute(state, work, message, sendMessage) {
     for (let partName of work.partOrder) {
       const part = state.parts[partName];
 
-      reply.text = renderer[part.kind](partName,state,work,
+      reply.text = renderer[part.kind](
+        partName,
+        state,
+        work,
         "{NOT_FOUND}");
-    
-      if(reply.text !== "{NOT_FOUND}") break;
+
+      if (reply.text !== "{NOT_FOUND}") break;
     }
 
-    if(reply.text === "{NOT_FOUND}"){
+    if (reply.text === "{NOT_FOUND}") {
       reply.text = render("{NOT_FOUND}", state.main);
     }
 
@@ -170,22 +174,22 @@ function hoist(target, parts) {
 function drop(target, parts) {
   // target をpartsの末尾に移動
   let pos = parts.indexOf(target);
-  if (pos !== -1 && pos<parts.length-1){
-    let removed = parts.splice(pos,1);
+  if (pos !== -1 && pos < parts.length - 1) {
+    let removed = parts.splice(pos, 1);
     parts.push(removed[0]);
   }
 }
 
-function render(tag,dict){
+function render(tag, dict) {
   // main辞書の中でタグ展開
   // {[^}]+}はmain辞書内の同じ名前の内容で置き換える。
   if (!(tag in dict)) return tag;
 
   const items = dict[tag];
-  
+
   let item = items[Math.floor(Math.random() * items.length)];
 
-  item = item.replace(RE_TAG,(whole,tag)=>render(tag,dict));
+  item = item.replace(RE_TAG, (whole, tag) => render(tag, dict));
 
   return item;
 }

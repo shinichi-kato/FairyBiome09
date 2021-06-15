@@ -224,7 +224,7 @@ export default function CreateFairy(props) {
         {props.appState === 'done' &&
           <>
             <Box>
-              {fb.state.config.displayName} が仲間になっています
+              {bot.state.config.displayName} が仲間になっています
             </Box>
             <Box>
               <Button

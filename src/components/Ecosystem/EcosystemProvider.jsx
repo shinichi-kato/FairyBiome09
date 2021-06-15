@@ -119,7 +119,7 @@ export default function EcosystemProvider(props) {
   const [season, setSeason] = useState(); /* 季節 */
   const [site, setSite] = useState('room'); /* 場所 */
   const [dayPart, setDayPart] = useState(); /* 昼、夜 */
-  const [change, setChange] = useState() /* weather,season,site,sceneの変化 */
+  const [change, setChange] = useState(null) /* weather,season,site,sceneの変化 */
 
 
   useInterval(() => {

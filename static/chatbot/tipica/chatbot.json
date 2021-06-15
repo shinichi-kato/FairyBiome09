@@ -11,7 +11,8 @@
         "initialPartOrder": [
             "greeting",
             "faq",
-            "cheer"
+            "cheer",
+            "peace"
         ],
         "hubBehavior": {
             "momentUpper": 10,
@@ -55,6 +56,22 @@
                 {
                     "in": "{enter_greeting}",
                     "out": "こんにちは。{user}さん。どうしたんですか？"
+                },
+                {
+                    "in": "{enter_morning}",
+                    "out": "おはようございます！"
+                },
+                {
+                    "in": "{enter_noon}",
+                    "out": "こんにちは！昼ですね"
+                },
+                {
+                    "in": "{enter_evening}",
+                    "out": "こんばんは！"
+                },
+                {
+                    "in": "{enter_night}",
+                    "out": "もうすっかり夜ですね"
                 },
                 {
                     "in": [
@@ -157,6 +174,22 @@
                     ]
                 }
             ]            
+        },
+        "peace":{
+            "kind": "knowledge",
+            "momentUpper": 100,
+            "momentLower": 0,
+            "precision": 0.4,
+            "retention": 0.6,
+            "scriptTimestamp": null,
+            "cacheTimestamp": null,
+            "featureWeights": null,
+            "script": [
+                {
+                    "in": ["弱気だって言われた"],
+                    "out": ["{user}さんは優しいんですよ。"]
+                }
+            ]
         }
     }
 }

@@ -52,6 +52,9 @@ async function readLog(site, number, startId) {
   return payload.map(msg => new Message(msg));
 }
 
+
+
+
 export default function IndexPage({ data }) {
   /* 
     チャットルームアプリのフレームワーク
@@ -100,12 +103,22 @@ export default function IndexPage({ data }) {
 
     return () => { isCancelled = true };
   }, [config.logViewLength]);
+  
+  function handleAuthOk() {setAppState('authOk'); }
+  function handleBotFound() { setAppState('continue'); }
+  function handleBotNotFound() { setAppState('new'); }
+  function handleContinue() { setAppState('chatroom'); }
+  function handleExitRoom() { setAppState('continue'); }
 
+  function handleNew() {
+    setAppState('authOk');
+    navigate('/create/');
+  }
 
   async function writeLog(message) {
     const site = message.site;
     if(site === 'forest' || site === 'room'){
-
+  
       await db[site].add(message);
   
       setLogs[site](prev => {
@@ -122,29 +135,14 @@ export default function IndexPage({ data }) {
       */
     
     } else if (site === 'park'){
-
+  
       /* firebaseへの書き込み*/
-
+  
     } else {
       throw new Error(`invalid site ${site}`);
     }
   }
 
-
-  
-  function handleAuthOk() {setAppState('authOk'); }
-  function handleBotFound() { setAppState('continue'); }
-  function handleBotNotFound() { setAppState('new'); }
-  function handleContinue() { setAppState('chatroom'); }
-  function handleExitRoom() { setAppState('continue'); }
-
-  function handleNew() {
-    setAppState('authOk');
-    navigate('/create/');
-  }
-
-  console.log("appState",appState)
-  
   return (
     <FirebaseProvider
       handleAuthOk={handleAuthOk}

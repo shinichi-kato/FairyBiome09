@@ -81,11 +81,31 @@ export default function ChatRoom(props) {
   const fb = useContext(FirebaseContext);
   const ecosystem = useContext(EcosystemContext);
   const bot = useRef(useContext(BiomebotContext));
+  const writeLogRef = useRef(props.writeLog);
   const [userInput, setUserInput] = useState("");
+
+  //---------------------------------------
+  // チャットルームに入室したらdeploy
+  //
 
   useEffect(()=>{
     bot.current.deploy(ecosystem.site);
   },[ecosystem.site]);
+
+  // ---------------------------------------------
+  // ecosystemが変化したらチャットボットにトリガーを送出
+  // ※ bot.deploy()が完了したあとでのみ実行
+
+  useEffect(()=>{
+    if(ecosystem.change !== null){
+      bot.current.execute(
+        new Message('trigger', `enter_${ecosystem.change}`),
+        writeLogRef.current
+      );
+    }
+  },[ecosystem.change]);
+
+
 
   function handleChangeUserInput(event) {
     setUserInput(event.target.value);
@@ -100,8 +120,10 @@ export default function ChatRoom(props) {
       avatarPath: fb.photoURL,
       site: ecosystem.site,
     });
-    props.writeLog(message);
-    bot.current.execute(message,props.writeLog);
+    writeLogRef.current(message);
+    bot.current.execute(
+      message,
+      writeLogRef.current);
 
     setUserInput("");
     event.preventDefault();
@@ -117,7 +139,7 @@ export default function ChatRoom(props) {
 
   const memorizedUserPanel = useMemo(()=>
     <UserPanel user={fb}/>
-    ,[fb.user]);
+    ,[fb]);
     
   return (
     <Box
