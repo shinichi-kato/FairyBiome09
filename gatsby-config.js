@@ -7,8 +7,8 @@ module.exports = {
     author: `skato21r@iris.eonet.ne.jp`,
     ecosystem: {
       randomSeed: 22563, // 1-65563
-      changeRate: 0.000001, // 天候変化の速度
-      updateInterval: 3000, // msec, 天候表示のアップデート周期
+      changeRate: 0.0000001, // 天候変化の速度
+      updateInterval: 6000, // msec, 天候表示のアップデート周期
     },
     chatbot: {
       logViewLength: 100, // 表示するログの長さ

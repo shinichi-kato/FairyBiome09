@@ -132,7 +132,6 @@ export default function LogViewer(props) {
 	*/
 
 	const messages = props.log.map((message, index) => {
-		console.log("avatar", message.avatarPath, "feats", message.features)
 
 		switch (message.person) {
 			case 'user': return <RightBalloon key={index} message={message} />

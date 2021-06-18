@@ -138,7 +138,14 @@
   weightsの値は機械学習により最適化が可能である。
   
   
-
+  # BiomebotProviderの状態
+  ## state.status
+  status    | 説明
+  ----------|----------
+  unload    | データがロードされる前
+  loaded    | データがロードされた
+  deploying | cache計算中
+  ready     | 実行可能
 
 */
 
@@ -196,6 +203,7 @@ const defaultSettings = {
   },
   work: {
     updatedAt: "",
+    status: "",
     partOrder: ["peace"],
     mentalLevel: 100,
     site: "",
@@ -256,7 +264,7 @@ function reducer(state, action) {
       console.log("parts", snap.parts)
 
       return {
-        ...state,
+        status: "loaded",
         botId: snap.botId,
         displayName: snap.displayName,
         config: snap.config,
@@ -270,26 +278,19 @@ function reducer(state, action) {
       const partName = action.partName;
       const cache = {
         ...state.cache,
-        [partName]: {...action.cache}
+        [partName]: { ...action.cache }
       };
 
       // キャッシュ計算中はstatusがdeploying, 計算終了時にstartになる
       const cacheKeys = Object.keys(cache);
       const partsKeys = Object.keys(state.parts);
       const status = cacheKeys.length === partsKeys.length
-        ? "start" : "deploying";
+        ? "ready" : "deploying";
 
-        return {
+      return {
         ...state,
         cache,
         status: status
-      }
-    }
-
-    case 'run':{
-      return {
-        ...state,
-        status: "run"
       }
     }
 
@@ -321,22 +322,20 @@ export default function BiomebotProvider(props) {
 
   useEffect(() => {
     stateRef.current = state;
-    
-    if(state.status === 'start'){
-      if(work.queue.length !== 0){
-        const top = work.queue[0];
-        const newWork = {
-          ...work,
-          queue:work.queue.slice(1)
-        };
-        let snap;
-        snap = executes[work.site](state,newWork,top.message, top.emitter)
-        setWork(prev => ({
-          ...prev,
-          ...snap
-        }));
+
+    if (state.status === 'ready') {
+      console.log("qlength",work.queue.length)
+      if (work.queue.length > 0) {
+        setWork(prev => {
+          const top = {...prev.queue[0]};
+          const newWork = {
+            ...prev,
+            queue: prev.queue.slice(1)
+          };
+
+          return executes[work.site](state, newWork, top.message, top.emitter);
+        });
       }
-      dispatch({type:"run"});
     }
   }, [state, work, work.queue]);
 
@@ -348,14 +347,14 @@ export default function BiomebotProvider(props) {
     let isCancelled = false;
 
     if (!isCancelled) {
-      if (appState === 'authOk' && fb.uid && !state.botId) {
+      if (appState === 'authOk' && fb.uid && !stateRef.current.botId) {
         db.load(fb.uid)
           .then(snap => {
             if (snap) {
               dispatch({ type: 'connect', snap: snap });
 
               const snapWork = snap.work;
-              console.log("useEffect setWork:", snapWork)
+              console.log("on load setWork:", snapWork)
               setWork(prev => ({
                 key: prev.key + 1,
                 mentalLevel: snapWork.mentalLevel,
@@ -383,21 +382,19 @@ export default function BiomebotProvider(props) {
   const handleExecute = (message, emitter) => {
     // 外部からの入力を受付け、必要な場合返答を送出する。
     // deploy完了前に呼び出された場合はqueueに積む
-    if(state.status!=='run'){
-      setWork(prev=>({
-        ...prev,
-        queue: [...prev.queue,
-          {message:message,emitter:emitter}
-        ],
-        
-      }));
-    }else{
-      let snap;
-      snap = executes[work.site](stateRef.current,work,message, emitter)
+    const currentState = stateRef.current;
+    if (currentState.status !== 'ready') {
       setWork(prev => ({
         ...prev,
-        ...snap
+        queue: [...prev.queue,
+        { message: message, emitter: emitter }
+        ],
+
       }));
+    } else {
+      setWork(prevWork=>
+        executes[work.site](currentState, prevWork, message, emitter)
+      );
     }
   }
 
@@ -444,7 +441,7 @@ export default function BiomebotProvider(props) {
       worker.onmessage = function (event) {
         const result = event.data;
         if (result) {
-          db.loadCache(state.botId, result.partName)
+          db.loadCache(stateRef.current.botId, result.partName)
             .then(cache => {
               dispatch({
                 type: 'readCache',
@@ -452,11 +449,11 @@ export default function BiomebotProvider(props) {
                 cache: cache
               });
             })
-          
+
         }
       };
 
-      worker.postMessage({ botId: state.botId, partName });
+      worker.postMessage({ botId: stateRef.current.botId, partName });
 
     }
 
@@ -468,7 +465,7 @@ export default function BiomebotProvider(props) {
     setWork(prev => ({ ...prev, site: site }));
 
   }
-  const photoURL = `/chatbot/${state.config.avatarPath}/${work.partOrder[0]}.svg`;
+  const photoURL = `/chatbot/${stateRef.current.config.avatarPath}/${work.partOrder[0]}.svg`;
 
   return (
     <BiomebotContext.Provider

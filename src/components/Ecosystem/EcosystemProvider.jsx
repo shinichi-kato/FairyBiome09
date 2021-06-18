@@ -1,4 +1,4 @@
-import React, { useState, createContext, useRef } from 'react';
+import React, { useState, createContext, useRef, useEffect } from 'react';
 import { Noise } from 'noisejs';
 import { useStaticQuery, graphql } from "gatsby";
 import useInterval from '../use-interval';
@@ -122,6 +122,9 @@ export default function EcosystemProvider(props) {
   const [change, setChange] = useState(null) /* weather,season,site,sceneの変化 */
 
 
+  useEffect(()=>{
+    console.log("changeMonitor: ",change);
+  },[change])
   useInterval(() => {
     const now = new Date();
     const s = SEASONS[now.getMonth()];
@@ -137,12 +140,7 @@ export default function EcosystemProvider(props) {
       return s;
     });
 
-    setPressure(prevState => {
-      if (prevState !== p) {
-        setChange(p);
-      };
-      return p;
-    });
+    setPressure(p);
 
     setWeather(prevState => {
       if (prevState !== w) {
@@ -209,7 +207,7 @@ export default function EcosystemProvider(props) {
     setSite(s);
   }
 
-  function onChangeAcknowledged() {
+  function handleChangeDispatched() {
     setChange(null);
   }
 
@@ -224,7 +222,7 @@ export default function EcosystemProvider(props) {
         site: site,
         dayPart: nightOrDay,
         change: change,
-        changeAcknowledged: onChangeAcknowledged,
+        changeDispatched: handleChangeDispatched,
         changeSite: handleChangeSite,
       }}
     >

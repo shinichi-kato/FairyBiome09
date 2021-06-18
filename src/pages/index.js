@@ -123,7 +123,6 @@ export default function IndexPage({ data }) {
   
       setLogs[site](prev => {
         const newLog = [...prev,message];
-        console.log(newLog);
         return newLog;
       
       });

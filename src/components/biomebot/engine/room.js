@@ -41,7 +41,9 @@ const renderer = {
 
 export function execute(state, work, message, sendMessage) {
   let reply = { text: null };
-  console.log("st,wk in e", state, work)
+
+  // shift queue
+
 
   // moodと同名のpartがあればそれをpartOrder先頭に移動
   hoist(work.mood, work.partOrder);
@@ -50,12 +52,11 @@ export function execute(state, work, message, sendMessage) {
     const part = state.parts[partName];
     let reply = {};
 
-    // キャッシュがなければスキップ（起動中）
-    // 起動チェック
     // moment値+0~9のランダム値がmomentUpperとmomentLowerの
     // 間に入っていたらOK
 
     const moment = work.moment + randomInt(9);
+    console.log("part",partName,"moment",moment,"l",part.momentLower,"u",part.momentUpper)
     if (part.momentLower >= moment || moment > part.momentUpper) {
       continue;
     }
@@ -63,6 +64,8 @@ export function execute(state, work, message, sendMessage) {
     // 辞書の一致チェック
 
     const result = retrieve(message, state.cache[partName]);
+    
+    console.log("retrieve",result,"precision",part.precision)
     if (result.score < part.precision) continue;
 
     // スピーチの生成
@@ -158,7 +161,7 @@ export function execute(state, work, message, sendMessage) {
       site: work.site,
     }
   ));
-
+  console.log("returning",work)  
   return work;
 }
 

@@ -94,16 +94,18 @@ export default function ChatRoom(props) {
 
   // ---------------------------------------------
   // ecosystemが変化したらチャットボットにトリガーを送出
-  // ※ bot.deploy()が完了したあとでのみ実行
+  // bot.deploy()が完了するまで保留される
 
   useEffect(()=>{
+    
     if(ecosystem.change !== null){
       bot.current.execute(
         new Message('trigger', `enter_${ecosystem.change}`),
         writeLogRef.current
       );
+      ecosystem.changeDispatched();
     }
-  },[ecosystem.change]);
+  },[ecosystem]);
 
 
 
