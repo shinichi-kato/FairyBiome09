@@ -4,6 +4,7 @@ import Box from '@material-ui/core/Box';
 import IconButton from '@material-ui/core/IconButton';
 import InputBase from '@material-ui/core/InputBase';
 import SendIcon from '@material-ui/icons/Send';
+import ArrowBackIcon from '@material-ui/icons/ArrowBackIos';
 
 import UserPanel from '../Panel/UserPanel';
 import FairyPanel from '../Panel/FairyPanel';
@@ -12,7 +13,6 @@ import { BiomebotContext } from '../biomebot/BiomebotProvider';
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
 import { EcosystemContext } from '../Ecosystem/EcosystemProvider';
 import { Message } from '../message';
-import MenuIcon from '@material-ui/icons/Menu';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
     height: "calc ( 100vh - 48px - 256px);",
     overflowY: "scroll",
   },
-  console:{
+  console: {
     width: 480,
   },
   textInput: {
@@ -88,24 +88,24 @@ export default function ChatRoom(props) {
   // チャットルームに入室したらdeploy
   //
 
-  useEffect(()=>{
+  useEffect(() => {
     bot.current.deploy(ecosystem.site);
-  },[ecosystem.site]);
+  }, [ecosystem.site]);
 
   // ---------------------------------------------
   // ecosystemが変化したらチャットボットにトリガーを送出
   // bot.deploy()が完了するまで保留される
 
-  useEffect(()=>{
-    
-    if(ecosystem.change !== null){
+  useEffect(() => {
+
+    if (ecosystem.change !== null) {
       bot.current.execute(
         new Message('trigger', `enter_${ecosystem.change}`),
         writeLogRef.current
       );
       ecosystem.changeDispatched();
     }
-  },[ecosystem]);
+  }, [ecosystem]);
 
 
 
@@ -133,16 +133,16 @@ export default function ChatRoom(props) {
 
   const currentLog = props.logs[ecosystem.site];
 
-  const memorizedLogViewer = useMemo(()=>
+  const memorizedLogViewer = useMemo(() =>
     <LogViewer
-    log={currentLog}
+      log={currentLog}
     />
-  ,[currentLog]);
+    , [currentLog]);
 
-  const memorizedUserPanel = useMemo(()=>
-    <UserPanel user={fb}/>
-    ,[fb]);
-    
+  const memorizedUserPanel = useMemo(() =>
+    <UserPanel user={fb} />
+    , [fb]);
+
   return (
     <Box
       display="flex"
@@ -164,7 +164,7 @@ export default function ChatRoom(props) {
         className={classes.console}
       >
         <Box>
-          <FairyPanel 
+          <FairyPanel
             photoURL={bot.current.photoURL}
           />
         </Box>
@@ -176,30 +176,38 @@ export default function ChatRoom(props) {
       <Box
         position="absolute"
         bottom={0}
+        display="flex"
+        flexDirection="row"
       >
-        <MenuIcon/>
-        <form onSubmit={handleUserSubmit}>
-          <div className={classes.textInput}>
-            <InputBase
-              value={userInput}
-              onChange={handleChangeUserInput}
-              fullWidth
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              inputProps={{ 'aria-label': 'text' }}
-              endAdornment={
-                <IconButton
-                  color="primary"
-                  onClick={handleUserSubmit}
-                >
-                  <SendIcon/>
-                </IconButton>
-              }
-            />
-          </div>
-        </form>
+        <Box>
+          <IconButton>
+            <ArrowBackIcon />
+          </IconButton>
+        </Box>
+        <Box flexGrow={1}>
+          <form onSubmit={handleUserSubmit}>
+            <div className={classes.textInput}>
+              <InputBase
+                value={userInput}
+                onChange={handleChangeUserInput}
+                fullWidth
+                classes={{
+                  root: classes.inputRoot,
+                  input: classes.inputInput,
+                }}
+                inputProps={{ 'aria-label': 'text' }}
+                endAdornment={
+                  <IconButton
+                    color="primary"
+                    onClick={handleUserSubmit}
+                  >
+                    <SendIcon />
+                  </IconButton>
+                }
+              />
+            </div>
+          </form>
+        </Box>
       </Box>
     </Box>
   )

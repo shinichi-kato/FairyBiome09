@@ -115,7 +115,7 @@
   すでに一部説明しているが、トリガとはmessageクラスをtriggerモードで作成する
   ことで得られる。これをチャットボットに渡すとこのメッセージがキューの先頭に乗り、
   partOrderにしたがって評価される。トリガにはmoodの変化に対応する{enter_peace}
-  などや入室{enter_room}など、天候の変化{enter_晴}、{enter_雨}などがある。
+  などや入室{enter_room}など、天候の変化{enter_halfClouds}、{enter_rain}などがある。
 
 
   # 辞書の検索

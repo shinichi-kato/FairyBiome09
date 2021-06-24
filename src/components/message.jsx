@@ -21,8 +21,8 @@
     timestamp ::= Date() // メッセージが生成された時刻
     avatarPath ::= string // アバターのディレクトリ
     site ::= 'room'|'forest'|'park' // 現在地
-    weather ::= '台風'|'大雨'|'雨'|'曇'|'晴'|'快晴'|'夏晴'|'吹雪'|'雪'| 
-    season ::= '春'|'夏'|'秋'|'冬'
+    weather ::= 'storm'|'heavyRain'|'rain'|'cloudy'|'halfClouds'|'sunny'|'heat'|'snowStorm'|'snow'| 
+    season ::= 'spring'|'summer'|'autumn'|'winter'
     dayPart ::= '朝'|'昼'|'夕'|'夜'
 
 
@@ -49,7 +49,7 @@
   });
 
   ## ecosystemが生成する環境の変化
-  const msg = new Message("trigger","{TRIGGER_WEATHER_晴}"})
+  const msg = new Message("trigger","{TRIGGER_WEATHER_halfClouds}"})
 
   ## チャットボットの内的状態の変化
   const msg = new Message("trigger",{
@@ -90,20 +90,20 @@ export const featureDict = {
   'forest': 13,
   'park': 14,
   // weather
-  '台風': 15,
-  '大雨': 16,
-  '雨': 17,
-  '曇': 18,
-  '晴': 19,
-  '快晴': 20,
-  '夏晴': 21,
-  '吹雪': 22,
-  '雪': 23,
+  'storm': 15,
+  'heavyRain': 16,
+  'rain': 17,
+  'cloudy': 18,
+  'halfClouds': 19,
+  'sunny': 20,
+  'heat': 21,
+  'snowStorm': 22,
+  'snow': 23,
   // season
-  '春': 24,
-  '夏': 25,
-  '秋': 26,
-  '冬': 27,
+  'spring': 24,
+  'summer': 25,
+  'autumn': 26,
+  'winter': 27,
   //dayPart
   'morning': 28,
   '朝': 28,
@@ -135,20 +135,20 @@ export const featureIndex = [
   'forest',
   'park',
   // weather
-  '台風',
-  '大雨',
-  '雨',
-  '曇',
-  '晴',
-  '快晴',
-  '夏晴',
-  '吹雪',
-  '雪',
+  'storm',
+  'heavyRain',
+  'rain',
+  'cloudy',
+  'halfClouds',
+  'sunny',
+  'heat',
+  'snowStorm',
+  'snow',
   // season
-  '春',
-  '夏',
-  '秋',
-  '冬',
+  'spring',
+  'summer',
+  'autumn',
+  'winter',
   //dayPart
   'morning', // 日の出から240分間
   'noon', // 日の出240分後〜日没まで
@@ -161,7 +161,7 @@ export class Message {
   // msg = new Message('speech',{text:"こんにちは",name:"アレス", ...})
   // msg = new Message('trigger','{TRIGGER_ENTER_SLEEP}');
   // msg = new Message('system','{})
-  // msg = new Message('こんにちは\tbot room 台風') 
+  // msg = new Message('こんにちは\tbot room storm') 
 
   constructor(mode, data) {
 

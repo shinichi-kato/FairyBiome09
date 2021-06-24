@@ -32,25 +32,25 @@ query j {
 `
 
 //                1    2     3    4     5     6     7     8    9    10   11    12   
-const SEASONS = ['冬', '冬', '春', '春', '春', '春', '夏', '夏', '夏', '秋', '秋', '冬'];
+const SEASONS = ['winter', 'winter', 'spring', 'spring', 'spring', 'spring', 'summer', 'summer', 'summer', 'autumn', 'autumn', 'winter'];
 
 const WEATHERS = {
-  '春': ['台風', '大雨', '雨', '雨', '曇', '曇', '晴', '晴', '快晴', '快晴'],
-  '夏': ['台風', '大雨', '雨', '曇', '晴', '晴', '晴', '快晴', '快晴', '夏晴'],
-  '秋': ['台風', '大雨', '雨', '曇', '曇', '晴', '晴', '晴', '快晴', '快晴'],
-  '冬': ['吹雪', '雪', '雪', '曇', '曇', '晴', '晴', '晴', '快晴', '快晴'],
+  'spring': ['storm', 'heavyRain', 'rain', 'rain', 'cloudy', 'cloudy', 'halfClouds', 'halfClouds', 'sunny', 'sunny'],
+  'summer': ['storm', 'heavyRain', 'rain', 'cloudy', 'halfClouds', 'halfClouds', 'halfClouds', 'sunny', 'sunny', 'heat'],
+  'autumn': ['storm', 'heavyRain', 'rain', 'cloudy', 'cloudy', 'halfClouds', 'halfClouds', 'halfClouds', 'sunny', 'sunny'],
+  'winter': ['snowStorm', 'snow', 'snow', 'cloudy', 'cloudy', 'halfClouds', 'halfClouds', 'halfClouds', 'sunny', 'sunny'],
 };
 
 const WEATHER_ICONS = {
-  '台風': 'wi-hurricane.svg',
-  '大雨': 'wi-rain.svg',
-  '雨': 'wi-showers.svg',
-  '曇': 'wi-cloudy.svg',
-  '晴': 'wi-day-cloudy.svg',
-  '快晴': 'wi-sunny.svg',
-  '夏晴': 'wi-thermometer.svg',
-  '吹雪': 'wi-snow-wind.svg',
-  '雪': 'wi-snow.svg',
+  'storm': 'wi-hurricane.svg',
+  'heavyRain': 'wi-rain.svg',
+  'rain': 'wi-showers.svg',
+  'cloudy': 'wi-cloudy.svg',
+  'halfClouds': 'wi-day-cloudy.svg',
+  'sunny': 'wi-sunny.svg',
+  'heat': 'wi-thermometer.svg',
+  'snowStorm': 'wi-snow-wind.svg',
+  'snow': 'wi-snow.svg',
 }
 
 const SUNRISE = {
@@ -76,6 +76,51 @@ const SUNSET = {
   },
 }
 
+
+function nightOrDay() {
+  /* nightOrDay() ... 現時点のmorning/noon/evening/ninghtを返す。
+    
+    年間を通して日の出、日没の時間は周期的に変化する。これをsinカーブで近似して
+    仮想的な昼夜を生成する。
+    日の出はsunrise.summer.hourRadを最小値とした一年周期のサインカーブ、
+    日没はSUNSET.winter.hourRadを最小値とした一年周期のサインカーブとする。
+  */
+  let l, e, grad, intc;
+  let now = getDateRad();
+
+  l = SUNSET.winter.getHourRad;
+  e = SUNSET.summer.getHourRad;
+  grad = (l - e) / 2;
+  intc = (e + l) / 2;
+  const sunset = grad * Math.cos(now + SUNSET.winter.dateRad) + intc;
+
+  l = SUNRISE.summer.getHourRad;
+  e = SUNRISE.winter.getHourRad;
+  grad = (l - e) / 2;
+  intc = (e + l) / 2;
+  const sunrise = grad * Math.cos(now + SUNRISE.summer.dateRad) + intc;
+  
+  // morning '朝', // 日の出前59分間から日の出240分まで
+  // noon '昼', // 日の出241分後〜日没前120分まで
+  // evening '夕', // 日没前121分〜日没後60分
+  // night '夜', // 日没後61分〜日の出前60分まで
+
+  // 1hをhourRadに換算すると = 1 / 24 * 2 * Math.PI = 1 / 12 * Math.PI 
+  
+  const nightEnd = sunrise - Math.PI / 12;
+  const morningEnd = sunrise + Math.PI / 3;
+  const noonEnd = sunset - Math.PI / 6;
+  const eveningEnd = sunset + Math.PI / 12;
+  // const nightStart = eveningEnd;
+  // const nightEnd = morningStart; 
+
+  if(now < nightEnd) return "night";
+  if(now < morningEnd) return "morning";
+  if(now < noonEnd) return "noon";
+  if(now < eveningEnd) return "evening";
+  return "night";
+
+}
 
 export default function EcosystemProvider(props) {
   /*
@@ -123,8 +168,9 @@ export default function EcosystemProvider(props) {
 
 
   useEffect(()=>{
-    console.log("changeMonitor: ",change);
+    console.log("ecosystem changeMonitor: ",change);
   },[change])
+
   useInterval(() => {
     const now = new Date();
     const s = SEASONS[now.getMonth()];
@@ -158,50 +204,6 @@ export default function EcosystemProvider(props) {
 
   }, config.updateInterval);
 
-  function nightOrDay() {
-    /* nightOrDay() ... 現時点のmorning/noon/evening/ninghtを返す。
-      
-      年間を通して日の出、日没の時間は周期的に変化する。これをsinカーブで近似して
-      仮想的な昼夜を生成する。
-      日の出はsunrise.summer.hourRadを最小値とした一年周期のサインカーブ、
-      日没はSUNSET.winter.hourRadを最小値とした一年周期のサインカーブとする。
-    */
-    let l, e, grad, intc;
-    let now = getDateRad();
-
-    l = SUNSET.winter.getHourRad;
-    e = SUNSET.summer.getHourRad;
-    grad = (l - e) / 2;
-    intc = (e + l) / 2;
-    const sunset = grad * Math.cos(now + SUNSET.winter.dateRad) + intc;
-
-    l = SUNRISE.summer.getHourRad;
-    e = SUNRISE.winter.getHourRad;
-    grad = (l - e) / 2;
-    intc = (e + l) / 2;
-    const sunrise = grad * Math.cos(now + SUNRISE.summer.dateRad) + intc;
-    
-    // morning '朝', // 日の出前59分間から日の出240分まで
-    // noon '昼', // 日の出241分後〜日没前120分まで
-    // evening '夕', // 日没前121分〜日没後60分
-    // night '夜', // 日没後61分〜日の出前60分まで
-
-    // 1hをhourRadに換算すると = 1 / 24 * 2 * Math.PI = 1 / 12 * Math.PI 
-    
-    const morningStart = sunrise - Math.PI / 12;
-    const morningEnd = sunrise + Math.PI / 3;
-    const noonEnd = sunset - Math.PI / 6;
-    const eveningEnd = sunset + Math.PI / 12;
-    // const nightStart = eveningEnd;
-    // const nightEnd = morningStart; 
-
-    if(now < morningStart) return "night";
-    if(now < morningEnd) return "morning";
-    if(now < noonEnd) return "noon";
-    if(now < eveningEnd) return "evening";
-    return "night";
-
-  }
 
   function handleChangeSite(s) {
     setSite(s);
