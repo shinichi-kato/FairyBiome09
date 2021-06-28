@@ -143,6 +143,7 @@ export default function IndexPage({ data }) {
   }
 
   return (
+    
     <FirebaseProvider
       handleAuthOk={handleAuthOk}
     >

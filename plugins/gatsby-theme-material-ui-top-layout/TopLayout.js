@@ -5,8 +5,10 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider } from '@material-ui/core/styles';
 import theme from '../../src/theme';
 
+// gatsby 3.8.0 で読み込まれなくなった
+
 export default function TopLayout(props) {
-  
+  console.log("toplayout")
   return (
     <React.Fragment>
       <Helmet>
@@ -26,7 +28,7 @@ export default function TopLayout(props) {
       <ThemeProvider theme={theme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
-        {props.children}
+          {props.children}
       </ThemeProvider>
     </React.Fragment>
   )

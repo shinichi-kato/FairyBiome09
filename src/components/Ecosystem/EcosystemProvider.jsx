@@ -230,7 +230,10 @@ export default function EcosystemProvider(props) {
     >
       <div
         style={{
-          width: "100%",
+          position: "fixed",
+          width: 480,
+          marginLeft: "calc((100% - 480px)  * 0.3)",
+          marginRight: "calc((100% - 480px) * 0.7)",
           height: "100vh",
           backgroundImage: `${weatherBg},${sceneBg}`,
           backgroundSize: `150px,cover`,
