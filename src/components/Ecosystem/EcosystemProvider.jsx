@@ -53,60 +53,63 @@ const WEATHER_ICONS = {
   'snow': 'wi-snow.svg',
 }
 
-const SUNRISE = {
-  summer: {
-    dateRad: getDateRad(6, 15),
-    hourRad: getHourRad(5, 0),
+const SOLTICE = {
+  sunrise: {
+    summer: {
+      dateRad: getDateRad(6, 15),　// 夏至の日
+      hourRad: getHourRad(5, 0),  // 夏至の日の出時刻
+    },
+    winter: {
+      dateRad: null, // 冬至の日(夏至の半年後)
+      hourRad: getHourRad(7, 0), // 冬至の日の出時刻
+    },
   },
-  winter: {
-    dateRad: null, // summer.dateRadの半年後
-    hourRad: getHourRad(7, 0),
-  },
-
+  sunset: {
+    summer: {
+      dateRad: null, // winter.dateRadの半年後
+      hourRad: getHourRad(19, 0),　// 夏至の日没時刻
+    },
+    winter: {
+      dateRad: getDateRad(12, 1), // 冬至の日
+      hourRad: getHourRad(17, 0),　// 冬至の日没時刻
+    },
+  }
 };
 
-const SUNSET = {
-  summer: {
-    dateRad: null, // winter.dateRadの半年後
-    hourRad: getHourRad(19, 0),
-  },
-  winter: {
-    dateRad: getDateRad(12, 1),
-    hourRad: getHourRad(17, 0),
-  },
-}
+const CSunset = {
+  a: (SOLTICE.sunset.winter.hourRad - SOLTICE.sunset.summer.hourRad) / 2,
+  b: (SOLTICE.sunset.winter.hourRad + SOLTICE.sunset.summer.hourRad) / 2,
+  t: SOLTICE.sunset.winter.dateRad,
+};
+const CSunrise = {
+  a: (SOLTICE.sunrise.summer.hourRad - SOLTICE.sunrise.winter.hourRad) / 2,
+  b: (SOLTICE.sunrise.summer.hourRad + SOLTICE.sunrise.winter.hourRad) / 2,
+  t: SOLTICE.sunrise.summer.dateRad
+};
 
 
-function nightOrDay() {
-  /* nightOrDay() ... 現時点のmorning/noon/evening/ninghtを返す。
+function nightOrDay(now) {
+  /* nightOrDay(now) ... nowで与えられたタイムスタンプをmorning/noon/evening/ninghtに変換する
     
     年間を通して日の出、日没の時間は周期的に変化する。これをsinカーブで近似して
     仮想的な昼夜を生成する。
     日の出はsunrise.summer.hourRadを最小値とした一年周期のサインカーブ、
     日没はSUNSET.winter.hourRadを最小値とした一年周期のサインカーブとする。
   */
-  let l, e, grad, intc;
-  let now = getDateRad();
+  if(now === undefined) {
+    now = new Date();
+  }
+  const nowDateRad = getDateRad(now);
 
-  l = SUNSET.winter.getHourRad;
-  e = SUNSET.summer.getHourRad;
-  grad = (l - e) / 2;
-  intc = (e + l) / 2;
-  const sunset = grad * Math.cos(now + SUNSET.winter.dateRad) + intc;
-
-  l = SUNRISE.summer.getHourRad;
-  e = SUNRISE.winter.getHourRad;
-  grad = (l - e) / 2;
-  intc = (e + l) / 2;
-  const sunrise = grad * Math.cos(now + SUNRISE.summer.dateRad) + intc;
-  
+  const sunset = CSunset.a * Math.cos(nowDateRad + CSunset.t) + CSunset.b;
+  const sunrise = CSunrise.a * Math.cos(nowDateRad + CSunrise.t) + CSunrise.b;
   // morning '朝', // 日の出前59分間から日の出240分まで
   // noon '昼', // 日の出241分後〜日没前120分まで
   // evening '夕', // 日没前121分〜日没後60分
   // night '夜', // 日没後61分〜日の出前60分まで
 
   // 1hをhourRadに換算すると = 1 / 24 * 2 * Math.PI = 1 / 12 * Math.PI 
-  
+
   const nightEnd = sunrise - Math.PI / 12;
   const morningEnd = sunrise + Math.PI / 3;
   const noonEnd = sunset - Math.PI / 6;
@@ -114,10 +117,11 @@ function nightOrDay() {
   // const nightStart = eveningEnd;
   // const nightEnd = morningStart; 
 
-  if(now < nightEnd) return "night";
-  if(now < morningEnd) return "morning";
-  if(now < noonEnd) return "noon";
-  if(now < eveningEnd) return "evening";
+  const nowHourRad = getHourRad(now);
+  if (nowHourRad < nightEnd) return "night";
+  if (nowHourRad < morningEnd) return "morning";
+  if (nowHourRad < noonEnd) return "noon";
+  if (nowHourRad < eveningEnd) return "evening";
   return "night";
 
 }
@@ -167,9 +171,9 @@ export default function EcosystemProvider(props) {
   const [change, setChange] = useState(null) /* weather,season,site,sceneの変化 */
 
 
-  useEffect(()=>{
-    console.log("ecosystem changeMonitor: ",change);
-  },[change])
+  useEffect(() => {
+    console.log("ecosystem changeMonitor: ", change);
+  }, [change])
 
   useInterval(() => {
     const now = new Date();
@@ -197,7 +201,7 @@ export default function EcosystemProvider(props) {
 
     setDayPart(prevState => {
       if (prevState !== d) {
-        setDayPart(d);
+        setChange(d);
       }
       return d;
     })
@@ -215,6 +219,7 @@ export default function EcosystemProvider(props) {
 
   const weatherBg = `url(images/ecosystem/weather/${WEATHER_ICONS[weather]})`;
   const sceneBg = `url(images/ecosystem/${site}-${dayPart}.svg)`;
+
   return (
     <EcosystemContext.Provider
       value={{
