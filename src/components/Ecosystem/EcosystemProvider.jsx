@@ -35,10 +35,10 @@ query j {
 const SEASONS = ['winter', 'winter', 'spring', 'spring', 'spring', 'spring', 'summer', 'summer', 'summer', 'autumn', 'autumn', 'winter'];
 
 const WEATHERS = {
-  'spring': ['storm', 'heavyRain', 'rain', 'rain', 'cloudy', 'cloudy', 'halfClouds', 'halfClouds', 'sunny', 'sunny'],
-  'summer': ['storm', 'heavyRain', 'rain', 'cloudy', 'halfClouds', 'halfClouds', 'halfClouds', 'sunny', 'sunny', 'heat'],
-  'autumn': ['storm', 'heavyRain', 'rain', 'cloudy', 'cloudy', 'halfClouds', 'halfClouds', 'halfClouds', 'sunny', 'sunny'],
-  'winter': ['snowStorm', 'snow', 'snow', 'cloudy', 'cloudy', 'halfClouds', 'halfClouds', 'halfClouds', 'sunny', 'sunny'],
+  'spring': ['storm', 'heavyRain', 'rain', 'rain', 'cloudy', 'cloudy', 'halfClouds', 'halfClouds', 'clear', 'clear'],
+  'summer': ['storm', 'heavyRain', 'rain', 'cloudy', 'halfClouds', 'halfClouds', 'halfClouds', 'clear', 'clear', 'heat'],
+  'autumn': ['storm', 'heavyRain', 'rain', 'cloudy', 'cloudy', 'halfClouds', 'halfClouds', 'halfClouds', 'clear', 'clear'],
+  'winter': ['snowStorm', 'snow', 'snow', 'cloudy', 'cloudy', 'halfClouds', 'halfClouds', 'halfClouds', 'clear', 'clear'],
 };
 
 const WEATHER_ICONS = {
@@ -47,7 +47,7 @@ const WEATHER_ICONS = {
   'rain': 'wi-showers.svg',
   'cloudy': 'wi-cloudy.svg',
   'halfClouds': 'wi-day-cloudy.svg',
-  'sunny': 'wi-sunny.svg',
+  'clear': 'wi-clear.svg',
   'heat': 'wi-thermometer.svg',
   'snowStorm': 'wi-snow-wind.svg',
   'snow': 'wi-snow.svg',
@@ -88,7 +88,7 @@ const CSunrise = {
 };
 
 
-function nightOrDay(now) {
+function getDayPart(now) {
   /* nightOrDay(now) ... nowで与えられたタイムスタンプをmorning/noon/evening/ninghtに変換する
     
     年間を通して日の出、日没の時間は周期的に変化する。これをsinカーブで近似して
@@ -96,7 +96,7 @@ function nightOrDay(now) {
     日の出はsunrise.summer.hourRadを最小値とした一年周期のサインカーブ、
     日没はSUNSET.winter.hourRadを最小値とした一年周期のサインカーブとする。
   */
-  if(now === undefined) {
+  if (now === undefined) {
     now = new Date();
   }
   const nowDateRad = getDateRad(now);
@@ -178,11 +178,10 @@ export default function EcosystemProvider(props) {
   useInterval(() => {
     const now = new Date();
     const s = SEASONS[now.getMonth()];
-    let p = noiseRef.current.simplex2(config.changeRate * now, 0);
-    p = (p + 1) * 0.5; /* 非負 (0〜1)に換算*/
+    const p = getPressure(now,config.changeRate);
     const w = WEATHERS[s][Math.round(9 * p)];
-    const d = nightOrDay();
-
+    const d = getDayPart(now);
+    
     setSeason(prevState => {
       if (prevState !== s) {
         setChange(s);
@@ -208,6 +207,24 @@ export default function EcosystemProvider(props) {
 
   }, config.updateInterval);
 
+  function getPressure(timestamp,changeRate) {
+    // ある時刻における気圧を返す
+    if (timestamp === undefined) {
+      timestamp = new Date();
+    }
+
+    return (noiseRef.current.simplex2(changeRate * timestamp.getTime(),
+      0) + 1) * 0.5; // simplex2は-1〜+1の値を取る。それを0~1に換算
+  }
+
+  function getWeather(timestamp,changeRate){
+    if(timestamp !== undefined && changeRate !== undefined){
+      const p=getPressure(timestamp, changeRate);
+      const s=SEASONS[timestamp.getMonth()];
+      return WEATHERS[s][Math.round(9 * p)];
+    }
+    return weather;
+  }
 
   function handleChangeSite(s) {
     setSite(s);
@@ -225,9 +242,10 @@ export default function EcosystemProvider(props) {
       value={{
         pressure: pressure,
         season: season,
-        weather: weather,
+        getWeather: getWeather,
+        getPressure: getPressure,
         site: site,
-        dayPart: nightOrDay,
+        getDayPart: getDayPart,
         change: change,
         changeDispatched: handleChangeDispatched,
         changeSite: handleChangeSite,
