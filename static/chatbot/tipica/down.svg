@@ -13,7 +13,7 @@
    viewBox="0 0 158.75 211.67"
    id="svg961"
    sodipodi:docname="down.svg"
-   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)">
+   inkscape:version="1.0.2 (e86c870879, 2021-01-15)">
   <defs
      id="defs965" />
   <sodipodi:namedview
@@ -25,17 +25,18 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1797"
-     inkscape:window-height="782"
+     inkscape:window-width="1556"
+     inkscape:window-height="912"
      id="namedview963"
      showgrid="false"
-     inkscape:zoom="0.9775"
-     inkscape:cx="300"
-     inkscape:cy="318.15857"
+     inkscape:zoom="0.48875"
+     inkscape:cx="-69.685954"
+     inkscape:cy="297.12932"
      inkscape:window-x="26"
      inkscape:window-y="23"
      inkscape:window-maximized="0"
-     inkscape:current-layer="svg961" />
+     inkscape:current-layer="svg961"
+     inkscape:document-rotation="0" />
   <metadata
      id="metadata901">
     <rdf:RDF>
@@ -44,7 +45,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -111,29 +112,26 @@
      fill-opacity="0.4179"
      stroke-width="0.17014"
      id="path921" />
-  <g
-     transform="matrix(1.2218 0 0 1.2218 -43.753 -57.898)"
-     id="g929">
-    <ellipse
-       transform="matrix(.9779 -.209 .214 .9768 0 0)"
-       cx="32.9"
-       cy="161.4"
-       rx="13.36"
-       ry="18.94"
-       fill="#924019"
-       style="paint-order:stroke markers fill"
-       id="ellipse923" />
-    <path
-       d="m161.1 104c0 24.65-4.138 31.4-49.49 31.03-28.62-0.2385-56.88 0.2438-59.89-24.22-6.481-52.62 24.01-62.78 52.64-62.78 28.62 0 56.75 31.32 56.75 55.97z"
-       fill="#924019"
-       style="paint-order:stroke markers fill"
-       id="path925" />
-    <path
-       d="m148.1 119.8c-0.0922 33.03-13.58 47.92-32.8 47.92-26.79 0-46.41-14.09-46.41-47.92 1e-6 -37.04 15.85-47.3 47.17-47.17 21.51 0.09118 32.16 6.116 32.05 47.17z"
-       fill="#f9bb78"
-       style="paint-order:stroke markers fill"
-       id="path927" />
-  </g>
+  <ellipse
+     transform="matrix(0.97791496,-0.2090032,0.21400704,0.97683212,0,0)"
+     cx="9.8474531"
+     cy="131.42732"
+     rx="16.322998"
+     ry="23.140131"
+     fill="#924019"
+     style="stroke-width:1.22177;paint-order:stroke markers fill"
+     id="ellipse923" />
+  <path
+     d="m 153.07898,69.1692 c 0,30.11737 -5.05581,38.36452 -60.466882,37.91245 C 57.644182,106.79025 23.116114,107.37953 19.438496,77.489658 11.52001,13.198542 48.773914,0.785054 83.754048,0.785054 c 34.967912,0 69.337152,38.266776 69.337152,68.384146 z"
+     fill="#924019"
+     style="stroke-width:1.2218;paint-order:stroke markers fill"
+     id="path925" />
+  <path
+     d="m 135.3245,92.391511 c -3.27224,22.317309 -4.70201,31.306429 -7.33002,35.043339 -1.76172,2.50509 -23.2541,18.55134 -30.474873,18.91275 C 72.749027,147.58736 37.279744,130.61948 38.59678,89.307781 40.038793,44.076187 59.793535,32.16419 98.035057,33.542264 c 26.263493,0.948752 39.034253,8.720609 37.301653,58.849637 z"
+     fill="#f9bb78"
+     style="stroke-width:1.22178;paint-order:stroke markers fill"
+     id="path861-6"
+     sodipodi:nodetypes="csssccc" />
   <g
      stroke-width="1.2218"
      id="g943">
@@ -238,7 +236,7 @@
      style="font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-feature-settings:normal;font-variation-settings:normal;text-indent:0;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;text-transform:none;text-orientation:mixed;white-space:normal;shape-padding:0;shape-margin:0;inline-size:0;isolation:auto;mix-blend-mode:normal;shape-rendering:auto"
      id="path955" />
   <path
-     d="m 92.50894,126.10025 a 1.6626,1.6626 0 0 1 -0.928337,-0.46098 1.6626,1.6626 0 0 1 -0.02429,-2.35088 c 0,0 2.707579,-2.83542 6.862391,-3.32812 4.476926,-0.53103 8.011066,2.77323 8.011066,2.77323 a 1.6626,1.6626 0 0 1 0.17371,2.34587 1.6626,1.6626 0 0 1 -2.34588,0.17372 c 0,0 -2.95036,-2.28731 -5.447297,-1.99118 -2.818922,0.33433 -4.879024,2.35537 -4.879024,2.35537 a 1.6626,1.6626 0 0 1 -1.422287,0.4829 z"
+     d="m 94.077231,124.94145 c 0.277485,0.78276 4.220467,-1.41379 5.048592,-1.26657 0,0 1.306557,0.47949 4.808217,0.25336 3.04558,-0.47804 2.62074,-1.36492 3.07858,-1.84758 0.69742,-0.59816 1.25738,0.75305 1.37411,0.22378 0.34162,-0.6859 -1.48832,-1.30755 -2.56299,-2.02106 -3.72424,0.86774 -8.686257,3.17285 -8.686257,3.17285 -1.143897,0.291 -3.230006,1.06089 -3.060252,1.48522 z"
      color="#000000"
      color-rendering="auto"
      dominant-baseline="auto"
@@ -246,6 +244,7 @@
      image-rendering="auto"
      solid-color="#000000"
      stop-color="#000000"
-     style="font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-feature-settings:normal;font-variation-settings:normal;text-indent:0;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;text-transform:none;text-orientation:mixed;white-space:normal;shape-padding:0;shape-margin:0;inline-size:0;isolation:auto;mix-blend-mode:normal;shape-rendering:auto"
-     id="path957" />
+     style="font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-feature-settings:normal;font-variation-settings:normal;text-indent:0;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;text-transform:none;text-orientation:mixed;white-space:normal;shape-padding:0;shape-margin:0;inline-size:0;isolation:auto;mix-blend-mode:normal;fill:#ee5f5f;fill-opacity:1;shape-rendering:auto"
+     id="path3995"
+     sodipodi:nodetypes="cccccccc" />
 </svg>

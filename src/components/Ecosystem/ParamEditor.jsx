@@ -32,21 +32,21 @@ export default function ParamEditor(props) {
           {props.randomSeed}
         </Grid>
         <Grid item xs={3}>
-          変化速度
+          天候変化速度
         </Grid>
         <Grid item xs={6}>
           <TextField
             id="change-rate"
-            label="天候変化速度"
             value={rate}
             onChange={handleChangeRate}
             variant="outlined"
             helperText={message}
           />
+          天候変化速度を反映するにはgatsby-configを編集してください
         </Grid>
         <Grid item xs={3}>
           <Button
-            contained
+            variant="contained"
             color="primary"
             onClick={handleClick}>
             変更
