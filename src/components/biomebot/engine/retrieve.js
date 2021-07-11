@@ -6,6 +6,12 @@
 
 */
 
+/*
+debugメモ
+キャッシュがうまく生成していないときにapplyでエラーになることがある。
+エラーメッセージにはretrieve.js 125:60とか表示されるが、125行がどこか特定できず
+*/
+
 import {
   zeros, apply, sum, dot, dotMultiply,
   map, norm, randomInt, concat
