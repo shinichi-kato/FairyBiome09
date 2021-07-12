@@ -41,6 +41,13 @@ const WEATHERS = {
   'winter': ['snowStorm', 'snow', 'snow', 'cloudy', 'cloudy', 'halfClouds', 'halfClouds', 'halfClouds', 'clear', 'clear'],
 };
 
+const SEVERE_WEATHERS = {
+  'storm': true,
+  'heavyRain': true,
+  'rain': true,
+  'snowStorm': true,
+};
+
 const WEATHER_ICONS = {
   'storm': 'wi-hurricane.svg',
   'heavyRain': 'wi-rain.svg',
@@ -144,7 +151,15 @@ export default function EcosystemProvider(props) {
     
 
     ** 天気 weather
-    季節と乱数を用いて天気を生成する。
+    季節と乱数を用いて天気を生成する。基本的には天候が変わったときにchangeがセットされるが、
+    人間が注意を向ける天候の変化は非対称らしく、
+
+    |晴 → 曇|「曇った」
+    |曇 → 晴|「晴れた」
+    |雨 → 曇|「雨が止んだ」
+    |曇 → 雨|「雨になった」
+    
+    雨、大雨、台風、雪、吹雪などのシビアな天候に対しては天候が終わったときにonExit
 
     ** 場所 site
     自分の部屋(room)、森(forest)、公園(park)の３箇所がある。
@@ -178,10 +193,10 @@ export default function EcosystemProvider(props) {
   useInterval(() => {
     const now = new Date();
     const s = SEASONS[now.getMonth()];
-    const p = getPressure(now,config.changeRate);
+    const p = getPressure(now, config.changeRate);
     const w = WEATHERS[s][Math.round(9 * p)];
     const d = getDayPart(now);
-    
+
     setSeason(prevState => {
       if (prevState !== s) {
         setChange(s);
@@ -193,7 +208,12 @@ export default function EcosystemProvider(props) {
 
     setWeather(prevState => {
       if (prevState !== w) {
-        setChange(w);
+        if (prevState in SEVERE_WEATHERS) {
+          setChange(`exit_${w}`)
+        }
+        else {
+          setChange(w);
+        }
       };
       return w;
     });
@@ -207,7 +227,7 @@ export default function EcosystemProvider(props) {
 
   }, config.updateInterval);
 
-  function getPressure(timestamp,changeRate) {
+  function getPressure(timestamp, changeRate) {
     // ある時刻における気圧を返す
     if (timestamp === undefined) {
       timestamp = new Date();
@@ -217,10 +237,10 @@ export default function EcosystemProvider(props) {
       0) + 1) * 0.5; // simplex2は-1〜+1の値を取る。それを0~1に換算
   }
 
-  function getWeather(timestamp,changeRate){
-    if(timestamp !== undefined && changeRate !== undefined){
-      const p=getPressure(timestamp, changeRate);
-      const s=SEASONS[timestamp.getMonth()];
+  function getWeather(timestamp, changeRate) {
+    if (timestamp !== undefined && changeRate !== undefined) {
+      const p = getPressure(timestamp, changeRate);
+      const s = SEASONS[timestamp.getMonth()];
       return WEATHERS[s][Math.round(9 * p)];
     }
     return weather;
