@@ -258,7 +258,10 @@ function reducer(state, action) {
         if (!snap.parts[partName].featureWeights) {
           newWeights = nums(featureIndex.length, 1 / 10);
           newWeights[0] = 4 / 10; // ※先頭は1番
-          snap.parts[partName].featureWeights = newWeights;
+          snap.parts[partName].coeffs = {
+            weights: newWeights,
+            biases: nums(featureIndex.length, 0)
+          };
         }
       }
       console.log("parts", snap.parts)
@@ -324,10 +327,10 @@ export default function BiomebotProvider(props) {
     stateRef.current = state;
 
     if (state.status === 'ready') {
-      console.log("qlength",work.queue.length)
+      console.log("qlength", work.queue.length)
       if (work.queue.length > 0) {
         setWork(prev => {
-          const top = {...prev.queue[0]};
+          const top = { ...prev.queue[0] };
           const newWork = {
             ...prev,
             queue: prev.queue.slice(1)
@@ -392,7 +395,7 @@ export default function BiomebotProvider(props) {
 
       }));
     } else {
-      setWork(prevWork=>
+      setWork(prevWork =>
         executes[work.site](currentState, prevWork, message, emitter)
       );
     }

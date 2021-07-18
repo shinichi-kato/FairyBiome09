@@ -14,7 +14,7 @@ debugメモ
 
 import {
   zeros, apply, sum, dot, dotMultiply,
-  map, norm, randomInt, concat
+  map, norm, randomInt, concat, divide
 } from "mathjs";
 
 
@@ -29,6 +29,10 @@ export function retrieve(message, cache, coeffs) {
   //
   // 内部表現のリストとして与えられbたmesageを使ってテキスト検索
   // tfidf,df,vocabを利用してtextに一番似ているdictの行番号を返す
+
+  if(cache.tfidf.length === 0 || cache.fv.length === 0){
+    return { index: null, score: 0};
+  }
 
   // wv
   const vocabLength = cache.vocab.length;
@@ -56,23 +60,37 @@ export function retrieve(message, cache, coeffs) {
   // 正規化
 
   const n = norm(tfidf);
-  const ntfidf = map(tfidf, x => x / n);
+  const ntfidf = map(tfidf, x => (divide(1, n)));
 
-  // message.textに対するinScript各業の類似度
-
-  const textScore = apply(cache.tfidf, 1, x => dot(x, ntfidf)).valueOf();
-
+  // message.textに対するinScript各行の類似度
+  let textScore;
+  try {
+    textScore = apply(cache.tfidf, 1, x => dot(x, ntfidf)).valueOf();
+  } catch (error) {
+    textScore = [];
+    console.log("invalid cache.tfidf,tfidf=", cache.tfidf, "error=",error)
+  }
+  
   // --------------------------------------------------------
   //
   // messageに含まれるその他の特徴量の類似度
   //
   // 特徴量のone-hot vectorとする行列に対して入力メッセージとの内積を取り、
   // 重み付けした後合計。重みの合計値は１なのでtotalScoreの最大値も1
-
-  let fmtx = apply(cache.fv, 1, x => dot(x, message.features)).valueOf();
+  
+  // cache.fvとmessage.featuresの各要素ごとに積→共通した項が１になる　fv.length×features.lengthのmatrixができる
+  const fmtx = apply(cache.fv, 1, x => dotMultiply(x, message.features));
+  
+  // 先頭をtextscore,以降をfeatureのスコアとした配列を作る
+  console.log("fmtx=",fmtx, "textScore=",textScore)
   let totalScore = concat(textScore, fmtx)
-  totalScore = apply(totalScore, 1, x => dotMultiply(x, coeffs.weights));
-  totalScore = apply(totalScore, 1, x => sum(x));
+  console.log("message.features=",message.features,"cache.fv=",cache.fv,"fmtx=",fmtx,"totalScore=",totalScore)
+  try {
+    totalScore = apply(totalScore, 1, x => dotMultiply(x, coeffs.weights));
+    totalScore = apply(totalScore, 1, x => sum(x));
+  }catch(error){
+    console.log("invalid coeffs coeffs=", coeffs,"totalscore=",totalScore)
+  }
 
 
 

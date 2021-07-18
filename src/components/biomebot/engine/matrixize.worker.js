@@ -2,12 +2,12 @@
   スクリプトをmatrixに変換
   botId,partNameで指定されたスクリプトをdbから読み込む。
   スクリプトは
-  [{in:[inputs],out:[],prev,next}...]
+  [{in:[inputs],out:[outputs],prev,next}...]
   という形式で与えられ、inputsは文字列またはmessage型データが有効である。
   Message型データは以下のようにコーディングする
   Message {
     text: 内部表現化
-    person, mood, site, weather, season, dayPart : one-hotベクター化
+    features: [person, mood, site, weather, season, dayPart, ... ]  one-hotベクター化
   }
 
   textは行ごとに正規化されたtfidf行列に変換する。
@@ -18,7 +18,7 @@
 
   この関数は以下の計算結果を返す
   {
-    index:　スクリプトの
+    index:　inとoutの数は必ずしも同じでないため、inscriptのi行がoutscriptのo行に対応することをindex[i]=oで格納
   }
 
   ## タグの処理
@@ -80,29 +80,44 @@ onmessage = function (event) {
           tagDict[tags[0]] = getValidNode(script[i].out);
         } else if(isNonEmpty(script[i].in) && isNonEmpty(script[i].out)){
 
-          inScript.push(...getValidNode(script[i].in));
-          outScript.push(...getValidNode(script[i].out));
+          inScript.push(getValidNode(script[i].in));
+          outScript.push(getValidNode(script[i].out));
         }
       }
     }
+
+    // inScriptは辞書の1エントリに対して複数の入力,複数の出力があってもよい。tfidfやfvは入力に
+    // つき1つ定義され、入力にどのoutScirptおよびfvが対応するかを示すindexを用意する。
+    // 
     // indexの生成
     // 単語のsqueeze
+    // fvの生成
+    
     let index = [];
     let squeezedDict = [];
     let vocab = {};
     let line;
+    let fv = [];
 
     for (let i = 0, l = inScript.length; i < l; i++) {
       // 
-      line = textToInternalRepr(segmenter.segment(inScript[i].text));
-      squeezedDict.push(...line);
-
-      for (let j = 0, m = line.length; j < m; j++) {
+      let inScript2 = inScript[i];
+      for(let i2 = 0, l2 = inScript2.length; i2 < l2; i2++){
+        let entry = inScirpt[i2];
+        line = textToInternalRepr(segmenter.segment(entry.text));
+        squeezedDict.push(...line);
         index.push(i);
-        for (let word of line[j]) {
-          vocab[word] = true;
+        fv.push(entry.features);
+
+        for (let j = 0, m = line.length; j < m; j++) {
+          for (let word of line[j]) {
+            vocab[word] = true;
+          }
         }
+        
       }
+        
+
     }
     // vocabの生成
 
@@ -148,13 +163,6 @@ onmessage = function (event) {
     const inv_n = apply(tfidf, 1, x => (divide(1, norm(x))));
     tfidf = multiply(diag(inv_n), tfidf);
 
-    /* 
-      messageのうち、
-      person, mood, site, weather, season, dayPart,
-      は one-hotベクターにする。これらをまとめてfeatureVector (fv)と呼ぶ。
-      
-    */
-    const fv = inScript.map(i => i.features);
 
     // 書き込み
     

@@ -63,7 +63,7 @@ export function execute(state, work, message, sendMessage) {
 
     // 辞書の一致チェック
 
-    const result = retrieve(message, state.cache[partName]);
+    const result = retrieve(message, state.cache[partName],part.coeffs);
     
     console.log("retrieve",result,"precision",part.precision)
     if (result.score < part.precision) continue;
