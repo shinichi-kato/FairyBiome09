@@ -1,9 +1,30 @@
 /*
-  スクリプトをmatrixに変換
-  botId,partNameで指定されたスクリプトをdbから読み込む。
-  スクリプトは
-  [{in:[inputs],out:[outputs],prev,next}...]
-  という形式で与えられ、inputsは文字列またはmessage型データが有効である。
+matrixize.worker
+
+usage:
+  worker.postMessage({ botId, partName });
+
+botId, partNameで指定されたスクリプトをdbから読み、
+tfidf類似度計算のためのキャッシュを生成してdbに書き込む。
+
+
+  # スクリプト
+  スクリプトはchatbot.jsonの中で以下のように記述される。
+  
+  "script": [
+      {
+          "in": ["弱気だって言われた","優柔不断だって言われた"],
+          "out": "{user}さんは優しいんですよ。"
+      },
+      {
+          "in": "{enter_storm}",
+          "out":["台風みたいです！","すごい風と雨になってきました"]
+      },
+  ]
+
+  inは入力文字列、outはinを受け取ったときの出力文字列で、in,outともに複数の候補が
+  あってもよく、候補が複数の場合は文字列のリスト、一つの場合は文字列で記述する。
+
   Message型データは以下のようにコーディングする
   Message {
     text: 内部表現化
@@ -21,12 +42,10 @@
     index:　inとoutの数は必ずしも同じでないため、inscriptのi行がoutscriptのo行に対応することをindex[i]=oで格納
   }
 
-  ## タグの処理
-  {ENTER_MOOD_PEACE}のように /^{[a-zA-Z][a-zA-Z0-9_]*}$/ に一致するin文字列を
-  見つけた場合、それはtfidfで処理せずtagDictを用いる。現バージョンでは該当した行の
-  tfidfはすべて0とする。
-
-  ※辞書がタグだけにならないようにすること
+  ## トリガー
+  入力文字列が "{enter_storm}"のように{}で囲まれた半角英数のコマンドである場合は
+  ecosystemの変化を示すトリガーなどである。トリガーは曖昧な検索が必要ないが
+  一般の文字列と同様に単純化のためtfidfを使った検索を利用する。
   
 */
 
@@ -40,11 +59,7 @@ import { Message } from '../../message';
 import { textToInternalRepr } from '../internal-repr';
 import { TinySegmenter } from '../tinysegmenter';
 
-const RE_TAG = /^{[a-zA-Z][a-zA-Z0-9_]*}$/;
-
 let segmenter = new TinySegmenter();
-
-
 
 
 function getValidNode(node) {
@@ -57,7 +72,7 @@ function getValidNode(node) {
   return [];
 }
 
-function isNonEmpty(node){
+function isNonEmpty(node) {
   return node !== "" && (Array.isArray(node) && node.length !== 0)
 }
 
@@ -70,29 +85,28 @@ onmessage = function (event) {
     // inスクリプトとoutスクリプトに分割
     let inScript = [];
     let outScript = [];
-    let tagDict = {};
-    let tags;
 
-    // 以下、空行を除外するロジックが重複していていまいち
+    // inスクリプトとoutスクリプトに分割
     for (let i = 0, len = script.length; i < len; i++) {
-      if ('in' in script[i] && 'out' in script[i]) {
-        if ((tags = RE_TAG.exec(script[i].in)) !== null) {
-          tagDict[tags[0]] = getValidNode(script[i].out);
-        } else if(isNonEmpty(script[i].in) && isNonEmpty(script[i].out)){
-
-          inScript.push(getValidNode(script[i].in));
-          outScript.push(getValidNode(script[i].out));
+      let line = script[i];
+      if ('in' in line && 'out' in line) {
+        if (isNonEmpty(line.in) && isNonEmpty(line.out)) {
+          inScript.push(getValidNode(line.in))
+          outScript.push(getValidNode(line.out))
         }
       }
     }
 
-    // inScriptは辞書の1エントリに対して複数の入力,複数の出力があってもよい。tfidfやfvは入力に
-    // つき1つ定義され、入力にどのoutScirptおよびfvが対応するかを示すindexを用意する。
+    console.log(partName, ": loaded in=", inScript.length, "out=", outScript.length, "entries")
+
+    // inScriptは辞書の1エントリに対して複数の入力,複数の出力があってもよい。tfidfや
+    // fvは入力につき1つ定義され、入力にどのoutScirptおよびfvが対応するかを示す
+    // indexを用意する。
     // 
     // indexの生成
     // 単語のsqueeze
     // fvの生成
-    
+
     let index = [];
     let squeezedDict = [];
     let vocab = {};
@@ -102,8 +116,8 @@ onmessage = function (event) {
     for (let i = 0, l = inScript.length; i < l; i++) {
       // 
       let inScript2 = inScript[i];
-      for(let i2 = 0, l2 = inScript2.length; i2 < l2; i2++){
-        let entry = inScirpt[i2];
+      for (let i2 = 0, l2 = inScript2.length; i2 < l2; i2++) {
+        let entry = inScript2[i2];
         line = textToInternalRepr(segmenter.segment(entry.text));
         squeezedDict.push(...line);
         index.push(i);
@@ -114,9 +128,9 @@ onmessage = function (event) {
             vocab[word] = true;
           }
         }
-        
+
       }
-        
+
 
     }
     // vocabの生成
@@ -129,7 +143,7 @@ onmessage = function (event) {
     */
 
     //wv
-    console.log("wv",squeezedDict.length,vocab.length)
+    console.log("wv", squeezedDict.length, vocab.length)
     let wv = zeros(squeezedDict.length, vocab.length);
     for (let i = 0, l = squeezedDict.length; i < l; i++) {
       for (let word of squeezedDict[i]) {
@@ -165,7 +179,7 @@ onmessage = function (event) {
 
 
     // 書き込み
-    
+
 
     await db.saveCache(botId, partName,
       {
@@ -176,15 +190,14 @@ onmessage = function (event) {
         tfidf: tfidf,
         index: index,
         fv: fv,
-        tagDict: tagDict,
       });
 
-      console.log("matrixize-end: ", botId, partName)
+    console.log("matrixize-end: ", botId, partName)
 
-      postMessage({
-        onmessage: true,
-        partName: partName,
-      });
+    postMessage({
+      onmessage: true,
+      partName: partName,
+    });
 
   })();
 

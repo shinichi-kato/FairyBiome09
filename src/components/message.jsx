@@ -95,7 +95,7 @@ export const featureDict = {
   'rain': 17,
   'cloudy': 18,
   'halfClouds': 19,
-  'sunny': 20,
+  'clear': 20,
   'heat': 21,
   'snowStorm': 22,
   'snow': 23,
