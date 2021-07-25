@@ -1,0 +1,23 @@
+<svg width="109.8mm" height="202.4mm" version="1.1" viewBox="0 0 109.8 202.4" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <metadata>
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <linearGradient id="linearGradient3298" x1="56.92" x2="79.94" y1="10.12" y2="166.5" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#c3c3b1" offset="0"/>
+   <stop stop-color="#e6f2f5" offset="1"/>
+  </linearGradient>
+ </defs>
+ <rect x="5.551e-17" y=".2465" width="109.8" height="202.4" fill="url(#linearGradient3298)" opacity=".99" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.647" style="paint-order:stroke markers fill"/>
+ <g fill="#d8e5e9" stroke-linecap="round" stroke-linejoin="round">
+  <path transform="scale(.2646)" d="m122.5 0.9316c-27.87 5.226-41.68 32.26-24.92 53.01h-65.79c-34.67 3.579-25.57 47.83 0 48.6h97.22c-2.003 10.59 7.914 20.27 16.08 20.52h232.3c24.38-3.808 17.82-32.57 0-33.11h-107.5c4.003-7.928 3.694-17.21-0.5195-24.32h145.6v-64.7z" stroke-width="6.326" style="paint-order:stroke markers fill"/>
+  <path transform="scale(.2646)" d="m58.27 143.2c-16.66 2.602-12.18 22.26 0 22.63h102.9c1.216 0.7786 2.658 1.234 4.215 1.234h153.7c11.5-1.797 8.411-15.37 0-15.62h-62.97c-1.334-4.763-5.69-8.238-10.89-8.238z" stroke-width="4.648" style="paint-order:stroke markers fill"/>
+  <rect x="58.71" y="48.55" width="42.46" height="2.822" ry="1.411" stroke-width=".7387" style="paint-order:stroke markers fill"/>
+  <rect x="18.35" y="54.01" width="34.42" height="2.045" ry="1.022" stroke-width=".5661" style="paint-order:stroke markers fill"/>
+ </g>
+</svg>

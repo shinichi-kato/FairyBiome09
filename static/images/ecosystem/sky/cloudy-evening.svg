@@ -1,0 +1,27 @@
+<svg width="109.8mm" height="202.4mm" version="1.1" viewBox="0 0 109.8 202.4" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <metadata>
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <linearGradient id="linearGradient3298" x1="56.92" x2="79.94" y1="10.12" y2="166.5" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#bdb1ff" offset="0"/>
+   <stop stop-color="#efa7a7" offset="1"/>
+  </linearGradient>
+ </defs>
+ <rect x="5.551e-17" y=".2464" width="109.8" height="202.4" fill="url(#linearGradient3298)" opacity=".99" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.647" style="paint-order:stroke markers fill"/>
+ <g stroke-linecap="round" stroke-linejoin="round">
+  <path d="m32.42 0.2465c-7.374 1.383-11.03 8.535-6.594 14.03h-17.41c-9.174 0.947-6.765 12.65 0 12.86h25.72c-0.5298 2.803 2.094 5.363 4.254 5.429h61.46c6.45-1.007 4.715-8.618 0-8.76h-28.44c1.059-2.098 0.9774-4.554-0.1375-6.436h38.52v-17.12z" fill="#ec9358" stroke-width="1.674" style="paint-order:stroke markers fill"/>
+  <path d="m34.06 50.43c-3.949 0.4579-2.887 3.917 0 3.981h24.4c0.2881 0.137 0.6301 0.2172 0.999 0.2172h36.44c2.727-0.3161 1.994-2.704 0-2.749h-14.93c-0.3162-0.838-1.349-1.449-2.581-1.449z" fill="#ffca5b" stroke-width=".9493" style="paint-order:stroke markers fill"/>
+  <path d="m34.06 50.43c-3.949 0.4579-2.887 3.917 0 3.981h24.4c0.2881 0.137 0.6301 0.2172 0.999 0.2172h36.44c2.727-0.3161 1.994-2.704 0-2.749h-14.93c-0.3162-0.838-1.349-1.449-2.581-1.449z" fill="#ffca5b" stroke-width=".9493" style="paint-order:stroke markers fill"/>
+  <rect x="59.24" y="69.36" width="42.46" height="2.822" ry="1.411" fill="#ffdc5b" stroke-width=".7387" style="paint-order:stroke markers fill"/>
+  <rect x="24.64" y="36.98" width="64.24" height="5.01" ry="2.505" fill="#ffa05f" stroke-width="1.211" style="paint-order:stroke markers fill"/>
+  <rect x=".3946" y="41.84" width="64.24" height="5.01" ry="2.505" fill="#ffa05f" stroke-width="1.211" style="paint-order:stroke markers fill"/>
+  <rect x="29.85" y="78.48" width="42.46" height="2.822" ry="1.411" fill="#ffebb1" stroke-width=".7387" style="paint-order:stroke markers fill"/>
+  <rect x="18.35" y="66.14" width="34.42" height="2.045" ry="1.022" fill="#ffdc5b" stroke-width=".5661" style="paint-order:stroke markers fill"/>
+ </g>
+</svg>

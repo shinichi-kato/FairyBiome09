@@ -1,0 +1,22 @@
+<svg width="109.8mm" height="202.4mm" version="1.1" viewBox="0 0 109.8 202.4" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <metadata>
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <linearGradient id="linearGradient3298" x1="56.92" x2="79.94" y1="10.12" y2="166.5" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#fafaed" offset="0"/>
+   <stop stop-color="#dcf7ff" offset="1"/>
+  </linearGradient>
+ </defs>
+ <rect x="5.551e-17" y=".2465" width="109.8" height="202.4" fill="url(#linearGradient3298)" opacity=".99" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.647" style="paint-order:stroke markers fill"/>
+ <g fill="#d8e5e9" stroke-linecap="round" stroke-linejoin="round">
+  <path d="m33.25 17.67c-7.577 0.03461-13.96 5.456-14.94 12.69-7.503-0.3772-13.54 7.28-13.68 12.4 0.01916 6.875 5.51 12.44 12.27 12.43h67.63c6.519-1.647 5.797-9.965-1.197-9.983-1.502-12.33-17.24-11.75-19.83-2.218-1.289-1.387-3.088-2.279-5.047-2.503 5.702-4.449-2.531-16.49-10.33-11.22-1.468-6.774-7.685-11.62-14.87-11.6z" stroke-width="6.225" style="paint-order:stroke markers fill"/>
+  <path d="m86.97 61.44c-3.337 0.01543-6.308 1.964-7.44 4.879-3.975 0.472-6.95 3.617-6.942 7.338 0.01238 4.073 3.575 7.367 7.962 7.361l14.11 0.04681c2.909-0.0038 6.078-2.057 6.273-4.93 6.694-6.607-4.641-10.83-6.592-10.14-1.236-2.766-4.149-4.564-7.374-4.553z" stroke-width="6.225" style="paint-order:stroke markers fill"/>
+  <path d="m19.25 65.99c-1.805 0.0066-3.412 0.84-4.024 2.087-2.15 0.2019-3.759 1.547-3.754 3.139 0.0067 1.742 1.934 3.151 4.306 3.148l7.632 0.02002c1.573-0.0016 3.287-0.88 3.392-2.108 3.621-2.826-2.51-4.634-3.565-4.338-0.6684-1.183-2.244-1.952-3.988-1.947z" stroke-width="2.994" style="paint-order:stroke markers fill"/>
+ </g>
+</svg>
