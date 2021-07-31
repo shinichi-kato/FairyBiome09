@@ -160,7 +160,7 @@ export default function AuthDialog(props){
       className = {classes.root}
       container
       direction="column"
-      justify="flex-start"
+      justifyContent="flex-start"
       alignItems="center"
       spacing={4}
     >
@@ -220,7 +220,7 @@ export default function AuthDialog(props){
           <Grid
             container
             direction="column"
-            justify="flex-start"
+            justifyContent="flex-start"
             alignItems="center"
             spacing={4}
           >
@@ -266,7 +266,7 @@ export default function AuthDialog(props){
         container
         spacing={0}
         direction="row"
-        justify="center"
+        justifyContent="center"
         alignItems="flex-start"        
       >
         { page === 'signIn' && 

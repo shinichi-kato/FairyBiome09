@@ -254,8 +254,9 @@ export default function EcosystemProvider(props) {
     setChange(null);
   }
 
-  const weatherBg = `url(images/ecosystem/weather/${WEATHER_ICONS[weather]})`;
+  // const weatherBg = `url(images/ecosystem/weather/${WEATHER_ICONS[weather]})`;
   const sceneBg = `url(images/ecosystem/${site}-${dayPart}.svg)`;
+  const skyBg = `url(images/ecosystem/sky/${weather}-${dayPart}.svg)`;
 
   return (
     <EcosystemContext.Provider
@@ -278,8 +279,8 @@ export default function EcosystemProvider(props) {
           marginLeft: "calc((100% - 480px)  * 0.3)",
           marginRight: "calc((100% - 480px) * 0.7)",
           height: "100vh",
-          backgroundImage: `${weatherBg},${sceneBg}`,
-          backgroundSize: `150px,cover`,
+          backgroundImage: `${sceneBg},${skyBg}`,
+          backgroundSize: `cover,cover`,
           backgroundRepeat: `no-repeat,no-repeat`
         }}
       >

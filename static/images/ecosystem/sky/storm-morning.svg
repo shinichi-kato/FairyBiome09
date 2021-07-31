@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    width="109.8mm"
-   height="202.39999mm"
+   height="202.4mm"
    version="1.1"
    viewBox="0 0 109.8 202.4"
-   id="svg5824"
-   sodipodi:docname="clear-noon.svg"
+   id="svg9354"
+   sodipodi:docname="storm-morning.svg"
    inkscape:version="1.1 (1:1.1+202105261517+ce6663b3b7)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -15,7 +15,7 @@
    xmlns:cc="http://creativecommons.org/ns#"
    xmlns:dc="http://purl.org/dc/elements/1.1/">
   <sodipodi:namedview
-     id="namedview5826"
+     id="namedview9356"
      pagecolor="#ffffff"
      bordercolor="#666666"
      borderopacity="1.0"
@@ -25,16 +25,16 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="0.99872368"
-     inkscape:cx="207.76517"
-     inkscape:cy="380.48562"
+     inkscape:cx="169.71661"
+     inkscape:cy="377.48179"
      inkscape:window-width="1848"
      inkscape:window-height="1016"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg5824" />
+     inkscape:current-layer="svg9354" />
   <metadata
-     id="metadata5813">
+     id="metadata9343">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
@@ -45,37 +45,36 @@
     </rdf:RDF>
   </metadata>
   <defs
-     id="defs5820">
+     id="defs9350">
     <linearGradient
        id="linearGradient3298"
-       x1="56.924"
-       x2="79.943001"
-       y1="10.121"
-       y2="166.53"
+       x1="60.26"
+       x2="61.73"
+       y1="-1.71"
+       y2="111.6"
        gradientUnits="userSpaceOnUse">
       <stop
-         stop-color="#a5d5f9"
+         stop-color="#dcdcdc"
          offset="0"
-         id="stop5815"
-         style="stop-color:#89c8f7;stop-opacity:1" />
+         id="stop9345"
+         style="stop-color:#505050;stop-opacity:1" />
       <stop
-         stop-color="#fff"
-         stop-opacity="0"
+         stop-color="#828282"
          offset="1"
-         id="stop5817"
-         style="stop-color:#abe2fa;stop-opacity:1" />
+         id="stop9347"
+         style="stop-color:#5f5f67;stop-opacity:1" />
     </linearGradient>
   </defs>
   <rect
-     x="5.5510999e-17"
-     y="0.24645001"
+     x="5.551e-17"
+     y=".2465"
      width="109.8"
-     height="202.35001"
+     height="202.4"
      fill="url(#linearGradient3298)"
-     opacity="0.99"
+     opacity=".99"
      stroke-linecap="round"
      stroke-linejoin="round"
      stroke-width="1.647"
      style="paint-order:stroke markers fill"
-     id="rect5822" />
+     id="rect9352" />
 </svg>
