@@ -42,10 +42,13 @@ tfidf類似度計算のためのキャッシュを生成してdbに書き込む�
     index:　inとoutの数は必ずしも同じでないため、inscriptのi行がoutscriptのo行に対応することをindex[i]=oで格納
   }
 
-  ## トリガー
-  入力文字列が "{enter_storm}"のように{}で囲まれた半角英数のコマンドである場合は
+  ## タグ及びトリガー
+  入力文字列が "{enter_storm}"のように正規表現/^{[a-z_]+}$/で示される入力文字列は
   ecosystemの変化を示すトリガーなどである。トリガーは曖昧な検索が必要ないが
   一般の文字列と同様に単純化のためtfidfを使った検索を利用する。
+  一方正規表現/^{[A-Z_]+}$/で示される入力文字列はタグで、出力文字列に含まれる場合再帰的に展開される。
+  スクリプトの入力文字列がtagだった場合はそれに対応するoutScriptの文字列をtagDictに格納する。
+
   
 */
 
@@ -60,6 +63,8 @@ import { textToInternalRepr } from '../internal-repr';
 import { TinySegmenter } from '../tinysegmenter';
 
 let segmenter = new TinySegmenter();
+
+const reTag = /^{[A-Z_]+}$/;
 
 
 function getValidNode(node) {
@@ -76,6 +81,13 @@ function isNonEmpty(node) {
   return node !== "" && (Array.isArray(node) && node.length !== 0)
 }
 
+function findTag(node){
+  if(typeof node === 'string'){
+    return node.match(reTag);
+  }
+  return false;
+}
+
 onmessage = function (event) {
   const { botId, partName } = event.data;
 
@@ -85,6 +97,7 @@ onmessage = function (event) {
     // inスクリプトとoutスクリプトに分割
     let inScript = [];
     let outScript = [];
+    let tagDict = {};
 
     // inスクリプトとoutスクリプトに分割
     for (let i = 0, len = script.length; i < len; i++) {
@@ -92,7 +105,13 @@ onmessage = function (event) {
       if ('in' in line && 'out' in line) {
         if (isNonEmpty(line.in) && isNonEmpty(line.out)) {
           inScript.push(getValidNode(line.in))
-          outScript.push(getValidNode(line.out))
+          
+          let out = getValidNode(line.out);
+          outScript.push(out);
+          let tag = findTag(line.in);
+          if(tag){
+            tagDict[tag] = line.out;
+          }
         }
       }
     }
@@ -190,6 +209,7 @@ onmessage = function (event) {
         tfidf: tfidf,
         index: index,
         fv: fv,
+        tagDict: tagDict,
       });
 
     console.log("matrixize-end: ", botId, partName)
