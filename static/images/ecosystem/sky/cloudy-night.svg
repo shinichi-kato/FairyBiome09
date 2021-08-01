@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <svg width="109.8mm" height="202.4mm" version="1.1" viewBox="0 0 109.8 202.4" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
  <metadata>
   <rdf:RDF>
@@ -15,10 +16,10 @@
  </defs>
  <rect x="5.551e-17" y=".2464" width="109.8" height="202.4" fill="url(#linearGradient3298)" opacity=".99" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.647" style="paint-order:stroke markers fill"/>
  <g fill="#2b2b2b" stroke-linecap="round" stroke-linejoin="round">
-  <path d="m0 29.69v17.54h43.79c0.5792 0.7771 1.358 1.396 2.26 1.783h-28.24c-7.935 0.8187-5.851 10.94 0 11.12h20.76c-0.4317 2.286 1.71 4.375 3.472 4.428h44.68c5.263-0.8223 3.848-7.032 0-7.148h-12.96c1.67-3 0.0379-6.756-2.583-7.95h28.24c7.935-0.8188 5.851-10.94 0-11.12h-33.32c-0.06164-4.806-3.97-8.657-8.819-8.657z" stroke-width="1.375" style="paint-order:stroke markers fill"/>
+  <path d="m0 29.69v11.38h28.4c0.3757 0.5041 0.8809 0.9055 1.466 1.157h-18.32c-5.147 0.531-3.795 7.096 0 7.213h13.47c-0.28 1.483 1.109 2.838 2.252 2.872h28.98c3.414-0.5334 2.496-4.561 0-4.636h-8.406c1.083-1.946 0.02458-4.382-1.675-5.157h18.32c5.147-0.5311 3.795-7.096 0-7.213h-21.61c-0.03998-3.117-2.575-5.615-5.72-5.615z" stroke-width=".8919" style="paint-order:stroke markers fill"/>
   <rect x="43.89" y="78.05" width="37.01" height="2.276" ry="1.138" stroke-width=".3481" style="paint-order:stroke markers fill"/>
   <path d="m75.08 70.7h34.72v2.276h-34.72c-0.6341 0-1.145-0.5076-1.145-1.138s0.5105-1.138 1.145-1.138z" stroke-width=".3481" style="paint-order:stroke markers fill"/>
   <rect x="34.94" y="67.28" width="27.35" height="4.114" ry="2.057" stroke-width=".4023" style="paint-order:stroke markers fill"/>
-  <path d="m47.11 5.156h62.79v22.32h-62.79c-6.183 0-11.16-4.978-11.16-11.16 0-6.183 4.978-11.16 11.16-11.16z" stroke-width="2.978" style="paint-order:stroke markers fill"/>
+  <path d="m72.23 5.156h37.67v13.39h-37.67c-3.71 0-6.696-2.987-6.696-6.696 0-3.71 2.987-6.696 6.696-6.696z" stroke-width="1.787" style="paint-order:stroke markers fill"/>
  </g>
 </svg>

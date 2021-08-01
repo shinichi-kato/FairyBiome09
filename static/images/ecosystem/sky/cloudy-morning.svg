@@ -1,4 +1,5 @@
-<svg width="109.8mm" height="202.4mm" version="1.1" viewBox="0 0 109.8 202.4" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xlink="http://www.w3.org/1999/xlink">
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="109.8mm" height="202.4mm" version="1.1" viewBox="0 0 109.8 202.4" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
  <metadata>
   <rdf:RDF>
    <cc:Work rdf:about="">
@@ -15,9 +16,11 @@
  </defs>
  <rect x="5.551e-17" y=".2465" width="109.8" height="202.4" fill="url(#linearGradient3298)" opacity=".99" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.647" style="paint-order:stroke markers fill"/>
  <g fill="#d8e5e9" stroke-linecap="round" stroke-linejoin="round">
-  <path transform="scale(.2646)" d="m122.5 0.9316c-27.87 5.226-41.68 32.26-24.92 53.01h-65.79c-34.67 3.579-25.57 47.83 0 48.6h97.22c-2.003 10.59 7.914 20.27 16.08 20.52h232.3c24.38-3.808 17.82-32.57 0-33.11h-107.5c4.003-7.928 3.694-17.21-0.5195-24.32h145.6v-64.7z" stroke-width="6.326" style="paint-order:stroke markers fill"/>
-  <path transform="scale(.2646)" d="m58.27 143.2c-16.66 2.602-12.18 22.26 0 22.63h102.9c1.216 0.7786 2.658 1.234 4.215 1.234h153.7c11.5-1.797 8.411-15.37 0-15.62h-62.97c-1.334-4.763-5.69-8.238-10.89-8.238z" stroke-width="4.648" style="paint-order:stroke markers fill"/>
-  <rect x="58.71" y="48.55" width="42.46" height="2.822" ry="1.411" stroke-width=".7387" style="paint-order:stroke markers fill"/>
-  <rect x="18.35" y="54.01" width="34.42" height="2.045" ry="1.022" stroke-width=".5661" style="paint-order:stroke markers fill"/>
+  <path d="m62.18 16.38c-4.538 0.8509-6.786 5.253-4.058 8.631h-10.71c-5.645 0.5827-4.163 7.788 0 7.913h15.83c-0.3261 1.724 1.289 3.3 2.618 3.341h37.82c3.97-0.62 2.902-5.303 0-5.391h-17.5c0.6518-1.291 0.6015-2.802-0.08459-3.96h23.71v-10.53z" stroke-width="1.03" style="paint-order:stroke markers fill"/>
+  <path d="m51.05 39.54c-2.713 0.4237-1.983 3.624 0 3.685h16.75c0.198 0.1268 0.4328 0.2009 0.6863 0.2009h25.03c1.872-0.2926 1.37-2.503 0-2.543h-10.25c-0.2172-0.7755-0.9265-1.341-1.773-1.341z" stroke-width=".7568" style="paint-order:stroke markers fill"/>
+  <rect x="79.53" y="51.91" width="26.13" height="1.737" ry=".8683" stroke-width=".4546" style="paint-order:stroke markers fill"/>
+  <rect x="40.42" y="50.21" width="26.13" height="1.737" ry=".8683" stroke-width=".4546" style="paint-order:stroke markers fill"/>
+  <rect x="54.69" y="55.27" width="21.18" height="1.258" ry=".6289" stroke-width=".3484" style="paint-order:stroke markers fill"/>
+  <rect x="15.84" y="60.31" width="21.18" height="1.258" ry=".6289" stroke-width=".3484" style="paint-order:stroke markers fill"/>
  </g>
 </svg>

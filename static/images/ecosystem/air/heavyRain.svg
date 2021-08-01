@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="109.8mm" height="202.4mm" version="1.1" viewBox="0 0 109.8 202.4" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <metadata>
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g fill="#e3fdf8" fill-opacity=".6376">
+  <g stroke-width=".1345">
+   <rect transform="matrix(1 .005512 -.0001663 1 0 0)" x="88.04" y="27.73" width=".6731" height="83.89"/>
+   <rect transform="matrix(1 .005512 -.0001663 1 0 0)" x="66.53" y="43.82" width=".6731" height="83.89"/>
+   <rect transform="matrix(1 .005512 -.0001663 1 0 0)" x="56.89" y="31.19" width=".6731" height="83.89"/>
+   <rect transform="matrix(1 .005512 -.0001663 1 0 0)" x="38.98" y="53.41" width=".6731" height="83.89"/>
+   <rect transform="matrix(1 .005512 -.0001663 1 0 0)" x="69.73" y="57.32" width=".6731" height="83.89"/>
+   <rect transform="matrix(1 .005512 -.0001663 1 0 0)" x="106.6" y="24.83" width=".6731" height="83.89"/>
+   <rect transform="matrix(1 .005512 -.0001663 1 0 0)" x="94.88" y="43.44" width=".6731" height="83.89"/>
+   <rect transform="matrix(1 .005512 -.0001663 1 0 0)" x="52.99" y="45.03" width=".6731" height="83.89"/>
+   <rect transform="matrix(1 .005512 -.0001663 1 0 0)" x="30.03" y="30.66" width=".6731" height="83.89"/>
+   <rect transform="matrix(1 .005512 -.0001663 1 0 0)" x="19.69" y="40.7" width=".6731" height="83.89"/>
+   <rect transform="matrix(1 .005512 -.0001663 1 0 0)" x="4.926" y="64.43" width=".6731" height="83.89"/>
+   <rect transform="matrix(1 .005512 -.0001663 1 0 0)" x="14.06" y="87" width=".6731" height="83.89"/>
+   <rect transform="matrix(1 .005512 -.0001663 1 0 0)" x="44.93" y="52.27" width=".6731" height="83.89"/>
+   <rect transform="matrix(1 .005512 -.0001663 1 0 0)" x="80.36" y="84.69" width=".6731" height="83.89"/>
+   <rect transform="matrix(1 .005512 -.0001663 1 0 0)" x="101" y="54.32" width=".6731" height="83.89"/>
+  </g>
+  <g stroke-width=".086">
+   <rect transform="matrix(1 .002253 -.0004068 1 0 0)" x="80.36" y="44.88" width=".6731" height="34.29"/>
+   <rect transform="matrix(1 .002253 -.0004068 1 0 0)" x="56.94" y="123.3" width=".6731" height="34.29"/>
+   <rect transform="matrix(1 .002253 -.0004068 1 0 0)" x="39.03" y="145.5" width=".6731" height="34.29"/>
+   <rect transform="matrix(1 .002253 -.0004068 1 0 0)" x="69.78" y="149.5" width=".6731" height="34.29"/>
+   <rect transform="matrix(1 .002253 -.0004068 1 0 0)" x="106.7" y="117.2" width=".6731" height="34.29"/>
+   <rect transform="matrix(1 .002253 -.0004068 1 0 0)" x="94.93" y="135.7" width=".6731" height="34.29"/>
+   <rect transform="matrix(1 .002253 -.0004068 1 0 0)" x="53.04" y="137.2" width=".6731" height="34.29"/>
+   <rect transform="matrix(1 .002253 -.0004068 1 0 0)" x="30.07" y="122.3" width=".6731" height="34.29"/>
+   <rect transform="matrix(1 .002253 -.0004068 1 0 0)" x="30.07" y="122.3" width=".6731" height="34.29"/>
+  </g>
+ </g>
+</svg>

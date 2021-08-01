@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="109.8mm" height="202.4mm" version="1.1" viewBox="0 0 109.8 202.4" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="109.8mm" height="202.4mm" version="1.1" viewBox="0 0 109.8 202.4" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
  <metadata>
   <rdf:RDF>
    <cc:Work rdf:about="">
@@ -9,16 +9,21 @@
   </rdf:RDF>
  </metadata>
  <defs>
-  <linearGradient id="linearGradient3298" x1="62.589" x2="58.961" y1="105.13" y2="5.3398" gradientUnits="userSpaceOnUse">
+  <linearGradient id="linearGradient3298" x1="59.42" x2="60.71" y1="6.564" y2="202.4" gradientUnits="userSpaceOnUse">
    <stop stop-color="#c7d0d7" offset="0"/>
    <stop stop-color="#d2d2d2" stop-opacity="0" offset="1"/>
   </linearGradient>
  </defs>
- <rect x="5.5511e-17" y=".24645" width="109.8" height="202.35" fill="url(#linearGradient3298)" opacity=".99" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.647" style="paint-order:stroke markers fill"/>
+ <rect x="5.551e-17" y=".2464" width="109.8" height="202.4" fill="url(#linearGradient3298)" opacity=".99" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.647" style="paint-order:stroke markers fill"/>
  <g fill="#c7d0d7" stroke-linecap="round" stroke-linejoin="round">
-  <path transform="scale(.26458)" d="m0 87.934v66.307h165.5c2.1892 2.9371 5.1307 5.2752 8.543 6.7402h-106.75c-29.99 3.0942-22.115 41.365 0 42.033h78.445c-1.6317 8.6411 6.4624 16.535 13.121 16.736h168.88c19.89-3.1078 14.543-26.578 0-27.018h-48.969c6.3104-11.337 0.14323-25.533-9.7637-30.049h106.75c29.989-3.0947 22.115-41.363 0-42.031h-125.92c-0.23297-18.164-15.005-32.719-33.33-32.719z" stroke-width="5.1964" style="paint-order:stroke markers fill"/>
-  <rect x="43.887" y="71.629" width="37.008" height="2.2762" ry="1.1381" stroke-width=".34806" style="paint-order:stroke markers fill"/>
-  <path d="m75.081 64.28h34.719v2.2762h-34.719c-0.6341 0-1.1446-0.5076-1.1446-1.1381 0-0.63052 0.51048-1.1381 1.1446-1.1381z" stroke-width=".34806" style="paint-order:stroke markers fill"/>
-  <rect x="34.944" y="60.857" width="27.349" height="4.1144" ry="2.0572" stroke-width=".40227" style="paint-order:stroke markers fill"/>
+  <path d="m0 21.63v11.13h27.79c0.3675 0.4931 0.8614 0.8857 1.434 1.132h-17.92c-5.035 0.5195-3.713 6.945 0 7.057h13.17c-0.2739 1.451 1.085 2.776 2.203 2.81h28.35c3.339-0.5218 2.442-4.462 0-4.536h-8.221c1.059-1.903 0.02405-4.287-1.639-5.045h17.92c5.035-0.5196 3.713-6.944 0-7.057h-21.14c-0.03911-3.05-2.519-5.493-5.596-5.493z" stroke-width=".8724" style="paint-order:stroke markers fill"/>
+  <g stroke-width=".2209">
+   <rect x="31.98" y="53.02" width="23.48" height="1.444" ry=".7222" style="paint-order:stroke markers fill"/>
+   <rect x="64.9" y="70.7" width="23.48" height="1.444" ry=".7222" style="paint-order:stroke markers fill"/>
+   <path d="m18.33 63.27h22.03v1.444h-22.03c-0.4024 0-0.7263-0.3221-0.7263-0.7222 0-0.4001 0.3239-0.7222 0.7263-0.7222z" style="paint-order:stroke markers fill"/>
+   <path d="m84.7 66.03h22.03v1.444h-22.03c-0.4024 0-0.7263-0.3221-0.7263-0.7222 0-0.4001 0.3239-0.7222 0.7263-0.7222z" style="paint-order:stroke markers fill"/>
+  </g>
+  <rect x="26.3" y="46.18" width="17.35" height="2.611" ry="1.305" stroke-width=".2553" style="paint-order:stroke markers fill"/>
+  <rect x="73.8" y="49.8" width="17.35" height="2.611" ry="1.305" stroke-width=".2553" style="paint-order:stroke markers fill"/>
  </g>
 </svg>

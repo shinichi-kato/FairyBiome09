@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <svg width="109.8mm" height="202.4mm" version="1.1" viewBox="0 0 109.8 202.4" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
  <metadata>
   <rdf:RDF>
@@ -15,13 +16,12 @@
  </defs>
  <rect x="5.551e-17" y=".2464" width="109.8" height="202.4" fill="url(#linearGradient3298)" opacity=".99" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.647" style="paint-order:stroke markers fill"/>
  <g stroke-linecap="round" stroke-linejoin="round">
-  <path d="m32.42 0.2465c-7.374 1.383-11.03 8.535-6.594 14.03h-17.41c-9.174 0.947-6.765 12.65 0 12.86h25.72c-0.5298 2.803 2.094 5.363 4.254 5.429h61.46c6.45-1.007 4.715-8.618 0-8.76h-28.44c1.059-2.098 0.9774-4.554-0.1375-6.436h38.52v-17.12z" fill="#ec9358" stroke-width="1.674" style="paint-order:stroke markers fill"/>
-  <path d="m34.06 50.43c-3.949 0.4579-2.887 3.917 0 3.981h24.4c0.2881 0.137 0.6301 0.2172 0.999 0.2172h36.44c2.727-0.3161 1.994-2.704 0-2.749h-14.93c-0.3162-0.838-1.349-1.449-2.581-1.449z" fill="#ffca5b" stroke-width=".9493" style="paint-order:stroke markers fill"/>
-  <path d="m34.06 50.43c-3.949 0.4579-2.887 3.917 0 3.981h24.4c0.2881 0.137 0.6301 0.2172 0.999 0.2172h36.44c2.727-0.3161 1.994-2.704 0-2.749h-14.93c-0.3162-0.838-1.349-1.449-2.581-1.449z" fill="#ffca5b" stroke-width=".9493" style="paint-order:stroke markers fill"/>
-  <rect x="59.24" y="69.36" width="42.46" height="2.822" ry="1.411" fill="#ffdc5b" stroke-width=".7387" style="paint-order:stroke markers fill"/>
-  <rect x="24.64" y="36.98" width="64.24" height="5.01" ry="2.505" fill="#ffa05f" stroke-width="1.211" style="paint-order:stroke markers fill"/>
-  <rect x=".3946" y="41.84" width="64.24" height="5.01" ry="2.505" fill="#ffa05f" stroke-width="1.211" style="paint-order:stroke markers fill"/>
-  <rect x="29.85" y="78.48" width="42.46" height="2.822" ry="1.411" fill="#ffebb1" stroke-width=".7387" style="paint-order:stroke markers fill"/>
-  <rect x="18.35" y="66.14" width="34.42" height="2.045" ry="1.022" fill="#ffdc5b" stroke-width=".5661" style="paint-order:stroke markers fill"/>
+  <g stroke-width="3.066">
+   <path d="m71.98 32.22c-3.732 0.01705-6.877 2.688-7.36 6.251-3.696-0.1858-6.67 3.586-6.739 6.108 0.0094 3.387 2.714 6.128 6.044 6.123h33.31c3.211-0.8113 2.856-4.909-0.5896-4.918-0.7399-6.074-8.493-5.788-9.768-1.093-0.635-0.6832-1.521-1.123-2.486-1.233 2.809-2.192-1.247-8.123-5.089-5.527-0.7231-3.337-3.786-5.724-7.325-5.714z" fill="#ec9358" style="paint-order:stroke markers fill"/>
+   <path d="m101.5 58.52c-1.644 0.0077-3.107 0.9675-3.665 2.403-1.958 0.2325-3.424 1.782-3.42 3.615 0.0062 2.006 1.761 3.629 3.922 3.626l6.951 0.02308c1.433-0.0015 2.994-1.013 3.09-2.429 3.298-3.255-2.286-5.335-3.247-4.995-0.6088-1.363-2.044-2.248-3.632-2.243z" fill="#ffebb1" style="paint-order:stroke markers fill"/>
+   <path d="m20.33 48.52c-1.644 0.0077-3.107 0.9675-3.665 2.403-1.958 0.2325-3.424 1.782-3.42 3.615 0.0062 2.006 1.761 3.629 3.922 3.626l6.951 0.02308c1.433-0.0015 2.994-1.013 3.09-2.429 3.298-3.255-2.286-5.335-3.247-4.995-0.6088-1.363-2.044-2.248-3.632-2.243z" fill="#ffebb1" style="paint-order:stroke markers fill"/>
+  </g>
+  <path d="m39 50.85c-0.8892 0.0031-1.681 0.4138-1.982 1.028-1.059 0.09946-1.852 0.7621-1.849 1.546 0.0033 0.8581 0.9527 1.552 2.121 1.551l3.76 0.0099c0.7749-7.72e-4 1.619-0.4335 1.671-1.038 1.784-1.392-1.236-2.283-1.756-2.137-0.3293-0.5828-1.105-0.9616-1.965-0.9591z" fill="#ffca5b" stroke-width="1.475" style="paint-order:stroke markers fill"/>
+  <path d="m56.85 57.77c-0.8892 0.0031-1.681 0.4138-1.982 1.028-1.059 0.09946-1.852 0.7621-1.849 1.546 0.0031 0.8581 0.9527 1.552 2.121 1.551l3.76 0.0099c0.7749-7.72e-4 1.619-0.4335 1.671-1.038 1.784-1.392-1.236-2.283-1.756-2.137-0.3293-0.5828-1.105-0.9616-1.965-0.9591z" fill="#ffca5b" stroke-width="1.475" style="paint-order:stroke markers fill"/>
  </g>
 </svg>
