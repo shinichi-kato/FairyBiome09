@@ -110,7 +110,7 @@ onmessage = function (event) {
           outScript.push(out);
           let tag = findTag(line.in);
           if(tag){
-            tagDict[tag] = line.out;
+            tagDict[tag] = out;
           }
         }
       }

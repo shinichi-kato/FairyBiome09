@@ -45,7 +45,8 @@ export function retrieve(message, cache, coeffs) {
   for (let word of message.text) {
     let pos = cache.vocab.indexOf(word);
     if (pos !== -1) {
-      wv.set([pos], wv.get([pos]) + 1);
+      // wv.set([pos], wv.get([pos]) + 1);
+      wv[pos] = wv[pos]+1;
     }
   }
   if (sum(wv) === 0) {
@@ -53,8 +54,7 @@ export function retrieve(message, cache, coeffs) {
   }
 
   // tfidf計算
-
-  const tf = map(wv, x => x / sum(wv));
+  const tf = divide(wv,sum(wv));
   const tfidf = dotMultiply(tf, cache.idf);
 
   // 正規化
