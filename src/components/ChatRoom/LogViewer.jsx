@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 import Box from '@material-ui/core/Box';
@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
 		margin: 0,
 		padding: 0,
 	},
-	conatiner:{
+	conatiner: {
 		width: "100%"
 	},
 	leftBalloon: {
@@ -131,6 +131,13 @@ export default function LogViewer(props) {
 		吹き出しではない表示.
 	*/
 
+	const scrollBottomRef = useRef();
+	
+	useLayoutEffect(()=>{
+		// 書き換わるたびに最下行へ自動スクロール
+		scrollBottomRef?.current?.scrollIntoView();
+	},[props.log]);
+
 	const messages = props.log.map((message, index) => {
 
 		switch (message.person) {
@@ -139,13 +146,15 @@ export default function LogViewer(props) {
 			case 'other': return <LeftBalloon key={index} message={message} />
 			default: return <SystemMessage key={index} message={message} />
 		}
-	})
+	});
+
 	return (
 		<Box
 			display="flex"
 			flexDirection="column"
 		>
-				{messages}
+			{messages}
+			<div ref={scrollBottomRef}/>
 		</Box>
 	)
 }

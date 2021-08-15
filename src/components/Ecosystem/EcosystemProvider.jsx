@@ -48,18 +48,6 @@ const SEVERE_WEATHERS = {
   'snowStorm': true,
 };
 
-const WEATHER_ICONS = {
-  'storm': 'wi-hurricane.svg',
-  'heavyRain': 'wi-rain.svg',
-  'rain': 'wi-showers.svg',
-  'cloudy': 'wi-cloudy.svg',
-  'halfClouds': 'wi-day-cloudy.svg',
-  'clear': 'wi-clear.svg',
-  'heat': 'wi-thermometer.svg',
-  'snowStorm': 'wi-snow-wind.svg',
-  'snow': 'wi-snow.svg',
-}
-
 const SOLTICE = {
   sunrise: {
     summer: {
