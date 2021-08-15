@@ -78,12 +78,15 @@ function getValidNode(node) {
 }
 
 function isNonEmpty(node) {
-  return node !== "" && (Array.isArray(node) && node.length !== 0)
+  return typeof node === "string" || (Array.isArray(node) && node.length !== 0)
 }
 
 function findTag(node){
   if(typeof node === 'string'){
-    return node.match(reTag);
+    let found = node.match(reTag);
+    if(found){
+      return found[0];
+    }
   }
   return false;
 }
@@ -116,7 +119,7 @@ onmessage = function (event) {
       }
     }
 
-    console.log(partName, ": loaded in=", inScript.length, "out=", outScript.length, "entries")
+    console.log(partName, ": loaded in=", inScript.length, "out=", outScript.length, "entries","tagDict",tagDict)
 
     // inScriptは辞書の1エントリに対して複数の入力,複数の出力があってもよい。tfidfや
     // fvは入力につき1つ定義され、入力にどのoutScirptおよびfvが対応するかを示す

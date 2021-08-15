@@ -108,7 +108,7 @@ export function execute(state, work, message, sendMessage) {
       // 自己Message投下
 
       let msg = renderer[part.kind](partName, state, work,
-        `{TRIGGER_ENTER_${trigger}}`
+        `{enter_${trigger}}`
       );
       if (msg) {
         work.queue.push(msg)
@@ -192,7 +192,7 @@ function render(tag, dict) {
 
   let item = items[Math.floor(Math.random() * items.length)];
 
-  item = item.replace(RE_TAG, (whole, tag) => render(tag, dict));
+  item = item.replace(RE_TAG, (whole, itemTag) => render(itemTag, dict));
 
   return item;
 }

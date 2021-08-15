@@ -49,6 +49,7 @@ export function render(partName, state, work, text) {
   // 
   // tagを展開して返す
   const tagDict = state.cache[partName].tagDict;
+  console.log(partName,"renderer: render", text,"tagDict",tagDict)
 
   function _render(text) {
     if (!(text in tagDict)) return text;
