@@ -83,7 +83,7 @@ export function execute(state, work, message, sendMessage) {
 
     // トリガーを捕捉
     let trigger = ""
-    reply.text = reply.text.replace(RE_ENTER, (dummy, p1) => {
+    reply.text = reply.text.replace(RE_ENTER, (_, p1) => {
       // ※クロージャ注意
       trigger = p1;
       return "";
@@ -92,20 +92,22 @@ export function execute(state, work, message, sendMessage) {
     // 各種トリガー処理
     if (trigger !== "" && trigger in state.parts) {
       // partと同名のトリガーを検出したら、そのpartを先頭にする。
+      hoist(trigger, work.partOrder);
+      
       // triggerがmoodのどれかと同じであったらmoodをその名前で上書きする。
       // そうでなければpart.initialMoodにする。
-      hoist(trigger, work.partOrder);
       if ('initialMood' in work.parts[trigger]) {
-        work.mood = work.parts[trigger].initialMood
+        work.mood = work.parts[trigger].initialMood 
       }
       else if (trigger in moodNames) {
         work.mood = trigger;
+        work.queue.push(`{enter_${trigger}}`);
       }
       else {
         work.mood = "peace"
       }
 
-      // 自己Message投下
+      // 自発的Message投下
 
       let msg = renderer[part.kind](partName, state, work,
         `{enter_${trigger}}`

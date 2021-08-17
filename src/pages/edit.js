@@ -29,9 +29,9 @@ export default function EditPage({ location, data }) {
 
   const [appState, setAppState] = useState('Landing');
 
-  function handleAuthOk() {setAppState('authOk'); }
+  function handleAuthOk() { setAppState('authOk'); }
   function handleBotFound() { setAppState('continue'); }
-  function handleBotNotFound() { 
+  function handleBotNotFound() {
     setAppState('authOk');
     navigate('/create/');
   }
@@ -45,7 +45,7 @@ export default function EditPage({ location, data }) {
         handleBotNotFound={handleBotNotFound}
         handleBotFound={handleBotFound}
       >
-        {appState==='continue' && <Editor /> }
+        {appState === 'continue' && <Editor />}
       </BiomebotProvider>
     </FirebaseProvider>
   )

@@ -2,21 +2,23 @@ import React from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
+import EditIcon from '@material-ui/icons/EditOutlined';
 
 import FairyBiomeCrest from './fairybiome-crest.inline.svg';
 import UserAccount from './UserAccount';
+import { navigate } from 'gatsby';
 
-const useStyles= makeStyles(theme=>({
-  crest:{
+const useStyles = makeStyles(theme => ({
+  crest: {
     width: "100%",
     padding: theme.spacing(1),
   },
   crestContainer: {
     width: "80%",
   },
-  button:{
+  button: {
     fontSize: 18,
-    padding:theme.spacing(2),
+    padding: theme.spacing(2),
   }
 }));
 
@@ -27,7 +29,7 @@ const STATE_TABLE = {
   'continue': 3
 };
 
-export default function Landing(props){
+export default function Landing(props) {
   /* 
     アプリの状態がprops.appStateで渡されてくる。
     appState    表示要素
@@ -35,12 +37,16 @@ export default function Landing(props){
     'landing'   ロゴ
     'authOk'    ロゴ ユーザアカウント
     'new'       ロゴ ユーザアカウント はじめから
-    'continue'  ロゴ ユーザアカウント はじめから チャットルームに入る
+    'continue'  ロゴ ユーザアカウント はじめから 編集 チャットルームに入る
     ---------------------------------------------------------
     
   */
   const classes = useStyles();
-  const appState = STATE_TABLE[props.appState]
+  const appState = STATE_TABLE[props.appState];
+
+  function handleToEdit() {
+    navigate("/edit");
+  }
 
   return (
     <Box
@@ -57,7 +63,7 @@ export default function Landing(props){
         {appState > 0 && <UserAccount />}
       </Box>
       <Box>
-        {appState > 1 && 
+        {appState > 1 &&
           <Button
             className={classes.button}
             onClick={props.handleNew}
@@ -66,16 +72,23 @@ export default function Landing(props){
           </Button>
         }
       </Box>
-      <Box>
-        {appState > 2 && 
+
+      {appState > 2 &&
+        <Box>
           <Button
-          className={classes.button}
-          onClick={props.handleContinue}
+            className={classes.button}
+            onClick={props.handleContinue}
           >
             チャットルームに入る
           </Button>
-        }
-      </Box>
+          <Button
+            className={classes.button}
+            startIcon={<EditIcon />}
+            onClick={handleToEdit}>
+            チャットボットのデータ編集
+          </Button>
+        </Box>
+      }
     </Box>
   )
 }

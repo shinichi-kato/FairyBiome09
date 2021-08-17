@@ -213,7 +213,7 @@ export default function EcosystemProvider(props) {
       return d;
     })
 
-  }, config.updateInterval);
+  }, config.updateInterval,true);
 
   function getPressure(timestamp, changeRate) {
     // ある時刻における気圧を返す
