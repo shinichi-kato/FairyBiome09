@@ -17,6 +17,7 @@ import { retrieve } from './retrieve';
 import * as knowledge from './knowledge-part';
 import { Message } from '../../message';
 
+
 const RE_ENTER = /{enter_([A-Za-z][a-zA-Z_]*)}/;
 const RE_TAG = /{[a-zA-Z][a-zA-Z0-9_]*}/g;
 
@@ -40,6 +41,9 @@ const renderer = {
 
 
 export function execute(state, work, message, sendMessage) {
+  // messageの型チェック
+  console.assert(message instanceof Message,"room: execute Message型ではないmessageが渡されました");
+
   let reply = { text: null };
 
   // shift queue
@@ -62,7 +66,6 @@ export function execute(state, work, message, sendMessage) {
     }
 
     // 辞書の一致チェック
-
     const result = retrieve(message, state.cache[partName],part.coeffs);
     
     console.log("retrieve",result,"precision",part.precision)
@@ -101,7 +104,7 @@ export function execute(state, work, message, sendMessage) {
       }
       else if (trigger in moodNames) {
         work.mood = trigger;
-        work.queue.push(`{enter_${trigger}}`);
+        work.queue.push(new Message('trigger',`{enter_${trigger}}`));
       }
       else {
         work.mood = "peace"

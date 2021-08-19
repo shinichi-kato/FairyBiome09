@@ -173,14 +173,14 @@ export class Message {
         // 第一引数に文字列だけを与えた場合
         // 辞書から取得した文字列をmessage化
         // 辞書にはタイムスタンプは記載せずseasonやdayPartに射影した情報を利用する。
-        const data = mode.split('\t');
-        this.text = data[0];
+        const line = mode.split('\t');
+        this.text = line[0];
         this.name = ""
         this.timestamp = null;
         this.avatarPath = "";
 
-        if (data.length > 1) {
-          const feats = data[1].split(' ');
+        if (line.length > 1) {
+          const feats = line[1].split(' ');
           for (let feat of feats) {
             if (feat in featureDict) {
               this.features[featureDict[feat]] = 1;

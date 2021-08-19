@@ -163,8 +163,13 @@ import { featureIndex } from '../message';
 import { db } from './dbio';
 import matrixizeWorker from "./engine/matrixize.worker";
 import * as room from "./engine/room";
+import { textToInternalRepr } from './internal-repr';
+import { TinySegmenter } from './tinysegmenter';
 
 export const BiomebotContext = createContext();
+
+
+let segmenter = new TinySegmenter();
 
 let workers = {};
 let executes = {
@@ -330,11 +335,12 @@ export default function BiomebotProvider(props) {
       console.log("qlength", work.queue.length)
       if (work.queue.length > 0) {
         setWork(prev => {
-          const top = { ...prev.queue[0] };
+          const top = prev.queue[0];
           const newWork = {
             ...prev,
             queue: prev.queue.slice(1)
           };
+          // console.log("biomebotProvider: topmessage=",top.message);
 
           return executes[work.site](state, newWork, top.message, top.emitter);
         });
@@ -385,6 +391,9 @@ export default function BiomebotProvider(props) {
   const handleExecute = (message, emitter) => {
     // 外部からの入力を受付け、必要な場合返答を送出する。
     // deploy完了前に呼び出された場合はqueueに積む
+
+    message.text = textToInternalRepr(segmenter.segment(message.text));
+
     const currentState = stateRef.current;
     if (currentState.status !== 'ready') {
       setWork(prev => ({

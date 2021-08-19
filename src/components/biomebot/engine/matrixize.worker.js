@@ -81,10 +81,10 @@ function isNonEmpty(node) {
   return typeof node === "string" || (Array.isArray(node) && node.length !== 0)
 }
 
-function findTag(node){
-  if(typeof node === 'string'){
+function findTag(node) {
+  if (typeof node === 'string') {
     let found = node.match(reTag);
-    if(found){
+    if (found) {
       return found[0];
     }
   }
@@ -108,18 +108,18 @@ onmessage = function (event) {
       if ('in' in line && 'out' in line) {
         if (isNonEmpty(line.in) && isNonEmpty(line.out)) {
           inScript.push(getValidNode(line.in))
-          
+
           let out = getValidNode(line.out);
           outScript.push(out);
           let tag = findTag(line.in);
-          if(tag){
+          if (tag) {
             tagDict[tag] = out;
           }
         }
       }
     }
 
-    console.log(partName, ": loaded in=", inScript.length, "out=", outScript.length, "entries","tagDict",tagDict)
+    console.log(partName, ": loaded in=", inScript.length, "out=", outScript.length, "entries", "tagDict", tagDict)
 
     // inScriptは辞書の1エントリに対して複数の入力,複数の出力があってもよい。tfidfや
     // fvは入力につき1つ定義され、入力にどのoutScirptおよびfvが対応するかを示す
@@ -139,16 +139,15 @@ onmessage = function (event) {
       // 
       let inScript2 = inScript[i];
       for (let i2 = 0, l2 = inScript2.length; i2 < l2; i2++) {
-        let entry = inScript2[i2];
-        line = textToInternalRepr(segmenter.segment(entry.text));
+        let message = inScript2[i2];
+        line = textToInternalRepr(segmenter.segment(message.text));
         squeezedDict.push(...line);
         index.push(i);
-        fv.push(entry.features);
+        
+        fv.push(message.features);
 
-        for (let j = 0, m = line.length; j < m; j++) {
-          for (let word of line[j]) {
-            vocab[word] = true;
-          }
+        for (let word of line) {
+          vocab[word] = true;
         }
 
       }

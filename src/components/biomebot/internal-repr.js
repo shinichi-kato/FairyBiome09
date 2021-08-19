@@ -18,7 +18,7 @@
 */
 
 // workaround for fast refresh error (Gatsby v3)
-global.$RefreshReg$ = () => {};
+global.$RefreshReg$ = () => { };
 global.$RefreshSig$ = () => type => type;
 
 export function textToInternalRepr(nodes) {
@@ -28,7 +28,7 @@ export function textToInternalRepr(nodes) {
 
 export function dictToInternalRepr(dict) {
   // 文字列のリストを内部表現のリストに変換
-  return dict.map(nodes=>{
+  return dict.map(nodes => {
     // const nodes = segmenter.segment(text);
     return parse(nodes);
   });
@@ -36,7 +36,7 @@ export function dictToInternalRepr(dict) {
 
 function dispatch(table) {
   /* 遷移表からディスパッチテーブルを生成 */
-  const rt = table["*"].map(c=>new Object()); // c=>{} not work
+  const rt = table["*"].map(c => new Object()); // c=>{} not work
   for (let k in table) {
     for (let i in table[k]) {
       let v = table[k][i];
@@ -105,14 +105,14 @@ function parse(text) {
     state = next_state(state, node);
 
     switch (state) {
-      case 0 : {
+      case 0: {
         // clear
         line.push(...buff);
         buff.length = 0;
         continue;
       }
-      case 1 :
-      case 2 : {
+      case 1:
+      case 2: {
         // through
         buff.length = 0;
         line.push(node);
@@ -125,7 +125,7 @@ function parse(text) {
         buff.length = 0;
         continue;
       }
-      default: {}
+      default: { }
     }
 
     buff.push(node);
@@ -133,10 +133,10 @@ function parse(text) {
     switch (state) {
       case 6:
       case 7: {
-          line.push(buff.join(""));
-          break;
+        line.push(buff.join(""));
+        break;
       }
-      default: {}
+      default: { }
     }
   }
   return line;
