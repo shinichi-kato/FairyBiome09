@@ -14,6 +14,8 @@ import { FirebaseContext } from "../Firebase/FirebaseProvider";
 import { EcosystemContext } from '../Ecosystem/EcosystemProvider';
 import { Message } from '../message';
 
+
+
 const useStyles = makeStyles(theme => ({
   root: {
     '& .MuiTextField-root': {
@@ -100,7 +102,7 @@ export default function ChatRoom(props) {
 
     if (ecosystem.change !== null) {
       bot.current.execute(
-        new Message('trigger', `enter_${ecosystem.change}`),
+        new Message('trigger', `{enter_${ecosystem.change}}`),
         writeLogRef.current
       );
       ecosystem.changeDispatched();
