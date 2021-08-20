@@ -156,20 +156,24 @@ onmessage = function (event) {
     }
     // vocabの生成
 
-    vocab = Object.keys(vocab)
-
+    const vocabKeys = Object.keys(vocab);
+    
+    for(let i=0,l=vocabKeys.length; i<l; i++){
+      vocab[vocabKeys[i]] = i;
+    }
+    console.log("vocab",vocab)
     /* 
       Term Frequency: 各行内での単語の出現頻度
       tf(t,d) = (ある単語tの行d内での出現回数)/(行d内の全ての単語の出現回数の和)
     */
 
     //wv
-    console.log("wv", squeezedDict.length, vocab.length)
-    let wv = zeros(squeezedDict.length, vocab.length);
+    console.log("wv", squeezedDict.length, vocabKeys.length)
+    let wv = zeros(squeezedDict.length, vocabKeys.length);
     for (let i = 0, l = squeezedDict.length; i < l; i++) {
       for (let word of squeezedDict[i]) {
-        let pos = vocab.indexOf(word);
-        if (pos !== -1) {
+        let pos = vocab[word];
+        if (pos !== undefined) {
           wv.set([i, pos], wv.get([i, pos]) + 1);
         }
       }
@@ -178,6 +182,9 @@ onmessage = function (event) {
     // tf = wv / wv.sum(axis=0)
     const inv_wv = apply(wv, 1, x => divide(1, sum(x)));
     const tf = multiply(diag(inv_wv), wv);
+    console.log("matrixize: wv=",wv,"inv_wv=",inv_wv)
+    // ここでsum(x)が０になるケースが存在して、計算が止まる。
+    // 原因は
 
     // """ Inverse Document Frequency: 各単語が現れる行の数の割合
     //
@@ -186,7 +193,7 @@ onmessage = function (event) {
 
     const num_of_columns = tf.size()[0];
     const df = apply(wv, 0, x => sum(isPositive(x)) / num_of_columns);
-
+    console.log("matrixize: tf=",tf,"df=",df)
     let idf = map(df, x => Math.log(1 + 1 / x));
     let tfidf = multiply(tf, diag(idf));
 

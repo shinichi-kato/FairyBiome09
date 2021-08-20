@@ -30,33 +30,32 @@ export function retrieve(message, cache, coeffs) {
   // 内部表現のリストとして与えられbたmesageを使ってテキスト検索
   // tfidf,df,vocabを利用してtextに一番似ているdictの行番号を返す
 
-  console.log("retreive: target=",message.text)
+  console.log("retreive: target=",message.text,"vocab=", cache.vocab)
   if (typeOf(cache.tfidf) !== 'Matrix' || cache.fv.length === 0) {
     return { index: null, score: 0 };
   }
   
   // wv
-  const vocabLength = cache.vocab.length;
+  const vocabLength = Object.keys(cache.vocab).length;
   if (vocabLength === 0) {
     return { index: null, score: 0 };
   }
 
-  const wv = zeros(vocabLength);
-
+  let wv = zeros(vocabLength);
   for (let word of message.text) {
-    let pos = cache.vocab.indexOf(word);
-    if (pos !== -1) {
-      // wv.set([pos], wv.get([pos]) + 1);
-      wv[pos] = wv[pos] + 1;
+    let pos = cache.vocab[word];
+    if (pos !== undefined) {
+      wv.set([pos], wv.get([pos]) + 1);
     }
   }
-  console.log("retrieve: sum(wv)",sum(wv),wv)
-  if (sum(wv) === 0) {
+  const sumWv = sum(wv)
+  if (sumWv === 0) {
     return { index: null, score: 0 };
   }
 
   // tfidf計算
-  const tf = divide(wv, sum(wv));
+  const tf = divide(wv, sumWv);
+  console.log("tf=",tf,"idf=",cache.idf)
   const tfidf = dotMultiply(tf, cache.idf);
 
   // 正規化

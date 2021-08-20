@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import EditIcon from '@material-ui/icons/EditOutlined';
+import ChatIcon from '@material-ui/icons/ChatOutlined';
 
 import FairyBiomeCrest from './fairybiome-crest.inline.svg';
 import UserAccount from './UserAccount';
@@ -16,9 +17,12 @@ const useStyles = makeStyles(theme => ({
   crestContainer: {
     width: "80%",
   },
+  buttonContainer: {
+    padding: theme.spacing(2),
+  },
   button: {
     fontSize: 18,
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
   }
 }));
 
@@ -73,22 +77,31 @@ export default function Landing(props) {
         }
       </Box>
 
-      {appState > 2 &&
-        <Box>
-          <Button
-            className={classes.button}
-            onClick={props.handleContinue}
-          >
-            チャットルームに入る
-          </Button>
-          <Button
-            className={classes.button}
-            startIcon={<EditIcon />}
-            onClick={handleToEdit}>
-            チャットボットのデータ編集
-          </Button>
-        </Box>
-      }
+      <Box
+        className={classes.buttonContainer}
+        visibility={appState > 2 ? "visible" : "hidden"}
+      >
+        <Button
+          className={classes.button}
+          onClick={props.handleContinue}
+          startIcon={<ChatIcon />}
+          color="primary"
+          variant="contained"
+        >
+          チャットを始める
+        </Button>
+      </Box>
+      <Box
+        className={classes.buttonContainer}
+        visibility={appState > 2 ? "visible" : "hidden"}
+      >
+        <Button
+          className={classes.button}
+          startIcon={<EditIcon />}
+          onClick={handleToEdit}>
+          チャットボットのデータ編集
+        </Button>
+      </Box>
     </Box>
   )
 }
