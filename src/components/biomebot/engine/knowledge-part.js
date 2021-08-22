@@ -23,46 +23,41 @@
 
 const RE_TAG = /{[a-zA-Z][a-zA-Z0-9_]*}/g;
 
+function _render(text, tagDict) {
+  if (!(text in tagDict)) return text;
+
+  const items = tagDict[text];
+  let item = items[Math.floor(Math.random() * items.length)];
+
+  return item.text.replace(RE_TAG, (_, tag) => _render(text, tagDict));
+}
+
 export function reply(partName, state, work, result) {
   // state.cache[partName]を利用して返答を生成する。
   // cache.outScriptのresult.index行を使用
 
-  const tagDict = state.cache[partName].tagDict;
+  const cache = state.cache[partName];
 
-  const cands = state.cache[result.index];
+  const tagDict = cache.tagDict;
+
+  const cands = cache.outScript[result.index];
 
   let cand = cands[Math.floor(Math.random() * cands.length)];
+  console.log("cands=",cands,cand)
 
-  function _render(text) {
-    if (!(text in tagDict)) return text;
-
-    const items = tagDict[text];
-    let item = items[Math.floor(Math.random() * items.length)];
-
-    return item.text.replace(RE_TAG, (whole, tag) => _render(text));
-  }
-
-  return _render(state.cache.outScript[cand])
+  let reply = _render(cand, tagDict);
+  console.log("rendered reply=",reply);
+  return reply;
 }
 
 export function render(partName, state, work, text) {
   // 
   // tagを展開して返す
   const tagDict = state.cache[partName].tagDict;
-  console.log(partName,"renderer: render", text,"tagDict",tagDict)
+  console.log(partName, "renderer: render", text, "tagDict", tagDict)
 
-  function _render(text) {
-    if (!(text in tagDict)) return text;
-
-    const items = tagDict[text];
-    let item = items[Math.floor(Math.random() * items.length)];
-
-    return item.text.replace(
-      RE_TAG, 
-      (whole, tag) => _render(text));
-
-  }
-
-  return _render(text);
+  const reply= _render(text, tagDict);
+  console.log("rendered reply=",reply);
+  return reply
 
 }

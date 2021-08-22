@@ -44,7 +44,7 @@ export function execute(state, work, message, sendMessage) {
   // messageの型チェック
   console.assert(message instanceof Message,"room: execute Message型ではないmessageが渡されました");
 
-  let reply = { text: null };
+  let reply = { message: null };
 
   // shift queue
 
@@ -54,7 +54,6 @@ export function execute(state, work, message, sendMessage) {
 
   for (let partName of work.partOrder) {
     const part = state.parts[partName];
-    let reply = {};
 
     // moment値+0~9のランダム値がmomentUpperとmomentLowerの
     // 間に入っていたらOK
@@ -73,19 +72,22 @@ export function execute(state, work, message, sendMessage) {
 
     // スピーチの生成
     reply = {
-      text: replier[part.kind](partName, state, work, result),
+      message: replier[part.kind](partName, state, work, result),
       hoist: partName,
       drop: null,
     }
 
     // retentionチェック
     if (part.retention < Math.random()) {
+      console.log("retention: drop")
       reply.drop = partName;
       reply.hoist = null;
     }
 
     // トリガーを捕捉
     let trigger = ""
+    console.log("reply",reply)
+    reply.text = reply.message.text;
     reply.text = reply.text.replace(RE_ENTER, (_, p1) => {
       // ※クロージャ注意
       trigger = p1;

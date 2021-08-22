@@ -14,7 +14,7 @@ debugメモ
 
 import {
   zeros, apply, sum, dot, dotMultiply,
-  map, norm, randomInt, concat, divide,typeOf
+  map, norm, randomInt, subset, divide, typeOf, matrixFromColumns, index, range, count
 } from "mathjs";
 
 
@@ -30,11 +30,10 @@ export function retrieve(message, cache, coeffs) {
   // 内部表現のリストとして与えられbたmesageを使ってテキスト検索
   // tfidf,df,vocabを利用してtextに一番似ているdictの行番号を返す
 
-  console.log("retreive: target=",message.text,"vocab=", cache.vocab)
   if (typeOf(cache.tfidf) !== 'Matrix' || cache.fv.length === 0) {
     return { index: null, score: 0 };
   }
-  
+
   // wv
   const vocabLength = Object.keys(cache.vocab).length;
   if (vocabLength === 0) {
@@ -55,7 +54,6 @@ export function retrieve(message, cache, coeffs) {
 
   // tfidf計算
   const tf = divide(wv, sumWv);
-  console.log("tf=",tf,"idf=",cache.idf)
   const tfidf = dotMultiply(tf, cache.idf);
 
   // 正規化
@@ -64,9 +62,9 @@ export function retrieve(message, cache, coeffs) {
   const ntfidf = map(tfidf, x => (divide(1, n)));
 
   // message.textに対するinScript各行の類似度
-  let textScore;
+  let textScore = [];
   try {
-    textScore = apply(cache.tfidf, 1, x => dot(x, ntfidf)).valueOf();
+    textScore = apply(cache.tfidf, 1, x => dot(x, ntfidf));
   } catch (error) {
     textScore = [];
     console.log("invalid cache.tfidf,tfidf=", cache.tfidf, "error=", error)
@@ -80,23 +78,29 @@ export function retrieve(message, cache, coeffs) {
   // 重み付けした後合計。重みの合計値は１なのでtotalScoreの最大値も1
 
   // cache.fvとmessage.featuresの各要素ごとに積→共通した項が１になる　fv.length×features.lengthのmatrixができる
+  
   const fmtx = apply(cache.fv, 1, x => dotMultiply(x, message.features));
-
+  console.log("fmtx",fmtx,"textScore",textScore);
   // 先頭をtextscore,以降をfeatureのスコアとした配列を作る
-  console.log("fmtx=", fmtx, "textScore=", textScore)
-  let totalScore = concat(textScore, fmtx)
+  const textScoreIndex = index(range(0, count(textScore)), 0);
+  let totalScore = subset(fmtx, textScoreIndex, matrixFromColumns(textScore));
+  
   console.log("message.features=", message.features, "cache.fv=", cache.fv, "fmtx=", fmtx, "totalScore=", totalScore)
   try {
     totalScore = apply(totalScore, 1, x => dotMultiply(x, coeffs.weights));
-    totalScore = apply(totalScore, 1, x => sum(x));
+    
+    totalScore = apply(totalScore, 1, x => sum(x)).valueOf();
   } catch (error) {
-    console.log("invalid coeffs coeffs=", coeffs, "totalscore=", totalScore)
+    console.log(error,"invalid coeffs coeffs=", coeffs, "totalscore=", totalScore)
   }
 
 
 
   // 最も類似度が高かった行のindexとその類似度を返す。
   // 同点一位が複数あった場合はランダムに一つを選ぶ
+
+
+  console.log("totalScores=",totalScore)
   const max = Math.max(...totalScore);
 
   let cand = [];

@@ -119,7 +119,7 @@ onmessage = function (event) {
       }
     }
 
-    console.log(partName, ": loaded in=", inScript.length, "out=", outScript.length, "entries", "tagDict", tagDict)
+    console.log(partName, ": loaded in=", inScript, "out=", outScript.length, "entries", "tagDict", tagDict)
 
     // inScriptは辞書の1エントリに対して複数の入力,複数の出力があってもよい。tfidfや
     // fvは入力につき1つ定義され、入力にどのoutScirptおよびfvが対応するかを示す
@@ -136,12 +136,13 @@ onmessage = function (event) {
     let fv = [];
 
     for (let i = 0, l = inScript.length; i < l; i++) {
-      // 
+
       let inScript2 = inScript[i];
       for (let i2 = 0, l2 = inScript2.length; i2 < l2; i2++) {
+
         let message = inScript2[i2];
         line = textToInternalRepr(segmenter.segment(message.text));
-        squeezedDict.push(...line);
+        squeezedDict.push(line);
         index.push(i);
         
         fv.push(message.features);
@@ -149,11 +150,9 @@ onmessage = function (event) {
         for (let word of line) {
           vocab[word] = true;
         }
-
       }
-
-
     }
+
     // vocabの生成
 
     const vocabKeys = Object.keys(vocab);
@@ -161,16 +160,14 @@ onmessage = function (event) {
     for(let i=0,l=vocabKeys.length; i<l; i++){
       vocab[vocabKeys[i]] = i;
     }
-    console.log("vocab",vocab)
     /* 
       Term Frequency: 各行内での単語の出現頻度
       tf(t,d) = (ある単語tの行d内での出現回数)/(行d内の全ての単語の出現回数の和)
     */
 
-    //wv
-    console.log("wv", squeezedDict.length, vocabKeys.length)
     let wv = zeros(squeezedDict.length, vocabKeys.length);
     for (let i = 0, l = squeezedDict.length; i < l; i++) {
+
       for (let word of squeezedDict[i]) {
         let pos = vocab[word];
         if (pos !== undefined) {
@@ -182,9 +179,7 @@ onmessage = function (event) {
     // tf = wv / wv.sum(axis=0)
     const inv_wv = apply(wv, 1, x => divide(1, sum(x)));
     const tf = multiply(diag(inv_wv), wv);
-    console.log("matrixize: wv=",wv,"inv_wv=",inv_wv)
-    // ここでsum(x)が０になるケースが存在して、計算が止まる。
-    // 原因は
+
 
     // """ Inverse Document Frequency: 各単語が現れる行の数の割合
     //

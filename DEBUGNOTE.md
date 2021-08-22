@@ -11,10 +11,27 @@ debug note
    wv[pos] = wv[pos] + 1
    の後でwvの中身が{ 5: NaN, 6: NaN, 7: NaN, _data: (9) […], _size: (1) […], _datatype: undefined }
 
-となりsumが0になっている -> get,setに戻して済
+となりsumが全て0になっている -> get,setに戻して済
 
--> greetingが応答しない
+* sum(wv)が0になる行がある
+-> squeezedDictのfix　-> ok
 
-* tfidfにnullが混入
+* concatが帰ってこない
+ｰ>dimemsionが変わってしまうのでsubsetに変更
+
+
+* greetingが応答しない
+-> momentUpperを大きくする。precisionを0.1にする
+※precisionはテキストが完全正解の場合0.14だった。これは他のfeatureに引っ張られたため。正解=1.0なら
+わかりやすいが現状はそうならない。わかりやすくする方法はあるか？？
+
+* _renderが動作しない
+-> totalScoreが長さ7でvalueOfが長さ8になってずれる
+
+* reply.text.replaceが動作しない
+-> replyにtextでなくmessageが入っているため。messageである必要は？？
+
+* ユーザ発言に分解されたものがダブる
+
 
 
