@@ -24,20 +24,16 @@ query indexq {
 
 let db = null;
 
-async function readLog(site, number, startId) {
-  /* siteのログをstartIdからnumber件読み出す */
+async function readLog(site, number, offset) {
+  /* siteのログをoffsetからnumber件読み出す */
   let payload = [];
   const siteDb = site === 'room' ? db.room : db.forest;
 
-  if (startId) {
+  if (offset) {
 
-    const start = await siteDb
-      .where({ id: startId })
-      .first();
     payload = await siteDb
-      .where("timestamp")
-      .below(start.timestamp)
-      .sortBy("timestamp")
+      .orderBy("timestamp")
+      .offset(offset)
       .limit(number)
       .toArray()
 
@@ -45,10 +41,14 @@ async function readLog(site, number, startId) {
 
     payload = await siteDb
       .orderBy("timestamp")
+      .reverse()
       .limit(number)
-      .toArray()
+      // ここで.reverse()するとうまく動作しないので外でやる
+      .toArray();
+      
+    
+    payload.reverse();
   }
-
   return payload.map(msg => new Message(msg));
 }
 
@@ -119,7 +119,8 @@ export default function IndexPage({ data }) {
     const site = message.site;
     if(site === 'forest' || site === 'room'){
   
-      await db[site].add(message);
+      let id = await db[site].add(message);
+      message.id = id;
   
       setLogs[site](prev => {
         const newLog = [...prev,message];

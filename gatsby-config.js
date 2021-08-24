@@ -1,6 +1,11 @@
 require("dotenv").config();
 
 module.exports = {
+  flags: {
+    DEV_WEBPACK_CACHE: true,
+    PARALLEL_SOURCING: true,
+    PARALLEL_QUERY_RUNNING: true,
+  },
   siteMetadata: {
     title: `FairyBiome`,
     description: `Small community chat with Ecosystem + Chatbot `,

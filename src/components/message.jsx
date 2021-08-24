@@ -192,6 +192,7 @@ export class Message {
         // そのオブジェクトの値をコピー
         this.text = mode.text;
         this.name = mode.name;
+        this.id = mode.id;
         this.timestamp = mode.timestamp;
         this.avatarPath = mode.avatarPath;
         if ("features" in mode) {

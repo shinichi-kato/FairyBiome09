@@ -125,6 +125,7 @@ export default function ChatRoom(props) {
       site: ecosystem.site,
     });
     writeLogRef.current(message);
+    
     bot.current.execute(
       message,
       writeLogRef.current);

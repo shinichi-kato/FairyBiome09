@@ -138,13 +138,13 @@ export default function LogViewer(props) {
 		scrollBottomRef?.current?.scrollIntoView();
 	},[props.log]);
 
-	const messages = props.log.map((message, index) => {
+	const messages = props.log.map(message => {
 
 		switch (message.person) {
-			case 'user': return <RightBalloon key={index} message={message} />
+			case 'user': return <RightBalloon key={message.id} message={message} />
 			case 'bot':
-			case 'other': return <LeftBalloon key={index} message={message} />
-			default: return <SystemMessage key={index} message={message} />
+			case 'other': return <LeftBalloon key={message.id} message={message} />
+			default: return <SystemMessage key={message.id} message={message} />
 		}
 	});
 
