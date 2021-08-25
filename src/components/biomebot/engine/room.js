@@ -44,10 +44,11 @@ export function execute(state, work, message, sendMessage) {
   // messageの型チェック
   console.assert(message instanceof Message,"room: execute Message型ではないmessageが渡されました");
 
+  console.log("execute: user message= ",message);
   let reply = { message: null };
 
   // shift queue
-
+  
 
   // moodと同名のpartがあればそれをpartOrder先頭に移動
   hoist(work.mood, work.partOrder);

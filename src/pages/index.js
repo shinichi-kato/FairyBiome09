@@ -45,7 +45,6 @@ async function readLog(site, number, offset) {
       .limit(number)
       // ここで.reverse()するとうまく動作しないので外でやる
       .toArray();
-      
     
     payload.reverse();
   }

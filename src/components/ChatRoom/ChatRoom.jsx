@@ -65,12 +65,10 @@ const useStyles = makeStyles(theme => ({
   inputInput: {
     padding: theme.spacing(1),
     // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+    paddingLeft: '1em',
     width: '100%',
     color: '#000000',
   },
-
-
 }));
 
 export default function ChatRoom(props) {
@@ -116,19 +114,24 @@ export default function ChatRoom(props) {
   }
 
   function handleUserSubmit(event) {
-    const message = new Message('speech', {
+    writeLogRef.current(new Message('speech', {
       text: userInput,
       name: fb.displayName,
       person: 'user',
       mood: 'peace',
       avatarPath: fb.photoURL,
       site: ecosystem.site,
-    });
-    writeLogRef.current(message);
-    
-    bot.current.execute(
-      message,
-      writeLogRef.current);
+    }));
+
+    // 後でtextの中身を直接いじるので同一内容のMessageを新たに作って渡す
+    bot.current.execute(new Message('speech', {
+      text: userInput,
+      name: fb.displayName,
+      person: 'user',
+      mood: 'peace',
+      avatarPath: fb.photoURL,
+      site: ecosystem.site,
+    }), writeLogRef.current);
 
     setUserInput("");
     event.preventDefault();

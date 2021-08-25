@@ -8,13 +8,13 @@ import IconButton from '@material-ui/core/IconButton';
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import GridList from '@material-ui/core/GridList';
-import GridListTile from '@material-ui/core/GridListTile';
+import ImageList from '@material-ui/core/ImageList';
+import ImageListItem from '@material-ui/core/ImageListItem';
 import WarningIcon from '@material-ui/icons/Warning';
 
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
-import { GridListTileBar } from "@material-ui/core";
+import { ImageListItemBar } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
   gridContainer: {
@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
     width: '100%',
   },
-  gridList: {
+  ImageList: {
     flexWrap: 'nowrap',
     // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
     transform: 'translateZ(0)',
@@ -178,12 +178,12 @@ export default function CreateFairy(props) {
             <Box
               className={classes.gridContainer}
             >
-              <GridList
-                className={classes.gridList}
+              <ImageList
+                className={classes.ImageList}
                 cols={2.5}
               >
                 {props.chatbots.map(bot => (
-                  <GridListTile key={bot.name}
+                  <ImageListItem key={bot.name}
                     onClick={() => handleClickTile(bot.directory)}
                   >
                     <img src={`../../chatbot/${bot.directory}/peace.svg`}
@@ -193,17 +193,17 @@ export default function CreateFairy(props) {
                       }}
                       alt={bot.directory}
                     />
-                    <GridListTileBar
+                    <ImageListItemBar
                       title={bot.name}
                       classes={{
                         root: classes.titleBar,
                         title: classes.title,
                       }}
                     />
-                  </GridListTile>
+                  </ImageListItem>
                 ))}
 
-              </GridList>
+              </ImageList>
             </Box>
             <Box>
               {currentDescription}

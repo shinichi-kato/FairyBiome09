@@ -1,7 +1,23 @@
 debug note
 ==============
 
-* 
+* CreateFairyで画像が見切れている
+
+
+* triggerに応答していない？
+
+* queueが消費されてない？
+
+* <br>で改行されていない
+* {user}が
+
+* {enter_night}にgreetingsが応答している
+
+# 以下対応済み
+
+* ユーザ発言に分解されたものがダブる
+-> writeLogとexecuteにそれぞれ同一内容のmessageを新たに作って渡して解消
+
 * vocabで{enter_**}が位置文字ずつ区切られている
 -> textToInternalReprが行われていない
 -.>executeにtextTOInternalRepr追加
@@ -31,7 +47,7 @@ debug note
 * reply.text.replaceが動作しない
 -> replyにtextでなくmessageが入っているため。messageである必要は？？
 
-* ユーザ発言に分解されたものがダブる
+
 
 * ログが最初の100件までしか取得されてない
 

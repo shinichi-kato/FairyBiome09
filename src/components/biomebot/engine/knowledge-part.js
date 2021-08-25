@@ -43,7 +43,6 @@ export function reply(partName, state, work, result) {
   const cands = cache.outScript[result.index];
 
   let cand = cands[Math.floor(Math.random() * cands.length)];
-  console.log("cands=",cands,cand)
 
   let reply = _render(cand, tagDict);
   console.log("rendered reply=",reply);
@@ -54,10 +53,8 @@ export function render(partName, state, work, text) {
   // 
   // tagを展開して返す
   const tagDict = state.cache[partName].tagDict;
-  console.log(partName, "renderer: render", text, "tagDict", tagDict)
 
   const reply= _render(text, tagDict);
-  console.log("rendered reply=",reply);
   return reply
 
 }
