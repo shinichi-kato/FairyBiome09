@@ -43,7 +43,8 @@ async function readLog(site, number, offset) {
       .orderBy("timestamp")
       .reverse()
       .limit(number)
-      // ここで.reverse()するとうまく動作しないので外でやる
+      // ここで.reverse()するとうまく動作しない。
+      // toArray()したあとでそれをreverseする。
       .toArray();
     
     payload.reverse();

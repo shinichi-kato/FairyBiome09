@@ -486,6 +486,7 @@ export default function BiomebotProvider(props) {
         generate: generate,
         deploy: deploy,
         state: state,
+        work:work,
         photoURL: photoURL,
       }}
     >

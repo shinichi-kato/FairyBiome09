@@ -13,17 +13,17 @@ import PartIcon from '@material-ui/icons/RecordVoiceOver';
 
 const menus = [
   {
-    icon:<EmojiPeopleIcon/>,
+    icon:<EmojiPeopleIcon style={{color:"#8fd2eb"}}/>,
     title: "基本設定",
     page: "config",
   },
   {
-    icon:<FlashOnIcon/>,
+    icon:<FlashOnIcon style={{ color:"#cfaf70"}}/>,
     title: "作業記憶",
     page: "work",
   },
   {
-    icon:<MenuBookIcon/>,
+    icon:<MenuBookIcon style={{ color: "#946ecc"}}/>,
     title: "メイン辞書",
     page: "main",
   },

@@ -43,7 +43,7 @@ export default function FairyPanel(props) {
         <img
         className={classes.portrait}
           src={props.photoURL}
-          alt={props.photoURL} />
+          alt="" />
       </Box>
 
     </Box>

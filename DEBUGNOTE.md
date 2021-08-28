@@ -1,6 +1,7 @@
 debug note
 ==============
 
+1. チャットルーム
 * CreateFairyで画像が見切れている
 
 
@@ -9,9 +10,12 @@ debug note
 * queueが消費されてない？
 
 * <br>で改行されていない
-* {user}が
+* {user}が展開されてない
 
 * {enter_night}にgreetingsが応答している
+
+2. エディタ
+* BotMonitorで名前が表示されない
 
 # 以下対応済み
 
@@ -47,9 +51,7 @@ debug note
 * reply.text.replaceが動作しない
 -> replyにtextでなくmessageが入っているため。messageである必要は？？
 
-
-
 * ログが最初の100件までしか取得されてない
-
+-> reverseを入れてfix
 
 
