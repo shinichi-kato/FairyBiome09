@@ -47,6 +47,8 @@ function LeftBalloon(props) {
 		`${message.avatarPath}/${message.mood}.svg`
 		:
 		`${message.avatarPath}`;
+	const texts = message.text.split('<br/>');
+
 
 	return (
 		<Box
@@ -66,7 +68,7 @@ function LeftBalloon(props) {
 				className={classes.leftBalloon}
 			>
 				<Typography variant="body1">{message.text}</Typography>
-				<Typography variant="caption">{message.name}</Typography>
+				{texts.map((text,index)=><Typography variant="caption" key={index}>{text}</Typography>)}
 			</Box>
 		</Box>
 	)

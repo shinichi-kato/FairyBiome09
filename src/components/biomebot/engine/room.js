@@ -156,6 +156,8 @@ export function execute(state, work, message, sendMessage) {
       reply.text = render("{NOT_FOUND}", state.main);
     }
 
+    reply.text.replace('{bot}',work.displayName);
+    reply.text.replace('{user}',message.name);
   }
 
   sendMessage(new Message(

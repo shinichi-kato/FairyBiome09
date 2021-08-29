@@ -404,8 +404,9 @@ export default function BiomebotProvider(props) {
 
       }));
     } else {
-      setWork(prevWork =>
+      setWork(prevWork =>{
         executes[work.site](currentState, prevWork, message, emitter)
+      }
       );
     }
   }

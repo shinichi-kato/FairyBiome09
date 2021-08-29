@@ -9,9 +9,9 @@ import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import ArrowBackIcon from '@material-ui/icons/ArrowBackIos';
 
-import BotMonitor from './BotMonitor';
 import RootEditor from './RootEditor';
 import ConfigEditor from './ConfigEditor';
+import PartEditor from './PartEditor';
 
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
@@ -53,16 +53,41 @@ export default function Editor() {
   const [currentPart, setCurrentPart] = useState('');
   const [page, setPage] = useState('root')
 
+  const route = {
+    'root': {
+      back: null,
+    },
+    'config': {
+      back : 'root'
+    },
+    'work': {
+      back: 'root'
+    },
+    'main': {
+      back : 'root'
+    },
+    'part': {
+      back: 'root'
+    },
+    'script': {
+      back: 'part'
+    }
+  };
+
   function handleChangePage(newPage, newPart) {
-    if (newPart) {
+    if (newPage === 'part') {
       setCurrentPart(newPart);
     }
+    setPage(newPage);
   }
 
   function handleClickBack() {
-    if (page === 'root') {
+    const dest= route[page].back;
+    if (dest === null) {
       navigate('/');
     }
+    setPage(dest);
+
   }
 
   const botState = bot.state;
@@ -104,23 +129,25 @@ export default function Editor() {
         flexGrow={1}
         className={classes.mainView}
       >
-        <Box alignSelf="center">
-          <BotMonitor
-            state={bot.state}
-            work={bot.work}
-          />
-        </Box>
         <Box >
           {
             page === 'root' &&
             <RootEditor
               state={bot.state}
+              work={bot.work}
               handleChangePage={handleChangePage}
             />
           }
-          {page === 'config' &&
+          {
+            page === 'config' &&
             <ConfigEditor
               config={botState.config}
+            />
+          }
+          {
+            page === 'part' &&
+            <PartEditor
+              part={currentPart}
             />
           }
         </Box>

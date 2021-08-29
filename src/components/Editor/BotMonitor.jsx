@@ -29,7 +29,6 @@ export default function BotMonitor(props) {
   
 		props.botState: bot.state
 	*/
-	const state = props.state;
 	const work = props.work;
 	const classes = useStyles();
 
