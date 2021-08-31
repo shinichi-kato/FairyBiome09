@@ -1,13 +1,33 @@
 import React, { useState } from "react";
-import Grid from '@material-ui/core/Grid';
+import { makeStyles } from '@material-ui/core/styles';
+import Box from '@material-ui/core/Box';
 import TextField from '@material-ui/core/TextField';
 import Slider from '@material-ui/core/Slider';
-import Checkbox from '@material-ui/core/Checkbox';
 import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
 
-function valuetext(value) {
-  return `${value}°時`;
-}
+const useStyles = makeStyles((theme) => ({
+  root: {
+    margin: theme.spacing(1),
+  },
+  item: {
+    marginBottom: theme.spacing(2),
+    padding: theme.spacing(2),
+  },
+  slider: {
+    marginTop: 50,
+    width: 350,
+    marginLeft: 40,
+  }
+}));
+
+const hourMarks = [
+  { value: 0, label: '0時' },
+  { value: 6, label: '6時' },
+  { value: 12, label: '12時' },
+  { value: 18, label: '18時' },
+  { value: 23, label: '23時' }
+]
 
 export default function ConfigEditor(props) {
   /* config Editor
@@ -31,60 +51,158 @@ export default function ConfigEditor(props) {
           "peace"
       ],
       "hubBehavior": {
-          "momentUpper": 10,
-          "momentLower": 0,
+          "utilization": 0.7,
           "precision": 0.5,
           "retention": 0.4
       }
     },
    */
 
+  const classes = useStyles();
   const config = props.config;
-  const [circInverted, setCircInverted] = useState(false);
-  const [circWake,setCircWake] = useState(config.circadian.wake);
-  const [circSleep,setCircSleep] = useState(config.circadian.sleep);
+  const [wake, setWake] = useState(config.circadian.wake);
+  const [sleep, setSleep] = useState(config.circadian.sleep);
+  const [initialMentalLevel, setInitialMentalLevel] = useState(config.initialMentalLevel);
+  const [initialPartOrder, setinitialPartOrder] = useState(config.initialPartOrder)
 
-  function handleChangeCircInverted(event) {
-    setCircInverted(event.target.checked);
+  function handleChangeWake(event, value) {
+    setWake(value);
   }
 
-  function handleChangeCircadian(event,value) {
-    setCircWake(value[1]);
-    setCircSleep(value[0]);
+  function handleChangeSleep(event, value) {
+    setSleep(value);
   }
+
+  function handleChangeInitialMentalLevel(event, value) {
+    setInitialMentalLevel(value);
+  }
+
 
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={12}>
+    <Box
+      display="flex"
+      flexDirection="column"
+      className={classes.root}
+    >
+
+      <Paper className={classes.item} elevation={0} >
         チャットボットの説明
-      </Grid>
-      <Grid item xs={12}>
         <TextField
           multiline
-          rows={4}
+          maxRows={4}
           defaultValue={config.description}
+          fullWidth
         />
-      </Grid>
-      <Grid item xs={12}>
-        <Typography>起きている時間帯の設定</Typography>
-        <Slider
-          min={0}
-          max={23}
-          onChange={handleChangeCircadian}
-          aria-labelledby="track-inverted-range-slider"
-          getAriaValueText={valuetext}
-          track={circInverted ? "normal" : "inverted" }
-          defaultValue={[circSleep,circWake]}
-        />
-        <Checkbox
-          checked={circInverted}
-          onChange={handleChangeCircInverted}
-          label="反転する"
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <Typography></Typography>
-      </Grid>
-    </Grid>
+      </Paper>
+      <Paper className={classes.item} elevation={0} >
+        <Box>
+          <Typography>チャットボットが目を覚ます時刻</Typography>
+        </Box>
+        <Box>
+          <Slider
+            className={classes.slider}
+            min={0} max={23}
+            step={1}
+            value={wake}
+            onChange={handleChangeWake}
+            valueLabelDisplay="on"
+            track={false}
+            marks={hourMarks}
+          />
+        </Box>
+        <Box>
+          <Typography>チャットボットが眠る時刻</Typography>
+        </Box>
+        <Box>
+          <Slider
+            className={classes.slider}
+            min={0} max={23}
+            step={1}
+            value={sleep}
+            onChange={handleChangeSleep}
+            valueLabelDisplay="on"
+            track={false}
+            marks={hourMarks}
+          />
+        </Box>
+        <Box>
+          <Typography variant="body2">
+            チャットボットは眠っている間ユーザに返事をしなくなります。
+          </Typography>
+        </Box>
+      </Paper>
+      <Paper className={classes.item} elevation={0}>
+        <Box>
+          <Typography>初期のメンタルレベル</Typography>
+          <Slider
+            className={classes.slider}
+            min={0} max={100}
+            step={1}
+            valueDisplay="on"
+            value={initialMentalLevel}
+            onChange={handleChangeInitialMentalLevel}
+            valueLabelDisplay="on"
+          />
+        </Box>
+        <Box>
+          <Typography variant="body2">
+            メンタルレベルはチャットボットの心の強さを表し、学習したり会話を続けることで少しずつ上昇します。
+
+          </Typography>
+        </Box>
+
+      </Paper>
+      <Paper className={classes.item} elevation={0}>
+        <Box>
+          <Typography>
+            初期のパート順
+          </Typography>
+        </Box>
+        <Box>
+
+        </Box>
+      </Paper>
+      <Paper className={classes.item} elevation={0}>
+        <Box>
+          <Typography>
+            公園でのふるまい
+          </Typography>
+        </Box>
+        <Box>
+          <Typography>稼働率 0~100</Typography>
+          <TextField />
+        </Box>
+        <Box>
+          <Typography variant="body2">
+            公園では多数のユーザとチャットボットが会話に参加するため、１対１のときよりも
+            一人のチャットボットが話す割合を小さくします。チャットボットは稼働率で示す確率でのみ
+            動作します。
+          </Typography>
+        </Box>
+        <Box>
+          <Typography>正確さ</Typography>
+          <TextField/>
+        </Box>
+        <Box>
+          <Typography variant="body2">
+            チャットボットは辞書に書かれた言葉がユーザの発言と似ているときに返答します。
+            正確さの値を高くすると、ユーザの発言がより厳密に辞書と一致しない限りは返答しなくなります。
+            正確さの値を0にすると、どのような発言に対しても「一致した」とみなして返答するようになります。
+            
+          </Typography>
+        </Box>
+        <Box>
+          <Typography>持続性 0〜100</Typography>
+          <TextField />
+        </Box>
+        <Box>
+          <Typography variant="body2">
+            一度しゃべり始めた人は自分の話題が一段落するまで続けて話そうとします。チャットボットでその様子を
+            決める数値が持続性です。持続性は次も話そうとする確率を示します。
+          </Typography>
+        </Box>
+      </Paper>
+
+    </Box>
   )
 }

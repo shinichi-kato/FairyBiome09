@@ -20,6 +20,7 @@ const useStyles = makeStyles((theme) => ({
   rootWhoseChildUsesFlexGrow: {
     width: 480,
     height: "calc( 100vh - 48px )",
+    backgroundColor: "#e0e0e0",
   },
   mainView: {
     overflowY: "scroll",

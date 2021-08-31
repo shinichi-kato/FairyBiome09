@@ -15,8 +15,7 @@
             "peace"
         ],
         "hubBehavior": {
-            "momentUpper": 10,
-            "momentLower": 0,
+            "utilization": 0.8,
             "precision": 0.5,
             "retention": 0.4
         }
