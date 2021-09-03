@@ -16,6 +16,8 @@ import PartEditor from './PartEditor';
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
 
+import FooterSvg from './footer.inline.svg';
+
 const useStyles = makeStyles((theme) => ({
   rootWhoseChildUsesFlexGrow: {
     width: 480,
@@ -151,6 +153,9 @@ export default function Editor() {
               part={currentPart}
             />
           }
+        </Box>
+        <Box>
+          <FooterSvg/>
         </Box>
       </Box>
     </Box>

@@ -6,6 +6,8 @@ import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 
+import PartOrder from './PartOrder';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     margin: theme.spacing(1),
@@ -63,7 +65,7 @@ export default function ConfigEditor(props) {
   const [wake, setWake] = useState(config.circadian.wake);
   const [sleep, setSleep] = useState(config.circadian.sleep);
   const [initialMentalLevel, setInitialMentalLevel] = useState(config.initialMentalLevel);
-  const [initialPartOrder, setinitialPartOrder] = useState(config.initialPartOrder)
+  const [initialPartOrder, setInitialPartOrder] = useState({parts:config.initialPartOrder,count:0})
 
   function handleChangeWake(event, value) {
     setWake(value);
@@ -77,6 +79,11 @@ export default function ConfigEditor(props) {
     setInitialMentalLevel(value);
   }
 
+  function handleChangeInitialPartOrder(parts){
+    setInitialPartOrder(prevState=>({
+      parts:[...parts],
+      count:prevState.count+1}))
+  }
 
   return (
     <Box
@@ -138,7 +145,6 @@ export default function ConfigEditor(props) {
             className={classes.slider}
             min={0} max={100}
             step={1}
-            valueDisplay="on"
             value={initialMentalLevel}
             onChange={handleChangeInitialMentalLevel}
             valueLabelDisplay="on"
@@ -159,7 +165,15 @@ export default function ConfigEditor(props) {
           </Typography>
         </Box>
         <Box>
-
+          <PartOrder 
+            items={initialPartOrder}
+            handleChange={handleChangeInitialPartOrder}
+          />
+        </Box>
+        <Box>
+          <Typography variant="body2">
+            パートは上から順に返答するかどうかをチェックします。会話中にパートを超えて返答をしたり、順が変わったりします。
+          </Typography>
         </Box>
       </Paper>
       <Paper className={classes.item} elevation={0}>
@@ -202,7 +216,6 @@ export default function ConfigEditor(props) {
           </Typography>
         </Box>
       </Paper>
-
     </Box>
   )
 }

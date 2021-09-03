@@ -44,7 +44,7 @@ export default function BotMonitor(props) {
 				<img
 					className={classes.portrait}
 					src={props.photoURL}
-					alt="" />
+					alt={props.photoURL} />
 			</Box>
 			<Box>
 				{props.work.displayName}

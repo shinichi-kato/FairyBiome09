@@ -35,7 +35,6 @@ const menus = [
 export default function RootEditor(props) {
 
   let parts = [];
-  console.log("state=", props.state);
   for (let part in props.state.parts) {
     parts.push({
       icon: <PartIcon />,
@@ -51,7 +50,7 @@ export default function RootEditor(props) {
 
   function lister(items) {
     return items.map(item =>
-      <ListItem button key={item.page}
+      <ListItem button key={item.title}
         onClick={() => handleChangePage(item.page, item.part)}
       >
         <ListItemIcon>
