@@ -1,12 +1,17 @@
-import React, { useState } from "react";
+import React, { useRef, useState, useContext, useEffect } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import TextField from '@material-ui/core/TextField';
 import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
+import Fab from '@material-ui/core/Fab';
+import SaveIcon from '@material-ui/icons/SaveAlt';
 
+import ColorSelector from './ColorSelector';
 import PartOrder from './PartOrder';
+
+import { BiomebotContext } from '../biomebot/BiomebotProvider';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -20,7 +25,18 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 50,
     width: 350,
     marginLeft: 40,
-  }
+  },
+  fab: {
+    position: 'absolute',
+    bottom: theme.spacing(4),
+    right: theme.spacing(4),
+  },
+  fabIcon: {
+    marginRight: theme.spacing(1),
+  },
+  part: {
+    background: "linear-gradient(0deg, #f0f0f0 , #ffffff)",
+  },
 }));
 
 const hourMarks = [
@@ -30,6 +46,7 @@ const hourMarks = [
   { value: 18, label: '18時' },
   { value: 23, label: '23時' }
 ]
+
 
 export default function ConfigEditor(props) {
   /* config Editor
@@ -61,29 +78,82 @@ export default function ConfigEditor(props) {
    */
 
   const classes = useStyles();
-  const config = props.config;
+
+  const bot = useContext(BiomebotContext);
+
+  const config = bot.state.config;
+  const descriptionRef = useRef();
+  const [backgroundColor, setBackgroundColor] = useState(config.backgroundColor);
   const [wake, setWake] = useState(config.circadian.wake);
   const [sleep, setSleep] = useState(config.circadian.sleep);
   const [initialMentalLevel, setInitialMentalLevel] = useState(config.initialMentalLevel);
-  const [initialPartOrder, setInitialPartOrder] = useState({parts:config.initialPartOrder,count:0})
+  const [initialPartOrder, setInitialPartOrder] = useState({ parts: config.initialPartOrder, count: 0 });
+  const [utilization, setUtilization] = useState(config.hubBehavior.utilization);
+  const [precision, setPrecision] = useState(config.hubBehavior.precision);
+  const [retention, setRetention] = useState(config.hubBehavior.retention);
 
-  function handleChangeWake(event, value) {
-    setWake(value);
+  const [message, setMessage] = useState("");
+
+  const handleChangeBackgroundColor = (col) => setBackgroundColor(col);
+  const handleChangeWake = (event, value) => setWake(value);
+  const handleChangeSleep = (event, value) => setSleep(value);
+  const handleChangeInitialMentalLevel = (event, value) => setInitialMentalLevel(value);
+  const handleChangeInitialPartOrder = (parts) =>
+    setInitialPartOrder(prevState => ({
+      parts: [...parts],
+      count: prevState.count + 1,  // partsの順序が変わるだけだと更新が効かないためダミーのカウンタを使う
+    }));
+
+  function handleChangeUtilization(event) {
+    const value = event.target.value;
+    // ここで0.0~1.00のバリデーション
+    setUtilization(value);
   }
 
-  function handleChangeSleep(event, value) {
-    setSleep(value);
+  function handleChangePrecision(event) {
+    const value = event.target.value;
+    // ここで0.00~1.00のバリデーション
+    setPrecision(value);
   }
 
-  function handleChangeInitialMentalLevel(event, value) {
-    setInitialMentalLevel(value);
+  function handleChangeRetention(event) {
+    const value = event.target.value;
+    // ここで0.0〜1.00のバリデーション
+    setRetention(value);
   }
 
-  function handleChangeInitialPartOrder(parts){
-    setInitialPartOrder(prevState=>({
-      parts:[...parts],
-      count:prevState.count+1}))
+  function handleSave() {
+    const config = {
+      description: descriptionRef.current.value,
+      backgroundColor: backgroundColor,
+      circadian: {
+        wake: wake,
+        sleep: sleep
+      },
+      initialMentalLevel: initialMentalLevel,
+      initialPartOrder: [...initialPartOrder.parts],
+      hubBehavior: {
+        utilization: parseFloat(utilization),
+        precision: parseFloat(precision),
+        retention: parseFloat(retention),
+      }
+    };
+
+    (async () => {
+      console.log("saving")
+      await bot.save('config', config);
+      console.log("saved")
+      setMessage(' - ok');
+
+    })()
+
   }
+
+  useEffect(() => {
+    if (message !== "") {
+      setTimeout(() => setMessage(""), 3000);
+    }
+  }, [message]);
 
   return (
     <Box
@@ -93,13 +163,33 @@ export default function ConfigEditor(props) {
     >
 
       <Paper className={classes.item} elevation={0} >
-        チャットボットの説明
-        <TextField
-          multiline
-          maxRows={4}
-          defaultValue={config.description}
-          fullWidth
-        />
+        <Box>
+          <Typography>チャットボットの説明</Typography>
+        </Box>
+        <Box>
+          <TextField
+            multiline
+            maxRows={4}
+            defaultValue={config.description}
+            inputRef={descriptionRef}
+            fullWidth
+          />
+        </Box>
+        <Box>
+          <Typography variant="body2">
+            チャットボット新規作成時に表示される説明です。
+          </Typography>
+        </Box>
+      </Paper>
+      <Paper className={classes.item} elevetion={0} >
+        <Box>背景の色</Box>
+        <Box>
+          <ColorSelector
+            defaultColor={config.backgroundColor}
+            color={backgroundColor}
+            handleChange={handleChangeBackgroundColor}
+          />
+        </Box>
       </Paper>
       <Paper className={classes.item} elevation={0} >
         <Box>
@@ -152,7 +242,7 @@ export default function ConfigEditor(props) {
         </Box>
         <Box>
           <Typography variant="body2">
-            メンタルレベルはチャットボットの心の強さを表し、学習したり会話を続けることで少しずつ上昇します。
+            メンタルレベルはチャットボットの心の強さを表し、学習したり会話を続けることで少しずつ成長します。
 
           </Typography>
         </Box>
@@ -165,9 +255,10 @@ export default function ConfigEditor(props) {
           </Typography>
         </Box>
         <Box>
-          <PartOrder 
+          <PartOrder
             items={initialPartOrder}
             handleChange={handleChangeInitialPartOrder}
+            partStyle={classes.part}
           />
         </Box>
         <Box>
@@ -184,7 +275,10 @@ export default function ConfigEditor(props) {
         </Box>
         <Box>
           <Typography>稼働率 0~100</Typography>
-          <TextField />
+          <TextField
+            value={utilization}
+            onChange={handleChangeUtilization}
+          />
         </Box>
         <Box>
           <Typography variant="body2">
@@ -195,19 +289,25 @@ export default function ConfigEditor(props) {
         </Box>
         <Box>
           <Typography>正確さ</Typography>
-          <TextField/>
+          <TextField
+            value={precision}
+            onChange={handleChangePrecision}
+          />
         </Box>
         <Box>
           <Typography variant="body2">
             チャットボットは辞書に書かれた言葉がユーザの発言と似ているときに返答します。
             正確さの値を高くすると、ユーザの発言がより厳密に辞書と一致しない限りは返答しなくなります。
             正確さの値を0にすると、どのような発言に対しても「一致した」とみなして返答するようになります。
-            
+
           </Typography>
         </Box>
         <Box>
           <Typography>持続性 0〜100</Typography>
-          <TextField />
+          <TextField
+            value={retention}
+            onChange={handleChangeRetention}
+          />
         </Box>
         <Box>
           <Typography variant="body2">
@@ -216,6 +316,16 @@ export default function ConfigEditor(props) {
           </Typography>
         </Box>
       </Paper>
+      <Box className={classes.fab}>
+        <Fab
+          variant="extended"
+          color="primary"
+          aria-label="save"
+          onClick={handleSave}
+        >
+          <SaveIcon className={classes.fabIcon} />保存{message}
+        </Fab>
+      </Box>
     </Box>
   )
 }

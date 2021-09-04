@@ -11,6 +11,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBackIos';
 
 import RootEditor from './RootEditor';
 import ConfigEditor from './ConfigEditor';
+import WorkEditor from './WorkEditor';
 import PartEditor from './PartEditor';
 
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
@@ -61,13 +62,13 @@ export default function Editor() {
       back: null,
     },
     'config': {
-      back : 'root'
+      back: 'root'
     },
     'work': {
       back: 'root'
     },
     'main': {
-      back : 'root'
+      back: 'root'
     },
     'part': {
       back: 'root'
@@ -85,7 +86,7 @@ export default function Editor() {
   }
 
   function handleClickBack() {
-    const dest= route[page].back;
+    const dest = route[page].back;
     if (dest === null) {
       navigate('/');
     }
@@ -144,8 +145,11 @@ export default function Editor() {
           {
             page === 'config' &&
             <ConfigEditor
-              config={botState.config}
             />
+          }
+          {
+            page === 'work' &&
+            <WorkEditor />
           }
           {
             page === 'part' &&
@@ -155,7 +159,7 @@ export default function Editor() {
           }
         </Box>
         <Box>
-          <FooterSvg/>
+          <FooterSvg />
         </Box>
       </Box>
     </Box>

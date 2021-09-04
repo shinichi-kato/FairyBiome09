@@ -302,6 +302,23 @@ function reducer(state, action) {
       }
     }
 
+    case 'saveConfig' : {
+      const config = action.config;
+      return {
+        ...state,
+        config: {
+          description: config.description,
+          backgroundColor: config.backgroundColor,
+          circadian: { ...config.circadian },
+          initialMenatalLevel: config.initialMentalLevel,
+          initialPartOrder: [...config.initialPartOrder],
+          hubBehavior: {...config.hubBehavior}
+        }
+      }
+    }
+
+    
+
     default:
       throw new Error(`invalid action ${action}`);
   }
@@ -478,6 +495,24 @@ export default function BiomebotProvider(props) {
     setWork(prev => ({ ...prev, site: site }));
 
   }
+
+
+  async function save(dest, obj){
+    /* チャットボットのデータをdbに保存し、今のチャットボットにも反映 */
+
+    switch(dest){
+      case 'config': {
+        await db.saveConfig(state.botId,obj);
+        dispatch({type:'saveConfig',config:obj});
+        return;
+      }
+      
+      default:
+        throw new Error(`invalid dest ${dest}`);
+    }
+  }
+
+
   const photoURL = `/chatbot/${stateRef.current.config.avatarPath}/${work.partOrder[0]}.svg`;
 
   return (
@@ -485,6 +520,7 @@ export default function BiomebotProvider(props) {
       value={{
         execute: handleExecute,
         generate: generate,
+        save: save,
         deploy: deploy,
         state: state,
         work:work,

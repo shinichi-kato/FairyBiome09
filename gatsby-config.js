@@ -18,7 +18,12 @@ module.exports = {
     chatbot: {
       logViewLength: 100, // 表示するログの長さ
       logStoreLength: 10000, // 保存するログの長さ
-    }
+    },
+    palette: [
+      // based on autism color palette
+      // https://www.color-hex.com/color-palette/10394
+      '#3bb150', '#f5eb50', '#a52228', '#7acedc', '#212962', '#b68611'
+    ]
   },
   plugins: [
     `gatsby-theme-material-ui`,
@@ -33,7 +38,7 @@ module.exports = {
     {
       resolve: `gatsby-plugin-mdx`,
       options: {
-        extensions: [`.md`,`.mdx`],
+        extensions: [`.md`, `.mdx`],
       },
     },
     {
@@ -57,7 +62,7 @@ module.exports = {
         name: "avatar",
         ignore: ["**/\.*"],
       },
-    },    
+    },
     {
       resolve: "gatsby-source-filesystem",
       options: {

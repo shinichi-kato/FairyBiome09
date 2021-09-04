@@ -9,6 +9,8 @@ import DownIcon from '@material-ui/icons/KeyboardArrowDown';
 import UpIcon from '@material-ui/icons/KeyboardArrowUp';
 import PartIcon from '@material-ui/icons/RecordVoiceOver';
 
+
+
 function Part(props) {
 	function handleUpItem(items, pos) {
 		// posのitemを一つ上げる操作
@@ -32,7 +34,7 @@ function Part(props) {
 	}
 
 	return (
-		<ListItem key={props.item}>
+		<ListItem key={props.item} className={props.partStyle}>
 			<ListItemIcon>
 				<PartIcon />
 			</ListItemIcon>
@@ -69,6 +71,7 @@ export default function PartOrder(props) {
 					items={arr}
 					pos={index}
 					handleChange={props.handleChange}
+					partStyle={props.partStyle}
 				/>
 			)}
 		</List>

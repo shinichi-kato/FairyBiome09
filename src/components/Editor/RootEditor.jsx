@@ -1,5 +1,7 @@
 import React from "react";
+import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
+import Paper from '@material-ui/core/Paper';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -13,6 +15,16 @@ import MenuBookIcon from '@material-ui/icons/MenuBook';
 import PartIcon from '@material-ui/icons/RecordVoiceOver';
 
 import BotMonitor from './BotMonitor';
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    margin: theme.spacing(1),
+  },
+  item: {
+    marginBottom: theme.spacing(2),
+    padding: theme.spacing(2),
+  },
+}));
 
 const menus = [
   {
@@ -33,6 +45,7 @@ const menus = [
 ];
 
 export default function RootEditor(props) {
+  const classes = useStyles();
 
   let parts = [];
   for (let part in props.state.parts) {
@@ -64,20 +77,29 @@ export default function RootEditor(props) {
   }
 
   return (
-    <>
-      <Box alignSelf="center">
-        <BotMonitor
-          state={props.state}
-          work={props.work}
-        />
-      </Box>
-      <Box>
+    <Box
+      display="flex"
+      flexDirection="column"
+      className={classes.root}
+    >
+      <Paper alignSelf="center"
+        className={classes.item} elevation={0}
+      >
+        <Box alignSelf="center">
+          <BotMonitor
+            state={props.state}
+            work={props.work}
+          />
+        </Box>
+      </Paper>
+      <Paper className={classes.item} elevation={0} >
         <List aria-label="main menu">
           {lister(menus)}
           <ListSubheader>パート</ListSubheader>
           {lister(parts)}
         </List>
-      </Box>
-    </>
+      </Paper>
+
+    </Box>
   )
 }

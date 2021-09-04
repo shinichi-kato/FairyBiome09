@@ -76,7 +76,7 @@ class dbio {
       ...obj.work,
       botId: botId,
       site: "room",
-      partOrder:[...obj.config.initialPartOrder],
+      partOrder: [...obj.config.initialPartOrder],
     });
 
     /* main "id,[botId+key]" */
@@ -165,7 +165,7 @@ class dbio {
     if (config) {
       work = await this.db.work.where({ botId: botId }).first();
       displayName = await this.db.main.where({ botId: botId, key: 'NAME' }).first();
-      console.log("load:displayname",displayName,"config",config)
+      console.log("load:displayname", displayName, "config", config)
       partList = await this.db.parts.where('[botId+name]')
         .between([botId, Dexie.minKey], [botId, Dexie.maxKey])
         .toArray();
@@ -290,6 +290,42 @@ class dbio {
     }
   }
 
+  async saveConfig(botId, config) {
+    /* configの内容をdbに書き込む 
+    
+      "config": {
+        "description": "妖精の育て方を教えるお姉さん妖精",
+        "backgroundColor": "#EEEE44",
+        "circadian": {
+            "wake": 6,
+            "sleep": 21
+        },
+        "initialMentalLevel": 100,
+        "initialPartOrder": [
+            "greeting",
+            "faq",
+            "cheer",
+            "peace"
+        ],
+        "hubBehavior": {
+            "utilization": 0.8,
+            "precision": 0.5,
+            "retention": 0.4
+        }
+    },
+    */
+
+
+
+
+    await this.db.config.put({
+      ...config,
+      botId: botId,
+      site: 'room',
+      estimater: {}
+    });
+
+  }
 }
 
 export const db = new dbio();
