@@ -94,8 +94,6 @@ export default function Editor() {
 
   }
 
-  const botState = bot.state;
-
   return (
     <Box
       display="flex"
@@ -139,13 +137,13 @@ export default function Editor() {
             <RootEditor
               state={bot.state}
               work={bot.work}
+              photoURL={bot.photoURL}
               handleChangePage={handleChangePage}
             />
           }
           {
             page === 'config' &&
-            <ConfigEditor
-            />
+            <ConfigEditor />
           }
           {
             page === 'work' &&

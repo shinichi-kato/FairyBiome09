@@ -12,6 +12,7 @@ import ColorSelector from './ColorSelector';
 import PartOrder from './PartOrder';
 
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
+import { config } from "mathjs";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -48,7 +49,7 @@ const hourMarks = [
 ]
 
 
-export default function ConfigEditor(props) {
+export default function ConfigEditor() {
   /* config Editor
    
     props.config : configデータ
@@ -58,6 +59,7 @@ export default function ConfigEditor(props) {
     "config": {
       "description": "妖精の育て方を教えるお姉さん妖精",
       "backgroundColor": "#EEEE44",
+      "avatarPath": <ー編集しない
       "circadian": {
           "wake": 6,
           "sleep": 21
@@ -126,6 +128,7 @@ export default function ConfigEditor(props) {
     const config = {
       description: descriptionRef.current.value,
       backgroundColor: backgroundColor,
+      avatarPath: config.avatarPath,
       circadian: {
         wake: wake,
         sleep: sleep

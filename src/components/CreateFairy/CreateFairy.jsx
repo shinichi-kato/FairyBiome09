@@ -182,19 +182,19 @@ export default function CreateFairy(props) {
                 className={classes.ImageList}
                 cols={2.5}
               >
-                {props.chatbots.map(bot => (
-                  <ImageListItem key={bot.name}
-                    onClick={() => handleClickTile(bot.directory)}
+                {props.chatbots.map(chatbot => (
+                  <ImageListItem key={chatbot.name}
+                    onClick={() => handleClickTile(chatbot.directory)}
                   >
-                    <img src={`../../chatbot/${bot.directory}/peace.svg`}
+                    <img src={`../../chatbot/${chatbot.directory}/peace.svg`}
                       style={{
-                        backgroundColor: bot.backgroundColor,
+                        backgroundColor: chatbot.backgroundColor,
                         width: 400,
                       }}
-                      alt={bot.directory}
+                      alt={chatbot.directory}
                     />
                     <ImageListItemBar
-                      title={bot.name}
+                      title={chatbot.name}
                       classes={{
                         root: classes.titleBar,
                         title: classes.title,

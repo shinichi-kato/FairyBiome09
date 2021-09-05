@@ -15,9 +15,12 @@ debug note
 * {enter_night}にgreetingsが応答している
 
 2. エディタ
-* BotMonitorで名前が表示されない
+
 
 # 以下対応済み
+
+* BotMonitorで名前が表示されない
+-> generate時にdisplayNameを復元するように修正
 
 * ユーザ発言に分解されたものがダブる
 -> writeLogとexecuteにそれぞれ同一内容のmessageを新たに作って渡して解消

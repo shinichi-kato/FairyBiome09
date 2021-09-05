@@ -296,6 +296,7 @@ class dbio {
       "config": {
         "description": "妖精の育て方を教えるお姉さん妖精",
         "backgroundColor": "#EEEE44",
+        "avatarPath": "/chatbot/???/"
         "circadian": {
             "wake": 6,
             "sleep": 21

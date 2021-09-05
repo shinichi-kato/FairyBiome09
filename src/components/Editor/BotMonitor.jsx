@@ -1,5 +1,6 @@
 import React from "react";
 import Box from '@material-ui/core/Box';
+import Typography from '@material-ui/core/Typography';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 
@@ -47,7 +48,7 @@ export default function BotMonitor(props) {
 					alt={props.photoURL} />
 			</Box>
 			<Box>
-				{props.work.displayName}
+				<Typography variant="h4">{props.state.displayName}</Typography>
 			</Box>
 			<Box
 				display="flex"

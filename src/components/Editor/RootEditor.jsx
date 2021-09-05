@@ -82,11 +82,12 @@ export default function RootEditor(props) {
       flexDirection="column"
       className={classes.root}
     >
-      <Paper alignSelf="center"
+      <Paper
         className={classes.item} elevation={0}
       >
         <Box alignSelf="center">
           <BotMonitor
+            photoURL={props.photoURL}
             state={props.state}
             work={props.work}
           />

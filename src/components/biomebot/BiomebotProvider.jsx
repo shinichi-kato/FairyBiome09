@@ -269,8 +269,7 @@ function reducer(state, action) {
           };
         }
       }
-      console.log("parts", snap.parts)
-
+      
       return {
         status: "loaded",
         botId: snap.botId,
@@ -302,22 +301,23 @@ function reducer(state, action) {
       }
     }
 
-    case 'saveConfig' : {
+    case 'saveConfig': {
       const config = action.config;
       return {
         ...state,
         config: {
           description: config.description,
           backgroundColor: config.backgroundColor,
+          avatarPath: config.avatarPath,
           circadian: { ...config.circadian },
           initialMenatalLevel: config.initialMentalLevel,
           initialPartOrder: [...config.initialPartOrder],
-          hubBehavior: {...config.hubBehavior}
+          hubBehavior: { ...config.hubBehavior }
         }
       }
     }
 
-    
+
 
     default:
       throw new Error(`invalid action ${action}`);
@@ -421,7 +421,7 @@ export default function BiomebotProvider(props) {
 
       }));
     } else {
-      setWork(prevWork =>{
+      setWork(prevWork => {
         executes[work.site](currentState, prevWork, message, emitter)
       }
       );
@@ -432,6 +432,9 @@ export default function BiomebotProvider(props) {
   async function generate(obj, avatarPath) {
     // avatarPathをobjに組み込む
     obj.config.avatarPath = avatarPath;
+
+    // displayNameを復元
+    obj.displayName=obj.main.NAME;
 
     // indexDBへの書き込み
     await db.generate(obj, fb.uid);
@@ -497,16 +500,16 @@ export default function BiomebotProvider(props) {
   }
 
 
-  async function save(dest, obj){
+  async function save(dest, obj) {
     /* チャットボットのデータをdbに保存し、今のチャットボットにも反映 */
 
-    switch(dest){
+    switch (dest) {
       case 'config': {
-        await db.saveConfig(state.botId,obj);
-        dispatch({type:'saveConfig',config:obj});
+        await db.saveConfig(state.botId, obj);
+        dispatch({ type: 'saveConfig', config: obj });
         return;
       }
-      
+
       default:
         throw new Error(`invalid dest ${dest}`);
     }
@@ -523,7 +526,7 @@ export default function BiomebotProvider(props) {
         save: save,
         deploy: deploy,
         state: state,
-        work:work,
+        work: work,
         photoURL: photoURL,
       }}
     >
