@@ -7,6 +7,7 @@ import SaveIcon from '@material-ui/icons/SaveAlt';
 import { DataGrid } from '@material-ui/data-grid';
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
 
+
 const useStyles = makeStyles((theme) => ({
 	root: {
 		margin: theme.spacing(1),
@@ -26,8 +27,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const columns = [
-	{ field: 'key', headerName: '名前', width: 120 },
-	{ field: 'value', headerName: '値', width: 400 },
+	{ field: 'key', headerName: '名前', width: 100 },
+	{ field: 'value', headerName: '値', width: 350 },
 ];
 
 function lister(obj) {
@@ -42,21 +43,15 @@ function lister(obj) {
 	return work;
 }
 
-export default function WorkEditor() {
-	/*
-		state.workを編集
-
-		state.workは辞書で、それをリストに変換して表示する。
-	*/
+export default function MainEditor() {
 	const classes = useStyles();
 	const bot = useContext(BiomebotContext);
+	const [rows, setRows] = useState([]);
 	const [message, setMessage] = useState("");
 
-	const [rows, setRows] = useState([]);
-
 	useEffect(() => {
-		setRows(lister(bot.work))
-	}, [bot.work]);
+		setRows(lister(bot.state.main))
+	}, [bot.state.main]);
 
 	function handleSave() {
 
@@ -72,15 +67,14 @@ export default function WorkEditor() {
 				<Box>
 					作業記憶
 				</Box>
-				<Box
-					height={600}
-				>
+				<Box>
 					<DataGrid
 						rows={rows}
 						columns={columns}
-					/>
+						/>
 				</Box>
 			</Paper>
+			
 			<Box className={classes.fab}>
 				<Fab
 					variant="extended"

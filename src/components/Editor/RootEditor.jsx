@@ -19,10 +19,12 @@ import BotMonitor from './BotMonitor';
 const useStyles = makeStyles((theme) => ({
   root: {
     margin: theme.spacing(1),
+    width: `calc(480px - ${theme.spacing(1)}px)`,
   },
   item: {
     marginBottom: theme.spacing(2),
     padding: theme.spacing(2),
+    width: `calc(480px - ${theme.spacing(3)}px)`
   },
 }));
 

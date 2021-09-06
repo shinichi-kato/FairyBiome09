@@ -12,6 +12,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBackIos';
 import RootEditor from './RootEditor';
 import ConfigEditor from './ConfigEditor';
 import WorkEditor from './WorkEditor';
+import MainEditor from './MainEditor';
 import PartEditor from './PartEditor';
 
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
@@ -24,9 +25,14 @@ const useStyles = makeStyles((theme) => ({
     width: 480,
     height: "calc( 100vh - 48px )",
     backgroundColor: "#e0e0e0",
+    overflow: "hidden",
+    position: "relative",
   },
   mainView: {
+    width: 480,
+    flexGrow: 1,
     overflowY: "scroll",
+    overflowX: "hidden"
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -89,8 +95,10 @@ export default function Editor() {
     const dest = route[page].back;
     if (dest === null) {
       navigate('/');
+    } else {
+      setPage(dest);
+
     }
-    setPage(dest);
 
   }
 
@@ -100,35 +108,33 @@ export default function Editor() {
       className={classes.rootWhoseChildUsesFlexGrow}
       flexDirection="column"
       position="relative"
+      flexGrow={1}
     >
-      <Box>
-        <AppBar position="static">
-          <Toolbar>
-            <IconButton
-              edge="start"
-              className={classes.menuButton}
-              color="inherit"
-              aria-label="menu"
-              onClick={handleClickBack}
-            >
-              <ArrowBackIcon />
-            </IconButton>
-            <Typography variant="h6" className={classes.title}>
-              チャットボットの編集
-            </Typography>
-            <IconButton
-              onClick={fb.openUpdateDialog}
-            >
-              <Avatar
-                aria-label="user"
-                src={`../../avatar/${fb.photoURL}`} alt={fb.photoURL}
-              />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-      </Box>
+      <AppBar position="static">
+        <Toolbar>
+          <IconButton
+            edge="start"
+            className={classes.menuButton}
+            color="inherit"
+            aria-label="menu"
+            onClick={handleClickBack}
+          >
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h6" className={classes.title}>
+            チャットボットの編集
+          </Typography>
+          <IconButton
+            onClick={fb.openUpdateDialog}
+          >
+            <Avatar
+              aria-label="user"
+              src={`../../avatar/${fb.photoURL}`} alt={fb.photoURL}
+            />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
       <Box
-        flexGrow={1}
         className={classes.mainView}
       >
         <Box >
@@ -148,6 +154,10 @@ export default function Editor() {
           {
             page === 'work' &&
             <WorkEditor />
+          }
+          {
+            page === 'main' &&
+            <MainEditor />
           }
           {
             page === 'part' &&

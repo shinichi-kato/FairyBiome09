@@ -52,6 +52,16 @@ class dbio {
 
   }
 
+
+
+  //-----------------------------------------------------------------------
+  //
+  //
+  //  DBへの書き込み関数
+  //
+  //
+  //-----------------------------------------------------------------------
+
   async generate(obj, uid) {
     // 
     //  chatbot.jsonから読み込んだobjの内容をindexDBとstateに書き込む。
@@ -80,36 +90,12 @@ class dbio {
     });
 
     /* main "id,[botId+key]" */
-    await this.db.main
-      .where('[botId+key]')
-      .between([botId, Dexie.minKey], [botId, Dexie.maxKey])
-      .delete();
-
-    let dictKeys = Object.keys(obj.main);
-    let mainData = [];
-    for (let key of dictKeys) {
-      let val = obj.main[key];
-
-      if (typeof val === 'string') {
-        mainData.push(
-          { botId: botId, key: key, val: val }
-        );
-      }
-      else if (Array.isArray(val)) {
-        for (let v of val) {
-          mainData.push(
-            { botId: botId, key: key, val: v }
-          )
-        }
-      }
-    }
-
-    await this.db.main.bulkAdd(mainData);
+    await this.saveMain(botId, obj.main);
 
     /* 各partのデータのうちscript以外を記憶
        scriptは以下で別途記憶
     */
-    dictKeys = Object.keys(obj.parts);
+    let dictKeys = Object.keys(obj.parts);
 
     await this.db.parts.bulkPut(
       dictKeys.map(key => {
@@ -120,8 +106,6 @@ class dbio {
           name: key,
         }
       }));
-
-
 
     /* scripts "[botId],next,prev" */
     await this.db.scripts.where('[botId+partName+id]')
@@ -151,6 +135,72 @@ class dbio {
       data[i] = { ...data[i], next: null };
       await this.db.scripts.bulkAdd(data);
     }
+  }
+
+
+  async saveConfig(botId, config) {
+    /* configの内容をdbに書き込む 
+    
+      "config": {
+        "description": "妖精の育て方を教えるお姉さん妖精",
+        "backgroundColor": "#EEEE44",
+        "avatarPath": "/chatbot/???/"
+        "circadian": {
+            "wake": 6,
+            "sleep": 21
+        },
+        "initialMentalLevel": 100,
+        "initialPartOrder": [
+            "greeting",
+            "faq",
+            "cheer",
+            "peace"
+        ],
+        "hubBehavior": {
+            "utilization": 0.8,
+            "precision": 0.5,
+            "retention": 0.4
+        }
+    },
+    */
+
+    await this.db.config.put({
+      ...config,
+      botId: botId,
+      site: 'room',
+      estimater: {}
+    });
+
+  }
+
+  async saveMain(botId, dict) {
+    /* main "id,[botId+key]" */
+    await this.db.main
+      .where('[botId+key]')
+      .between([botId, Dexie.minKey], [botId, Dexie.maxKey])
+      .delete();
+
+    let dictKeys = Object.keys(dict);
+    let mainData = [];
+
+    for (let key of dictKeys) {
+      let val = dict[key];
+
+      if (typeof val === 'string') {
+        mainData.push(
+          { botId: botId, key: key, val: val }
+        );
+      }
+      else if (Array.isArray(val)) {
+        for (let v of val) {
+          mainData.push(
+            { botId: botId, key: key, val: v }
+          )
+        }
+      }
+    }
+
+    await this.db.main.bulkAdd(mainData);
   }
 
   async load(botId) {
@@ -289,45 +339,8 @@ class dbio {
       positives: positives,
     }
   }
-
-  async saveConfig(botId, config) {
-    /* configの内容をdbに書き込む 
-    
-      "config": {
-        "description": "妖精の育て方を教えるお姉さん妖精",
-        "backgroundColor": "#EEEE44",
-        "avatarPath": "/chatbot/???/"
-        "circadian": {
-            "wake": 6,
-            "sleep": 21
-        },
-        "initialMentalLevel": 100,
-        "initialPartOrder": [
-            "greeting",
-            "faq",
-            "cheer",
-            "peace"
-        ],
-        "hubBehavior": {
-            "utilization": 0.8,
-            "precision": 0.5,
-            "retention": 0.4
-        }
-    },
-    */
-
-
-
-
-    await this.db.config.put({
-      ...config,
-      botId: botId,
-      site: 'room',
-      estimater: {}
-    });
-
-  }
 }
+
 
 export const db = new dbio();
 

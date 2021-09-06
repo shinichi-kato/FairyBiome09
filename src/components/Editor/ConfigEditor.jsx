@@ -12,7 +12,6 @@ import ColorSelector from './ColorSelector';
 import PartOrder from './PartOrder';
 
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
-import { config } from "mathjs";
 
 const useStyles = makeStyles((theme) => ({
   root: {
