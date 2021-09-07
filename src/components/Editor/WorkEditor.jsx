@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
 
 const columns = [
 	{ field: 'key', headerName: '名前', width: 120 },
-	{ field: 'value', headerName: '値', width: 400 },
+	{ field: 'value', headerName: '値', width: 290 },
 ];
 
 function lister(obj) {
@@ -35,7 +35,15 @@ function lister(obj) {
 	let i = 0;
 	for (let node in obj) {
 		if (obj.hasOwnProperty(node)) {
-			work.push({ id: i, col1: node, col2: obj[node] });
+
+			let value = obj[node];
+			// if(Array.isArray(value)){
+			// 	value = value.join(',');
+			// }
+			// if(typeof value === 'number'){
+			// 	value = `${value}`;
+			// }
+			work.push({ id: i, key: node, value: value });
 			i++;
 		}
 	}
@@ -55,7 +63,8 @@ export default function WorkEditor() {
 	const [rows, setRows] = useState([]);
 
 	useEffect(() => {
-		setRows(lister(bot.work))
+		setRows(lister(bot.work));
+
 	}, [bot.work]);
 
 	function handleSave() {
@@ -78,6 +87,7 @@ export default function WorkEditor() {
 					<DataGrid
 						rows={rows}
 						columns={columns}
+						hideFooterSelectedRowCount
 					/>
 				</Box>
 			</Paper>
