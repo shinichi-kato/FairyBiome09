@@ -30,11 +30,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const columns = [
-	{ field: 'key', headerName: '名前', width: 120, editable: true },
-	{ field: 'value', headerName: '値', width: 280, editable: true },
+	{ field: 'key', headerName: '名前', flex: 0.4, editable: true },
+	{ field: 'value', headerName: '値', flex: 1, editable: true },
 ];
 
-function lister(obj) {
+function obj2rows(obj) {
 	let work = [];
 	let i = 0;
 	for (let node in obj) {
@@ -46,6 +46,14 @@ function lister(obj) {
 	return work;
 }
 
+function rows2obj(rows) {
+	let obj = {};
+	for (let row of rows) {
+		obj[row.key] = row.value;
+	}
+	return obj;
+}
+
 function setify(rows, column) {
 	let bag = {};
 	for (let row of rows) {
@@ -54,8 +62,8 @@ function setify(rows, column) {
 	return bag;
 }
 
-function maxId(rows){
-	let ids = rows.map(row=>row.id);
+function maxId(rows) {
+	let ids = rows.map(row => row.id);
 	return Math.max(ids);
 
 }
@@ -67,25 +75,29 @@ export default function MainEditor() {
 	const [message, setMessage] = useState("");
 
 	useEffect(() => {
-		setRows(lister(bot.state.main))
+		setRows(obj2rows(bot.state.main))
 	}, [bot.state.main]);
 
-	function handleAdd(){
-		const keys = setify(rows,"key");
-		if("" in keys){
+	function handleAdd() {
+		const keys = setify(rows, "key");
+		if ("" in keys) {
 			setMessage("値が空白の行があります")
 		}
-		else{
-			setRows(prevRows=>
-				[...prevRows,{id:maxId(prevRows)+1,key:"新しい値",value:""}]
+		else {
+			setRows(prevRows =>
+				[...prevRows, { id: maxId(prevRows) + 1, key: "新しい値", value: "" }]
 			);
-	
+
 		}
 	}
 
 
 	function handleSave() {
+		(async () => {
 
+			await bot.save('main', rows2obj(rows));
+			setMessage("ok");
+		})()
 	}
 
 	const handleCellEditCommit = useCallback(
@@ -139,7 +151,7 @@ export default function MainEditor() {
 					<Button
 						variant="outlined"
 						color="primary"
-						startIcon={<AddIcon/>}
+						startIcon={<AddIcon />}
 						onClick={handleAdd}
 					>
 						行の追加
@@ -152,7 +164,9 @@ export default function MainEditor() {
 						onCellEditCommit={handleCellEditCommit}
 					/>
 				</Box>
-				<Typography color="error">{message}</Typography>
+				<Typography color="error">
+					{(message !== "" || message !== "ok") && message}
+				</Typography>
 
 			</Paper>
 
@@ -163,7 +177,8 @@ export default function MainEditor() {
 					aria-label="save"
 					onClick={handleSave}
 				>
-					<SaveIcon className={classes.fabIcon} />保存{message}
+					<SaveIcon className={classes.fabIcon} />保存
+					{message === "ok" && "- ok"}
 				</Fab>
 			</Box>
 

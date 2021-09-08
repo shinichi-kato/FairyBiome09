@@ -317,8 +317,12 @@ function reducer(state, action) {
       }
     }
 
-
-
+    case 'saveMain': {
+      return {
+        ...state,
+        main: {...action.main}
+      }
+    }
     default:
       throw new Error(`invalid action ${action}`);
   }
@@ -507,6 +511,11 @@ export default function BiomebotProvider(props) {
       case 'config': {
         await db.saveConfig(state.botId, obj);
         dispatch({ type: 'saveConfig', config: obj });
+        return;
+      }
+      case 'main': {
+        await db.saveMain(state.botId, obj);
+        dispatch({ type: 'saveMain', main: obj});
         return;
       }
 

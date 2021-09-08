@@ -42,6 +42,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const initialState={
+  page: "root",
+  part: null
+};
+
+function reducer(state,action){
+  switch(action.type){
+    case 'ChangePage': {
+      return {
+        page: action.page,
+        part: action.part,
+      }
+    }
+    default :
+      throw new Error(`invalid action ${action.type}`);
+  }
+}
+
 export default function Editor() {
   /* 
     チャットボットエディタのフレームワーク
@@ -60,8 +78,7 @@ export default function Editor() {
   const fb = useContext(FirebaseContext);
   const bot = useContext(BiomebotContext);
 
-  const [currentPart, setCurrentPart] = useState('');
-  const [page, setPage] = useState('root')
+  const [state,dispatch] = useReducer(reducer,initialState)
 
   const route = {
     'root': {
@@ -84,11 +101,8 @@ export default function Editor() {
     }
   };
 
-  function handleChangePage(newPage, newPart) {
-    if (newPage === 'part') {
-      setCurrentPart(newPart);
-    }
-    setPage(newPage);
+  function handleChangePage(page, part) {
+    dispatch({type:'ChangePage',page:page,part:part});
   }
 
   function handleClickBack() {
@@ -96,8 +110,7 @@ export default function Editor() {
     if (dest === null) {
       navigate('/');
     } else {
-      setPage(dest);
-
+      dispatch({type:'ChangePage',page:dest});
     }
 
   }
@@ -139,7 +152,7 @@ export default function Editor() {
       >
         <Box >
           {
-            page === 'root' &&
+            state.page === 'root' &&
             <RootEditor
               state={bot.state}
               work={bot.work}
@@ -148,11 +161,11 @@ export default function Editor() {
             />
           }
           {
-            page === 'config' &&
+            state.page === 'config' &&
             <ConfigEditor />
           }
           {
-            page === 'work' &&
+            state.page === 'work' &&
             <WorkEditor />
           }
           {
@@ -160,9 +173,9 @@ export default function Editor() {
             <MainEditor />
           }
           {
-            page === 'part' &&
+            state.page === 'part' &&
             <PartEditor
-              part={currentPart}
+              part={state.part}
             />
           }
         </Box>

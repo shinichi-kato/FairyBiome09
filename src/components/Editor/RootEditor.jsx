@@ -59,8 +59,9 @@ export default function RootEditor(props) {
     })
   }
 
-  function handleChangePage(newPage) {
-    props.handleChangePage(newPage)
+  function handleChangePage(newPage, part) {
+
+    props.handleChangePage(newPage,part);
   };
 
   function lister(items) {
