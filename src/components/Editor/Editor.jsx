@@ -14,11 +14,13 @@ import ConfigEditor from './ConfigEditor';
 import WorkEditor from './WorkEditor';
 import MainEditor from './MainEditor';
 import PartEditor from './PartEditor';
+import ScriptEditor from "./ScriptEditor";
 
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
 
 import FooterSvg from './footer.inline.svg';
+
 
 const useStyles = makeStyles((theme) => ({
   rootWhoseChildUsesFlexGrow: {
@@ -175,8 +177,13 @@ export default function Editor() {
           {
             state.page === 'part' &&
             <PartEditor
-              part={state.part}
+              partName={state.part}
+              handleChangePage={handleChangePage}
             />
+          }
+          {
+            state.page === 'script' &&
+            <ScriptEditor />
           }
         </Box>
         <Box>

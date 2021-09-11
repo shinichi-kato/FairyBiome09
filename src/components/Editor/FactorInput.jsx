@@ -12,19 +12,19 @@ export default function FactorInput(props) {
       */
 
   const [value, setValue] = useState(props.value);
-  const [helperText, setHelperText] = useState();
+  const [helperText, setHelperText] = useState(null);
 
   function handleChange(event) {
     let v = event.target.value;
     setValue(v);
 
-    const fv = parseFloat(v);
+    const fv = Number(v);
     
-    if (Number.isNan(fv) || (fv < 0 || 1 < fv)) {
+    if (Number.isNaN(fv) || (fv < 0 || 1 < fv)) {
       setHelperText("0.00〜1.00の数値にしてください")
     } else {
       setHelperText(null);
-      props.handleChangeValue(v);
+      props.handleChange(v);
     }
   }
 

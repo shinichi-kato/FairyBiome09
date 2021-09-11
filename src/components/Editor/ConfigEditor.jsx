@@ -12,6 +12,7 @@ import ColorSelector from './ColorSelector';
 import PartOrder from './PartOrder';
 
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
+import FactorInput from "./FactorInput";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -142,9 +143,7 @@ export default function ConfigEditor() {
     };
 
     (async () => {
-      console.log("saving")
       await bot.save('config', newConfig);
-      console.log("saved")
       setMessage(' - ok');
 
     })()
@@ -152,8 +151,12 @@ export default function ConfigEditor() {
   }
 
   useEffect(() => {
+    let id
     if (message !== "") {
-      setTimeout(() => setMessage(""), 3000);
+      id = setTimeout(() => setMessage(""), 3000);
+    }
+    return () => {
+      clearTimeout(id);
     }
   }, [message]);
 
@@ -275,48 +278,35 @@ export default function ConfigEditor() {
             公園でのふるまい
           </Typography>
         </Box>
-        <Box>
-          <Typography>稼働率 0~100</Typography>
-          <TextField
-            value={utilization}
-            onChange={handleChangeUtilization}
-          />
-        </Box>
-        <Box>
-          <Typography variant="body2">
+        <FactorInput
+          label="稼働率 0~1.00"
+          value={utilization}
+          handleChange={handleChangeUtilization}
+          description={<>
             公園では多数のユーザとチャットボットが会話に参加するため、１対１のときよりも
             一人のチャットボットが話す割合を小さくします。チャットボットは稼働率で示す確率でのみ
             動作します。
-          </Typography>
-        </Box>
-        <Box>
-          <Typography>正確さ</Typography>
-          <TextField
-            value={precision}
-            onChange={handleChangePrecision}
-          />
-        </Box>
-        <Box>
-          <Typography variant="body2">
+          </>}
+        />
+        <FactorInput
+          label="正確さ 0~1.00"
+          value={precision}
+          handleChange={handleChangePrecision}
+          description={<>
             チャットボットは辞書に書かれた言葉がユーザの発言と似ているときに返答します。
             正確さの値を高くすると、ユーザの発言がより厳密に辞書と一致しない限りは返答しなくなります。
             正確さの値を0にすると、どのような発言に対しても「一致した」とみなして返答するようになります。
-
-          </Typography>
-        </Box>
-        <Box>
-          <Typography>持続性 0〜100</Typography>
-          <TextField
-            value={retention}
-            onChange={handleChangeRetention}
-          />
-        </Box>
-        <Box>
-          <Typography variant="body2">
+          </>}
+        />
+        <FactorInput
+          label="持続性 0~1.00"
+          value={retention}
+          handleChange={handleChangeRetention}
+          description={<>
             一度しゃべり始めた人は自分の話題が一段落するまで続けて話そうとします。チャットボットでその様子を
             決める数値が持続性です。持続性は次も話そうとする確率を示します。
-          </Typography>
-        </Box>
+          </>}
+        />
       </Paper>
       <Box className={classes.fab}>
         <Fab

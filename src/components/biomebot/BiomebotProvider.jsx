@@ -218,7 +218,7 @@ const defaultSettings = {
     queue: [], // 複数にわけた出力を保持
     futurePostings: [], // 
   },
-  part: {
+  parts: {
     "peace": {
       kind: "knowledge",
       initialMood: "peace",
@@ -270,7 +270,7 @@ function reducer(state, action) {
           };
         }
       }
-      
+
       return {
         status: "loaded",
         botId: snap.botId,
@@ -321,9 +321,52 @@ function reducer(state, action) {
     case 'saveMain': {
       return {
         ...state,
-        main: {...action.main}
+        main: { ...action.main }
       }
     }
+
+    case 'movePart': {
+      const { prevName, newName, data } = action.data;
+
+      let parts = {...state.parts};
+      delete parts[prevName];
+      parts[newName] = { ...data }
+
+      // part名はconfig.partOrderにも書かれているのでそれを変更
+      let partOrder = [...state.config.initialPartOrder];
+      const index = partOrder.indexOf(prevName);
+      if (index !== -1) {
+        partOrder.splice(index, 1, newName);
+      } else {
+        partOrder.unshift(newName);
+      }
+
+      return {
+        ...state,
+        config: {
+          ...state.config,
+          circadian: {
+            ...state.config.circadian,
+          },
+        },
+        parts: parts,
+      }
+    }
+
+    case 'updatePart': {
+      const { prevName, data } = action.data;
+      return {
+        ...state,
+        parts:{
+          ...state.parts,
+          [prevName]: {
+            ...data
+          }
+        }
+      }
+
+    }
+
     default:
       throw new Error(`invalid action ${action}`);
   }
@@ -439,7 +482,7 @@ export default function BiomebotProvider(props) {
     obj.config.avatarPath = avatarPath;
 
     // displayNameを復元
-    obj.displayName=obj.main.NAME;
+    obj.displayName = obj.main.NAME;
 
     // indexDBへの書き込み
     await db.generate(obj, fb.uid);
@@ -516,7 +559,20 @@ export default function BiomebotProvider(props) {
       }
       case 'main': {
         await db.saveMain(state.botId, obj);
-        dispatch({ type: 'saveMain', main: obj});
+        dispatch({ type: 'saveMain', main: obj });
+        return;
+      }
+      case 'part': {
+        if (obj.prevName !== obj.newName) {
+          // partの名前が変更された場合、旧partを削除して新partを追加する。
+          // 加えてconfigのpartOrderにあるpartNameを置き換える。
+          await db.movePart(state.botId, obj);
+          dispatch({ type: 'movePart', data: obj })
+        } else {
+          // 既存partのアップデート
+          await db.updatePart(state.botId, obj);
+          dispatch({ type: 'updatePart', data: obj});
+        }
         return;
       }
 

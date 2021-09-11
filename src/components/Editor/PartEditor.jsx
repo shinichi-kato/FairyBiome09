@@ -9,6 +9,7 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Fab from '@material-ui/core/Fab';
+import Button from '@material-ui/core/Button';
 import SaveIcon from '@material-ui/icons/SaveAlt';
 
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
@@ -41,27 +42,42 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const builtInMoods = {
+  'cheer': true, 'down': true, 'greeting': true, 'peace': true, 'sleepy': true, 'wake': true
+};
+
+
 export default function PartEditor(props) {
   const classes = useStyles();
 
   const bot = useContext(BiomebotContext);
 
-  const part = bot.state.part[props.name];
+  const part = bot.state.parts[props.partName];
 
-  const [name, setName] = useState(props.part);
+  const [partName, setPartName] = useState(props.partName);
   const [nameDuplicated, setNameDuplicated] = useState(false);
   const [kind, setKind] = useState(part.kind);
-  const [initialMood, setInitialMood] = useState(part.initialMood);
-  const [momentUpper, setMomentUpper] = useState(part.mementUpper);
-  const [momentLower, setMomentLower] = useState(part.mementLower);
+  const [initialMood, setInitialMood] = useState(
+    partName in builtInMoods ? partName : (part.initialMood || "peace")
+  );
+  const moodIsBuiltIn = partName in builtInMoods;
+
+  const [momentUpper, setMomentUpper] = useState(part.momentUpper);
+  const [momentLower, setMomentLower] = useState(part.momentLower);
   const [precision, setPrecision] = useState(part.precision);
   const [retention, setRetention] = useState(part.retention);
   const [message, setMessage] = useState();
 
-  function handleChangeName(event) {
+  function handleChangePartName(event) {
     const newName = event.target.value;
-    setName(newName);
-    setNameDuplicated(newName in bot.state.part);
+    setPartName(newName);
+    if (props.partName !== newName) {
+      setNameDuplicated(newName in bot.state.parts);
+    }
+
+    if (newName in builtInMoods) {
+      setInitialMood(newName);
+    }
 
   }
 
@@ -72,26 +88,48 @@ export default function PartEditor(props) {
   const handleChangePrecision = value => setPrecision(value);
   const handleChangeRetention = value => setRetention(value);
 
+  function handleToScript(){
+    props.handleChangePage('script',props.partName);
+  }
+
   function handleSave() {
     /*
       パートの名前が変更された場合、古い方のパートは削除して
       入れ替える。
     */
-    const newPart = {
-      [name]: {
+    const newPartData = {
+      newName: partName,
+      prevName: props.partName,
+      data: {
         kind: kind,
         initialMood: initialMood,
         momentUpper: momentUpper,
+        momentLower: momentLower,
+        precision: precision,
+        retention: retention,
+
       }
     }
+
+      (async () => {
+        await bot.save('part', newPartData);
+        setMessage(' - ok');
+
+      })()
 
   }
 
   useEffect(() => {
+    let id;
     if (message !== "") {
-      setTimeout(() => setMessage(""), 3000);
+      id = setTimeout(() => setMessage(""), 3000);
+    }
+    return () => {
+      clearTimeout(id);
     }
   }, [message]);
+
+
 
   return (
     <Box
@@ -108,25 +146,16 @@ export default function PartEditor(props) {
         <Box>
           名前：
           <TextField
-            value={name}
-            onChange={handleChangeName}
+            value={partName}
+            onChange={handleChangePartName}
             error={nameDuplicated}
             helperText={nameDuplicated && "名前が他のパートと重複しています"}
           />
         </Box>
-      </Paper>
-      <Paper className={classes.item} elevation={0} >
         <Box>
-          <Typography>種類</Typography>
-        </Box>
-        <Box>
-          <form>
-            <RadioGroup aria-label="kind" name="kind" value={kind} onChange={handleChangeKind}>
-              <FormControlLabel value="knowledge" control={<Radio />} label="用意した辞書にある言葉に対して決まった返事を返す" />
-              <FormControlLabel value="episode" control={<Radio />} label="言われた言葉で昔のやり取りを思い出してしゃべる" />
-              <FormControlLabel value="curiosity" control={<Radio />} label="知らない言葉を言われたらそれを聞き返して覚える" />
-            </RadioGroup>
-          </form>
+          <Typography variant="body2">
+            パートの名前は変更できます。他のパートと同じ名前は使えません
+          </Typography>
         </Box>
       </Paper>
       <Paper className={classes.item} elevation={0}>
@@ -135,12 +164,34 @@ export default function PartEditor(props) {
         </Box>
         <Box>
           <form>
-            <RadioGroup aria-label="initial-mood" name="initialMood" value={initialMood} onChange={handleChangeInitialMood}>
-              <FormControlLabel value="peace" control={<Radio />} label="落ち着いている" />
-              <FormControlLabel value="cheer" control={<Radio />} label="盛り上がっている" />
-              <FormControlLabel value="down" control={<Radio />} label="落ち込んでいる" />
-              <FormControlLabel value="wake" control={<Radio />} label="目がさめたところ" />
-              <FormControlLabel value="sleepy" control={<Radio />} label="眠そう" />
+            <RadioGroup aria-label="initial-mood" name="initialMood" value={initialMood} onChange={handleChangeInitialMood}
+            >
+              <FormControlLabel value="peace" control={<Radio />} label="peace (落ち着いている)" disabled={moodIsBuiltIn} />
+              <FormControlLabel value="cheer" control={<Radio />} label="cheer (盛り上がっている" disabled={moodIsBuiltIn} />
+              <FormControlLabel value="down" control={<Radio />} label="down (落ち込んでいる)" disabled={moodIsBuiltIn} />
+              <FormControlLabel value="greeting" control={<Radio />} label="greeting (挨拶)" disabled={moodIsBuiltIn} />
+              <FormControlLabel value="wake" control={<Radio />} label="wake (目がさめたところ)" disabled={moodIsBuiltIn} />
+              <FormControlLabel value="sleepy" control={<Radio />} label="sleepy (眠そう)" disabled={moodIsBuiltIn} />
+            </RadioGroup>
+          </form>
+        </Box>
+        <Box>
+          <Typography variant="body2">
+            このパートが返答をし始めた時に使われる表情です。
+            パートの名前がこれらのどれかと同じ場合は変更できません。
+          </Typography>
+        </Box>
+      </Paper>
+      <Paper className={classes.item} elevation={0} >
+        <Box>
+          <Typography>パートの返答方式</Typography>
+        </Box>
+        <Box>
+          <form>
+            <RadioGroup aria-label="kind" name="kind" value={kind} onChange={handleChangeKind}>
+              <FormControlLabel value="knowledge" control={<Radio />} label="用意した辞書にある言葉に対して決まった返事を返す" />
+              <FormControlLabel value="episode" control={<Radio />} label="言われた言葉で昔のやり取りを思い出してしゃべる" />
+              <FormControlLabel value="curiosity" control={<Radio />} label="知らない言葉を言われたらそれを聞き返して覚える" />
             </RadioGroup>
           </form>
         </Box>
@@ -174,6 +225,7 @@ export default function PartEditor(props) {
             この値は0から始まり、やり取りを重ねると大きくなっていきます。
           </Typography>
         </Box>
+
         <FactorInput
           label="正確さ"
           value={precision}
@@ -197,6 +249,19 @@ export default function PartEditor(props) {
             </>
           }
         />
+      </Paper>
+      <Paper className={classes.item} elevation={0} >
+        <Button
+          variant="outlined"
+          color="primary"
+          disabled={partName != props.partName}
+          onClick={handleToScript}
+        >
+          スクリプトの編集
+        </Button>
+        <Typography variant="body2">
+          辞書を編集します。パートの名前を変更する場合は先にこの画面の保存ボタンを押してください。
+        </Typography>
       </Paper>
       <Box className={classes.fab}>
         <Fab
