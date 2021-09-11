@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useReducer } from "react";
 import { navigate } from 'gatsby';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -106,7 +106,7 @@ export default function Editor() {
   }
 
   function handleClickBack() {
-    const dest = route[page].back;
+    const dest = route[state.page].back;
     if (dest === null) {
       navigate('/');
     } else {
@@ -169,7 +169,7 @@ export default function Editor() {
             <WorkEditor />
           }
           {
-            page === 'main' &&
+            state.page === 'main' &&
             <MainEditor />
           }
           {

@@ -124,7 +124,7 @@ export default function ConfigEditor() {
   }
 
   function handleSave() {
-    const config = {
+    const newConfig = {
       description: descriptionRef.current.value,
       backgroundColor: backgroundColor,
       avatarPath: config.avatarPath,
@@ -143,7 +143,7 @@ export default function ConfigEditor() {
 
     (async () => {
       console.log("saving")
-      await bot.save('config', config);
+      await bot.save('config', newConfig);
       console.log("saved")
       setMessage(' - ok');
 
