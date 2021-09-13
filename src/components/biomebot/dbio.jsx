@@ -95,17 +95,7 @@ class dbio {
     /* 各partのデータのうちscript以外を記憶
        scriptは以下で別途記憶
     */
-    let dictKeys = Object.keys(obj.parts);
-
-    await this.db.parts.bulkPut(
-      dictKeys.map(key => {
-        const part = obj.parts[key];
-        return {
-          ...part,
-          botId: botId,
-          name: key,
-        }
-      }));
+    await this.saveParts(botId, obj.parts);
 
     /* scripts "[botId],next,prev" */
     await this.db.scripts.where('[botId+partName+id]')
@@ -117,7 +107,6 @@ class dbio {
     /* scriptはidをこちらで与え、next,prevも設定する */
 
     for (let partName of Object.keys(obj.parts)) {
-      console.log("partName", partName)
       let data = [];
       const script = obj.parts[partName].script;
       let i;
@@ -201,6 +190,74 @@ class dbio {
     }
 
     await this.db.main.bulkAdd(mainData);
+  }
+
+  async savePart(botId, dict) {
+    /* 各partのデータのうちscript以外を記憶
+       scriptは以下で別途記憶
+    */
+    let dictKeys = Object.keys(dict);
+    await this.db.parts.bulkPut(
+      dictKeys.map(key => {
+        const part = dict[key];
+        return {
+          ...part,
+          botId: botId,
+          name: key,
+        }
+      }));
+
+  }
+
+  async movePart(botId, obj) {
+    const { prevName, newName, data } = obj;
+    // prevNameのデータを削除
+    await this.db.parts.where({ botId: botId, name: prevName })
+      .delete();
+    // 変更したpartのみ書き込み
+    await this.db.parts.put({
+      botId: botId,
+      name: newName,
+      ...data
+    });
+  }
+
+  async updatePart(botId, obj) {
+    const { prevName, data } = obj;
+    // prevNameのデータを上書き
+    await this.db.parts.where({ botId: botId, name: prevName })
+      .modify(...data);
+  }
+
+  async addPart(botId){
+    // パートの追加
+    // ユニークな名前を生成
+    const lastNew = await this.db.parts
+      .where('name')
+      .startswith('New')
+      .sortBy('name')
+      .last()
+      .slice(4)
+    
+    const newName = `New ${Number(lastNew)+1}`;
+
+    await this.db.parts.put({
+      botId: botId,
+      name: newName,
+      kind: "knowledge",
+      initialMood: "peace",
+      momentUpper: 15,
+      momentLower: 0,
+      precision: 0.3,
+      retention: 0.2,
+      scriptTimestamp: null,
+      cacheTimestamp: null,
+      featureWights: null,
+    });
+
+    // 追加したパート用にスクリプトが必要だが、
+    // 空のスクリプトが作れないので編集時に先送り
+
   }
 
   async load(botId) {

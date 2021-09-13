@@ -117,6 +117,10 @@ export default function Editor() {
 
   }
 
+  function handleAddNewPart(){
+    bot.
+  }
+
   return (
     <Box
       display="flex"
@@ -160,6 +164,7 @@ export default function Editor() {
               work={bot.work}
               photoURL={bot.photoURL}
               handleChangePage={handleChangePage}
+              handleAddNewPart={handleAddNewPart}
             />
           }
           {

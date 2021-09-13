@@ -508,6 +508,10 @@ export default function BiomebotProvider(props) {
       }));
   }
 
+  async function addNewPart(){
+    await db.addPart(state.botId);
+  }
+
   async function deploy(site) {
 
     for (let partName in state.parts) {
@@ -590,6 +594,7 @@ export default function BiomebotProvider(props) {
         execute: handleExecute,
         generate: generate,
         save: save,
+        addNewPart: addNewPart,
         deploy: deploy,
         state: state,
         work: work,

@@ -26,6 +26,9 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     width: `calc(480px - ${theme.spacing(3)}px)`
   },
+  newPart:{
+    backgroundColor: theme.palette.primary
+  }
 }));
 
 const menus = [
@@ -59,15 +62,10 @@ export default function RootEditor(props) {
     })
   }
 
-  function handleChangePage(newPage, part) {
-
-    props.handleChangePage(newPage,part);
-  };
-
   function lister(items) {
     return items.map(item =>
       <ListItem button key={item.title}
-        onClick={() => handleChangePage(item.page, item.part)}
+        onClick={() => props.handleChangePage(item.page, item.part)}
       >
         <ListItemIcon>
           {item.icon}
@@ -101,7 +99,14 @@ export default function RootEditor(props) {
           {lister(menus)}
           <ListSubheader>パート</ListSubheader>
           {lister(parts)}
+          <ListItem button key="_newPart_"
+            onClick={props.handleAddNewPart}
+            className={classes.newPart}
+          >
+            <ListItemText primary="パートの追加" />
+          </ListItem>
         </List>
+
       </Paper>
 
     </Box>
