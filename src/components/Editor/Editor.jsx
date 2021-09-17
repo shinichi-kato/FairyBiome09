@@ -118,7 +118,7 @@ export default function Editor() {
   }
 
   function handleAddNewPart(){
-    bot.
+    bot.addNewPart();
   }
 
   return (
