@@ -333,6 +333,7 @@ function reducer(state, action) {
       parts[newName] = { ...data }
 
       // part名はconfig.partOrderにも書かれているのでそれを変更
+      // ※scriptの移動は別途
       let partOrder = [...state.config.initialPartOrder];
       const index = partOrder.indexOf(prevName);
       if (index !== -1) {
@@ -585,6 +586,15 @@ export default function BiomebotProvider(props) {
     }
   }
 
+  async function loadScript(partName){
+    return await db.loadScript(state.botId,partName);
+    
+  }
+
+  async function saveScript(partName, script){
+    await db.saveScript(state.botId,partName,script);
+  }
+
 
   const photoURL = `/chatbot/${stateRef.current.config.avatarPath}/${work.partOrder[0]}.svg`;
 
@@ -595,6 +605,8 @@ export default function BiomebotProvider(props) {
         generate: generate,
         save: save,
         addNewPart: addNewPart,
+        loadScript: loadScript,
+        saveScript: saveScript,
         deploy: deploy,
         state: state,
         work: work,

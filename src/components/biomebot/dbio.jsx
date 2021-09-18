@@ -107,22 +107,8 @@ class dbio {
     /* scriptはidをこちらで与え、next,prevも設定する */
 
     for (let partName of Object.keys(obj.parts)) {
-      let data = [];
       const script = obj.parts[partName].script;
-      let i;
-      for (i in script) {
-        data.push({
-          id: i,
-          botId: botId, // compound key
-          partName: partName,
-          in: script[i].in, out: script[i].out,
-          next: i + 1,
-          prev: i - 1,
-        });
-      }
-      data[0] = { ...data[0], prev: null };
-      data[i] = { ...data[i], next: null };
-      await this.db.scripts.bulkAdd(data);
+      await this.saveScript(botId,partName,script);
     }
   }
 
@@ -220,6 +206,7 @@ class dbio {
       name: newName,
       ...data
     });
+    // 未実装：スクリプトの移動
   }
 
   async updatePart(botId, obj) {
@@ -307,7 +294,7 @@ class dbio {
     return null;
   }
 
-  async readScript(botId, partName) {
+  async loadScript(botId, partName) {
     /* botId,partNameで指定されたscriptを読んで配列化して返す */
 
     return await this.db.scripts.where('[botId+partName+id]')
@@ -316,6 +303,24 @@ class dbio {
         [botId, partName, Dexie.maxKey])
       .toArray();
 
+  }
+
+  async saveScript(botId, partName,script){
+    let data = [];
+    let i;
+    for (i in script) {
+      data.push({
+        id: i,
+        botId: botId, // compound key
+        partName: partName,
+        in: script[i].in, out: script[i].out,
+        next: i + 1,
+        prev: i - 1,
+      });
+    }
+    data[0] = { ...data[0], prev: null };
+    data[i] = { ...data[i], next: null };
+    await this.db.scripts.bulkAdd(data);
   }
 
   async saveCache(botId, partName, payload) {

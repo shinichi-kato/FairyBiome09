@@ -188,7 +188,9 @@ export default function Editor() {
           }
           {
             state.page === 'script' &&
-            <ScriptEditor />
+            <ScriptEditor
+              partName={state.part}
+            />
           }
         </Box>
         <Box>
