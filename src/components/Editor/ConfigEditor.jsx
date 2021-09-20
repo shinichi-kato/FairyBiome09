@@ -283,7 +283,7 @@ export default function ConfigEditor() {
           onClick={handleSave}
         >
           <SaveIcon
-            sx={{ marginRight: theme => theme.spacing(1), }}
+            sx={{ marginRight: theme => theme.spacing(1) }}
           />保存{message}
         </Fab>
       </FabContainerBox>

@@ -1,15 +1,9 @@
 import React from "react";
 import Box from '@mui/material/Box';
-import { css } from '@emotion/react';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 
-
-const cssContainer=css`
-width: 192;
-height: 256;
-`;
 
 
 const GaugeLinearProgress = styled(LinearProgress)(({theme}) => ({
@@ -36,10 +30,16 @@ export default function BotMonitor(props) {
 			alignItems="center"
 		>
 			<Box
-				css={cssContainer}
+				sx={{
+          width: 192,
+          height: 256
+        }}
 			>
 				<img
-					css={cssContainer}
+					style={{
+            width: 192,
+            height: 256
+          }}
 					src={props.photoURL}
 					alt={props.photoURL} />
 			</Box>

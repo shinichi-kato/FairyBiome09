@@ -32,7 +32,7 @@ export default function FairyPanel(props) {
         right={0}
       >
         <img
-          sx={{
+          style={{
             width: 192,
             height: 256,
           }}

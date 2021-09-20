@@ -33,7 +33,7 @@ export default function UserPanel(props) {
         right={0}
       >
         <img
-          sx={{
+          style={{
             width: 192,
             height: 256,
           }}

@@ -48,7 +48,8 @@ export default function Landing(props) {
     >
       <Box sx={{width: "80%"}}>
         <FairyBiomeCrest
-          sx={{
+          style={{
+            // sx未対応？
             width: "100%",
             padding: theme => theme.spacing(1)
           }}

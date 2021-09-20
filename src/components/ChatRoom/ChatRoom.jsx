@@ -1,6 +1,5 @@
 import React, { useContext, useRef, useEffect, useState, useMemo } from 'react';
 import { alpha } from '@mui/material/styles';
-import { css } from "@emotion/react";
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import InputBase from '@mui/material/InputBase';
@@ -17,10 +16,6 @@ import { Message } from '../message';
 
 
 
-const cssRootWhoseChildUsesFlexGrow = css`
-    width: 480px;
-    height: 100vh;
-`;
 
 export default function ChatRoom(props) {
   /*
@@ -102,15 +97,19 @@ export default function ChatRoom(props) {
   return (
     <Box
       display="flex"
-      css={cssRootWhoseChildUsesFlexGrow}
+      sx={{
+        width: 480,
+        height: "100vh"
+        // 子がflexGrowを使うコンポーネントは高さを指定
+      }}
       flexDirection="column"
       position="relative"
     >
       <Box
-        css={css`
-          height: calc ( 100vh - 48px - 256px);
-          overflow-y: scroll;
-        `}
+        sx={{
+          height: "calc ( 100vh - 48px - 256px)",
+          overflowY: "scroll"
+        }}
         flexGrow={1}
       >
         {memorizedLogViewer}
@@ -150,9 +149,9 @@ export default function ChatRoom(props) {
             <div sx={{
               position: 'relative',
               borderRadius: "50vh",
-              backgroundColor: theme=> alpha(theme.palette.common.white, 0.15),
+              backgroundColor: theme => alpha(theme.palette.common.white, 0.15),
               '&:hover': {
-                backgroundColor: theme=> alpha(theme.palette.common.white, 0.25),
+                backgroundColor: theme => alpha(theme.palette.common.white, 0.25),
               },
               marginRight: theme => theme.spacing(2),
               marginLeft: 0,

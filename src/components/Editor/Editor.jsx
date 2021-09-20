@@ -1,6 +1,5 @@
 import React, { useContext, useReducer } from "react";
 import { navigate } from 'gatsby';
-import { css } from '@emotion/react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -21,13 +20,6 @@ import { FirebaseContext } from "../Firebase/FirebaseProvider";
 
 import FooterSvg from './footer.inline.svg';
 
-const cssRootWhoseChildUsesFlexGrow=css`
-width: 480;
-height: calc( 100vh - 48px );
-background-color: #e0e0e0;
-overflow: hidden;
-position: relative;
-`;
 
 const initialState={
   page: "root",
@@ -108,7 +100,13 @@ export default function Editor() {
   return (
     <Box
       display="flex"
-      css={cssRootWhoseChildUsesFlexGrow}
+      sx={{
+        width: 480,
+        height: "calc( 100vh - 48px )",
+        backgroundColor: "#e0e0e0",
+        overflow: "hidden",
+        position: "relative"
+      }}
       flexDirection="column"
       position="relative"
       flexGrow={1}
@@ -138,12 +136,12 @@ export default function Editor() {
         </Toolbar>
       </AppBar>
       <Box
-        css={css`
-          width: 480;
-          flex-grow: 1;
-          overflow-y: scroll;
-          overflow-x: hidden;
-        `}
+        sx={{
+          width: 480,
+          flexGrow: 1,
+          overflowY: "scroll",
+          overflowX: "hidden"
+        }}
       >
         <Box >
           {
