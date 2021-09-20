@@ -2,9 +2,9 @@ import React, {useContext} from 'react';
 
 import {FirebaseContext} from "../Firebase/FirebaseProvider";
 
-import Avatar from '@material-ui/core/Avatar';
-import Chip from '@material-ui/core/Chip';
-import EditIcon from '@material-ui/icons/Edit';
+import Avatar from '@mui/material/Avatar';
+import Chip from '@mui/material/Chip';
+import EditIcon from '@mui/icons-material/Edit';
 
 export default function UserAccount(){
   const fb = useContext(FirebaseContext);

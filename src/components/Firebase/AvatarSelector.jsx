@@ -1,8 +1,7 @@
 import React from 'react';
 import { graphql, useStaticQuery } from 'gatsby';
-import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Avatar from '@material-ui/core/Avatar';
+import Button from '@mui/material/Button';
+import Avatar from '@mui/material/Avatar';
 
 const query = graphql`
 query a {
@@ -16,24 +15,19 @@ query a {
   }
 }`;
 
-const useStyles = makeStyles(theme => ({
-  button: {
-    borderRadius: 0,
-    padding: 0,
-  }
-}));
-
 
 export default function AvatarSelector(props) {
   const data = useStaticQuery(query);
-  const classes = useStyles();
 
   return (
     data.allFile.edges.map(node => {
       const path = node.node.relativePath;
       return (
       <Button
-        className={classes.button}
+        sx={{
+          borderRadius: 0,
+          padding: 0,
+        }}
         color={props.photoURL===path ? "primary" : "default"}
         key={path}
         image={path}

@@ -1,31 +1,11 @@
 import React from 'react'
-import { makeStyles } from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import { graphql } from 'gatsby'
 import MDXRenderer from "gatsby-plugin-mdx/mdx-renderer"
 import { navigate } from "gatsby"
 
-const useStyles = makeStyles((theme) => ({
-  rootWhoseChildUsesFlexGrow: {
-    width: "100%",
-    height: "100vh",
-    // backgroundImage: "url(../images/landing-bg.png)",
-    // backgroundPosition: "center bottom",
-  },
-  content: {
-    padding: theme.spacing(2),
 
-  },
-  grow: {
-    width: "100%",
-    height: "calc( 100vh - 100px )",
-    overflowY: "scroll",
-    overscrollBehavior: "auto",
-    WebkitOverflowScrolling: "touch",
-    padding: theme.spacing(2),
-  },
-}));
 
 export const pageQuery = graphql`
   query StoryQuery($id: String) {
@@ -37,7 +17,6 @@ export const pageQuery = graphql`
 `
 
 export default function StoryTemplate({ data: { mdx } }) {
-  const classes = useStyles();
 
   function handleClick(){
     navigate('/create/?exec');
@@ -45,20 +24,31 @@ export default function StoryTemplate({ data: { mdx } }) {
 
   return (
       <Box
-        className={classes.rootWhoseChildUsesFlexGrow}
+        sx={{
+          width: "100%",
+          height: "100vh",
+        }}
         display="flex"
         flexDirection="column"
       >
         <Box
-          className={classes.grow}
+          sx={{
+            width: "100%",
+            height: "calc( 100vh - 100px )",
+            overflowY: "scroll",
+            overscrollBehavior: "auto",
+            WebkitOverflowScrolling: "touch",
+            padding: theme=>theme.spacing(2),
+          }}
         >
-          <Box className={classes.content}>
+          <Box
+            sx={{padding: theme=>theme.spacing(2)}}
+          >
             <MDXRenderer>{mdx.body}</MDXRenderer>
           </Box>
         </Box>
         <Box>
           <Button
-            className={classes.button}
             variant="contained"
             onClick={handleClick}
           >

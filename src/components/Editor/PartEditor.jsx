@@ -1,46 +1,18 @@
 import React, { useState, useContext, useEffect } from "react";
-import { makeStyles } from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box';
-import TextField from '@material-ui/core/TextField';
-import Slider from '@material-ui/core/Slider';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Fab from '@material-ui/core/Fab';
-import Button from '@material-ui/core/Button';
-import SaveIcon from '@material-ui/icons/SaveAlt';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Fab from '@mui/material/Fab';
+import Button from '@mui/material/Button';
+import SaveIcon from '@mui/icons-material/SaveAlt';
 
+import {ItemPaper, ParamSlider, FabContainerBox}  from './StyledWigets';
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
 
 import FactorInput from './FactorInput';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    margin: theme.spacing(1),
-  },
-  item: {
-    marginBottom: theme.spacing(2),
-    padding: theme.spacing(2),
-  },
-  slider: {
-    marginTop: 50,
-    width: 350,
-    marginLeft: 40,
-  },
-  fab: {
-    position: 'absolute',
-    bottom: theme.spacing(4),
-    right: theme.spacing(4),
-  },
-  fabIcon: {
-    marginRight: theme.spacing(1),
-  },
-  part: {
-    background: "linear-gradient(0deg, #f0f0f0 , #ffffff)",
-  },
-}));
 
 const builtInMoods = {
   'cheer': true, 'down': true, 'greeting': true, 'peace': true, 'sleepy': true, 'wake': true
@@ -48,8 +20,6 @@ const builtInMoods = {
 
 
 export default function PartEditor(props) {
-  const classes = useStyles();
-
   const bot = useContext(BiomebotContext);
 
   const part = bot.state.parts[props.partName];
@@ -135,9 +105,9 @@ export default function PartEditor(props) {
     <Box
       display="flex"
       flexDirection="column"
-      className={classes.root}
+      sx={{margin: theme=>theme.spacing(1)}}
     >
-      <Paper className={classes.item} elevation={0} >
+      <ItemPaper elevation={0} >
         <Box>
           <Typography variant="h5">
             パート
@@ -157,8 +127,8 @@ export default function PartEditor(props) {
             パートの名前は変更できます。他のパートと同じ名前は使えません
           </Typography>
         </Box>
-      </Paper>
-      <Paper className={classes.item} elevation={0}>
+      </ItemPaper>
+      <ItemPaper elevation={0}>
         <Box>
           <Typography>開始時のムード</Typography>
         </Box>
@@ -181,8 +151,8 @@ export default function PartEditor(props) {
             パートの名前がこれらのどれかと同じ場合は変更できません。
           </Typography>
         </Box>
-      </Paper>
-      <Paper className={classes.item} elevation={0} >
+      </ItemPaper>
+      <ItemPaper elevation={0} >
         <Box>
           <Typography>パートの返答方式</Typography>
         </Box>
@@ -195,12 +165,11 @@ export default function PartEditor(props) {
             </RadioGroup>
           </form>
         </Box>
-      </Paper>
-      <Paper className={classes.item} elevation={0} >
+      </ItemPaper>
+      <ItemPaper elevation={0} >
         <Box>
           <Typography>パートが反応する上限の会話温度</Typography>
-          <Slider
-            className={classes.slider}
+          <ParamSlider
             min={0} max={100}
             step={1}
             value={momentUpper}
@@ -208,8 +177,7 @@ export default function PartEditor(props) {
             valueLabelDisplay="on"
           />
           <Typography>パートが反応する下限の会話温度</Typography>
-          <Slider
-            className={classes.slider}
+          <ParamSlider
             min={0} max={100}
             step={1}
             value={momentLower}
@@ -249,12 +217,12 @@ export default function PartEditor(props) {
             </>
           }
         />
-      </Paper>
-      <Paper className={classes.item} elevation={0} >
+      </ItemPaper>
+      <ItemPaper elevation={0} >
         <Button
           variant="outlined"
           color="primary"
-          disabled={partName != props.partName}
+          disabled={partName !== props.partName}
           onClick={handleToScript}
         >
           スクリプトの編集
@@ -262,17 +230,17 @@ export default function PartEditor(props) {
         <Typography variant="body2">
           辞書を編集します。パートの名前を変更する場合は先にこの画面の保存ボタンを押してください。
         </Typography>
-      </Paper>
-      <Box className={classes.fab}>
+      </ItemPaper>
+      <FabContainerBox>
         <Fab
           variant="extended"
           color="primary"
           aria-label="save"
           onClick={handleSave}
         >
-          <SaveIcon className={classes.fabIcon} />保存{message}
+          <SaveIcon sx={{marginRight: theme=>theme.spacing(1),}} />保存{message}
         </Fab>
-      </Box>
+      </FabContainerBox>
     </Box>
   )
 }

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
-import FormControl from '@material-ui/core/FormControl';
-import Button from '@material-ui/core/Button';
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
+import FormControl from '@mui/material/FormControl';
+import Button from '@mui/material/Button';
 
 
 export default function ParamEditor(props) {

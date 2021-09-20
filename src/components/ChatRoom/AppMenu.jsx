@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import Popover from '@material-ui/core/Popover';
-import Slide from '@material-ui/core/Slide';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import ArrowBackIcon from '@material-ui/icons/ArrowBackIos';
+import Popover from '@mui/material/Popover';
+import Slide from '@mui/material/Slide';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import ArrowBackIcon from '@mui/icons-material/ArrowBackIos';
 
 function AppMenuDialog(props){
   /*

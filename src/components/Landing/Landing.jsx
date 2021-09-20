@@ -1,29 +1,18 @@
 import React from "react";
-import { makeStyles } from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import EditIcon from '@material-ui/icons/EditOutlined';
-import ChatIcon from '@material-ui/icons/ChatOutlined';
+import { styled } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import EditIcon from '@mui/icons-material/EditOutlined';
+import ChatIcon from '@mui/icons-material/ChatOutlined';
 
 import FairyBiomeCrest from './fairybiome-crest.inline.svg';
 import UserAccount from './UserAccount';
 import { navigate } from 'gatsby';
 
-const useStyles = makeStyles(theme => ({
-  crest: {
-    width: "100%",
-    padding: theme.spacing(1),
-  },
-  crestContainer: {
-    width: "80%",
-  },
-  buttonContainer: {
-    padding: theme.spacing(2),
-  },
-  button: {
-    fontSize: 18,
-    padding: theme.spacing(1),
-  }
+
+const MenuButton = styled(Button)(({theme})=>({
+  fontSize: 18,
+  padding: theme.spacing(1),
 }));
 
 const STATE_TABLE = {
@@ -45,7 +34,6 @@ export default function Landing(props) {
     ---------------------------------------------------------
     
   */
-  const classes = useStyles();
   const appState = STATE_TABLE[props.appState];
 
   function handleToEdit() {
@@ -58,9 +46,12 @@ export default function Landing(props) {
       flexDirection="column"
       alignItems="center"
     >
-      <Box className={classes.crestContainer}>
+      <Box sx={{width: "80%"}}>
         <FairyBiomeCrest
-          className={classes.crest}
+          sx={{
+            width: "100%",
+            padding: theme => theme.spacing(1)
+          }}
         />
       </Box>
       <Box>
@@ -68,39 +59,36 @@ export default function Landing(props) {
       </Box>
       <Box>
         {appState > 1 &&
-          <Button
-            className={classes.button}
+          <MenuButton
             onClick={props.handleNew}
           >
             はじめから
-          </Button>
+          </MenuButton>
         }
       </Box>
 
       <Box
-        className={classes.buttonContainer}
+        sx={{ padding:theme=>theme.spacing(2)}}
         visibility={appState > 2 ? "visible" : "hidden"}
       >
-        <Button
-          className={classes.button}
+        <MenuButton
           onClick={props.handleContinue}
           startIcon={<ChatIcon />}
           color="primary"
           variant="contained"
         >
           チャットを始める
-        </Button>
+        </MenuButton>
       </Box>
       <Box
-        className={classes.buttonContainer}
+        sx={{ padding:theme=>theme.spacing(2)}}
         visibility={appState > 2 ? "visible" : "hidden"}
       >
-        <Button
-          className={classes.button}
+        <MenuButton
           startIcon={<EditIcon />}
           onClick={handleToEdit}>
           チャットボットのデータ編集
-        </Button>
+        </MenuButton>
       </Box>
     </Box>
   )

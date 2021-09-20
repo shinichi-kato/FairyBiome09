@@ -1,9 +1,9 @@
 import React from "react";
 import { useStaticQuery, graphql } from "gatsby"
-import Box from '@material-ui/core/Box';
+import Box from '@mui/material/Box';
 import CheckedIcon from './CheckedIcon';
 import BlankIcon from './BlankIcon';
-import IconButton from '@material-ui/core/IconButton';
+import IconButton from '@mui/material/IconButton';
 
 const query = graphql`
 	query palette {

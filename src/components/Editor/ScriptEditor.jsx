@@ -1,12 +1,12 @@
 import React, { useState, useContext, useEffect, useCallback } from "react";
-import { makeStyles } from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box';
-import Paper from '@material-ui/core/Paper';
-import Fab from '@material-ui/core/Fab';
-import SaveIcon from '@material-ui/icons/SaveAlt';
-import { DataGrid } from '@material-ui/data-grid';
+
+import Box from '@mui/material/Box';
+import Fab from '@mui/material/Fab';
+import SaveIcon from '@mui/icons-material/SaveAlt';
+import { DataGrid } from '@mui/x-data-grid';
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
-import { Typography } from "@material-ui/core";
+import { Typography } from "@mui/material";
+import { ItemPaper, FabContainerBox } from './StyledWigets';
 
 const description = {
   'knowledge':
@@ -43,23 +43,7 @@ const columns= {
   ]
 };
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    margin: theme.spacing(1),
-  },
-  item: {
-    marginBottom: theme.spacing(2),
-    padding: theme.spacing(2),
-  },
-  fab: {
-    position: 'absolute',
-    bottom: theme.spacing(4),
-    right: theme.spacing(4),
-  },
-  fabIcon: {
-    marginRight: theme.spacing(1),
-  },
-}));
+
 
 function rows2obj(rows) {
   let obj = {};
@@ -82,7 +66,6 @@ function obj2rows(obj) {
 }
 
 export default function ScriptEditor(props) {
-  const classes = useStyles();
   const bot = useContext(BiomebotContext);
   const [rows, setRows] = useState([]);
   const [message, setMessage] = useState("");
@@ -121,9 +104,9 @@ export default function ScriptEditor(props) {
     <Box
       display="flex"
       flexDirection="column"
-      className={classes.root}
+      sx={{margin: theme=>theme.spacing(1)}}
     >
-      <Paper className={classes.item} elevation={0} >
+      <ItemPaper elevation={0} >
         <Box>
         <Typography variant="h5">スクリプト<br/>{props.partNmae}</Typography>
         </Box>
@@ -139,18 +122,18 @@ export default function ScriptEditor(props) {
             oncellEditCommit={handleCellEditCommit}
             />
         </Box>
-      </Paper>
-      <Box className={classes.fab}>
+      </ItemPaper>
+      <FabContainerBox>
         <Fab
           variant="extended"
           color="primary"
           aria-label="save"
           onClick={handleSave}
         >
-          <SaveIcon className={classes.fabIcon} />保存
+          <SaveIcon sx={{marginRight: theme=>theme.spacing(1)}} />保存
           {message === "ok" && "- ok"}
         </Fab>
-      </Box>
+      </FabContainerBox>
     </Box>
   )
 }

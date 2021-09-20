@@ -1,44 +1,18 @@
 import React, { useState, useRef } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import Link from '@material-ui/core/Link';
-import TextField from '@material-ui/core/TextField';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import Collapse from '@material-ui/core/Collapse'
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Link from '@mui/material/Link';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import Collapse from '@mui/material/Collapse'
 
-import EmailIcon from '@material-ui/icons/Email';
-import KeyIcon from '@material-ui/icons/VpnKey';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import EmailIcon from '@mui/icons-material/Email';
+import KeyIcon from '@mui/icons-material/VpnKey';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 import AvatarSelector from './AvatarSelector';
 
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    '& .MuiTextField-root': {
-      '& fieldset': {
-        borderRadius: '50vh',
-      },
-      margin: theme.spacing(1),
-      width: 350,
-      fontSize: 18,
-      backgroundColor: '#f0f0f0',
-      borderRadius: '50vh',
-
-    },
-  },
-  button: {
-    padding: theme.spacing(2),
-    fontSize: 18,
-    width: 350,
-    borderRadius: '50vh',
-  },
-  checkbox: {
-    marginLeft: theme.spacing(2)
-  },
-}));
 
 const TITLE = {
   'signIn':'ユーザ認証',
@@ -73,7 +47,6 @@ export default function AuthDialog(props){
 
   */
 
-  const classes = useStyles();
   const emailRef = useRef();
   const passwordRef = useRef();
   const displayNameRef = useRef();
@@ -157,7 +130,17 @@ export default function AuthDialog(props){
 
   return (
     <Grid
-      className = {classes.root}
+      sx={{
+        '& .MuiTextField-root': {
+          '& fieldset': {
+            borderRadius: '50vh',
+          },
+          margin: theme=>theme.spacing(1),
+          width: 350,
+          fontSize: 18,
+          backgroundColor: '#f0f0f0',
+          borderRadius: '50vh',
+      }}}
       container
       direction="column"
       justifyContent="flex-start"
@@ -255,7 +238,12 @@ export default function AuthDialog(props){
           variant="contained"
           size="large"
           color="primary"
-          className={classes.button}
+          sx={{
+            padding: theme=>theme.spacing(2),
+            fontSize: 18,
+            width: 350,
+            borderRadius: '50vh',
+          }}
           disabled = {!isButtonValid}
           onClick={handleClick}
         >

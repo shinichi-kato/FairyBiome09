@@ -1,29 +1,11 @@
 import React, { useState, useContext, useEffect } from "react";
-import { makeStyles } from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box';
-import Paper from '@material-ui/core/Paper';
-import Fab from '@material-ui/core/Fab';
-import SaveIcon from '@material-ui/icons/SaveAlt';
-import { DataGrid } from '@material-ui/data-grid';
+import Box from '@mui/material/Box';
+import Fab from '@mui/material/Fab';
+import SaveIcon from '@mui/icons-material/SaveAlt';
+import { ItemPaper, FabContainerBox } from './StyledWigets';
+import { DataGrid } from '@mui/x-data-grid';
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		margin: theme.spacing(1),
-	},
-	item: {
-		marginBottom: theme.spacing(2),
-		padding: theme.spacing(2),
-	},
-	fab: {
-		position: 'absolute',
-		bottom: theme.spacing(4),
-		right: theme.spacing(4),
-	},
-	fabIcon: {
-		marginRight: theme.spacing(1),
-	},
-}));
 
 const columns = [
 	{ field: 'key', headerName: '名前', width: 120 },
@@ -56,7 +38,6 @@ export default function WorkEditor() {
 
 		state.workは辞書で、それをリストに変換して表示する。
 	*/
-	const classes = useStyles();
 	const bot = useContext(BiomebotContext);
 	const [message, setMessage] = useState("");
 
@@ -75,9 +56,9 @@ export default function WorkEditor() {
 		<Box
 			display="flex"
 			flexDirection="column"
-			className={classes.root}
+			sx={{margin: theme=>theme.spacing(1)}}
 		>
-			<Paper className={classes.item} elevation={0} >
+			<ItemPaper elevation={0} >
 				<Box>
 					作業記憶
 				</Box>
@@ -90,17 +71,17 @@ export default function WorkEditor() {
 						hideFooterSelectedRowCount
 					/>
 				</Box>
-			</Paper>
-			<Box className={classes.fab}>
+			</ItemPaper>
+			<FabContainerBox>
 				<Fab
 					variant="extended"
 					color="primary"
 					aria-label="save"
 					onClick={handleSave}
 				>
-					<SaveIcon className={classes.fabIcon} />保存{message}
+					<SaveIcon sx={{marginRight: theme=>theme.spacing(1),}} />保存{message}
 				</Fab>
-			</Box>
+			</FabContainerBox>
 
 		</Box>
 	)

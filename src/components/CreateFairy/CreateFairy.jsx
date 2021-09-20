@@ -1,53 +1,20 @@
 import React, { useContext, useState } from "react";
 import { navigate } from "gatsby";
-import { makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import Avatar from '@material-ui/core/Avatar';
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import ImageList from '@material-ui/core/ImageList';
-import ImageListItem from '@material-ui/core/ImageListItem';
-import WarningIcon from '@material-ui/icons/Warning';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+import WarningIcon from '@mui/icons-material/Warning';
 
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
-import { ImageListItemBar } from "@material-ui/core";
+import { ImageListItemBar } from "@mui/material";
 
-const useStyles = makeStyles(theme => ({
-  gridContainer: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    overflow: 'hidden',
-    backgroundColor: theme.palette.background.paper,
-    width: '100%',
-  },
-  ImageList: {
-    flexWrap: 'nowrap',
-    // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
-    transform: 'translateZ(0)',
-  },
-  crest: {
-    width: "100%",
-    padding: theme.spacing(1),
-  },
-  crestContainer: {
-    width: "80%",
-  },
-  button: {
-    fontSize: 18,
-    padding: theme.spacing(2),
-  },
-  title: {
-    flexGrow: 1,
-  },
-  main: {
-    paddingTop: "3em",
-  }
-}));
 
 const STATE_TABLE = {
   'new': 0,
@@ -78,7 +45,6 @@ export default function CreateFairy(props) {
           description: string,}
     ]
   */
-  const classes = useStyles();
   const fb = useContext(FirebaseContext);
   const bot = useContext(BiomebotContext);
   const appState = STATE_TABLE[props.appState];
@@ -120,7 +86,7 @@ export default function CreateFairy(props) {
     <>
       <AppBar position="static">
         <Toolbar>
-          <Typography variant="h6" className={classes.title}>
+          <Typography variant="h6" sx={{flexGrow: 1}}>
             新しい妖精
           </Typography>
           {appState > 0 &&
@@ -139,7 +105,7 @@ export default function CreateFairy(props) {
         display="flex"
         flexDirection="column"
         alignItems="center"
-        className={classes.main}
+        sx={{ paddingTop: "3em",}}
       >
         {props.appState === 'continue' &&
           <>
@@ -176,10 +142,21 @@ export default function CreateFairy(props) {
         {props.appState === 'exec' &&
           <>
             <Box
-              className={classes.gridContainer}
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'space-around',
+                overflow: 'hidden',
+                backgroundColor: theme=>theme.palette.background.paper,
+                width: '100%',
+              }}
             >
               <ImageList
-                className={classes.ImageList}
+                sx={{
+                  flexWrap: 'nowrap',
+                  // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
+                  transform: 'translateZ(0)',
+                }}
                 cols={2.5}
               >
                 {props.chatbots.map(chatbot => (
@@ -195,9 +172,8 @@ export default function CreateFairy(props) {
                     />
                     <ImageListItemBar
                       title={chatbot.name}
-                      classes={{
-                        root: classes.titleBar,
-                        title: classes.title,
+                      sx={{
+                        flexGrow: 1,
                       }}
                     />
                   </ImageListItem>

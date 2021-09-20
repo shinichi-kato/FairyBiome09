@@ -1,34 +1,25 @@
 import React from "react";
-import { makeStyles } from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box';
-import Paper from '@material-ui/core/Paper';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListSubheader from '@material-ui/core/ListSubheader';
+import { styled } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import ListSubheader from '@mui/material/ListSubheader';
 
-import ArrowForwardIcon from '@material-ui/icons/ArrowForwardIos';
-import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
-import FlashOnIcon from '@material-ui/icons/FlashOn';
-import MenuBookIcon from '@material-ui/icons/MenuBook';
-import PartIcon from '@material-ui/icons/RecordVoiceOver';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForwardIos';
+import EmojiPeopleIcon from '@mui/icons-material/EmojiPeople';
+import FlashOnIcon from '@mui/icons-material/FlashOn';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import PartIcon from '@mui/icons-material/RecordVoiceOver';
 
 import BotMonitor from './BotMonitor';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    margin: theme.spacing(1),
-    width: `calc(480px - ${theme.spacing(1)}px)`,
-  },
-  item: {
-    marginBottom: theme.spacing(2),
-    padding: theme.spacing(2),
-    width: `calc(480px - ${theme.spacing(3)}px)`
-  },
-  newPart:{
-    backgroundColor: theme.palette.primary
-  }
+export const ItemPaper = styled(Paper)(({ theme }) => ({
+  marginBottom: theme.spacing(2),
+  padding: theme.spacing(2),
+  width: `calc(480px - ${theme.spacing(3)}px)`
 }));
 
 const menus = [
@@ -50,7 +41,6 @@ const menus = [
 ];
 
 export default function RootEditor(props) {
-  const classes = useStyles();
 
   let parts = [];
   for (let part in props.state.parts) {
@@ -81,10 +71,13 @@ export default function RootEditor(props) {
     <Box
       display="flex"
       flexDirection="column"
-      className={classes.root}
+      sx={{
+        margin: theme=>theme.spacing(1),
+        width: theme=>(`calc(480px - ${theme.spacing(1)}px)`)
+      }}
     >
-      <Paper
-        className={classes.item} elevation={0}
+      <ItemPaper
+         elevation={0}
       >
         <Box alignSelf="center">
           <BotMonitor
@@ -93,21 +86,21 @@ export default function RootEditor(props) {
             work={props.work}
           />
         </Box>
-      </Paper>
-      <Paper className={classes.item} elevation={0} >
+      </ItemPaper>
+      <ItemPaper  elevation={0} >
         <List aria-label="main menu">
           {lister(menus)}
           <ListSubheader>パート</ListSubheader>
           {lister(parts)}
           <ListItem button key="_newPart_"
             onClick={props.handleAddNewPart}
-            className={classes.newPart}
+            sx={{backgroundColor: theme=>theme.palette.primary}}
           >
             <ListItemText primary="パートの追加" />
           </ListItem>
         </List>
 
-      </Paper>
+      </ItemPaper>
 
     </Box>
   )

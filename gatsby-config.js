@@ -26,9 +26,10 @@ module.exports = {
     ]
   },
   plugins: [
-    `gatsby-theme-material-ui`,
+    `gatsby-plugin-top-layout`,
     `gatsby-plugin-remove-serviceworker`,
     `gatsby-plugin-react-helmet`,
+    `gatsby-plugin-mui-emotion`,
     {
       resolve: `gatsby-transformer-json`,
       options: {

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import Box from '@material-ui/core/Box';
-import TextField from '@material-ui/core/TextField';
-import { Typography } from "@material-ui/core";
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import { Typography } from "@mui/material";
 
 export default function FactorInput(props) {
   /*  0〜1.00の数値をTextFieldから取得

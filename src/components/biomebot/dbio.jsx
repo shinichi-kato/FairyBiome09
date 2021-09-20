@@ -44,11 +44,19 @@ class dbio {
     });
 
     this.generate = this.generate.bind(this);
+    this.saveConfig = this.saveConfig.bind(this);
+    this.saveMain = this.saveMain.bind(this);
+    this.savePart = this.savePart.bind(this);
+    this.movePart = this.movePart.bind(this);
+    this.updatePart = this.updatePart.bind(this);
+    this.addPart = this.addPart.bind(this);
     this.load = this.load.bind(this);
     this.loadCache = this.loadCache.bind(this);
     this.readEstimator = this.readEstimator.bind(this);
-    this.readScript = this.readScript.bind(this);
+    this.loadScript = this.loadScript.bind(this);
+    this.saveScript = this.saveScript.bind(this);
     this.saveCache = this.saveCache.bind(this);
+
 
   }
 
@@ -227,6 +235,7 @@ class dbio {
       .slice(4)
     
     const newName = `New ${Number(lastNew)+1}`;
+
 
     await this.db.parts.put({
       botId: botId,

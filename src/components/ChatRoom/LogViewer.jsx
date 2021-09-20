@@ -1,36 +1,11 @@
 import React, { useLayoutEffect, useRef } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-
-import Box from '@material-ui/core/Box';
-import Avatar from '@material-ui/core/Avatar';
-import Badge from '@material-ui/core/Badge';
-import Typography from '@material-ui/core/Typography';
-import MusicNoteIcon from '@material-ui/icons/MusicNote';
-import ClearIcon from '@material-ui/icons/Clear';
-import HotelIcon from '@material-ui/icons/Hotel';
-
-const useStyles = makeStyles(theme => ({
-	nonDotList: {
-		listStyle: "none",
-		margin: 0,
-		padding: 0,
-	},
-	conatiner: {
-		width: "100%"
-	},
-	leftBalloon: {
-		borderRadius: "15px 15px 15px 0px",
-		padding: "0.5em",
-		marginLeft: 4,
-		backgroundColor: theme.palette.secondary.light,
-	},
-	rightBalloon: {
-		borderRadius: " 15px 15px 0px 15px",
-		padding: "0.5em",
-		marginRight: 4,
-		backgroundColor: theme.palette.primary.light,
-	}
-}));
+import Box from '@mui/material/Box';
+import Avatar from '@mui/material/Avatar';
+import Badge from '@mui/material/Badge';
+import Typography from '@mui/material/Typography';
+import MusicNoteIcon from '@mui/icons-material/MusicNote';
+import ClearIcon from '@mui/icons-material/Clear';
+import HotelIcon from '@mui/icons-material/Hotel';
 
 const moodBadgeIcon = {
 	peace: null,
@@ -41,7 +16,6 @@ const moodBadgeIcon = {
 }
 
 function LeftBalloon(props) {
-	const classes = useStyles();
 	const message = props.message;
 	const avatarSrc = message.person === 'bot' ?
 		`${message.avatarPath}/${message.mood}.svg`
@@ -65,7 +39,12 @@ function LeftBalloon(props) {
 				</Badge>
 			</Box>
 			<Box
-				className={classes.leftBalloon}
+				sx={{
+          borderRadius: "15px 15px 15px 0px",
+          padding: "0.5em",
+          marginLeft: 4,
+          backgroundColor: theme=>theme.palette.secondary.light,
+        }}
 			>
 				<Typography variant="body1">{message.text}</Typography>
 				{texts.map((text,index)=><Typography variant="caption" key={index}>{text}</Typography>)}
@@ -75,7 +54,6 @@ function LeftBalloon(props) {
 }
 
 function RightBalloon(props) {
-	const classes = useStyles();
 	const message = props.message;
 	const avatarSrc = message.person === 'bot' ?
 		`${message.avatarPath}/${message.mood}.svg`
@@ -90,7 +68,12 @@ function RightBalloon(props) {
 		>
 
 			<Box
-				className={classes.rightBalloon}
+				sx={{
+          borderRadius: " 15px 15px 0px 15px",
+          padding: "0.5em",
+          marginRight: 4,
+          backgroundColor: theme=>theme.palette.primary.light,
+        }}
 			>
 				<Typography variant="body1">{message.text}</Typography>
 				<Typography variant="caption">{message.name}</Typography>

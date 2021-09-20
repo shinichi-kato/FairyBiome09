@@ -1,44 +1,17 @@
 import React, { useRef, useState, useContext, useEffect } from "react";
-import { makeStyles } from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box';
-import TextField from '@material-ui/core/TextField';
-import Slider from '@material-ui/core/Slider';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import Fab from '@material-ui/core/Fab';
-import SaveIcon from '@material-ui/icons/SaveAlt';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import Fab from '@mui/material/Fab';
+import SaveIcon from '@mui/icons-material/SaveAlt';
 
+import { ItemPaper, ParamSlider, FabContainerBox } from './StyledWigets';
 import ColorSelector from './ColorSelector';
 import PartOrder from './PartOrder';
 
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
 import FactorInput from "./FactorInput";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    margin: theme.spacing(1),
-  },
-  item: {
-    marginBottom: theme.spacing(2),
-    padding: theme.spacing(2),
-  },
-  slider: {
-    marginTop: 50,
-    width: 350,
-    marginLeft: 40,
-  },
-  fab: {
-    position: 'absolute',
-    bottom: theme.spacing(4),
-    right: theme.spacing(4),
-  },
-  fabIcon: {
-    marginRight: theme.spacing(1),
-  },
-  part: {
-    background: "linear-gradient(0deg, #f0f0f0 , #ffffff)",
-  },
-}));
 
 const hourMarks = [
   { value: 0, label: '0時' },
@@ -78,8 +51,6 @@ export default function ConfigEditor() {
       }
     },
    */
-
-  const classes = useStyles();
 
   const bot = useContext(BiomebotContext);
 
@@ -164,10 +135,10 @@ export default function ConfigEditor() {
     <Box
       display="flex"
       flexDirection="column"
-      className={classes.root}
+      sx={{ margin: theme => theme.spacing(1) }}
     >
 
-      <Paper className={classes.item} elevation={0} >
+      <ItemPaper elevation={0} >
         <Box>
           <Typography>チャットボットの説明</Typography>
         </Box>
@@ -185,8 +156,8 @@ export default function ConfigEditor() {
             チャットボット新規作成時に表示される説明です。
           </Typography>
         </Box>
-      </Paper>
-      <Paper className={classes.item} elevetion={0} >
+      </ItemPaper>
+      <ItemPaper elevetion={0} >
         <Box>背景の色</Box>
         <Box>
           <ColorSelector
@@ -195,14 +166,13 @@ export default function ConfigEditor() {
             handleChange={handleChangeBackgroundColor}
           />
         </Box>
-      </Paper>
-      <Paper className={classes.item} elevation={0} >
+      </ItemPaper>
+      <ItemPaper elevation={0} >
         <Box>
           <Typography>チャットボットが目を覚ます時刻</Typography>
         </Box>
         <Box>
-          <Slider
-            className={classes.slider}
+          <ParamSlider
             min={0} max={23}
             step={1}
             value={wake}
@@ -216,8 +186,7 @@ export default function ConfigEditor() {
           <Typography>チャットボットが眠る時刻</Typography>
         </Box>
         <Box>
-          <Slider
-            className={classes.slider}
+          <ParamSlider
             min={0} max={23}
             step={1}
             value={sleep}
@@ -232,12 +201,11 @@ export default function ConfigEditor() {
             チャットボットは眠っている間ユーザに返事をしなくなります。
           </Typography>
         </Box>
-      </Paper>
-      <Paper className={classes.item} elevation={0}>
+      </ItemPaper>
+      <ItemPaper elevation={0}>
         <Box>
           <Typography>初期のメンタルレベル</Typography>
-          <Slider
-            className={classes.slider}
+          <ParamSlider
             min={0} max={100}
             step={1}
             value={initialMentalLevel}
@@ -252,8 +220,8 @@ export default function ConfigEditor() {
           </Typography>
         </Box>
 
-      </Paper>
-      <Paper className={classes.item} elevation={0}>
+      </ItemPaper>
+      <ItemPaper elevation={0}>
         <Box>
           <Typography>
             初期のパート順
@@ -263,7 +231,6 @@ export default function ConfigEditor() {
           <PartOrder
             items={initialPartOrder}
             handleChange={handleChangeInitialPartOrder}
-            partStyle={classes.part}
           />
         </Box>
         <Box>
@@ -271,8 +238,8 @@ export default function ConfigEditor() {
             パートは上から順に返答するかどうかをチェックします。会話中にパートを超えて返答をしたり、順が変わったりします。
           </Typography>
         </Box>
-      </Paper>
-      <Paper className={classes.item} elevation={0}>
+      </ItemPaper>
+      <ItemPaper elevation={0}>
         <Box>
           <Typography>
             公園でのふるまい
@@ -307,17 +274,19 @@ export default function ConfigEditor() {
             決める数値が持続性です。持続性は次も話そうとする確率を示します。
           </>}
         />
-      </Paper>
-      <Box className={classes.fab}>
+      </ItemPaper>
+      <FabContainerBox >
         <Fab
           variant="extended"
           color="primary"
           aria-label="save"
           onClick={handleSave}
         >
-          <SaveIcon className={classes.fabIcon} />保存{message}
+          <SaveIcon
+            sx={{ marginRight: theme => theme.spacing(1), }}
+          />保存{message}
         </Fab>
-      </Box>
+      </FabContainerBox>
     </Box>
   )
 }

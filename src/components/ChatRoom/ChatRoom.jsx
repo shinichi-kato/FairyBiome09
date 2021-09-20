@@ -1,10 +1,11 @@
 import React, { useContext, useRef, useEffect, useState, useMemo } from 'react';
-import { alpha, makeStyles } from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box';
-import IconButton from '@material-ui/core/IconButton';
-import InputBase from '@material-ui/core/InputBase';
-import SendIcon from '@material-ui/icons/Send';
-import ArrowBackIcon from '@material-ui/icons/ArrowBackIos';
+import { alpha } from '@mui/material/styles';
+import { css } from "@emotion/react";
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import InputBase from '@mui/material/InputBase';
+import SendIcon from '@mui/icons-material/Send';
+import ArrowBackIcon from '@mui/icons-material/ArrowBackIos';
 
 import UserPanel from '../Panel/UserPanel';
 import FairyPanel from '../Panel/FairyPanel';
@@ -16,60 +17,10 @@ import { Message } from '../message';
 
 
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    '& .MuiTextField-root': {
-      '& fieldset': {
-        borderRadius: '50vh',
-      },
-      margin: theme.spacing(1),
-      width: 350,
-      fontSize: 18,
-      backgroundColor: '#f0f0f0',
-      borderRadius: '50vh',
-
-    },
-  },
-  rootWhoseChildUsesFlexGrow: {
-    width: 480,
-    height: "100vh",
-  },
-  icon: {
-    width: 120, // 24*x
-    height: 140  // 28*x
-  },
-  main: {
-    paddingTop: 200,
-  },
-  mainView: {
-    height: "calc ( 100vh - 48px - 256px);",
-    overflowY: "scroll",
-  },
-  console: {
-    width: 480,
-  },
-  textInput: {
-    position: 'relative',
-    borderRadius: "50vh",
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
-    '&:hover': {
-      backgroundColor: alpha(theme.palette.common.white, 0.25),
-    },
-    marginRight: theme.spacing(2),
-    marginLeft: 0,
-    width: 400,
-  },
-  inputRoot: {
-    color: '#FFFFFFCC',
-  },
-  inputInput: {
-    padding: theme.spacing(1),
-    // vertical padding + font size from searchIcon
-    paddingLeft: '1em',
-    width: '100%',
-    color: '#000000',
-  },
-}));
+const cssRootWhoseChildUsesFlexGrow = css`
+    width: 480px;
+    height: 100vh;
+`;
 
 export default function ChatRoom(props) {
   /*
@@ -77,7 +28,6 @@ export default function ChatRoom(props) {
     ===============
 
   */
-  const classes = useStyles();
   const fb = useContext(FirebaseContext);
   const ecosystem = useContext(EcosystemContext);
   const bot = useRef(useContext(BiomebotContext));
@@ -152,12 +102,15 @@ export default function ChatRoom(props) {
   return (
     <Box
       display="flex"
-      className={classes.rootWhoseChildUsesFlexGrow}
+      css={cssRootWhoseChildUsesFlexGrow}
       flexDirection="column"
       position="relative"
     >
       <Box
-        className={classes.mainView}
+        css={css`
+          height: calc ( 100vh - 48px - 256px);
+          overflow-y: scroll;
+        `}
         flexGrow={1}
       >
         {memorizedLogViewer}
@@ -167,7 +120,9 @@ export default function ChatRoom(props) {
         display="flex"
         flexDirection="row"
         justifyContent="space-between"
-        className={classes.console}
+        sx={{
+          width: 480
+        }}
       >
         <Box>
           <FairyPanel
@@ -192,15 +147,28 @@ export default function ChatRoom(props) {
         </Box>
         <Box flexGrow={1}>
           <form onSubmit={handleUserSubmit}>
-            <div className={classes.textInput}>
+            <div sx={{
+              position: 'relative',
+              borderRadius: "50vh",
+              backgroundColor: theme=> alpha(theme.palette.common.white, 0.15),
+              '&:hover': {
+                backgroundColor: theme=> alpha(theme.palette.common.white, 0.25),
+              },
+              marginRight: theme => theme.spacing(2),
+              marginLeft: 0,
+              width: 400,
+            }}>
               <InputBase
+                sx={{
+                  padding: (theme) => theme.spacing(1),
+                  // vertical padding + font size from searchIcon
+                  pladdingLeft: '1em',
+                  width: '100%',
+                  color: '#000000',
+                }}
                 value={userInput}
                 onChange={handleChangeUserInput}
                 fullWidth
-                classes={{
-                  root: classes.inputRoot,
-                  input: classes.inputInput,
-                }}
                 inputProps={{ 'aria-label': 'text' }}
                 endAdornment={
                   <IconButton

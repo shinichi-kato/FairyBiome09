@@ -1,13 +1,13 @@
 import React, { useContext, useReducer } from "react";
 import { navigate } from 'gatsby';
-import { makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import Avatar from '@material-ui/core/Avatar';
-import Box from '@material-ui/core/Box';
-import ArrowBackIcon from '@material-ui/icons/ArrowBackIos';
+import { css } from '@emotion/react';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
+import ArrowBackIcon from '@mui/icons-material/ArrowBackIos';
 
 import RootEditor from './RootEditor';
 import ConfigEditor from './ConfigEditor';
@@ -21,28 +21,13 @@ import { FirebaseContext } from "../Firebase/FirebaseProvider";
 
 import FooterSvg from './footer.inline.svg';
 
-
-const useStyles = makeStyles((theme) => ({
-  rootWhoseChildUsesFlexGrow: {
-    width: 480,
-    height: "calc( 100vh - 48px )",
-    backgroundColor: "#e0e0e0",
-    overflow: "hidden",
-    position: "relative",
-  },
-  mainView: {
-    width: 480,
-    flexGrow: 1,
-    overflowY: "scroll",
-    overflowX: "hidden"
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
-  title: {
-    flexGrow: 1,
-  },
-}));
+const cssRootWhoseChildUsesFlexGrow=css`
+width: 480;
+height: calc( 100vh - 48px );
+background-color: #e0e0e0;
+overflow: hidden;
+position: relative;
+`;
 
 const initialState={
   page: "root",
@@ -76,7 +61,6 @@ export default function Editor() {
      └ script  partのscript編集。 <ボタンでpartへ
 
   */
-  const classes = useStyles();
   const fb = useContext(FirebaseContext);
   const bot = useContext(BiomebotContext);
 
@@ -124,7 +108,7 @@ export default function Editor() {
   return (
     <Box
       display="flex"
-      className={classes.rootWhoseChildUsesFlexGrow}
+      css={cssRootWhoseChildUsesFlexGrow}
       flexDirection="column"
       position="relative"
       flexGrow={1}
@@ -133,14 +117,14 @@ export default function Editor() {
         <Toolbar>
           <IconButton
             edge="start"
-            className={classes.menuButton}
+            sx={{marginRight: theme=>theme.spacing(2),}}
             color="inherit"
             aria-label="menu"
             onClick={handleClickBack}
           >
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h6" className={classes.title}>
+          <Typography variant="h6" sx={{flexGrow: 1}}>
             チャットボットの編集
           </Typography>
           <IconButton
@@ -154,7 +138,12 @@ export default function Editor() {
         </Toolbar>
       </AppBar>
       <Box
-        className={classes.mainView}
+        css={css`
+          width: 480;
+          flex-grow: 1;
+          overflow-y: scroll;
+          overflow-x: hidden;
+        `}
       >
         <Box >
           {

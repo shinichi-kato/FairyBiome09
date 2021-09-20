@@ -1,33 +1,13 @@
 import React, { useState, useContext, useEffect, useCallback } from "react";
-import { makeStyles } from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
-import Fab from '@material-ui/core/Fab';
-import Typography from "@material-ui/core/Typography";
-import SaveIcon from '@material-ui/icons/SaveAlt';
-import AddIcon from '@material-ui/icons/Add';
-import { DataGrid } from '@material-ui/data-grid';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Fab from '@mui/material/Fab';
+import Typography from "@mui/material/Typography";
+import SaveIcon from '@mui/icons-material/SaveAlt';
+import AddIcon from '@mui/icons-material/Add';
+import { DataGrid } from '@mui/x-data-grid';
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
-
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    margin: theme.spacing(1),
-  },
-  item: {
-    marginBottom: theme.spacing(2),
-    padding: theme.spacing(2),
-  },
-  fab: {
-    position: 'absolute',
-    bottom: theme.spacing(4),
-    right: theme.spacing(4),
-  },
-  fabIcon: {
-    marginRight: theme.spacing(1),
-  },
-}));
+import { ItemPaper, FabContainerBox } from './StyledWigets';
 
 const columns = [
   { field: 'key', headerName: '名前', flex: 0.4, editable: true },
@@ -69,7 +49,6 @@ function maxId(rows) {
 }
 
 export default function MainEditor() {
-  const classes = useStyles();
   const bot = useContext(BiomebotContext);
   const [rows, setRows] = useState([]);
   const [message, setMessage] = useState("");
@@ -139,9 +118,9 @@ export default function MainEditor() {
     <Box
       display="flex"
       flexDirection="column"
-      className={classes.root}
+      sx={{ margin: theme=>theme.spacing(1)}}
     >
-      <Paper className={classes.item} elevation={0} >
+      <ItemPaper elevation={0} >
         <Box>
           <Typography variant="h5">主記憶</Typography>
           <Typography variant="body2">
@@ -174,19 +153,19 @@ export default function MainEditor() {
           {(message !== "" || message !== "ok") && message}
         </Typography>
 
-      </Paper>
+      </ItemPaper>
 
-      <Box className={classes.fab}>
+      <FabContainerBox>
         <Fab
           variant="extended"
           color="primary"
           aria-label="save"
           onClick={handleSave}
         >
-          <SaveIcon className={classes.fabIcon} />保存
+          <SaveIcon sx={{marginRight: theme=>theme.spacing(1),}} />保存
           {message === "ok" && "- ok"}
         </Fab>
-      </Box>
+      </FabContainerBox>
 
     </Box>
   )

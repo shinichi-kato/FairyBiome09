@@ -1,21 +1,18 @@
 import React from "react";
-import Box from '@material-ui/core/Box';
-import Typography from '@material-ui/core/Typography';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import { withStyles, makeStyles } from '@material-ui/core/styles';
+import Box from '@mui/material/Box';
+import { css } from '@emotion/react';
+import { styled } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+import LinearProgress from '@mui/material/LinearProgress';
 
-const useStyles = makeStyles(theme => ({
-	container: {
-		width: 192,
-		height: 256,
-	},
-	portrait: {
-		width: 192,
-		height: 256,
-	}
-}));
 
-const GaugeLinearProgress = withStyles((theme) => ({
+const cssContainer=css`
+width: 192;
+height: 256;
+`;
+
+
+const GaugeLinearProgress = styled(LinearProgress)(({theme}) => ({
 	root: {
 		height: 10,
 		borderRadius: 5,
@@ -23,7 +20,7 @@ const GaugeLinearProgress = withStyles((theme) => ({
 	bar: {
 		borderRadius: 5,
 	},
-}))(LinearProgress);
+}));
 
 export default function BotMonitor(props) {
 	/* チャットボットの現在の状態を表示 
@@ -31,7 +28,6 @@ export default function BotMonitor(props) {
 		props.botState: bot.state
 	*/
 	const work = props.work;
-	const classes = useStyles();
 
 	return (
 		<Box
@@ -40,10 +36,10 @@ export default function BotMonitor(props) {
 			alignItems="center"
 		>
 			<Box
-				className={classes.container}
+				css={cssContainer}
 			>
 				<img
-					className={classes.portrait}
+					css={cssContainer}
 					src={props.photoURL}
 					alt={props.photoURL} />
 			</Box>

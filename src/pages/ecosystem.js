@@ -1,16 +1,16 @@
 import React, { useState, useContext } from 'react';
 
 import { graphql } from 'gatsby';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 import EcosystemProvider from '../components/Ecosystem/EcosystemProvider';
 import { EcosystemContext } from '../components/Ecosystem/EcosystemProvider';
 import ParamEditor from '../components/Ecosystem/ParamEditor';
-import LinearProgress from '@material-ui/core/LinearProgress';
+import LinearProgress from '@mui/material/LinearProgress';
 
 export const query = graphql`
 query {
