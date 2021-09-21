@@ -1,8 +1,12 @@
 import React, { useEffect, useReducer, useRef, createContext } from 'react';
 import loadable from '@loadable/component';
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore";
+import { initializeApp, getApp, getApps } from 'firebase/app';
+import {
+  getAuth, onAuthStateChanged, updateProfile,
+  createUserWithEmailAndPassword, signInWithEmailAndPassword
+} from "firebase/auth";
+
+import { getFirestore } from 'firebase/firestore/lite';
 
 const AuthDialog = loadable(() => import('./AuthDialog'));
 var undefined; // for checking undefind
@@ -36,14 +40,14 @@ function reducer(state, action) {
       }
     }
 
-    case "run" : {
+    case "run": {
       return {
         ...state,
         authState: "run",
       };
     }
 
-    case 'ok':{
+    case 'ok': {
       return {
         user: action.user,
         authState: "ok",
@@ -54,13 +58,13 @@ function reducer(state, action) {
       }
     }
 
-    case "signOut" : {
+    case "signOut": {
       return {
         ...initialState,
       };
     }
 
-    case "updateUserInfo" : {
+    case "updateUserInfo": {
       return {
         ...state,
         displayName: action.displayName,
@@ -69,7 +73,7 @@ function reducer(state, action) {
       };
     }
 
-    case "error" : {
+    case "error": {
       return {
         ...initialState,
         authState: "error",
@@ -79,7 +83,7 @@ function reducer(state, action) {
       };
     }
 
-    case "openUpdateDialog":{
+    case "openUpdateDialog": {
       return {
         ...state,
         openDialog: "update",
@@ -93,7 +97,7 @@ function reducer(state, action) {
       }
     }
 
-    case "closeDialog":{
+    case "closeDialog": {
       return {
         ...state,
         openDialog: false
@@ -119,12 +123,12 @@ export default function FirebaseProvider(props) {
 
   useEffect(() => {
     let isCancelled = false;
-    if(!isCancelled){
+    if (!isCancelled) {
 
       let firebaseApp;
-      if(window !== undefined){
-        if(!firebase.apps.length){
-          firebaseApp = firebase.initializeApp({
+      if (window !== undefined) {
+        if (getApps().length === 0) {
+          firebaseApp = initializeApp({
             apiKey: process.env.GATSBY_FIREBASE_API_KEY,
             authDomain: process.env.GATSBY_FIREBASE_AUTH_DOMAIN,
             databaseURL: process.env.GATSBY_FIREBASE_DATABASE_URL,
@@ -134,73 +138,80 @@ export default function FirebaseProvider(props) {
             appId: process.env.GATSBY_FIREBASE_APP_ID,
           });
         }
-        else{
-          firebaseApp = firebase.app();
+        else {
+          firebaseApp = getApp();
         }
-  
-        dispatch({ 
-          type: "init", 
-          firebaseApp: firebaseApp, 
-          firestore: firebase.firestore()
+
+        dispatch({
+          type: "init",
+          firebaseApp: firebaseApp,
+          firestore: getFirestore(firebaseApp)
         });
-  
-        firebaseApp.auth().onAuthStateChanged(user=>{
-          if(user){
-            dispatch({ type: "ok", user:user});
+        const auth = getAuth();
+        onAuthStateChanged(auth, user => {
+          if (user) {
+            dispatch({ type: "ok", user: user });
             handleAuthOk.current();
           } else {
-            dispatch({ type: "error",message:"ユーザが認証されていません"});
+            dispatch({ type: "error", message: "ユーザが認証されていません" });
           }
         })
-  
+
       }
-  
+
     }
-    
+
     return () => { isCancelled = true }
   }, [state.firebaseApp]);
 
   function authenticate(email, password) {
-    dispatch({type: "run"});
-
-    firebase.auth().signInWithEmailAndPassword(email, password)
-    .then(()=>{
-      // userの更新はonAuthStateChangedで検出
-    })
-		.catch(error=>{
-			switch (error.code) {
-				case "auth/user-not-found":
-					dispatch({type: "error", message: "ユーザが登録されていません"});
-					break;
-				case "auth/wrong-password" :
-					dispatch({type: "error", message: "パスワードが違います"});
-					break;
-				case "auth/invalid-email" :
-					dispatch({type: "error", message: "不正なemailアドレスです"});
-					break;
-				default:
-					dispatch({type: "error", message: `${error.code}: ${error.message}`});
-			}
-		});
+    dispatch({ type: "run" });
+    const auth = getAuth();
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        dispatch({ type: "ok", user: userCredential.user });
+        handleAuthOk.current();
+      })
+      .catch(error => {
+        switch (error.code) {
+          case "auth/user-not-found":
+            dispatch({ type: "error", message: "ユーザが登録されていません" });
+            break;
+          case "auth/wrong-password":
+            dispatch({ type: "error", message: "パスワードが違います" });
+            break;
+          case "auth/invalid-email":
+            dispatch({ type: "error", message: "不正なemailアドレスです" });
+            break;
+          default:
+            dispatch({ type: "error", message: `${error.code}: ${error.message}` });
+        }
+      });
   }
 
   function createUser(email, password) {
-    dispatch({type: "run"});
-		firebase.auth().createUserWithEmailAndPassword(email, password)
-		.catch(error=>{
-      // 失敗したらエラーメッセージ出力
-      // ※成功したらonAuthStateChangeで捕捉
-			dispatch({type: "error", message: error.message});
-		});
+    dispatch({ type: "run" });
+    const auth = getAuth();
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(userCredential => {
+        dispatch({ type: "ok", user: userCredential.user });
+        handleAuthOk.current();
+      })
+      .catch(error => {
+        // 失敗したらエラーメッセージ出力
+        // ※成功したらonAuthStateChangeで捕捉
+        dispatch({ type: "error", message: error.message });
+      });
   }
 
   function updateUserInfo(displayName, photoURL) {
-		let user = firebase.auth().currentUser;
-		if (user) {
-			user.updateProfile({
-				displayName: displayName || user.displayName,
-				photoURL: photoURL || user.photoURL
-			}).then(()=>{
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (user) {
+      updateProfile(user, {
+        displayName: displayName || user.displayName,
+        photoURL: photoURL || user.photoURL
+      }).then(() => {
         // userの更新はonAuthStateChangedで捕捉するが、タイミングがUIに
         // 追いつかないため内部的にも書き換えを実行
         dispatch({
@@ -208,63 +219,64 @@ export default function FirebaseProvider(props) {
           displayName: displayName,
           photoURL: photoURL
         });
-			}).catch(error=>{
-				dispatch({type: "error", message: error.code});
-			});
-		}
+      }).catch(error => {
+        dispatch({ type: "error", message: error.code });
+      });
+    }
   }
 
-  function openUpdateDialog(){
-    dispatch({type:"openUpdateDialog"});
+  function openUpdateDialog() {
+    dispatch({ type: "openUpdateDialog" });
   }
 
-  function closeAuthDialog(){
+  function closeAuthDialog() {
 
-    if(state.authState==='ok'){
-      dispatch({type:"closeDialog"})
-    }else{
-      dispatch({type:"error",message:"無効な操作です"})
+    if (state.authState === 'ok') {
+      dispatch({ type: "closeDialog" })
+    } else {
+      dispatch({ type: "error", message: "無効な操作です" })
     }
 
   }
 
   function signOut() {
-		firebase.auth().signOut().then(()=>{
-			dispatch({type: "signOut"});
-		}).catch(error=>{
-			dispatch({type: "error", message: error.message});
-		});
+    const auth = getAuth();
+    signOut(auth).then(() => {
+      dispatch({ type: "signOut" });
+    }).catch(error => {
+      dispatch({ type: "error", message: error.message });
+    });
   }
 
 
-  return(
+  return (
     <FirebaseContext.Provider
       value={{
-        displayName:state.user.displayName,
-        authState:state.authState,
-        photoURL:state.user.photoURL,
-        firestore:state.firestore,
-        openUpdateDialog:openUpdateDialog,
+        displayName: state.user.displayName,
+        authState: state.authState,
+        photoURL: state.user.photoURL,
+        firestore: state.firestore,
+        openUpdateDialog: openUpdateDialog,
 
-        uid:state.user.uid,
+        uid: state.user.uid,
       }}
     >
-      { 
-        state.openDialog !== false 
+      {
+        state.openDialog !== false
           ?
-        <AuthDialog
-          authState={state.authState}
-          dialog={state.openDialog}
-          user={state.user}
-          update={state.isUpdate}
-          createUser={createUser}
-          authenticate={authenticate}
-          signOut={signOut}
-          updateUserInfo={updateUserInfo}
-          handleClose={closeAuthDialog}
-        />
+          <AuthDialog
+            authState={state.authState}
+            dialog={state.openDialog}
+            user={state.user}
+            update={state.isUpdate}
+            createUser={createUser}
+            authenticate={authenticate}
+            signOut={signOut}
+            updateUserInfo={updateUserInfo}
+            handleClose={closeAuthDialog}
+          />
           :
-        props.children
+          props.children
       }
     </FirebaseContext.Provider>
   )
