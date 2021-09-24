@@ -47,7 +47,6 @@ export default function ParamEditor(props) {
         <Grid item xs={3}>
           <Button
             variant="contained"
-            color="primary"
             onClick={handleClick}>
             変更
           </Button>

@@ -171,7 +171,6 @@ export default function ChatRoom(props) {
                 inputProps={{ 'aria-label': 'text' }}
                 endAdornment={
                   <IconButton
-                    color="primary"
                     onClick={handleUserSubmit}
                   >
                     <SendIcon />

@@ -221,7 +221,6 @@ export default function PartEditor(props) {
       <ItemPaper elevation={0} >
         <Button
           variant="outlined"
-          color="primary"
           disabled={partName !== props.partName}
           onClick={handleToScript}
         >
@@ -234,7 +233,6 @@ export default function PartEditor(props) {
       <FabContainerBox>
         <Fab
           variant="extended"
-          color="primary"
           aria-label="save"
           onClick={handleSave}
         >

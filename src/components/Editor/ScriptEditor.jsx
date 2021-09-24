@@ -62,6 +62,7 @@ function obj2rows(obj) {
       i++;
     }
   }
+  console.log("obj2rows",obj)
   return work;
 }
 
@@ -126,7 +127,6 @@ export default function ScriptEditor(props) {
       <FabContainerBox>
         <Fab
           variant="extended"
-          color="primary"
           aria-label="save"
           onClick={handleSave}
         >

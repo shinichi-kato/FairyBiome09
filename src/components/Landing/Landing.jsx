@@ -1,5 +1,5 @@
 import React from "react";
-import { styled } from '@mui/material/styles';
+import { styled } from '@mui/system';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import EditIcon from '@mui/icons-material/EditOutlined';
@@ -75,7 +75,6 @@ export default function Landing(props) {
         <MenuButton
           onClick={props.handleContinue}
           startIcon={<ChatIcon />}
-          color="primary"
           variant="contained"
         >
           チャットを始める

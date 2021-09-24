@@ -237,7 +237,6 @@ export default function AuthDialog(props){
         <Button
           variant="contained"
           size="large"
-          color="primary"
           sx={{
             padding: theme=>theme.spacing(2),
             fontSize: 18,

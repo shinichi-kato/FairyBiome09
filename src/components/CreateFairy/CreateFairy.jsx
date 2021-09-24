@@ -124,7 +124,6 @@ export default function CreateFairy(props) {
             </Box>
             <Box>
               <Button
-                color="primary"
                 variant="contained"
                 onClick={handleAccept}>
                 今の妖精を消して新しい妖精を作る
@@ -186,7 +185,6 @@ export default function CreateFairy(props) {
             </Box>
             <Box>
               <Button
-                color="primary"
                 variant="contained"
                 fullWidth
                 onClick={handleClickLoad}
@@ -204,7 +202,6 @@ export default function CreateFairy(props) {
             </Box>
             <Box>
               <Button
-                color="primary"
                 variant="contained"
                 onClick={handleReturn}>
                 戻る

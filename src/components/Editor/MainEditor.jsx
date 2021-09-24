@@ -135,7 +135,6 @@ export default function MainEditor() {
         >
           <Button
             variant="outlined"
-            color="primary"
             startIcon={<AddIcon />}
             onClick={handleAdd}
           >
@@ -158,7 +157,6 @@ export default function MainEditor() {
       <FabContainerBox>
         <Fab
           variant="extended"
-          color="primary"
           aria-label="save"
           onClick={handleSave}
         >

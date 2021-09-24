@@ -75,7 +75,6 @@ export default function WorkEditor() {
       <FabContainerBox>
         <Fab
           variant="extended"
-          color="primary"
           aria-label="save"
           onClick={handleSave}
         >

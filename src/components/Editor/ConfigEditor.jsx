@@ -278,7 +278,6 @@ export default function ConfigEditor() {
       <FabContainerBox >
         <Fab
           variant="extended"
-          color="primary"
           aria-label="save"
           onClick={handleSave}
         >

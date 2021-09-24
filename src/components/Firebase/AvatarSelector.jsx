@@ -28,7 +28,6 @@ export default function AvatarSelector(props) {
           borderRadius: 0,
           padding: 0,
         }}
-        color={props.photoURL===path ? "primary" : "default"}
         key={path}
         image={path}
         variant={props.photoURL===path ? "contained" : "text"}
