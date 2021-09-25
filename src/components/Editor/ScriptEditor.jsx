@@ -46,24 +46,21 @@ const columns= {
 
 
 function rows2obj(rows) {
-  let obj = {};
-  for (let row of rows) {
-    obj[row.key] = row.value;
-  }
+  const obj = rows.map(item=>({
+    in: item.in.split(','),
+    out: item.out.split(',')
+  }));
+
   return obj;
 }
 
 function obj2rows(obj) {
-  let work = [];
-  let i = 0;
-  for (let node in obj) {
-    if (obj.hasOwnProperty(node)) {
-      work.push({ id: i, key: node, value: obj[node] });
-      i++;
-    }
-  }
-  console.log("obj2rows",obj)
-  return work;
+  const rows = obj.map(item=>({
+    id: parseInt(item.id),
+    in: typeof item.in === 'string' ? item.in : item.in.join(','),
+    out: typeof item.out === 'string' ? item.out : item.out.join(','),
+    }));
+  return rows;
 }
 
 export default function ScriptEditor(props) {
@@ -74,12 +71,22 @@ export default function ScriptEditor(props) {
   const part = bot.state.parts[partName];
 
   useEffect(() => {
-    setRows(obj2rows(bot.loadScript(partName)))
+    (async () => {
+      const data= await bot.loadScript(partName);
+      setRows(obj2rows(data)); 
+    })()
   }, [bot, partName]);
 
   const handleCellEditCommit = useCallback(
     ({id, field, value})=>{
-
+      setRows(prevRows=>
+        prevRows.map(row=> {
+          if(row.id === id) {
+            return {...row, [field]:value};
+          }
+          return row;
+        })
+      )
     },[rows]
   )
 
@@ -114,21 +121,24 @@ export default function ScriptEditor(props) {
         <Box>
           {description[partName]}
         </Box>
-        <Box>
+        <Box
+          sx={{height: "500px"}}
+        >
           <DataGrid
             height={500}
             rows={rows}
             columns={columns[part.kind]}
             hideFooterSelectedRowCount
-            oncellEditCommit={handleCellEditCommit}
+            onCellEditCommit={handleCellEditCommit}
             />
         </Box>
       </ItemPaper>
       <FabContainerBox>
         <Fab
           variant="extended"
-          aria-label="save"
+          aria-label="save-script"
           onClick={handleSave}
+          color="primary"
         >
           <SaveIcon sx={{marginRight: theme=>theme.spacing(1)}} />保存
           {message === "ok" && "- ok"}

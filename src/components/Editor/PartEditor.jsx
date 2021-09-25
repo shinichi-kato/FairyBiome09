@@ -128,6 +128,18 @@ export default function PartEditor(props) {
           </Typography>
         </Box>
       </ItemPaper>
+      <ItemPaper elevation={0} >
+        <Button
+          variant="outlined"
+          disabled={partName !== props.partName}
+          onClick={handleToScript}
+        >
+          スクリプトの編集
+        </Button>
+        <Typography variant="body2">
+          辞書を編集します。パートの名前を変更する場合は先にこの画面の保存ボタンを押してください。
+        </Typography>
+      </ItemPaper>
       <ItemPaper elevation={0}>
         <Box>
           <Typography>開始時のムード</Typography>
@@ -218,23 +230,13 @@ export default function PartEditor(props) {
           }
         />
       </ItemPaper>
-      <ItemPaper elevation={0} >
-        <Button
-          variant="outlined"
-          disabled={partName !== props.partName}
-          onClick={handleToScript}
-        >
-          スクリプトの編集
-        </Button>
-        <Typography variant="body2">
-          辞書を編集します。パートの名前を変更する場合は先にこの画面の保存ボタンを押してください。
-        </Typography>
-      </ItemPaper>
+
       <FabContainerBox>
         <Fab
           variant="extended"
           aria-label="save"
           onClick={handleSave}
+          color="primary"
         >
           <SaveIcon sx={{marginRight: theme=>theme.spacing(1),}} />保存{message}
         </Fab>

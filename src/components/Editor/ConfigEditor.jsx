@@ -280,6 +280,7 @@ export default function ConfigEditor() {
           variant="extended"
           aria-label="save"
           onClick={handleSave}
+          color="primary"
         >
           <SaveIcon
             sx={{ marginRight: theme => theme.spacing(1) }}

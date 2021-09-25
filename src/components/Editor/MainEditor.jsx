@@ -159,6 +159,7 @@ export default function MainEditor() {
           variant="extended"
           aria-label="save"
           onClick={handleSave}
+          color="primary"
         >
           <SaveIcon sx={{marginRight: theme=>theme.spacing(1),}} />保存
           {message === "ok" && "- ok"}

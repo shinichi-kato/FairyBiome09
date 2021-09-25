@@ -21,20 +21,20 @@ import { FirebaseContext } from "../Firebase/FirebaseProvider";
 import FooterSvg from './footer.inline.svg';
 
 
-const initialState={
+const initialState = {
   page: "root",
   part: null
 };
 
-function reducer(state,action){
-  switch(action.type){
+function reducer(state, action) {
+  switch (action.type) {
     case 'ChangePage': {
       return {
         page: action.page,
-        part: action.part,
+        part: action.part || state.part,
       }
     }
-    default :
+    default:
       throw new Error(`invalid action ${action.type}`);
   }
 }
@@ -56,7 +56,7 @@ export default function Editor() {
   const fb = useContext(FirebaseContext);
   const bot = useContext(BiomebotContext);
 
-  const [state,dispatch] = useReducer(reducer,initialState)
+  const [state, dispatch] = useReducer(reducer, initialState)
 
   const route = {
     'root': {
@@ -80,7 +80,7 @@ export default function Editor() {
   };
 
   function handleChangePage(page, part) {
-    dispatch({type:'ChangePage',page:page,part:part});
+    dispatch({ type: 'ChangePage', page: page, part: part });
   }
 
   function handleClickBack() {
@@ -88,12 +88,12 @@ export default function Editor() {
     if (dest === null) {
       navigate('/');
     } else {
-      dispatch({type:'ChangePage',page:dest});
+      dispatch({ type: 'ChangePage', page: dest });
     }
 
   }
 
-  function handleAddNewPart(){
+  function handleAddNewPart() {
     bot.addNewPart();
   }
 
@@ -115,14 +115,14 @@ export default function Editor() {
         <Toolbar>
           <IconButton
             edge="start"
-            sx={{marginRight: theme=>theme.spacing(2),}}
+            sx={{ marginRight: theme => theme.spacing(2), }}
             color="inherit"
             aria-label="menu"
             onClick={handleClickBack}
           >
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h6" sx={{flexGrow: 1}}>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
             チャットボットの編集
           </Typography>
           <IconButton
