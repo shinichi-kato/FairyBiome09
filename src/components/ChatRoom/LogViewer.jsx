@@ -123,6 +123,8 @@ export default function LogViewer(props) {
 		scrollBottomRef?.current?.scrollIntoView();
 	},[props.log]);
 
+  console.log("log~",props.log)
+
 	const messages = props.log.map(message => {
 
 		switch (message.person) {

@@ -169,13 +169,24 @@ import { TinySegmenter } from './tinysegmenter';
 
 export const BiomebotContext = createContext();
 
-
 let segmenter = new TinySegmenter();
 
 let workers = {};
 let executes = {
   'room': room.execute,
 }
+
+export const initialWork = {
+  updatedAt: "",
+  status: "",
+  partOrder: ["peace"],
+  mentalLevel: 100,
+  site: "room",
+  moment: 0,
+  mood: "peace",
+  queue: [], // 複数にわけた出力を保持
+  futurePostings: [], // 
+};
 
 // チャットボットデータの初期値
 const defaultSettings = {
@@ -208,15 +219,7 @@ const defaultSettings = {
     "END_DECK": "",
   },
   work: {
-    updatedAt: "",
-    status: "",
-    partOrder: ["peace"],
-    mentalLevel: 100,
-    site: "",
-    moment: 0,
-    mood: "peace",
-    queue: [], // 複数にわけた出力を保持
-    futurePostings: [], // 
+    ...initialWork,
   },
   parts: {
     "peace": {
@@ -325,6 +328,13 @@ function reducer(state, action) {
       }
     }
 
+    case 'saveWork': {
+      return {
+        ...state,
+        work: {...action.work}
+      }
+    }
+
     case 'movePart': {
       const { prevName, newName, data } = action.data;
 
@@ -365,7 +375,6 @@ function reducer(state, action) {
           }
         }
       }
-
     }
 
     default:
@@ -553,7 +562,7 @@ export default function BiomebotProvider(props) {
   }
 
 
-  async function save(dest, obj) {
+  async function save(dest, obj, partName) {
     /* チャットボットのデータをdbに保存し、今のチャットボットにも反映 */
 
     switch (dest) {
@@ -562,11 +571,19 @@ export default function BiomebotProvider(props) {
         dispatch({ type: 'saveConfig', config: obj });
         return;
       }
+
       case 'main': {
         await db.saveMain(state.botId, obj);
         dispatch({ type: 'saveMain', main: obj });
         return;
       }
+
+      case 'work': {
+        await db.saveWork(state.botId, obj);
+        dispatch({ type: 'saveWork', work: obj});
+        return;
+      }
+
       case 'part': {
         if (obj.prevName !== obj.newName) {
           // partの名前が変更された場合、旧partを削除して新partを追加する。
@@ -578,6 +595,11 @@ export default function BiomebotProvider(props) {
           await db.updatePart(state.botId, obj);
           dispatch({ type: 'updatePart', data: obj});
         }
+        return;
+      }
+
+      case 'script': {
+        await db.saveScript(state.botId, partName, obj);
         return;
       }
 

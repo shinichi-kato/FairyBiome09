@@ -96,7 +96,7 @@ onmessage = function (event) {
 
   console.log("matrixize-start: ", botId, partName);
   (async () => {
-    const script = await db.readScript(botId, partName);
+    const script = await db.loadScript(botId, partName);
     // inスクリプトとoutスクリプトに分割
     let inScript = [];
     let outScript = [];

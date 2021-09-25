@@ -54,7 +54,7 @@ export default function BotMonitor(props) {
 					心のパワー（最大値）
 				</Box>
 				<Box>
-					<GaugeLinearProgress variant="determinate" value={work.mentalLevel} />
+					<GaugeLinearProgress variant="determinate" value={parseInt(work.mentalLevel)} />
 				</Box>
 			</Box>
 			<Box
@@ -65,7 +65,7 @@ export default function BotMonitor(props) {
 					心のパワー（現在の値）
 				</Box>
 				<Box>
-					<GaugeLinearProgress variant="determinate" value={work.moment} />
+					<GaugeLinearProgress variant="determinate" value={parseInt(work.moment)} />
 				</Box>
 			</Box>
 			

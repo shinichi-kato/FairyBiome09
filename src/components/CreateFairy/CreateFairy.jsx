@@ -156,7 +156,7 @@ export default function CreateFairy(props) {
                   // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
                   transform: 'translateZ(0)',
                 }}
-                cols={2.5}
+                cols={3}
               >
                 {props.chatbots.map(chatbot => (
                   <ImageListItem key={chatbot.name}

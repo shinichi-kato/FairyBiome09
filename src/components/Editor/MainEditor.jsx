@@ -1,10 +1,8 @@
 import React, { useState, useContext, useEffect, useCallback } from "react";
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Fab from '@mui/material/Fab';
 import Typography from "@mui/material/Typography";
 import SaveIcon from '@mui/icons-material/SaveAlt';
-import AddIcon from '@mui/icons-material/Add';
 import { DataGrid } from '@mui/x-data-grid';
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
 import { ItemPaper, FabContainerBox } from './StyledWigets';
@@ -23,6 +21,12 @@ function obj2rows(obj) {
       i++;
     }
   }
+
+  const lastItem = work[work.length - 1];
+  if (lastItem.key === "" && lastItem.value === "") {
+    work.pop();
+  }
+
   return work;
 }
 
@@ -57,20 +61,6 @@ export default function MainEditor() {
     setRows(obj2rows(bot.state.main))
   }, [bot.state.main]);
 
-  function handleAdd() {
-    const keys = setify(rows, "key");
-    if ("" in keys) {
-      setMessage("値が空白の行があります")
-    }
-    else {
-      setRows(prevRows =>
-        [...prevRows, { id: maxId(prevRows) + 1, key: "新しい値", value: "" }]
-      );
-
-    }
-  }
-
-
   function handleSave() {
     (async () => {
 
@@ -78,30 +68,6 @@ export default function MainEditor() {
       setMessage("ok");
     })()
   }
-
-  const handleCellEditCommit = useCallback(
-    ({ id, field, value }) => {
-
-      if (field === 'key') {
-        // keyはunique制約あり
-        const keys = setify(rows, "key");
-
-        const updatedRows = rows.map(row => {
-          if (row.id === id) {
-            if (value in keys) {
-              setMessage(`名前${value}が重複しています`);
-              return row;
-            }
-            return { ...row, key: value }
-          }
-          return row;
-        });
-
-        setRows(updatedRows);
-      }
-
-    }, [rows]
-  );
 
   useEffect(() => {
     let id;
@@ -114,11 +80,50 @@ export default function MainEditor() {
   }, [message]);
 
 
+  const handleCellEditCommit = useCallback(
+    ({ id, field, value }) => {
+
+      setRows(prevRows => {
+        let newRows = rows.map(row => {
+
+          const keys = setify(rows, "key");
+
+          if (row.id === id) {
+            if (field === 'key') {
+              if (value in keys) {
+                setMessage(`名前${value}が重複しています`);
+                return row;
+              }
+              return { ...row, key: value }
+            }
+            else {
+              return { ...row, [field]: value }
+            }
+          }
+          return row;
+        });
+
+        // 最下行が空行でなければ空行を追加
+
+        const lastItem = newRows[newRows.length - 1];
+        if (lastItem.key !== "" || lastItem.value !== "") {
+          newRows.push({ id: `${maxId(prevRows) + 1}`, key: "", value: "" });
+        }
+
+        return newRows;
+      })
+
+    }, [rows]
+  );
+
+
+
+
   return (
     <Box
       display="flex"
       flexDirection="column"
-      sx={{ margin: theme=>theme.spacing(1)}}
+      sx={{ margin: theme => theme.spacing(1) }}
     >
       <ItemPaper elevation={0} >
         <Box>
@@ -133,13 +138,6 @@ export default function MainEditor() {
         <Box
           height={600}
         >
-          <Button
-            variant="outlined"
-            startIcon={<AddIcon />}
-            onClick={handleAdd}
-          >
-            行の追加
-          </Button>
           <DataGrid
             height={500}
             rows={rows}
@@ -161,7 +159,7 @@ export default function MainEditor() {
           onClick={handleSave}
           color="primary"
         >
-          <SaveIcon sx={{marginRight: theme=>theme.spacing(1),}} />保存
+          <SaveIcon sx={{ marginRight: theme => theme.spacing(1), }} />保存
           {message === "ok" && "- ok"}
         </Fab>
       </FabContainerBox>

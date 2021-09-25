@@ -46,6 +46,7 @@ class dbio {
     this.generate = this.generate.bind(this);
     this.saveConfig = this.saveConfig.bind(this);
     this.saveMain = this.saveMain.bind(this);
+    this.saveWork = this.saveWork.bind(this);
     this.savePart = this.savePart.bind(this);
     this.movePart = this.movePart.bind(this);
     this.updatePart = this.updatePart.bind(this);
@@ -103,7 +104,7 @@ class dbio {
     /* 各partのデータのうちscript以外を記憶
        scriptは以下で別途記憶
     */
-    await this.saveParts(botId, obj.parts);
+    await this.savePart(botId, obj.parts);
 
     /* scripts "[botId],next,prev" */
     await this.db.scripts.where('[botId+partName+id]')
@@ -163,27 +164,20 @@ class dbio {
       .between([botId, Dexie.minKey], [botId, Dexie.maxKey])
       .delete();
 
-    let dictKeys = Object.keys(dict);
-    let mainData = [];
+    const data = dict2data(botId,dict)
 
-    for (let key of dictKeys) {
-      let val = dict[key];
+    await this.db.main.bulkAdd(data);
+  }
 
-      if (typeof val === 'string') {
-        mainData.push(
-          { botId: botId, key: key, val: val }
-        );
-      }
-      else if (Array.isArray(val)) {
-        for (let v of val) {
-          mainData.push(
-            { botId: botId, key: key, val: v }
-          )
-        }
-      }
-    }
-
-    await this.db.main.bulkAdd(mainData);
+  async saveWork(botId, dict){
+    await this.db.work
+      .where({botId:botId})
+      .delete();
+    
+    await this.db.work.put({
+      ...dict,
+      botId: botId,
+    });
   }
 
   async savePart(botId, dict) {
@@ -315,6 +309,15 @@ class dbio {
   }
 
   async saveScript(botId, partName,script){
+
+    /* 効率が低いが毎回全消去後に新規作成 */
+    /* 辞書が大規模になったら再考する */
+    await this.db.scripts.where('[botId+partName+id]')
+    .between(
+      [botId, partName, Dexie.minKey],
+      [botId, partName, Dexie.maxKey])
+    .delete();
+
     let data = [];
     let i;
     for (i in script) {
@@ -327,8 +330,10 @@ class dbio {
         prev: i - 1,
       });
     }
+
     data[0] = { ...data[0], prev: null };
     data[i] = { ...data[i], next: null };
+    
     await this.db.scripts.bulkAdd(data);
   }
 
@@ -414,4 +419,28 @@ class dbio {
 
 
 export const db = new dbio();
+
+function dict2data(botId,dict){
+  let dictKeys = Object.keys(dict);
+  let data = [];
+
+  for (let key of dictKeys) {
+    let val = dict[key];
+
+    if (typeof val === 'string') {
+      data.push(
+        { botId: botId, key: key, val: val }
+      );
+    }
+    else if (Array.isArray(val)) {
+      for (let v of val) {
+        data.push(
+          { botId: botId, key: key, val: v }
+        )
+      }
+    }
+  }
+
+  return data;
+}
 

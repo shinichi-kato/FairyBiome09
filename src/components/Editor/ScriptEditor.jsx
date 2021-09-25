@@ -28,39 +28,50 @@ const description = {
     </Typography>,
 };
 
-const columns= {
+const columns = {
   'knowledge': [
-    {field: 'in', headerName: 'IN', flex: 0.4, editable: true},
-    {field: 'out', headerName: 'OUT',flex: 1, editable: true},
+    { field: 'in', headerName: 'IN', flex: 0.4, editable: true },
+    { field: 'out', headerName: 'OUT', flex: 1, editable: true },
   ],
   'episode': [
-    {field: 'id',headerName: '行番号', flex:0.2},
-    {field: 'out',headerName: 'セリフ', flex:1, editable: true},
+    { field: 'id', headerName: '行番号', flex: 0.2 },
+    { field: 'out', headerName: 'セリフ', flex: 1, editable: true },
   ],
   'curiosity': [
-    {field: 'in', headerName: 'IN', flex: 0.4, editable: true},
-    {field: 'out', headerName: 'OUT',flex: 1, editable: true},
+    { field: 'in', headerName: 'IN', flex: 0.4, editable: true },
+    { field: 'out', headerName: 'OUT', flex: 1, editable: true },
   ]
 };
 
 
 
 function rows2obj(rows) {
-  const obj = rows.map(item=>({
+  let obj = rows.map(item => ({
     in: item.in.split(','),
     out: item.out.split(',')
   }));
+
+  const lastItem = obj[obj.length - 1];
+  if (lastItem.in === "" && lastItem.out === "") {
+    obj.pop();
+  }
 
   return obj;
 }
 
 function obj2rows(obj) {
-  const rows = obj.map(item=>({
+  const rows = obj.map(item => ({
     id: parseInt(item.id),
     in: typeof item.in === 'string' ? item.in : item.in.join(','),
     out: typeof item.out === 'string' ? item.out : item.out.join(','),
-    }));
+  }));
   return rows;
+}
+
+function maxId(rows) {
+  let ids = rows.map(row => row.id);
+  return Math.max(ids);
+
 }
 
 export default function ScriptEditor(props) {
@@ -72,30 +83,35 @@ export default function ScriptEditor(props) {
 
   useEffect(() => {
     (async () => {
-      const data= await bot.loadScript(partName);
-      setRows(obj2rows(data)); 
+      const data = await bot.loadScript(partName);
+      setRows(obj2rows(data));
     })()
   }, [bot, partName]);
 
   const handleCellEditCommit = useCallback(
-    ({id, field, value})=>{
-      setRows(prevRows=>
-        prevRows.map(row=> {
-          if(row.id === id) {
-            return {...row, [field]:value};
-          }
-          return row;
-        })
-      )
-    },[rows]
+    ({ id, field, value }) => {
+      setRows(prevRows => {
+        let newRows = prevRows.map(row =>
+          row.id === id ? { ...row, [field]: value } : row);
+
+        // 最終行が空行でなければ空行を追加
+        const lastItem = newRows[newRows.length - 1];
+
+        if (lastItem.in !== "" || lastItem.out !== "") {
+          newRows.push({ id: `${maxId(prevRows) + 1}`, in: "", out: "" })
+        }
+
+        return newRows;
+      })
+    }, []
   )
 
-  function handleSave(){
+  function handleSave() {
     (async () => {
 
-      await bot.save('main', rows2obj(rows));
+      await bot.save('script', rows2obj(rows), partName);
       setMessage("ok");
-    })()  
+    })()
   }
 
   useEffect(() => {
@@ -112,17 +128,18 @@ export default function ScriptEditor(props) {
     <Box
       display="flex"
       flexDirection="column"
-      sx={{margin: theme=>theme.spacing(1)}}
+      sx={{ margin: theme => theme.spacing(1) }}
     >
       <ItemPaper elevation={0} >
         <Box>
-        <Typography variant="h5">スクリプト<br/>{props.partNmae}</Typography>
+          <Typography variant="h5">スクリプト {props.partName}</Typography>
+          <Typography variant="body2">カンマ(,)で区切ると値を複数設定できます</Typography>
         </Box>
         <Box>
           {description[partName]}
         </Box>
         <Box
-          sx={{height: "500px"}}
+          sx={{ height: "500px" }}
         >
           <DataGrid
             height={500}
@@ -130,7 +147,7 @@ export default function ScriptEditor(props) {
             columns={columns[part.kind]}
             hideFooterSelectedRowCount
             onCellEditCommit={handleCellEditCommit}
-            />
+          />
         </Box>
       </ItemPaper>
       <FabContainerBox>
@@ -140,7 +157,7 @@ export default function ScriptEditor(props) {
           onClick={handleSave}
           color="primary"
         >
-          <SaveIcon sx={{marginRight: theme=>theme.spacing(1)}} />保存
+          <SaveIcon sx={{ marginRight: theme => theme.spacing(1) }} />保存
           {message === "ok" && "- ok"}
         </Fab>
       </FabContainerBox>

@@ -1,4 +1,3 @@
-import React from "react";
 import { styled } from '@mui/material/styles';
 import Slider from '@mui/material/Slider';
 import Paper from '@mui/material/Paper';
