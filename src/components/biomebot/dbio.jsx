@@ -52,16 +52,12 @@ class dbio {
     this.updatePart = this.updatePart.bind(this);
     this.addPart = this.addPart.bind(this);
     this.load = this.load.bind(this);
-    this.loadCache = this.loadCache.bind(this);
-    this.readEstimator = this.readEstimator.bind(this);
     this.loadScript = this.loadScript.bind(this);
     this.saveScript = this.saveScript.bind(this);
     this.saveCache = this.saveCache.bind(this);
-
-
+    this.loadCache = this.loadCache.bind(this);
+    this.readEstimator = this.readEstimator.bind(this);
   }
-
-
 
   //-----------------------------------------------------------------------
   //
@@ -117,7 +113,7 @@ class dbio {
 
     for (let partName of Object.keys(obj.parts)) {
       const script = obj.parts[partName].script;
-      await this.saveScript(botId,partName,script);
+      await this.saveScript(botId, partName, script);
     }
   }
 
@@ -164,16 +160,16 @@ class dbio {
       .between([botId, Dexie.minKey], [botId, Dexie.maxKey])
       .delete();
 
-    const data = dict2data(botId,dict)
+    const data = dict2data(botId, dict)
 
     await this.db.main.bulkAdd(data);
   }
 
-  async saveWork(botId, dict){
+  async saveWork(botId, dict) {
     await this.db.work
-      .where({botId:botId})
+      .where({ botId: botId })
       .delete();
-    
+
     await this.db.work.put({
       ...dict,
       botId: botId,
@@ -218,7 +214,7 @@ class dbio {
       .modify(...data);
   }
 
-  async addPart(botId){
+  async addPart(botId) {
     // パートの追加
     // ユニークな名前を生成
     const lastNew = await this.db.parts
@@ -227,8 +223,8 @@ class dbio {
       .sortBy('name')
       .last()
       .slice(4)
-    
-    const newName = `New ${Number(lastNew)+1}`;
+
+    const newName = `New ${Number(lastNew) + 1}`;
 
 
     await this.db.parts.put({
@@ -308,15 +304,17 @@ class dbio {
 
   }
 
-  async saveScript(botId, partName,script){
+  async saveScript(botId, script, partName) {
 
     /* 効率が低いが毎回全消去後に新規作成 */
     /* 辞書が大規模になったら再考する */
     await this.db.scripts.where('[botId+partName+id]')
-    .between(
-      [botId, partName, Dexie.minKey],
-      [botId, partName, Dexie.maxKey])
-    .delete();
+      .between(
+        [botId, partName, Dexie.minKey],
+        [botId, partName, Dexie.maxKey])
+      .delete();
+    
+    console.log("script",script)
 
     let data = [];
     let i;
@@ -333,7 +331,7 @@ class dbio {
 
     data[0] = { ...data[0], prev: null };
     data[i] = { ...data[i], next: null };
-    
+
     await this.db.scripts.bulkAdd(data);
   }
 
@@ -420,7 +418,7 @@ class dbio {
 
 export const db = new dbio();
 
-function dict2data(botId,dict){
+function dict2data(botId, dict) {
   let dictKeys = Object.keys(dict);
   let data = [];
 

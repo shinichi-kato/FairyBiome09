@@ -6,7 +6,7 @@ import { ItemPaper, FabContainerBox } from './StyledWigets';
 import { DataGrid } from '@mui/x-data-grid';
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
 
-import {initialWork} from '../biomebot/BiomebotProvider';
+import { defaultSettings } from '../biomebot/BiomebotProvider';
 
 const columns = [
   { field: 'key', headerName: '名前', width: 120, editable: true },
@@ -32,7 +32,7 @@ function obj2rows(obj) {
 }
 
 function rows2obj(rows) {
-  let obj = {...initialWork};
+  let obj = Object.assign({}, defaultSettings.work);
   
   for (let row of rows) {
     obj[row.key] = row.value;
@@ -50,7 +50,7 @@ function setify(rows, column) {
 
 function maxId(rows) {
   let ids = rows.map(row => row.id);
-  return Math.max(ids);
+  return Math.max(...ids);
 
 }
 
@@ -116,7 +116,7 @@ export default function WorkEditor() {
 
         const lastItem = newRows[newRows.length - 1];
         if (lastItem.key !== "" || lastItem.value !== "") {
-          newRows.push({ id: `${maxId(prevRows) + 1}`, key: "", value: "" });
+          newRows.push({ id: maxId(prevRows) + 1, key: "", value: "" });
         }
 
         return newRows;

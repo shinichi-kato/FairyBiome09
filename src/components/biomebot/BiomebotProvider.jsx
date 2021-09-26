@@ -176,20 +176,9 @@ let executes = {
   'room': room.execute,
 }
 
-export const initialWork = {
-  updatedAt: "",
-  status: "",
-  partOrder: ["peace"],
-  mentalLevel: 100,
-  site: "room",
-  moment: 0,
-  mood: "peace",
-  queue: [], // 複数にわけた出力を保持
-  futurePostings: [], // 
-};
 
 // チャットボットデータの初期値
-const defaultSettings = {
+export const defaultSettings = {
   botId: null,
   config: {
     description: "",
@@ -219,7 +208,15 @@ const defaultSettings = {
     "END_DECK": "",
   },
   work: {
-    ...initialWork,
+    updatedAt: "",
+    status: "",
+    partOrder: ["peace"],
+    mentalLevel: 100,
+    site: "room",
+    moment: 0,
+    mood: "peace",
+    queue: [], // 複数にわけた出力を保持
+    futurePostings: [], // 
   },
   parts: {
     "peace": {
@@ -331,14 +328,14 @@ function reducer(state, action) {
     case 'saveWork': {
       return {
         ...state,
-        work: {...action.work}
+        work: { ...action.work }
       }
     }
 
     case 'movePart': {
       const { prevName, newName, data } = action.data;
 
-      let parts = {...state.parts};
+      let parts = { ...state.parts };
       delete parts[prevName];
       parts[newName] = { ...data }
 
@@ -368,7 +365,7 @@ function reducer(state, action) {
       const { prevName, data } = action.data;
       return {
         ...state,
-        parts:{
+        parts: {
           ...state.parts,
           [prevName]: {
             ...data
@@ -413,11 +410,15 @@ export default function BiomebotProvider(props) {
           const top = prev.queue[0];
           const newWork = {
             ...prev,
+            key: prev.key + 1,
             queue: prev.queue.slice(1)
           };
           // console.log("biomebotProvider: topmessage=",top.message);
 
-          return executes[work.site](state, newWork, top.message, top.emitter);
+          return {
+            key: prev.key + 1,
+            ...executes[work.site](state, newWork, top.message, top.emitter),
+          }
         });
       }
     }
@@ -473,15 +474,17 @@ export default function BiomebotProvider(props) {
     if (currentState.status !== 'ready') {
       setWork(prev => ({
         ...prev,
+        key: prev.key + 1,
         queue: [...prev.queue,
         { message: message, emitter: emitter }
         ],
 
       }));
     } else {
-      setWork(prevWork => {
-        executes[work.site](currentState, prevWork, message, emitter)
-      }
+      setWork(prevWork => ({
+        key: prevWork.key + 1,
+        ...executes[work.site](currentState, prevWork, message, emitter)
+      })
       );
     }
   }
@@ -518,7 +521,7 @@ export default function BiomebotProvider(props) {
       }));
   }
 
-  async function addNewPart(){
+  async function addNewPart() {
     await db.addPart(state.botId);
   }
 
@@ -557,7 +560,11 @@ export default function BiomebotProvider(props) {
       // * 未実装 *
     }
 
-    setWork(prev => ({ ...prev, site: site }));
+    setWork(prev => ({
+      ...prev,
+      key: prev.key + 1,
+      site: site 
+    }));
 
   }
 
@@ -580,7 +587,7 @@ export default function BiomebotProvider(props) {
 
       case 'work': {
         await db.saveWork(state.botId, obj);
-        dispatch({ type: 'saveWork', work: obj});
+        dispatch({ type: 'saveWork', work: obj });
         return;
       }
 
@@ -593,13 +600,13 @@ export default function BiomebotProvider(props) {
         } else {
           // 既存partのアップデート
           await db.updatePart(state.botId, obj);
-          dispatch({ type: 'updatePart', data: obj});
+          dispatch({ type: 'updatePart', data: obj });
         }
         return;
       }
 
       case 'script': {
-        await db.saveScript(state.botId, partName, obj);
+        await db.saveScript(state.botId, obj, partName);
         return;
       }
 
@@ -608,13 +615,13 @@ export default function BiomebotProvider(props) {
     }
   }
 
-  async function loadScript(partName){
-    return await db.loadScript(state.botId,partName);
-    
+  async function loadScript(partName) {
+    return await db.loadScript(state.botId, partName);
+
   }
 
-  async function saveScript(partName, script){
-    await db.saveScript(state.botId,partName,script);
+  async function saveScript(partName, script) {
+    await db.saveScript(state.botId, partName, script);
   }
 
 

@@ -48,7 +48,8 @@ function setify(rows, column) {
 
 function maxId(rows) {
   let ids = rows.map(row => row.id);
-  return Math.max(ids);
+  console.log(ids)
+  return Math.max(...ids);
 
 }
 
@@ -107,7 +108,7 @@ export default function MainEditor() {
 
         const lastItem = newRows[newRows.length - 1];
         if (lastItem.key !== "" || lastItem.value !== "") {
-          newRows.push({ id: `${maxId(prevRows) + 1}`, key: "", value: "" });
+          newRows.push({ id: maxId(prevRows) + 1, key: "", value: "" });
         }
 
         return newRows;

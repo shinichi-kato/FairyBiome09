@@ -1,5 +1,6 @@
 import React, { useContext, useRef, useEffect, useState, useMemo } from 'react';
 import { alpha } from '@mui/material/styles';
+import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import InputBase from '@mui/material/InputBase';
@@ -138,49 +139,50 @@ export default function ChatRoom(props) {
         bottom={0}
         display="flex"
         flexDirection="row"
+        sx={{ width: "100%" }}
       >
-        <Box>
-          <IconButton>
+        <Paper
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            width: "calc( 100% - 4px)",
+            p: '2px 4px',
+            m: '4px',
+            borderRadius: '10px',
+            flexGrow: 1,
+            backgroundColor: alpha('#ffffff', 0.2)
+          }}
+          component="form"
+          onSubmit={handleUserSubmit}
+          elevation={0}
+        >
+          <IconButton
+            sx={{ p: "10px" }}
+            aria-label="menu"
+          >
             <ArrowBackIcon />
           </IconButton>
-        </Box>
-        <Box flexGrow={1}>
-          <form onSubmit={handleUserSubmit}>
-            <div sx={{
-              position: 'relative',
-              borderRadius: "50vh",
-              backgroundColor: theme => alpha(theme.palette.common.white, 0.15),
-              '&:hover': {
-                backgroundColor: theme => alpha(theme.palette.common.white, 0.25),
-              },
-              marginRight: theme => theme.spacing(2),
-              marginLeft: 0,
-              width: 400,
-            }}>
-              <InputBase
-                sx={{
-                  padding: (theme) => theme.spacing(1),
-                  // vertical padding + font size from searchIcon
-                  pladdingLeft: '1em',
-                  width: '100%',
-                  color: '#000000',
-                }}
-                value={userInput}
-                onChange={handleChangeUserInput}
-                fullWidth
-                inputProps={{ 'aria-label': 'text' }}
-                endAdornment={
-                  <IconButton
-                    onClick={handleUserSubmit}
-                  >
-                    <SendIcon />
-                  </IconButton>
-                }
-              />
-            </div>
-          </form>
-        </Box>
+          <InputBase
+            sx={{
+              ml: 1,
+              flex: 1,
+            }}
+            value={userInput}
+            onChange={handleChangeUserInput}
+            fullWidth
+            autoFocus
+            inputProps={{ 'aria-label': 'text' }}
+            endAdornment={
+              <IconButton
+                onClick={handleUserSubmit}
+                color="primary"
+              >
+                <SendIcon />
+              </IconButton>
+            }
+          />
+        </Paper>
       </Box>
-    </Box>
+    </Box >
   )
 }

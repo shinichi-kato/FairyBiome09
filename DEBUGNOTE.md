@@ -2,12 +2,10 @@ debug note
 ==============
 
 1. チャットルーム
-* CreateFairyで画像が見切れている
-
 
 * triggerに応答していない？
-
 * queueが消費されてない？
+* → undefined返答になる
 
 * <br>で改行されていない
 * {user}が展開されてない
@@ -18,6 +16,7 @@ debug note
 
 
 # 以下対応済み
+* CreateFairyで画像が見切れている
 
 * BotMonitorで名前が表示されない
 -> generate時にdisplayNameを復元するように修正

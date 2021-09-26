@@ -21,7 +21,7 @@ function LeftBalloon(props) {
 		`${message.avatarPath}/${message.mood}.svg`
 		:
 		`${message.avatarPath}`;
-	const texts = message.text.split('<br/>');
+	const texts = message.text?.split('<br/>') || ["undefined"];
 
 
 	return (
@@ -123,7 +123,6 @@ export default function LogViewer(props) {
 		scrollBottomRef?.current?.scrollIntoView();
 	},[props.log]);
 
-  console.log("log~",props.log)
 
 	const messages = props.log.map(message => {
 
