@@ -606,7 +606,7 @@ export default function BiomebotProvider(props) {
       }
 
       case 'script': {
-        await db.saveScript(state.botId, obj, partName);
+        await db.saveScript(state.botId, partName, obj);
         return;
       }
 
@@ -620,11 +620,6 @@ export default function BiomebotProvider(props) {
 
   }
 
-  async function saveScript(partName, script) {
-    await db.saveScript(state.botId, partName, script);
-  }
-
-
   const photoURL = `/chatbot/${stateRef.current.config.avatarPath}/${work.partOrder[0]}.svg`;
 
   return (
@@ -635,7 +630,6 @@ export default function BiomebotProvider(props) {
         save: save,
         addNewPart: addNewPart,
         loadScript: loadScript,
-        saveScript: saveScript,
         deploy: deploy,
         state: state,
         work: work,

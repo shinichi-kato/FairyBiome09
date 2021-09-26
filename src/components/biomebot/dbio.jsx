@@ -102,13 +102,6 @@ class dbio {
     */
     await this.savePart(botId, obj.parts);
 
-    /* scripts "[botId],next,prev" */
-    await this.db.scripts.where('[botId+partName+id]')
-      .between(
-        [botId, Dexie.minKey, Dexie.minKey],
-        [botId, Dexie.maxKey, Dexie.maxKey])
-      .delete();
-
     /* scriptはidをこちらで与え、next,prevも設定する */
 
     for (let partName of Object.keys(obj.parts)) {
@@ -178,16 +171,24 @@ class dbio {
 
   async savePart(botId, dict) {
     /* 各partのデータのうちscript以外を記憶
-       scriptは以下で別途記憶
+       scriptは別途記憶
     */
     let dictKeys = Object.keys(dict);
+    
     await this.db.parts.bulkPut(
       dictKeys.map(key => {
         const part = dict[key];
         return {
-          ...part,
           botId: botId,
           name: key,
+          kind: part.kind,
+          cacheTimestamp: part.cacheTimestamp,
+          featureWeights: part.featureWeights,
+          momentLower: part.momentLower,
+          momentUpper: part.momentUpper,
+          precision: part.precision,
+          retention: part.retention,
+          scriptTimestamp: part.scriptTimestamp,
         }
       }));
 
@@ -304,7 +305,7 @@ class dbio {
 
   }
 
-  async saveScript(botId, script, partName) {
+  async saveScript(botId, partName, script) {
 
     /* 効率が低いが毎回全消去後に新規作成 */
     /* 辞書が大規模になったら再考する */
@@ -314,8 +315,6 @@ class dbio {
         [botId, partName, Dexie.maxKey])
       .delete();
     
-    console.log("script",script)
-
     let data = [];
     let i;
     for (i in script) {

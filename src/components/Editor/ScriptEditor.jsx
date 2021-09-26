@@ -60,7 +60,7 @@ function rows2obj(rows, kind) {
   }
 
   if (kind === 'episode') {
-    // episode記憶の場合は前行のOUTを聞いたら今の行を出力する
+    // episode記憶の場合は前行のOUTを今の行のINにする
     if (rows[0].in === "") {
       obj[0].in = '{NOP}';
       obj[0].out = rows[0].out;

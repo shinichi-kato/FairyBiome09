@@ -153,6 +153,7 @@ export default function CreateFairy(props) {
               <ImageList
                 sx={{
                   flexWrap: 'nowrap',
+                  width: 500,
                   // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
                   transform: 'translateZ(0)',
                 }}
@@ -161,16 +162,21 @@ export default function CreateFairy(props) {
                 {props.chatbots.map(chatbot => (
                   <ImageListItem key={chatbot.name}
                     onClick={() => handleClickTile(chatbot.directory)}
+                    sx={{
+                      border: "4px solid",
+                      borderColor: chatbot.directory === currentDirectory ? 'primary.main' : '#FFFFFF',
+                    }}
                   >
                     <img src={`../../chatbot/${chatbot.directory}/peace.svg`}
                       style={{
                         backgroundColor: chatbot.backgroundColor,
-                        width: 400,
+                        width: 200,
                       }}
                       alt={chatbot.directory}
                     />
                     <ImageListItemBar
                       title={chatbot.name}
+                      subtitle={chatbot.description}
                       sx={{
                         flexGrow: 1,
                       }}
@@ -198,7 +204,7 @@ export default function CreateFairy(props) {
         {props.appState === 'done' &&
           <>
             <Box>
-              {bot.state.config.displayName} が仲間になっています
+              {bot.state.displayName} が仲間になっています
             </Box>
             <Box>
               <Button

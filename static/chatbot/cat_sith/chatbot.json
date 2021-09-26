@@ -1,0 +1,240 @@
+{
+    "botId": null,
+    "config": {
+        "description": "猫の姿をした妖精",
+        "backgroundColor": "#EE44EE",
+        "circadian": {
+            "wake": 6,
+            "sleep": 21
+        },
+        "initialMentalLevel": 10,
+        "initialPartOrder": [
+            "greeting",
+            "faq",
+            "cheer",
+            "peace"
+        ],
+        "hubBehavior": {
+            "utilization": 0.4,
+            "precision": 0.3,
+            "retention": 0.4
+        }
+    },
+    "work": {
+        "updatedAt": "",
+        "partOrder": [],
+        "mentalLevel": 10,
+        "moment": 0,
+        "mood": "peace",
+        "queue": [],
+        "timerPostings": []
+    },
+    "main": {
+        "NAME": "アズキ",
+        "CREATOR_NAME": "system",
+        "POSITIVE_LABEL": [
+            "いいね",
+            "おっけー"
+        ],
+        "NEGATIVE_LABEL": "死ね",
+        "START_DECK": "",
+        "END_DECK": "",
+        "{NOT_FOUND}": ["そうなんですか？"]
+    },
+    "parts": {
+        "greeting": {
+            "kind": "knowledge",
+            "momentUpper": 15,
+            "momentLower": 0,
+            "precision": 0.3,
+            "retention": 0.2,
+            "scriptTimestamp": null,
+            "cacheTimestamp": null,
+            "featureWights": null,
+            "script": [
+                {
+                    "in": "{enter_greeting}",
+                    "out": "こんにちは。{user}さん。どうしたんですか？"
+                },
+                {
+                    "in": "{enter_morning}",
+                    "out": "おはようございます！"
+                },
+                {
+                    "in": "{enter_noon}",
+                    "out": "こんにちは！昼ですね"
+                },
+                {
+                    "in": "{enter_evening}",
+                    "out": "こんばんは！"
+                },
+                {
+                    "in": "{enter_night}",
+                    "out": "もうすっかり夜ですね"
+                },
+                {
+                    "in": [
+                        "こんにちは"
+                    ],
+                    "out": [
+                        "今日は。<br>妖精のことで、聞きたいことがあったらどうぞ。"
+                    ]
+                },
+                {
+                    "in": [
+                        "ばいばい"
+                    ],
+                    "out": [
+                        "またね！"
+                    ]
+                },
+                {
+                    "in": [],
+                    "out": []
+                },
+                {
+                    "in": [],
+                    "out": []
+                },
+                {
+                    "in": [],
+                    "out": []
+                }
+            ]
+        },
+        "faq": {
+            "kind": "knowledge",
+            "momentUpper": 100,
+            "momentLower": 0,
+            "precision": 0.3,
+            "retention": 0.2,
+            "scriptTimestamp": null,
+            "cacheTimestamp": null,
+            "featureWights": null,
+            "script": [
+                {
+                    "in": [
+                        "名前は変えられるの"
+                    ],
+                    "out": [
+                        "妖精の名前は一度決めたら変えられないよ。"
+                    ]
+                },
+                {
+                    "in": [
+                        "元気がなくて心配"
+                    ],
+                    "out": [
+                        "元気づけるような言葉をかけてみて。"
+                    ]
+                },
+                {
+                    "in": [
+                        "返事してくれない"
+                    ],
+                    "out": [
+                        "言葉を覚えさせてみて"
+                    ]
+                },
+                {
+                    "in": [
+                        "レベルアップするにはどうしたらいいの"
+                    ],
+                    "out": [
+                        "たくさんお話したり、言葉を覚えさせたりして"
+                    ]
+                }
+            ]
+        },
+        "cheer":{
+            "kind": "knowledge",
+            "momentUpper": 100,
+            "momentLower": 20,
+            "precision": 0.3,
+            "retention": 0.2,
+            "scriptTimestamp": null,
+            "cacheTimestamp": null,
+            "featureWights": null,
+            "script": [
+                {
+                    "in": "{NOT_FOUND}",
+                    "out": [
+                        "あはは！","面白い〜"
+                    ]
+                },
+                {
+                    "in": [
+                        "あはは"
+                    ],
+                    "out": [
+                        "^_^"
+                    ]
+                }
+            ]            
+        },
+        "peace":{
+            "kind": "knowledge",
+            "momentUpper": 100,
+            "momentLower": 0,
+            "precision": 0.3,
+            "retention": 0.6,
+            "scriptTimestamp": null,
+            "cacheTimestamp": null,
+            "featureWeights": null,
+            "script": [
+                {
+                    "in": "{enter_night}",
+                    "out": ["夜になりましたね・・"]
+                },
+                {
+                    "in": "{enter_morning}",
+                    "out": ["朝になりました。おはようございます！","おはよう〜","おはよう！"]
+                },
+                {
+                    "in": "{enter_noon}",
+                    "out": ["お昼ですね。"]
+                },
+                {
+                    "in": "{enter_evening}",
+                    "out": ["もうすぐ夜になりますね。","夕方になってきました。"]
+                },
+                {
+                    "in": ["弱気だって言われた"],
+                    "out": ["{user}さんは優しいんですよ。"]
+                },
+                {
+                    "in": "{enter_storm}",
+                    "out":["台風みたいです！","すごい風と雨になってきました"]
+                },
+                {
+                    "in": "{enter_rain}",
+                    "out":["雨ですね〜"]
+                },
+                {
+                    "in": "{enter_halfClouds}",
+                    "out":["晴れましたね！"]
+                },
+                {
+                    "in": "{enter_cloudy}",
+                    "out":["なんだか曇ってきましたね。","涼しくなってきた気がします"]
+                },
+                {
+                    "in": "{enter_sunny}",
+                    "out": ["すごくいいお天気ですね！"]
+                },
+                {
+                    "in": "{enter_heat}",
+                    "out": ["すごくいいお天気なんですが・・・ちょっと暑いですね"]
+                },
+                {
+                    "in": "{enter_snowStorm}",
+                    "out": ["吹雪いてます！周りがよく見えません！"]
+                },
+                {
+                    "in": "{enter_snow}",
+                    "out":["雪ですね〜"]
+                }
+            ]
+        }
+    }
+}
