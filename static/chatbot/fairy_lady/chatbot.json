@@ -1,7 +1,7 @@
 {
     "botId": null,
     "config": {
-        "description": "妖精の育て方を教えるお姉さん妖精",
+        "description": "妖精の育て方を教える",
         "backgroundColor": "#EEEE44",
         "circadian": {
             "wake": 6,

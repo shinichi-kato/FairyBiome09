@@ -3,9 +3,11 @@ debug note
 
 1. チャットルーム
 
+*{NOT_FOUND}が展開されてない
+
 * triggerに応答していない？
 * queueが消費されてない？
-* → undefined返答になる
+
 
 * <br>で改行されていない
 * {user}が展開されてない

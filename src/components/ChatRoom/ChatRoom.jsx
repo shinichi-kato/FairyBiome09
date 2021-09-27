@@ -170,7 +170,6 @@ export default function ChatRoom(props) {
             value={userInput}
             onChange={handleChangeUserInput}
             fullWidth
-            autoFocus
             inputProps={{ 'aria-label': 'text' }}
             endAdornment={
               <IconButton

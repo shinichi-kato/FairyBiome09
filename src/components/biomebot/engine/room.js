@@ -45,7 +45,7 @@ export function execute(state, work, message, sendMessage) {
   console.assert(message instanceof Message,"room: execute Message型ではないmessageが渡されました");
 
   console.log("execute: user message= ",message);
-  let reply = { message: null };
+  let reply = { text: null, drop: null, hoist: null };
 
   // shift queue
   
@@ -72,8 +72,10 @@ export function execute(state, work, message, sendMessage) {
     if (result.score < part.precision) continue;
 
     // スピーチの生成
+    const botMessage = replier[part.kind](partName, state, work, result);
+
     reply = {
-      message: replier[part.kind](partName, state, work, result),
+      text: botMessage.text,
       hoist: partName,
       drop: null,
     }
@@ -88,7 +90,6 @@ export function execute(state, work, message, sendMessage) {
     // トリガーを捕捉
     let trigger = ""
     console.log("reply",reply)
-    reply.text = reply.message.text;
     reply.text = reply.text.replace(RE_ENTER, (_, p1) => {
       // ※クロージャ注意
       trigger = p1;
@@ -132,7 +133,7 @@ export function execute(state, work, message, sendMessage) {
   }
 
 
-
+  console.log("reply",reply)
   if (reply.text === null) {
     // NOT_FOUNDの生成
     // 各partの辞書にNOT_FOUNDを置くことができ、partOrderの
@@ -155,6 +156,7 @@ export function execute(state, work, message, sendMessage) {
     if (reply.text === "{NOT_FOUND}") {
       reply.text = render("{NOT_FOUND}", state.main);
     }
+    console.log("state.main",state.main)
 
     reply.text.replace('{bot}',work.displayName);
     reply.text.replace('{user}',message.name);

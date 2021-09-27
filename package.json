@@ -25,7 +25,7 @@
     "@mui/styles": "^5.0.1",
     "@mui/x-data-grid": "^5.0.0-beta.1",
     "dexie": "^3.0.3",
-    "firebase": "^9.0.2",
+    "firebase": "^9.1.0",
     "gatsby": "^3.14.0",
     "gatsby-plugin-manifest": "^3.14.0",
     "gatsby-plugin-mdx": "^2.11.0",
