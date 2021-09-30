@@ -1,3 +1,4 @@
+//@ts-check
 /*
   Knowledge Part
   =========================
@@ -29,11 +30,18 @@ function _render(text, tagDict) {
   const items = tagDict[text];
   let item = items[Math.floor(Math.random() * items.length)];
 
-  return item.text.replace(RE_TAG, (_, tag) => _render(text, tagDict));
+  return item.replace(RE_TAG, (_, tag) => _render(tag, tagDict));
 }
 
+/**
+ * state.cache[partName]を利用して文字列型の返答を生成する。
+ * @param {String} partName パート名称
+ * @param {Object} state bot.state
+ * @param {Object} work bot.work
+ * @param {Object} result retrieve()戻り値
+ * @returns {String}
+ */
 export function reply(partName, state, work, result) {
-  // state.cache[partName]を利用して返答を生成する。
   // cache.outScriptのresult.index行を使用
 
   const cache = state.cache[partName];
@@ -49,8 +57,15 @@ export function reply(partName, state, work, result) {
   return reply;
 }
 
+/**
+ * partNameのtagDictを使いtagを展開して返す
+ * @param {String} partName 
+ * @param {Object} state 
+ * @param {Object} work 
+ * @param {String} text 
+ * @returns {String}
+ */
 export function render(partName, state, work, text) {
-  // 
   // tagを展開して返す
   const tagDict = state.cache[partName].tagDict;
 

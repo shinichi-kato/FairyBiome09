@@ -24,6 +24,7 @@ tfidf類似度計算のためのキャッシュを生成してdbに書き込む�
 
   inは入力文字列、outはinを受け取ったときの出力文字列で、in,outともに複数の候補が
   あってもよく、候補が複数の場合は文字列のリスト、一つの場合は文字列で記述する。
+  スクリプトのinはユーザ入力との類似度計算をするためMessage型に変換する。
 
   Message型データは以下のようにコーディングする
   Message {
@@ -33,13 +34,21 @@ tfidf類似度計算のためのキャッシュを生成してdbに書き込む�
 
   textは行ごとに正規化されたtfidf行列に変換する。
   retrieve関数ではMessage.textに対して類似度(内積)を計算し、得られた1次元のスコアベクターに
-  特徴量行列をconcatする。
-  得られた全体のスコア行列について score = score*weights + biases という重み付け計算を行って
-  その中でscoreが最大のものを選出する。
+  特徴量行列をconcatする。  得られた全体のスコア行列について score = score*weights + biases 
+  という重み付け計算を行い、その中でscoreが最大のものを選出する。
 
-  この関数は以下の計算結果を返す
+  一方出力文字列はfeatureが環境によって与えられるためキャッシュにはstringだけを格納する。
+
+  この関数は以下の計算結果を生成し、dbに書き込む。
   {
-    index:　inとoutの数は必ずしも同じでないため、inscriptのi行がoutscriptのo行に対応することをindex[i]=oで格納
+    outScript: 出力文字列のリスト
+    vocab: 辞書に現れる全ての単語のリスト。
+    wv: 入力文字列を単語のindexで表した行列
+    idf: idf値,
+    tfidf: tfidf行列,
+    index: inscriptの行とoutscriptの行の対応を記述したリスト,
+    fv: fv, 入力をfeatureで表した行列
+    tagDict: 入力文字列が{...}であるエントリを辞書化したもの
   }
 
   ## タグ及びトリガー
@@ -77,6 +86,15 @@ function getValidNode(node) {
   return [];
 }
 
+function getValidList(node){
+  if (typeof node === 'string') {
+    return [node];
+  }
+  else if (Array.isArray(node)){
+    return node
+  }
+}
+
 function isNonEmpty(node) {
   return typeof node === "string" || (Array.isArray(node) && node.length !== 0)
 }
@@ -109,7 +127,7 @@ onmessage = function (event) {
         if (isNonEmpty(line.in) && isNonEmpty(line.out)) {
           inScript.push(getValidNode(line.in))
 
-          let out = getValidNode(line.out);
+          let out = getValidList(line.out);
           outScript.push(out);
           let tag = findTag(line.in);
           if (tag) {

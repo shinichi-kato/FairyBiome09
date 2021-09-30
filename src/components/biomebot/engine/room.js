@@ -1,4 +1,5 @@
 
+//@ts-check
 /*
   室内でのチャットボットの応答
 
@@ -72,10 +73,10 @@ export function execute(state, work, message, sendMessage) {
     if (result.score < part.precision) continue;
 
     // スピーチの生成
-    const botMessage = replier[part.kind](partName, state, work, result);
+    const botMessageText = replier[part.kind](partName, state, work, result);
 
     reply = {
-      text: botMessage.text,
+      text: botMessageText,
       hoist: partName,
       drop: null,
     }
