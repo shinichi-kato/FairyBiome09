@@ -5,11 +5,11 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import InputBase from '@mui/material/InputBase';
 import SendIcon from '@mui/icons-material/Send';
-import ArrowBackIcon from '@mui/icons-material/ArrowBackIos';
 
 import UserPanel from '../Panel/UserPanel';
 import FairyPanel from '../Panel/FairyPanel';
 import LogViewer from './LogViewer';
+import AppMenu from './AppMenu';
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
 import { FirebaseContext } from "../Firebase/FirebaseProvider";
 import { EcosystemContext } from '../Ecosystem/EcosystemProvider';
@@ -27,15 +27,29 @@ export default function ChatRoom(props) {
   const fb = useContext(FirebaseContext);
   const ecosystem = useContext(EcosystemContext);
   const bot = useRef(useContext(BiomebotContext));
-  const writeLogRef = useRef(props.writeLog);
+  const writeLogRef = useRef();
+  const logRef = useRef();
   const [userInput, setUserInput] = useState("");
+
+  function handleChangeSite(site){
+    ecosystem.changeSite(site);
+  }
 
   //---------------------------------------
   // チャットルームに入室したらdeploy
   //
-
+  
   useEffect(() => {
-    bot.current.deploy(ecosystem.site);
+    const site = ecosystem.site;
+    bot.current.deploy(site);
+
+    if(site === 'park'){
+      writeLogRef.current = fb.writeLog;
+      logRef.current = fb.parkLog;
+    }else{
+      writeLogRef.current = props.writeLog;
+      logRef.current = props.logs[ecosystem.site];
+    }
   }, [ecosystem.site]);
 
   // ---------------------------------------------
@@ -83,13 +97,13 @@ export default function ChatRoom(props) {
     event.preventDefault();
   }
 
-  const currentLog = props.logs[ecosystem.site];
+
 
   const memorizedLogViewer = useMemo(() =>
     <LogViewer
-      log={currentLog}
+      log={logRef.current}
     />
-    , [currentLog]);
+    , [logRef]);
 
   const memorizedUserPanel = useMemo(() =>
     <UserPanel user={fb} />
@@ -156,12 +170,11 @@ export default function ChatRoom(props) {
           onSubmit={handleUserSubmit}
           elevation={0}
         >
-          <IconButton
-            sx={{ p: "10px" }}
-            aria-label="menu"
-          >
-            <ArrowBackIcon />
-          </IconButton>
+          <AppMenu
+            site={ecosystem.site}
+            handleExitRoom={props.handleExitRoom}
+            handleChangeSite={handleChangeSite}
+          />
           <InputBase
             sx={{
               ml: 1,

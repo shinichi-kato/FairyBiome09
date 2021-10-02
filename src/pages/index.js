@@ -1,3 +1,11 @@
+/*
+  チャット画面
+
+  firestoreの構成
+  parkのログ
+  log
+
+*/
 import React, { useState, useEffect } from "react";
 import { graphql, navigate } from "gatsby";
 
@@ -87,7 +95,7 @@ export default function IndexPage({ data }) {
 
   useEffect(() => {
     let isCancelled = false;
-
+    
     if (!db && !isCancelled ) {
       db = new Dexie('Log');
       db.version(1).stores({

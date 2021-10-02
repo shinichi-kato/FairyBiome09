@@ -235,7 +235,11 @@ export default function EcosystemProvider(props) {
   }
 
   function handleChangeSite(s) {
-    setSite(s);
+    // forest実装後に外すこと
+    if(s !== 'forest'){
+      setSite(s);
+    }
+    console.log("handleChangeSite",s)
   }
 
   function handleChangeDispatched() {

@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useRef, createContext } from 'react';
+import React, { useEffect, useReducer, useRef, useState, createContext } from 'react';
 import loadable from '@loadable/component';
 import { initializeApp, getApp, getApps } from 'firebase/app';
 import {
@@ -6,7 +6,11 @@ import {
   createUserWithEmailAndPassword, signInWithEmailAndPassword
 } from "firebase/auth";
 
-import { getFirestore } from 'firebase/firestore/lite';
+import {
+  getFirestore,
+  collection, query, where, onSnapshot, orderBy, limit,
+  doc, setDoc
+} from 'firebase/firestore';
 
 const AuthDialog = loadable(() => import('./AuthDialog'));
 var undefined; // for checking undefind
@@ -111,18 +115,22 @@ function reducer(state, action) {
 
 export default function FirebaseProvider(props) {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [parkLog, setParkLog] = useState([]);
 
   const handleAuthOk = useRef(props.handleAuthOk);
 
   // -----------------------------------------------
   //
-  //   ユーザ認証関連
+  //   ユーザ認証とfirestoreのListen
   //
   //
   // -----------------------------------------------
 
   useEffect(() => {
     let isCancelled = false;
+    let firestore = null;
+    let unsubscribe;
+
     if (!isCancelled) {
 
       let firebaseApp;
@@ -142,11 +150,24 @@ export default function FirebaseProvider(props) {
           firebaseApp = getApp();
         }
 
+        firestore = getFirestore(firebaseApp);
+
+        const q = query(collection(firestore, "log"),
+          orderBy('date'),
+          limit(100));
+
+        unsubscribe = onSnapshot(q, snap => {
+
+          setParkLog(snap.data());
+
+        });
+
         dispatch({
           type: "init",
           firebaseApp: firebaseApp,
-          firestore: getFirestore(firebaseApp)
+          firestore: firestore,
         });
+
         const auth = getAuth();
         onAuthStateChanged(auth, user => {
           if (user) {
@@ -161,8 +182,34 @@ export default function FirebaseProvider(props) {
 
     }
 
-    return () => { isCancelled = true }
+    return () => {
+      unsubscribe();
+      isCancelled = true;
+    }
+
   }, [state.firebaseApp]);
+
+  //------------------------------------------------------------
+  //
+  //  logへの書き込み
+  //
+  //
+  //------------------------------------------------------------
+  
+  function writeLog(message){
+    const data = {
+      test: message.text,
+      name: message.name,
+      timestamp: firebase.database.ServerValue.TIMESTAMP,
+      avatarPath: message.avatarPath,
+      features: message.features
+    }
+    (async () => {
+      addDoc(doc(firestore, "log"), data);
+    })();
+  }
+
+
 
   function authenticate(email, password) {
     dispatch({ type: "run" });
@@ -249,6 +296,8 @@ export default function FirebaseProvider(props) {
   }
 
 
+
+
   return (
     <FirebaseContext.Provider
       value={{
@@ -257,6 +306,7 @@ export default function FirebaseProvider(props) {
         photoURL: state.user.photoURL,
         firestore: state.firestore,
         openUpdateDialog: openUpdateDialog,
+        parkLog: parkLog,
 
         uid: state.user.uid,
       }}
