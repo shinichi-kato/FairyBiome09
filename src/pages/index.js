@@ -11,9 +11,17 @@ import { graphql, navigate } from "gatsby";
 
 import Landing from '../components/Landing/Landing';
 import ChatRoom from '../components/ChatRoom/ChatRoom';
-import FirebaseProvider from '../components/Firebase/FirebaseProvider';
+import AuthProvider from '../components/Auth/AuthProvider';
 import EcosystemProvider from '../components/Ecosystem/EcosystemProvider';
 import BiomebotProvider from '../components/biomebot/BiomebotProvider';
+
+import { initializeApp, getApp, getApps } from 'firebase/app';
+
+import {
+  getFirestore,
+  collection, query as fsQuery, onSnapshot, orderBy, limit,
+  doc, addDoc, serverTimestamp
+} from 'firebase/firestore';
 
 import Dexie from "dexie";
 import { Message } from '../components/message';
@@ -31,8 +39,10 @@ query indexq {
 }`
 
 let db = null;
+let firebaseApp = null;
+let firestore = null;
 
-async function readLog(site, number, offset) {
+async function readLocalLog(site, number, offset) {
   /* siteのログをoffsetからnumber件読み出す */
   let payload = [];
   const siteDb = site === 'room' ? db.room : db.forest;
@@ -54,13 +64,33 @@ async function readLog(site, number, offset) {
       // ここで.reverse()するとうまく動作しない。
       // toArray()したあとでそれをreverseする。
       .toArray();
-    
+
     payload.reverse();
   }
   return payload.map(msg => new Message(msg));
 }
 
+async function writeLog(message) {
+  const site = message.site;
+  if (site === 'forest' || site === 'room') {
 
+    let id = await db[site].add(message);
+    message.id = id;
+  } 
+  else if (site === 'park'){
+    const data = {
+      test: message.text,
+      name: message.name,
+      timestamp: serverTimestamp(),
+      avatarPath: message.avatarPath,
+      features: message.features
+    }
+    const d = await addDoc(doc(firestore, "log"), data);
+    message.id = d.id;
+  }
+
+  return message;
+ }
 
 
 export default function IndexPage({ data }) {
@@ -85,18 +115,19 @@ export default function IndexPage({ data }) {
   */
 
   const [appState, setAppState] = useState('Landing');
-  const [roomLog, setRoomLog] = useState([]);
+  const [parkLog, setParkLog] = useState([]);
   const [forestLog, setForestLog] = useState([]);
+  const [roomLog, setRoomLog] = useState([]);
 
-  const logs = { room: roomLog, forest: forestLog };
-  const setLogs = {room: setRoomLog, forest: setForestLog };
+  const logs = { park: parkLog, forest: forestLog, room: roomLog };
+  const setLogs = {forest: setForestLog, room: setRoomLog};
 
   const config = data.site.siteMetadata.chatbot;
 
   useEffect(() => {
     let isCancelled = false;
-    
-    if (!db && !isCancelled ) {
+
+    if (!db && !isCancelled) {
       db = new Dexie('Log');
       db.version(1).stores({
         room: "++id,timestamp", // id, timestamp, message
@@ -104,15 +135,63 @@ export default function IndexPage({ data }) {
       });
 
       (async () => {
-        setForestLog(await readLog('forest',config.logViewLength));
-        setRoomLog(await readLog('room',config.logViewLength));
+        setForestLog(await readLocalLog('forest', config.logViewLength));
+        setRoomLog(await readLocalLog('room', config.logViewLength));
       })();
     }
 
     return () => { isCancelled = true };
   }, [config.logViewLength]);
-  
-  function handleAuthOk() {setAppState('authOk'); }
+
+  useEffect(()=>{
+    let isCancelled = false;
+    let unsubscribe;
+
+    if(!firebaseApp &&!isCancelled){
+      if (window !== undefined) {
+        if (getApps().length === 0) {
+          firebaseApp = initializeApp({
+            apiKey: process.env.GATSBY_FIREBASE_API_KEY,
+            authDomain: process.env.GATSBY_FIREBASE_AUTH_DOMAIN,
+            databaseURL: process.env.GATSBY_FIREBASE_DATABASE_URL,
+            projectId: process.env.GATSBY_FIREBASE_PROJECT_ID,
+            storageBucket: process.env.GATSBY_FIREBASE_STORAGE_BUCKET,
+            messagingSenderId: process.env.GATSBY_FIREBASE_MESSAGING_SENDER_ID,
+            appId: process.env.GATSBY_FIREBASE_APP_ID,
+          });
+        }
+        else {
+          firebaseApp = getApp();
+        }
+
+        firestore = getFirestore(firebaseApp);
+        const q = fsQuery(collection(firestore, "log"),
+        orderBy('date'),
+        limit(100));
+
+        unsubscribe = onSnapshot(q, snap => {
+
+          setParkLog(snap.data());
+
+      });
+      }
+    }
+    return (()=>{ 
+      isCancelled = true;
+      unsubscribe();
+    });
+    
+  },[]);
+
+  function handleWriteLog(message){
+    (async ()=>{
+      const m = await writeLog(message)
+      setLogs[message.site](prev=>[...prev, m]);
+
+    })()
+  }
+
+  function handleAuthOk() { setAppState('authOk'); }
   function handleBotFound() { setAppState('continue'); }
   function handleBotNotFound() { setAppState('new'); }
   function handleContinue() { setAppState('chatroom'); }
@@ -123,37 +202,10 @@ export default function IndexPage({ data }) {
     navigate('/create/');
   }
 
-  async function writeLog(message) {
-    const site = message.site;
-    if(site === 'forest' || site === 'room'){
-  
-      let id = await db[site].add(message);
-      message.id = id;
-  
-      setLogs[site](prev => {
-        const newLog = [...prev,message];
-        return newLog;
-      
-      });
-      
-      /*
-      const count = db[site].count();
-      const exceeded = count - config.logStoreLength;
-      ここで古いログを削除
-      */
-    
-    } else if (site === 'park'){
-  
-      /* firebaseへの書き込み*/
-  
-    } else {
-      throw new Error(`invalid site ${site}`);
-    }
-  }
-
   return (
-    
-    <FirebaseProvider
+
+    <AuthProvider
+      firebase ={firebaseApp}
       handleAuthOk={handleAuthOk}
     >
       <EcosystemProvider
@@ -161,13 +213,13 @@ export default function IndexPage({ data }) {
       >
         <BiomebotProvider
           appState={appState}
-          writeLog={writeLog}
+          writeLog={handleWriteLog}
           handleBotNotFound={handleBotNotFound}
           handleBotFound={handleBotFound}
         >
           {appState === 'chatroom' ?
             <ChatRoom
-              writeLog={writeLog}
+              writeLog={handleWriteLog}
               logs={logs}
               handleExitRoom={handleExitRoom}
             />
@@ -180,6 +232,6 @@ export default function IndexPage({ data }) {
           }
         </BiomebotProvider>
       </EcosystemProvider>
-    </FirebaseProvider>
+    </AuthProvider>
   )
 }

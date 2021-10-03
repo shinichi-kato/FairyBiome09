@@ -69,7 +69,7 @@ yarn-error.log
 .yarn-integrity
 
 # fireabse
-.firebase/
+auth./
 
 
 .vscode/

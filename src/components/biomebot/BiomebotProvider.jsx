@@ -158,7 +158,7 @@ import React, {
   useState
 } from 'react';
 
-import { FirebaseContext } from "../Firebase/FirebaseProvider";
+import { AuthContext } from "../Auth/AuthProvider";
 import { featureIndex } from '../message';
 
 import { db } from './dbio';
@@ -380,7 +380,7 @@ function reducer(state, action) {
 }
 
 export default function BiomebotProvider(props) {
-  const fb = useContext(FirebaseContext);
+  const auth = useContext(AuthContext);
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const [work, setWork] = useState({
@@ -432,8 +432,8 @@ export default function BiomebotProvider(props) {
     let isCancelled = false;
 
     if (!isCancelled) {
-      if (appState === 'authOk' && fb.uid && !stateRef.current.botId) {
-        db.load(fb.uid)
+      if (appState === 'authOk' && auth.uid && !stateRef.current.botId) {
+        db.load(auth.uid)
           .then(snap => {
             if (snap) {
               dispatch({ type: 'connect', snap: snap });
@@ -460,7 +460,7 @@ export default function BiomebotProvider(props) {
     }
 
     return () => { isCancelled = true }
-  }, [appState, fb.uid, state]);
+  }, [appState, auth.uid, state]);
 
 
 
@@ -498,7 +498,7 @@ export default function BiomebotProvider(props) {
     obj.displayName = obj.main.NAME;
 
     // indexDBへの書き込み
-    await db.generate(obj, fb.uid);
+    await db.generate(obj, auth.uid);
 
     // stateへの書き込み
     dispatch({ type: 'connect', snap: obj });
@@ -516,7 +516,7 @@ export default function BiomebotProvider(props) {
         mood: "peace",
         queue: [],
         futurePostings: [],
-        botId: fb.uid,
+        botId: auth.uid,
 
       }));
   }

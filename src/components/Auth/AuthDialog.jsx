@@ -40,8 +40,8 @@ export default function AuthDialog(props){
       photoURL                    編集可       編集可
       displayName                 編集可       編集可
       リンク表示       signUp      signIn      　なし
-      サインアウト     (props.authStateがOKの場合 あり)
-      閉じる          (props.authStateがOKの場合 あり)
+      サインアウト     (props.auth.StateがOKの場合 あり)
+      閉じる          (props.auth.StateがOKの場合 あり)
 
     編集可の項目はすべて有効な状態でないと実行ボタンが押せない
 

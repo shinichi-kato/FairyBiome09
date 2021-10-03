@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { graphql, navigate } from "gatsby"
 
-import FirebaseProvider from '../components/Firebase/FirebaseProvider';
+import AuthProvider from '../components/Auth/AuthProvider';
 import BiomebotProvider from '../components/biomebot/BiomebotProvider';
 import CreateFairy from '../components/CreateFairy/CreateFairy';
 
@@ -66,7 +66,7 @@ export default function CreatePage({ location, data }) {
 
   console.log("appState", appState)
   return (
-    <FirebaseProvider
+    <AuthProvider
       handleAuthOk={handleAuthOk}
     >
       <BiomebotProvider
@@ -80,7 +80,7 @@ export default function CreatePage({ location, data }) {
           chatbots={chatbots}
         />
       </BiomebotProvider>
-    </FirebaseProvider>
+    </AuthProvider>
   )
 }
 

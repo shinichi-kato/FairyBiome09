@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { navigate } from "gatsby";
 import Editor from '../components/Editor/Editor';
 
-import FirebaseProvider from "../components/Firebase/FirebaseProvider";
+import AuthProvider from "../components/Auth/AuthProvider";
 import BiomebotProvider from '../components/biomebot/BiomebotProvider';
 
 export default function EditPage({ location, data }) {
@@ -37,7 +37,7 @@ export default function EditPage({ location, data }) {
   }
 
   return (
-    <FirebaseProvider
+    <AuthProvider
       handleAuthOk={handleAuthOk}
     >
       <BiomebotProvider
@@ -47,6 +47,6 @@ export default function EditPage({ location, data }) {
       >
         {appState === 'continue' && <Editor />}
       </BiomebotProvider>
-    </FirebaseProvider>
+    </AuthProvider>
   )
 }

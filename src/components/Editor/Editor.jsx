@@ -16,7 +16,7 @@ import PartEditor from './PartEditor';
 import ScriptEditor from "./ScriptEditor";
 
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
-import { FirebaseContext } from "../Firebase/FirebaseProvider";
+import { AuthContext } from "../Auth/AuthProvider";
 
 import FooterSvg from './footer.inline.svg';
 
@@ -53,7 +53,7 @@ export default function Editor() {
      └ script  partのscript編集。 <ボタンでpartへ
 
   */
-  const fb = useContext(FirebaseContext);
+  const auth = useContext(AuthContext);
   const bot = useContext(BiomebotContext);
 
   const [state, dispatch] = useReducer(reducer, initialState)
@@ -126,11 +126,11 @@ export default function Editor() {
             チャットボットの編集
           </Typography>
           <IconButton
-            onClick={fb.openUpdateDialog}
+            onClick={auth.openUpdateDialog}
           >
             <Avatar
               aria-label="user"
-              src={`../../avatar/${fb.photoURL}`} alt={fb.photoURL}
+              src={`../../avatar/${auth.photoURL}`} alt={auth.photoURL}
             />
           </IconButton>
         </Toolbar>

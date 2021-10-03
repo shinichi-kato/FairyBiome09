@@ -1,21 +1,18 @@
-import React, { useEffect, useReducer, useRef, useState, createContext } from 'react';
-import loadable from '@loadable/component';
-import { initializeApp, getApp, getApps } from 'firebase/app';
+import React, {
+  useEffect, useReducer, useRef, createContext,
+} from 'react';
+
 import {
   getAuth, onAuthStateChanged, updateProfile,
   createUserWithEmailAndPassword, signInWithEmailAndPassword
 } from "firebase/auth";
 
-import {
-  getFirestore,
-  collection, query, where, onSnapshot, orderBy, limit,
-  doc, setDoc
-} from 'firebase/firestore';
-
+import loadable from '@loadable/component';
 const AuthDialog = loadable(() => import('./AuthDialog'));
-var undefined; // for checking undefind
 
-export const FirebaseContext = createContext();
+export const AuthContext = createContext();
+
+
 
 const initialState = {
   user: {
@@ -34,7 +31,7 @@ const initialState = {
 };
 
 function reducer(state, action) {
-  // console.log("firebaseProvider:",action,state)
+  // console.log("AuthProvider:",action,state)
   switch (action.type) {
     case 'init': {
       return {
@@ -113,10 +110,10 @@ function reducer(state, action) {
   }
 }
 
-export default function FirebaseProvider(props) {
+export default function AuthProvider(props) {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [parkLog, setParkLog] = useState([]);
-
+  const firebase = props.firebase;
+  
   const handleAuthOk = useRef(props.handleAuthOk);
 
   // -----------------------------------------------
@@ -128,44 +125,11 @@ export default function FirebaseProvider(props) {
 
   useEffect(() => {
     let isCancelled = false;
-    let firestore = null;
-    let unsubscribe;
 
-    if (!isCancelled) {
-
-      let firebaseApp;
-      if (window !== undefined) {
-        if (getApps().length === 0) {
-          firebaseApp = initializeApp({
-            apiKey: process.env.GATSBY_FIREBASE_API_KEY,
-            authDomain: process.env.GATSBY_FIREBASE_AUTH_DOMAIN,
-            databaseURL: process.env.GATSBY_FIREBASE_DATABASE_URL,
-            projectId: process.env.GATSBY_FIREBASE_PROJECT_ID,
-            storageBucket: process.env.GATSBY_FIREBASE_STORAGE_BUCKET,
-            messagingSenderId: process.env.GATSBY_FIREBASE_MESSAGING_SENDER_ID,
-            appId: process.env.GATSBY_FIREBASE_APP_ID,
-          });
-        }
-        else {
-          firebaseApp = getApp();
-        }
-
-        firestore = getFirestore(firebaseApp);
-
-        const q = query(collection(firestore, "log"),
-          orderBy('date'),
-          limit(100));
-
-        unsubscribe = onSnapshot(q, snap => {
-
-          setParkLog(snap.data());
-
-        });
-
+    if (!isCancelled && !firebase) {
         dispatch({
           type: "init",
-          firebaseApp: firebaseApp,
-          firestore: firestore,
+          firebaseApp: firebase,
         });
 
         const auth = getAuth();
@@ -180,35 +144,11 @@ export default function FirebaseProvider(props) {
 
       }
 
-    }
-
     return () => {
-      unsubscribe();
       isCancelled = true;
     }
 
-  }, [state.firebaseApp]);
-
-  //------------------------------------------------------------
-  //
-  //  logへの書き込み
-  //
-  //
-  //------------------------------------------------------------
-  
-  function writeLog(message){
-    const data = {
-      test: message.text,
-      name: message.name,
-      timestamp: firebase.database.ServerValue.TIMESTAMP,
-      avatarPath: message.avatarPath,
-      features: message.features
-    }
-    (async () => {
-      addDoc(doc(firestore, "log"), data);
-    })();
-  }
-
+  }, [firebase]);
 
 
   function authenticate(email, password) {
@@ -299,15 +239,13 @@ export default function FirebaseProvider(props) {
 
 
   return (
-    <FirebaseContext.Provider
+    <AuthContext.Provider
       value={{
         displayName: state.user.displayName,
-        authState: state.authState,
+        authState:state.authState,
         photoURL: state.user.photoURL,
         firestore: state.firestore,
         openUpdateDialog: openUpdateDialog,
-        parkLog: parkLog,
-
         uid: state.user.uid,
       }}
     >
@@ -328,7 +266,7 @@ export default function FirebaseProvider(props) {
           :
           props.children
       }
-    </FirebaseContext.Provider>
+    </AuthContext.Provider>
   )
 
 }

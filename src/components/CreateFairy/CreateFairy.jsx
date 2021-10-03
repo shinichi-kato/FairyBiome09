@@ -12,7 +12,7 @@ import ImageListItem from '@mui/material/ImageListItem';
 import WarningIcon from '@mui/icons-material/Warning';
 
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
-import { FirebaseContext } from "../Firebase/FirebaseProvider";
+import { AuthContext } from "../Auth/AuthProvider";
 import { ImageListItemBar } from "@mui/material";
 
 
@@ -45,7 +45,7 @@ export default function CreateFairy(props) {
           description: string,}
     ]
   */
-  const fb = useContext(FirebaseContext);
+  const auth = useContext(AuthContext);
   const bot = useContext(BiomebotContext);
   const appState = STATE_TABLE[props.appState];
 
@@ -91,11 +91,11 @@ export default function CreateFairy(props) {
           </Typography>
           {appState > 0 &&
             <IconButton
-              onClick={fb.openUpdateDialog}
+              onClick={auth.openUpdateDialog}
             >
               <Avatar
                 aria-label="user"
-                src={`../../avatar/${fb.photoURL}`} alt={fb.photoURL} />
+                src={`../../avatar/${auth.photoURL}`} alt={auth.photoURL} />
             </IconButton>
           }
 

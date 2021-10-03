@@ -11,7 +11,7 @@ import FairyPanel from '../Panel/FairyPanel';
 import LogViewer from './LogViewer';
 import AppMenu from './AppMenu';
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
-import { FirebaseContext } from "../Firebase/FirebaseProvider";
+import { AuthContext } from "../Auth/AuthProvider";
 import { EcosystemContext } from '../Ecosystem/EcosystemProvider';
 import { Message } from '../message';
 
@@ -24,11 +24,9 @@ export default function ChatRoom(props) {
     ===============
 
   */
-  const fb = useContext(FirebaseContext);
+  const auth = useContext(AuthContext);
   const ecosystem = useContext(EcosystemContext);
   const bot = useRef(useContext(BiomebotContext));
-  const writeLogRef = useRef();
-  const logRef = useRef();
   const [userInput, setUserInput] = useState("");
 
   function handleChangeSite(site){
@@ -39,17 +37,19 @@ export default function ChatRoom(props) {
   // チャットルームに入室したらdeploy
   //
   
-  useEffect(() => {
-    const site = ecosystem.site;
-    bot.current.deploy(site);
+  const logRef = useRef(props.log);
+  const writeLogRef = useRef(props.writeLog);
 
-    if(site === 'park'){
-      writeLogRef.current = fb.writeLog;
-      logRef.current = fb.parkLog;
-    }else{
-      writeLogRef.current = props.writeLog;
-      logRef.current = props.logs[ecosystem.site];
+  useEffect(() => {
+    let isCancelled = false;
+    if(!isCancelled){
+      const site = ecosystem.site;
+      bot.current.deploy(site);
+  
     }
+
+    return (()=>{ isCancelled = true; })
+
   }, [ecosystem.site]);
 
   // ---------------------------------------------
@@ -68,30 +68,29 @@ export default function ChatRoom(props) {
   }, [ecosystem]);
 
 
-
   function handleChangeUserInput(event) {
     setUserInput(event.target.value);
   }
 
   function handleUserSubmit(event) {
-    writeLogRef.current(new Message('speech', {
+    props.writeLog(new Message('speech', {
       text: userInput,
-      name: fb.displayName,
+      name: auth.displayName,
       person: 'user',
       mood: 'peace',
-      avatarPath: fb.photoURL,
+      avatarPath: auth.photoURL,
       site: ecosystem.site,
     }));
 
     // 後でtextの中身を直接いじるので同一内容のMessageを新たに作って渡す
     bot.current.execute(new Message('speech', {
       text: userInput,
-      name: fb.displayName,
+      name: auth.displayName,
       person: 'user',
       mood: 'peace',
-      avatarPath: fb.photoURL,
+      avatarPath: auth.photoURL,
       site: ecosystem.site,
-    }), writeLogRef.current);
+    }), props.writeLog);
 
     setUserInput("");
     event.preventDefault();
@@ -106,8 +105,8 @@ export default function ChatRoom(props) {
     , [logRef]);
 
   const memorizedUserPanel = useMemo(() =>
-    <UserPanel user={fb} />
-    , [fb]);
+    <UserPanel user={auth} />
+    , [auth]);
 
   return (
     <Box
