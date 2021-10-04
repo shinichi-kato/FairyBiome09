@@ -126,7 +126,7 @@ export default function AuthProvider(props) {
   useEffect(() => {
     let isCancelled = false;
 
-    if (!isCancelled && !firebase) {
+    if (!isCancelled && firebase) {
         dispatch({
           type: "init",
           firebaseApp: firebase,

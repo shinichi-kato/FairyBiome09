@@ -6,7 +6,7 @@
   log
 
 */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { graphql, navigate } from "gatsby";
 
 import Landing from '../components/Landing/Landing';
@@ -119,7 +119,7 @@ export default function IndexPage({ data }) {
   const [forestLog, setForestLog] = useState([]);
   const [roomLog, setRoomLog] = useState([]);
 
-  const logs = { park: parkLog, forest: forestLog, room: roomLog };
+  const logsRef = useRef({ park: parkLog, forest: forestLog, room: roomLog });
   const setLogs = {forest: setForestLog, room: setRoomLog};
 
   const config = data.site.siteMetadata.chatbot;
@@ -169,10 +169,10 @@ export default function IndexPage({ data }) {
         orderBy('date'),
         limit(100));
 
-        unsubscribe = onSnapshot(q, snap => {
-
-          setParkLog(snap.data());
-
+        unsubscribe = onSnapshot(q, (snap) => {
+          let arr = [];
+          snap.forEach((doc)=>{arr.push(doc.data())});
+          setParkLog(arr);
       });
       }
     }
@@ -220,7 +220,7 @@ export default function IndexPage({ data }) {
           {appState === 'chatroom' ?
             <ChatRoom
               writeLog={handleWriteLog}
-              logs={logs}
+              logsRef={logsRef}
               handleExitRoom={handleExitRoom}
             />
             :

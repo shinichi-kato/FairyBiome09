@@ -37,7 +37,7 @@ export default function ChatRoom(props) {
   // チャットルームに入室したらdeploy
   //
   
-  const logRef = useRef(props.log);
+  const logsRef = useRef(props.logsRef.current);
   const writeLogRef = useRef(props.writeLog);
 
   useEffect(() => {
@@ -45,7 +45,6 @@ export default function ChatRoom(props) {
     if(!isCancelled){
       const site = ecosystem.site;
       bot.current.deploy(site);
-  
     }
 
     return (()=>{ isCancelled = true; })
@@ -100,9 +99,9 @@ export default function ChatRoom(props) {
 
   const memorizedLogViewer = useMemo(() =>
     <LogViewer
-      log={logRef.current}
+      log={logsRef.current[ecosystem.site]}
     />
-    , [logRef]);
+    , [ecosystem.site]);
 
   const memorizedUserPanel = useMemo(() =>
     <UserPanel user={auth} />
