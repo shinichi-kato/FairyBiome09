@@ -6,7 +6,7 @@
   log
 
 */
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { graphql, navigate } from "gatsby";
 
 import Landing from '../components/Landing/Landing';
@@ -15,10 +15,9 @@ import AuthProvider from '../components/Auth/AuthProvider';
 import EcosystemProvider from '../components/Ecosystem/EcosystemProvider';
 import BiomebotProvider from '../components/biomebot/BiomebotProvider';
 
-import { initializeApp, getApp, getApps } from 'firebase/app';
+import { initializeFirebaseApp, firebaseApp, firestore } from '../firebase';
 
 import {
-  getFirestore,
   collection, query as fsQuery, onSnapshot, orderBy, limit,
   doc, addDoc, serverTimestamp
 } from 'firebase/firestore';
@@ -39,8 +38,6 @@ query indexq {
 }`
 
 let db = null;
-let firebaseApp = null;
-let firestore = null;
 
 async function readLocalLog(site, number, offset) {
   /* siteのログをoffsetからnumber件読み出す */
@@ -76,8 +73,8 @@ async function writeLog(message) {
 
     let id = await db[site].add(message);
     message.id = id;
-  } 
-  else if (site === 'park'){
+  }
+  else if (site === 'park') {
     const data = {
       test: message.text,
       name: message.name,
@@ -90,7 +87,7 @@ async function writeLog(message) {
   }
 
   return message;
- }
+}
 
 
 export default function IndexPage({ data }) {
@@ -119,8 +116,8 @@ export default function IndexPage({ data }) {
   const [forestLog, setForestLog] = useState([]);
   const [roomLog, setRoomLog] = useState([]);
 
-  const logsRef = useRef({ park: parkLog, forest: forestLog, room: roomLog });
-  const setLogs = {forest: setForestLog, room: setRoomLog};
+  const logs = { park: parkLog, forest: forestLog, room: roomLog };
+  const setLogs = { forest: setForestLog, room: setRoomLog };
 
   const config = data.site.siteMetadata.chatbot;
 
@@ -143,50 +140,35 @@ export default function IndexPage({ data }) {
     return () => { isCancelled = true };
   }, [config.logViewLength]);
 
-  useEffect(()=>{
+  useEffect(() => {
     let isCancelled = false;
     let unsubscribe;
 
-    if(!firebaseApp &&!isCancelled){
-      if (window !== undefined) {
-        if (getApps().length === 0) {
-          firebaseApp = initializeApp({
-            apiKey: process.env.GATSBY_FIREBASE_API_KEY,
-            authDomain: process.env.GATSBY_FIREBASE_AUTH_DOMAIN,
-            databaseURL: process.env.GATSBY_FIREBASE_DATABASE_URL,
-            projectId: process.env.GATSBY_FIREBASE_PROJECT_ID,
-            storageBucket: process.env.GATSBY_FIREBASE_STORAGE_BUCKET,
-            messagingSenderId: process.env.GATSBY_FIREBASE_MESSAGING_SENDER_ID,
-            appId: process.env.GATSBY_FIREBASE_APP_ID,
-          });
-        }
-        else {
-          firebaseApp = getApp();
-        }
+    if (!firebaseApp && !isCancelled) {
+      initializeFirebaseApp();
 
-        firestore = getFirestore(firebaseApp);
-        const q = fsQuery(collection(firestore, "log"),
+      const q = fsQuery(collection(firestore, "log"),
         orderBy('date'),
         limit(100));
 
-        unsubscribe = onSnapshot(q, (snap) => {
-          let arr = [];
-          snap.forEach((doc)=>{arr.push(doc.data())});
-          setParkLog(arr);
+      unsubscribe = onSnapshot(q, (snap) => {
+        let arr = [];
+        snap.forEach((doc) => { arr.push(doc.data()) });
+        setParkLog(arr);
       });
-      }
     }
-    return (()=>{ 
+
+    return (() => {
       isCancelled = true;
       unsubscribe();
     });
-    
-  },[]);
 
-  function handleWriteLog(message){
-    (async ()=>{
+  }, []);
+
+  function handleWriteLog(message) {
+    (async () => {
       const m = await writeLog(message)
-      setLogs[message.site](prev=>[...prev, m]);
+      setLogs[message.site](prev => [...prev, m]);
 
     })()
   }
@@ -205,7 +187,8 @@ export default function IndexPage({ data }) {
   return (
 
     <AuthProvider
-      firebase ={firebaseApp}
+      firebase={firebaseApp}
+      firestore={firestore}
       handleAuthOk={handleAuthOk}
     >
       <EcosystemProvider
@@ -220,7 +203,7 @@ export default function IndexPage({ data }) {
           {appState === 'chatroom' ?
             <ChatRoom
               writeLog={handleWriteLog}
-              logsRef={logsRef}
+              logs={logs}
               handleExitRoom={handleExitRoom}
             />
             :

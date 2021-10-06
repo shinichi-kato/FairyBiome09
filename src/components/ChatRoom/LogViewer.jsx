@@ -46,8 +46,8 @@ function LeftBalloon(props) {
           backgroundColor: theme=>theme.palette.secondary.light,
         }}
 			>
-				<Typography variant="body1">{message.text}</Typography>
-				{texts.map((text,index)=><Typography variant="caption" key={index}>{text}</Typography>)}
+        {texts.map((text,index)=><Typography variant="body1" key={index}>{text}</Typography>)}
+				<Typography variant="caption">{message.name}</Typography>
 			</Box>
 		</Box>
 	)

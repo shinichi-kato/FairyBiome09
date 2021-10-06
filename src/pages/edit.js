@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { navigate } from "gatsby";
 import Editor from '../components/Editor/Editor';
 
 import AuthProvider from "../components/Auth/AuthProvider";
 import BiomebotProvider from '../components/biomebot/BiomebotProvider';
+import { initializeFirebaseApp, firebaseApp, firestore } from '../firebase';
 
 export default function EditPage({ location, data }) {
   /* 
@@ -36,8 +37,22 @@ export default function EditPage({ location, data }) {
     navigate('/create/');
   }
 
+  useEffect(()=>{
+    let isCancelled = false;
+
+    if(!firebaseApp &&!isCancelled){
+      initializeFirebaseApp();
+    }
+
+    return (()=>{ 
+      isCancelled = true;
+    });
+  }, []);
+
   return (
     <AuthProvider
+      firebase ={firebaseApp}
+      firestore = {firestore}
       handleAuthOk={handleAuthOk}
     >
       <BiomebotProvider
@@ -45,7 +60,7 @@ export default function EditPage({ location, data }) {
         handleBotNotFound={handleBotNotFound}
         handleBotFound={handleBotFound}
       >
-        {appState === 'continue' && <Editor />}
+        {appState === 'continue' && <Editor /> }
       </BiomebotProvider>
     </AuthProvider>
   )

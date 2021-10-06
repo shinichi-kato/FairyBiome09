@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { graphql, navigate } from "gatsby"
 
 import AuthProvider from '../components/Auth/AuthProvider';
 import BiomebotProvider from '../components/biomebot/BiomebotProvider';
 import CreateFairy from '../components/CreateFairy/CreateFairy';
+import { initializeFirebaseApp, firebaseApp, firestore } from '../firebase';
 
 export const query = graphql`
   {
@@ -62,11 +63,25 @@ export default function CreatePage({ location, data }) {
     setAppState('new');
     navigate('/content/prologue1/');
   }
+
   function handleDone() { setAppState('done') }
 
-  console.log("appState", appState)
+  useEffect(()=>{
+    let isCancelled = false;
+
+    if(!firebaseApp && !firestore && !isCancelled){
+      initializeFirebaseApp();
+    }
+
+    return (()=>{ 
+      isCancelled = true;
+    });
+  }, []);
+
   return (
     <AuthProvider
+      firebase={firebaseApp}
+      firestore={firestore}
       handleAuthOk={handleAuthOk}
     >
       <BiomebotProvider

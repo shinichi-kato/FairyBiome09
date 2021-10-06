@@ -113,6 +113,7 @@ function reducer(state, action) {
 export default function AuthProvider(props) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const firebase = props.firebase;
+  const firestore = props.firestore;
   
   const handleAuthOk = useRef(props.handleAuthOk);
 
@@ -126,10 +127,11 @@ export default function AuthProvider(props) {
   useEffect(() => {
     let isCancelled = false;
 
-    if (!isCancelled && firebase) {
+    if (!isCancelled && firebase && firestore) {
         dispatch({
           type: "init",
           firebaseApp: firebase,
+          firestore: firestore
         });
 
         const auth = getAuth();
@@ -148,7 +150,7 @@ export default function AuthProvider(props) {
       isCancelled = true;
     }
 
-  }, [firebase]);
+  }, [firebase, firestore]);
 
 
   function authenticate(email, password) {

@@ -37,7 +37,7 @@ export default function ChatRoom(props) {
   // チャットルームに入室したらdeploy
   //
   
-  const logsRef = useRef(props.logsRef.current);
+  const logsRef = useRef(props.logs);
   const writeLogRef = useRef(props.writeLog);
 
   useEffect(() => {
@@ -101,12 +101,12 @@ export default function ChatRoom(props) {
     <LogViewer
       log={logsRef.current[ecosystem.site]}
     />
-    , [ecosystem.site]);
+    , [logsRef, ecosystem.site]);
 
   const memorizedUserPanel = useMemo(() =>
     <UserPanel user={auth} />
     , [auth]);
-
+  
   return (
     <Box
       display="flex"
