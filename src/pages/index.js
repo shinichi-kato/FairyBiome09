@@ -19,7 +19,7 @@ import { initializeFirebaseApp, firebaseApp, firestore } from '../firebase';
 
 import {
   collection, query as fsQuery, onSnapshot, orderBy, limit,
-  doc, addDoc, serverTimestamp
+  doc , addDoc, serverTimestamp
 } from 'firebase/firestore';
 
 import Dexie from "dexie";
@@ -76,13 +76,13 @@ async function writeLog(message) {
   }
   else if (site === 'park') {
     const data = {
-      test: message.text,
+      text: message.text,
       name: message.name,
       timestamp: serverTimestamp(),
       avatarPath: message.avatarPath,
       features: message.features
     }
-    const d = await addDoc(doc(firestore, "log"), data);
+    const d = await addDoc(collection(firestore, "parklog"), data);
     message.id = d.id;
   }
 
@@ -144,16 +144,19 @@ export default function IndexPage({ data }) {
     if (!firebaseApp && !isCancelled) {
       initializeFirebaseApp();
 
-      const q = fsQuery(collection(firestore, "log"),
-        orderBy('date'),
-        limit(100));
+      const q = fsQuery(collection(firestore, "parklog"),
+        orderBy('timestamp'),limit(100));
 
       unsubscribe = onSnapshot(q, (snap) => {
         let arr = [];
-        snap.forEach((doc) => { arr.push(doc.data()) });
+        snap.forEach((doc) => {
+          let m=new Message(doc.data());
+          m.id = doc.id;
+          arr.push(m)});
+        console.log("snap=",arr)
         setParkLog(arr);
       });
-    }
+    };
 
     return (() => {
       isCancelled = true;
@@ -165,18 +168,18 @@ export default function IndexPage({ data }) {
   function handleWriteLog(message) {
     (async () => {
       const m = await writeLog(message);
-      switch(message.site){
+      switch (message.site) {
         case 'room':
-          setRoomLog(prev=>[...prev, m]);
+          setRoomLog(prev => [...prev, m]);
           break;
         case 'forest':
-          setForestLog(prev=>[...prev, m]);
+          setForestLog(prev => [...prev, m]);
           break;
-        default: 
+        case 'park':
+          break;
+        default:
           throw new Error(`invalid site ${message.site}`)
       }
-      // setLogs[message.site](prev => [...prev, m]);
-      console.log("handleWriteLog", message.site, m)
     })()
   }
 

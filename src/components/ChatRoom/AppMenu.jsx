@@ -140,6 +140,11 @@ export default function AppMenu(props) {
   const open = Boolean(anchorEl);
   const id = open ? 'app-menu-popover' : undefined;
 
+  function handleChangeSite(site){
+    handleClose();
+    props.handleChangeSite(site);
+  }
+
   return (
     <>
       <IconButton
@@ -167,7 +172,7 @@ export default function AppMenu(props) {
       >
         <AppMenuDialog
           site={props.site}
-          handleChangeSite={props.handleChangeSite}
+          handleChangeSite={handleChangeSite}
           handleExit={props.handleExitRoom}
           handleClose={handleClose} />
       </Popover>

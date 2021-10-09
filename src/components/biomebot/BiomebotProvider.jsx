@@ -164,6 +164,7 @@ import { featureIndex } from '../message';
 import { db } from './dbio';
 import matrixizeWorker from "./engine/matrixize.worker";
 import * as room from "./engine/room";
+import * as park from "./engine/park";
 import { textToInternalRepr } from './internal-repr';
 import { TinySegmenter } from './tinysegmenter';
 
@@ -174,6 +175,7 @@ let segmenter = new TinySegmenter();
 let workers = {};
 let executes = {
   'room': room.execute,
+  'park': park.execute,
 }
 
 
@@ -404,7 +406,7 @@ export default function BiomebotProvider(props) {
     stateRef.current = state;
 
     if (state.status === 'ready') {
-      console.log("qlength", work.queue.length)
+      // console.log("qlength", work.queue.length)
       if (work.queue.length > 0) {
         setWork(prev => {
           const top = prev.queue[0];

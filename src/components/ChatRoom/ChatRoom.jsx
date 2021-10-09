@@ -29,24 +29,24 @@ export default function ChatRoom(props) {
   const bot = useRef(useContext(BiomebotContext));
   const [userInput, setUserInput] = useState("");
 
-  function handleChangeSite(site){
+  function handleChangeSite(site) {
     ecosystem.changeSite(site);
   }
 
   //---------------------------------------
   // チャットルームに入室したらdeploy
   //
-  
+
   const writeLogRef = useRef(props.writeLog);
 
   useEffect(() => {
     let isCancelled = false;
-    if(!isCancelled){
+    if (!isCancelled) {
       const site = ecosystem.site;
       bot.current.deploy(site);
     }
 
-    return (()=>{ isCancelled = true; })
+    return (() => { isCancelled = true; })
 
   }, [ecosystem.site]);
 
@@ -95,10 +95,10 @@ export default function ChatRoom(props) {
   }
 
 
-  const memorizedLogViewer = useMemo(() =>{
+  const memorizedLogViewer = useMemo(() => {
     let log;
     switch (ecosystem.site) {
-      case 'room' :
+      case 'room':
         log = props.roomLog;
         break;
       case 'park':
@@ -111,10 +111,7 @@ export default function ChatRoom(props) {
         throw new Error(`invalid site ${ecosystem.site}`)
     }
     return (
-      <LogViewer
-      log={log}
-    />
-
+      <LogViewer log={log} />
     )
   }
     , [props.forestLog, props.parkLog, props.roomLog, ecosystem.site]);
@@ -122,7 +119,7 @@ export default function ChatRoom(props) {
   const memorizedUserPanel = useMemo(() =>
     <UserPanel user={auth} />
     , [auth]);
-  
+
   return (
     <Box
       display="flex"
