@@ -3,13 +3,14 @@ debug note
 
 1. チャットルーム
 
+* 返答が生成されない
 *{NOT_FOUND}が展開されてない
 
 * triggerに応答していない？
 * queueが消費されてない？
 
 
-* <br>で改行されていない
+
 * {user}が展開されてない
 
 * {enter_night}にgreetingsが応答している
@@ -18,6 +19,7 @@ debug note
 
 
 # 以下対応済み
+* <br>で改行されていない
 * CreateFairyで画像が見切れている
 
 * BotMonitorで名前が表示されない

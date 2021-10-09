@@ -116,9 +116,6 @@ export default function IndexPage({ data }) {
   const [forestLog, setForestLog] = useState([]);
   const [roomLog, setRoomLog] = useState([]);
 
-  const logs = { park: parkLog, forest: forestLog, room: roomLog };
-  const setLogs = { forest: setForestLog, room: setRoomLog };
-
   const config = data.site.siteMetadata.chatbot;
 
   useEffect(() => {
@@ -167,9 +164,19 @@ export default function IndexPage({ data }) {
 
   function handleWriteLog(message) {
     (async () => {
-      const m = await writeLog(message)
-      setLogs[message.site](prev => [...prev, m]);
-
+      const m = await writeLog(message);
+      switch(message.site){
+        case 'room':
+          setRoomLog(prev=>[...prev, m]);
+          break;
+        case 'forest':
+          setForestLog(prev=>[...prev, m]);
+          break;
+        default: 
+          throw new Error(`invalid site ${message.site}`)
+      }
+      // setLogs[message.site](prev => [...prev, m]);
+      console.log("handleWriteLog", message.site, m)
     })()
   }
 
@@ -192,7 +199,7 @@ export default function IndexPage({ data }) {
       handleAuthOk={handleAuthOk}
     >
       <EcosystemProvider
-        writeLog={writeLog}
+        writeLog={handleWriteLog}
       >
         <BiomebotProvider
           appState={appState}
@@ -203,7 +210,9 @@ export default function IndexPage({ data }) {
           {appState === 'chatroom' ?
             <ChatRoom
               writeLog={handleWriteLog}
-              logs={logs}
+              roomLog={roomLog}
+              forestLog={forestLog}
+              parkLog={parkLog}
               handleExitRoom={handleExitRoom}
             />
             :

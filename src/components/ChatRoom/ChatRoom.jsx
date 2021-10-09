@@ -37,7 +37,6 @@ export default function ChatRoom(props) {
   // チャットルームに入室したらdeploy
   //
   
-  const logsRef = useRef(props.logs);
   const writeLogRef = useRef(props.writeLog);
 
   useEffect(() => {
@@ -96,12 +95,29 @@ export default function ChatRoom(props) {
   }
 
 
-
-  const memorizedLogViewer = useMemo(() =>
-    <LogViewer
-      log={logsRef.current[ecosystem.site]}
+  const memorizedLogViewer = useMemo(() =>{
+    let log;
+    switch (ecosystem.site) {
+      case 'room' :
+        log = props.roomLog;
+        break;
+      case 'park':
+        log = props.parkLog;
+        break;
+      case 'forest':
+        log = props.forestLog;
+        break;
+      default:
+        throw new Error(`invalid site ${ecosystem.site}`)
+    }
+    return (
+      <LogViewer
+      log={log}
     />
-    , [logsRef, ecosystem.site]);
+
+    )
+  }
+    , [props.forestLog, props.parkLog, props.roomLog, ecosystem.site]);
 
   const memorizedUserPanel = useMemo(() =>
     <UserPanel user={auth} />
