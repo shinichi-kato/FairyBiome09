@@ -19,7 +19,7 @@ import { initializeFirebaseApp, firebaseApp, firestore } from '../firebase';
 
 import {
   collection, query as fsQuery, onSnapshot, orderBy, limit,
-  doc , addDoc, serverTimestamp
+  addDoc, serverTimestamp
 } from 'firebase/firestore';
 
 import Dexie from "dexie";

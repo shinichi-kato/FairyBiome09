@@ -18,11 +18,10 @@ const moodBadgeIcon = {
 function LeftBalloon(props) {
 	const message = props.message;
 	const avatarSrc = message.person === 'bot' ?
-		`${message.avatarPath}/${message.mood}.svg`
+		`/chatbot/${message.avatarPath}/avatar.svg`
 		:
 		`${message.avatarPath}`;
 	const texts = message.text?.split('<br/>') || ["undefined"];
-
 
 	return (
 		<Box
@@ -56,9 +55,10 @@ function LeftBalloon(props) {
 function RightBalloon(props) {
 	const message = props.message;
 	const avatarSrc = message.person === 'bot' ?
-		`${message.avatarPath}/${message.mood}.svg`
+		`/chatbot/${message.avatarPath}/avatar.svg`
 		:
-		`${message.avatarPath}`;
+		`/avatar/${message.avatarPath}`;
+  console.log(message.avatarPath);
 
 	return (
 		<Box
