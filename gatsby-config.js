@@ -111,34 +111,3 @@ module.exports = {
   }
 }
 
-// module.exports = {
-//   siteMetadata: {
-//     title: "FairyBiome",
-//     description: "A small community chat with chatbot",
-//     author: `skato21r@iris.eonet.ne.jp`,
-//     ecosystem: {
-//       randomSeed: 22563, // 1-65563
-//       changeRate: 0.000001, // 天候変化の速度
-//       updateInterval: 3000, // msec, 天候表示のアップデート周期
-//     }
-//   },
-//   plugins: [
-//     "gatsby-plugin-react-helmet",
-//     `gatsby-plugin-material-ui`,
-//     {
-//       resolve: "gatsby-plugin-manifest",
-//       options: {
-//         icon: "src/images/icon.png",
-//       },
-//     },
-//     "gatsby-plugin-mdx",
-//     {
-//       resolve: "gatsby-source-filesystem",
-//       options: {
-//         name: "pages",
-//         path: "./src/pages/",
-//       },
-//       __key: "pages",
-//     },
-//   ],
-// };

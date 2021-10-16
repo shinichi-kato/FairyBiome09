@@ -2,7 +2,7 @@ import React, { useState, createContext, useRef, useEffect } from 'react';
 import { Noise } from 'noisejs';
 import { useStaticQuery, graphql } from "gatsby";
 import useInterval from '../use-interval';
-
+import Container from '@mui/material/Container';
 import { getDateRad, getHourRad } from '../calendar-rad.jsx';
 
 
@@ -264,21 +264,20 @@ export default function EcosystemProvider(props) {
         changeSite: handleChangeSite,
       }}
     >
-      <div
-        style={{
-          position: "fixed",
-          width: 480,
-          marginLeft: "calc((100% - 480px)  * 0.3)",
-          marginRight: "calc((100% - 480px) * 0.7)",
+      <Container
+        fixed
+        maxWidth="xs"
+        disableGutters
+        sx={{
           height: "100vh",
           backgroundImage: `${sceneBg},${skyBg}`,
           backgroundSize: `cover,cover`,
-          backgroundRepeat: `no-repeat,no-repeat`
+          backgroundRepeat: `no-repeat,no-repeat`,
         }}
       >
         {props.children}
 
-      </div>
+      </Container>
 
     </EcosystemContext.Provider>
   )

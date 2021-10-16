@@ -124,8 +124,9 @@ export default function ChatRoom(props) {
     <Box
       display="flex"
       sx={{
-        width: 480,
-        height: "100vh"
+        width: "100%",
+        height: "100vh",
+        padding: "0px",
         // 子がflexGrowを使うコンポーネントは高さを指定
       }}
       flexDirection="column"
@@ -146,7 +147,7 @@ export default function ChatRoom(props) {
         flexDirection="row"
         justifyContent="space-between"
         sx={{
-          width: 480
+          width: "100%"
         }}
       >
         <Box>

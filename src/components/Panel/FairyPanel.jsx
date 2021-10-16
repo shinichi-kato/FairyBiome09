@@ -7,14 +7,14 @@ export default function FairyPanel(props) {
 
     <Box
       sx={{
-        width: 192,
-        height: 256,
+        width: 160,
+        height: 240,
       }}
       position="relative">
       <Box
         sx={{
-          width: 192,
-          height: 192,
+          width: 160,
+          height: 160,
           borderRadius: "0% 100% 100% 0% / 100% 100% 0% 0%",
           backgroundColor: theme=>theme.palette.primary.main
         }}
@@ -24,8 +24,8 @@ export default function FairyPanel(props) {
       />
       <Box
         sx={{
-          width: 192,
-          height: 256,
+          width: 160,
+          height: 240,
         }}
         position="absolute"
         bottom={0}
@@ -33,8 +33,8 @@ export default function FairyPanel(props) {
       >
         <img
           style={{
-            width: 192,
-            height: 256,
+            width: 160,
+            height: 240,
           }}
           src={props.photoURL}
           alt="" />
