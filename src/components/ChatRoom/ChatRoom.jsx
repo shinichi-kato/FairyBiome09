@@ -15,7 +15,9 @@ import { AuthContext } from "../Auth/AuthProvider";
 import { EcosystemContext } from '../Ecosystem/EcosystemProvider';
 import { Message } from '../message';
 
+import useLocalStorage from '../use-localstorage';
 
+const panelWidth=[120, 160, 192];
 
 
 export default function ChatRoom(props) {
@@ -28,6 +30,7 @@ export default function ChatRoom(props) {
   const ecosystem = useContext(EcosystemContext);
   const bot = useRef(useContext(BiomebotContext));
   const [userInput, setUserInput] = useState("");
+  const [panelSize, setPanelSize] = useLocalStorage("panelSize", 1);
 
   function handleChangeSite(site) {
     ecosystem.changeSite(site);
@@ -94,6 +97,14 @@ export default function ChatRoom(props) {
     event.preventDefault();
   }
 
+  function handleChangePanelSize(size) {
+    setPanelSize(prev=>{
+      let newSize = prev + size;
+      newSize = newSize<0 ? 0 : newSize;
+      newSize = newSize<panelWidth.length ? newSize : panelWidth.length-1;
+      return newSize; 
+    });
+  }
 
   const memorizedLogViewer = useMemo(() => {
     let log;
@@ -117,8 +128,11 @@ export default function ChatRoom(props) {
     , [props.forestLog, props.parkLog, props.roomLog, ecosystem.site]);
 
   const memorizedUserPanel = useMemo(() =>
-    <UserPanel user={auth} />
-    , [auth]);
+    <UserPanel
+      panelWidth={panelWidth[panelSize]}
+      user={auth}
+    />
+    , [auth, panelSize]);
 
   return (
     <Box
@@ -135,7 +149,8 @@ export default function ChatRoom(props) {
       <Box
         sx={{
           height: "calc ( 100vh - 48px - 256px)",
-          overflowY: "scroll"
+          overflowY: "scroll",
+          alignItems: 'flex-end',
         }}
         flexGrow={1}
       >
@@ -147,11 +162,12 @@ export default function ChatRoom(props) {
         flexDirection="row"
         justifyContent="space-between"
         sx={{
-          width: "100%"
+          width: "100%",
         }}
       >
         <Box>
           <FairyPanel
+            panelWidth={panelWidth[panelSize]}
             photoURL={bot.current.photoURL}
           />
         </Box>
@@ -185,6 +201,7 @@ export default function ChatRoom(props) {
           <AppMenu
             site={ecosystem.site}
             handleExitRoom={props.handleExitRoom}
+            handleChangePanelSize={handleChangePanelSize}
             handleChangeSite={handleChangeSite}
           />
           <InputBase

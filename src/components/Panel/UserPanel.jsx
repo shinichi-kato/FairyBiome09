@@ -4,19 +4,20 @@ import Box from '@mui/material/Box';
 
 export default function UserPanel(props) {
   const user = props.user;
-  console.log("photourl", user.photoURL)
+  const width = props.panelWidth;
+  const height = width * 1.5;
 
   return (
     <Box
       sx={{
-        width: 160,
-        height: 240,
+        width: width,
+        height: height,
       }}
       position="relative">
       <Box
         sx={{
-          width: 160,
-          height: 160,
+          width: width,
+          height: width,
           borderRadius: "100% 0% 0% 100% / 100% 100% 0% 0%",
           backgroundColor: theme => theme.palette.primary.main
         }}
@@ -25,8 +26,8 @@ export default function UserPanel(props) {
         right={0}
       />
       <Box sx={{
-        width: 160,
-        height: 240,
+        width: width,
+        height: height,
       }}
         position="absolute"
         bottom={0}
@@ -34,8 +35,8 @@ export default function UserPanel(props) {
       >
         <img
           style={{
-            width: 160,
-            height: 240,
+            width: width,
+            height: height,
           }}
           src={`/avatar/${user.photoURL}`}
           alt={user.photoURL} />

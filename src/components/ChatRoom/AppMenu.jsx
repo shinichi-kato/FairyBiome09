@@ -4,12 +4,15 @@ import Slide from '@mui/material/Slide';
 import IconButton from '@mui/material/IconButton';
 import DirectionsIcon from '@mui/icons-material/Directions';
 import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
 import Box from '@mui/material/Box';
 import ForestIcon from '@mui/icons-material/Park';
 import HomeIcon from '@mui/icons-material/Gite';
 import ParkIcon from '@mui/icons-material/Deck';
 import PersonPinIcon from '@mui/icons-material/PersonPinCircle';
 import ArrowBackIcon from '@mui/icons-material/ArrowBackIos';
+import PersonSmallIcon from './PersonSmallIcon';
+import PersonLargeIcon from './PersonLargeIcon';
 
 const buttonSx = {
   marginLeft: "2px",
@@ -61,6 +64,15 @@ function AppMenuDialog(props) {
     * 家/森/公園への移動
   */
   const site = props.site;
+
+  function handleSetPanelSmall(){
+    props.handleChangePanelSize(-1)
+  }
+
+  function handleSetPanelLarge(){
+    props.handleChangePanelSize(1)
+  }
+
   return (
     <Box
       sx={{
@@ -69,18 +81,36 @@ function AppMenuDialog(props) {
       }}
     >
       <Button
-       startIcon={<ArrowBackIcon/>}
-       onClick={props.handleExit}
+        startIcon={<ArrowBackIcon />}
+        onClick={props.handleExit}
       >
         メインメニュー
       </Button>
+      <ButtonGroup
+        variant="text"
+      >
+        <Button
+          startIcon={<PersonSmallIcon/>}
+          onClick={handleSetPanelSmall}
+        >
+          小
+        </Button>
+        <Button
+          startIcon={<PersonLargeIcon/>}
+          onClick={handleSetPanelLarge}
+        >
+          大
+        </Button>
+        
+
+      </ButtonGroup>
       <Button key="forest"
         sx={{
           ...buttonSx,
           marginLeft: "8px",
         }}
-        disabled={site==='forest'}
-        onClick={()=>props.handleChangeSite('forest')}
+        disabled={site === 'forest'}
+        onClick={() => props.handleChangeSite('forest')}
       >
         <ButtonContent
           icon={<ForestIcon />}
@@ -93,8 +123,8 @@ function AppMenuDialog(props) {
           ...buttonSx,
           marginLeft: "50px",
         }}
-        disabled={site==='park'}
-        onClick={()=>props.handleChangeSite('park')}
+        disabled={site === 'park'}
+        onClick={() => props.handleChangeSite('park')}
       >
         <ButtonContent
           icon={<ParkIcon />}
@@ -107,8 +137,8 @@ function AppMenuDialog(props) {
           ...buttonSx,
           marginLeft: "60px",
         }}
-        disabled={site==='room'}
-        onClick={()=>props.handleChangeSite('room')}
+        disabled={site === 'room'}
+        onClick={() => props.handleChangeSite('room')}
       >
         <ButtonContent
           icon={<HomeIcon />}
@@ -140,7 +170,7 @@ export default function AppMenu(props) {
   const open = Boolean(anchorEl);
   const id = open ? 'app-menu-popover' : undefined;
 
-  function handleChangeSite(site){
+  function handleChangeSite(site) {
     handleClose();
     props.handleChangeSite(site);
   }
@@ -173,6 +203,7 @@ export default function AppMenu(props) {
         <AppMenuDialog
           site={props.site}
           handleChangeSite={handleChangeSite}
+          handleChangePanelSize={props.handleChangePanelSize}
           handleExit={props.handleExitRoom}
           handleClose={handleClose} />
       </Popover>
