@@ -6,6 +6,7 @@
   log
 
 */
+
 import React, { useState, useEffect } from "react";
 import { graphql, navigate } from "gatsby";
 
@@ -145,15 +146,16 @@ export default function IndexPage({ data }) {
       initializeFirebaseApp();
 
       const q = fsQuery(collection(firestore, "parklog"),
-        orderBy('timestamp'),limit(100));
+        orderBy('timestamp'), limit(100));
 
       unsubscribe = onSnapshot(q, (snap) => {
         let arr = [];
         snap.forEach((doc) => {
-          let m=new Message(doc.data());
+          let m = new Message(doc.data());
           m.id = doc.id;
-          arr.push(m)});
-        console.log("snap=",arr)
+          arr.push(m)
+        });
+        console.log("snap=", arr)
         setParkLog(arr);
       });
     };

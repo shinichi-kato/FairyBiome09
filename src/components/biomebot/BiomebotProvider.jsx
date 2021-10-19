@@ -433,35 +433,42 @@ export default function BiomebotProvider(props) {
   useEffect(() => {
     let isCancelled = false;
 
-    if (!isCancelled) {
-      if (appState === 'authOk' && auth.uid && !stateRef.current.botId) {
-        db.load(auth.uid)
-          .then(snap => {
-            if (snap) {
-              dispatch({ type: 'connect', snap: snap });
+    if (!isCancelled && appState === 'authOk') {
+      (async () => {
+        if (auth.uid && !stateRef.current.botId){
+          const snap = await db.load(auth.uid);
+          if(snap){
+            dispatch({ type: 'connect', snap: snap });
 
-              const snapWork = snap.work;
-              console.log("on load setWork:", snapWork)
-              setWork(prev => ({
-                key: prev.key + 1,
-                mentalLevel: snapWork.mentalLevel,
-                moment: snapWork.moment,
-                mood: snapWork.mood,
-                partOrder: [...snapWork.partOrder],
-                queue: [...snapWork.queue],
-                site: snapWork.site,
-                updatedAt: snapWork.updatedAt
-              }));
-              handleBotFound.current();
-            }
-            else {
-              handleBotNotFound.current();
-            }
-          });
-      }
+            const snapWork = snap.work;
+            console.log("on load setWork:", snapWork)
+            setWork(prev => ({
+              key: prev.key + 1,
+              mentalLevel: snapWork.mentalLevel,
+              moment: snapWork.moment,
+              mood: snapWork.mood,
+              partOrder: [...snapWork.partOrder],
+              queue: [...snapWork.queue],
+              site: snapWork.site,
+              updatedAt: snapWork.updatedAt
+            }));
+            handleBotFound.current();           
+          }
+          else {
+            handleBotNotFound.current();
+          }
+        }
+
+        if(stateRef.current.botId){
+          handleBotFound.current();
+        }
+  
+      })()
+
     }
 
     return () => { isCancelled = true }
+
   }, [appState, auth.uid, state]);
 
 
