@@ -58,7 +58,6 @@ function RightBalloon(props) {
 		`/chatbot/${message.avatarPath}/avatar.svg`
 		:
 		`/avatar/${message.avatarPath}`;
-  console.log(message.avatarPath);
 
 	return (
 		<Box

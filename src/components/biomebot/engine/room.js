@@ -43,13 +43,13 @@ const renderer = {
 
 export function execute(state, work, message, sendMessage) {
   // messageの型チェック
-  console.assert(message instanceof Message,"room: execute Message型ではないmessageが渡されました");
+  console.assert(message instanceof Message, "room: execute Message型ではないmessageが渡されました");
 
-  console.log("execute: user message= ",message);
+  console.log("execute: user message= ", message);
   let reply = { text: null, drop: null, hoist: null };
 
   // shift queue
-  
+
 
   // moodと同名のpartがあればそれをpartOrder先頭に移動
   hoist(work.mood, work.partOrder);
@@ -61,15 +61,15 @@ export function execute(state, work, message, sendMessage) {
     // 間に入っていたらOK
 
     const moment = work.moment + randomInt(9);
-    console.log("part",partName,"moment",moment,"l",part.momentLower,"u",part.momentUpper)
+    console.log("part", partName, "moment", moment, "l", part.momentLower, "u", part.momentUpper)
     if (part.momentLower >= moment || moment > part.momentUpper) {
       continue;
     }
 
     // 辞書の一致チェック
-    const result = retrieve(message, state.cache[partName],part.coeffs);
-    
-    console.log("retrieve",result,"precision",part.precision)
+    const result = retrieve(message, state.cache[partName], part.coeffs);
+
+    console.log("retrieve", result, "precision", part.precision)
     if (result.score < part.precision) continue;
 
     // スピーチの生成
@@ -90,7 +90,6 @@ export function execute(state, work, message, sendMessage) {
 
     // トリガーを捕捉
     let trigger = ""
-    console.log("reply",reply)
     reply.text = reply.text.replace(RE_ENTER, (_, p1) => {
       // ※クロージャ注意
       trigger = p1;
@@ -101,15 +100,15 @@ export function execute(state, work, message, sendMessage) {
     if (trigger !== "" && trigger in state.parts) {
       // partと同名のトリガーを検出したら、そのpartを先頭にする。
       hoist(trigger, work.partOrder);
-      
+
       // triggerがmoodのどれかと同じであったらmoodをその名前で上書きする。
       // そうでなければpart.initialMoodにする。
       if ('initialMood' in work.parts[trigger]) {
-        work.mood = work.parts[trigger].initialMood 
+        work.mood = work.parts[trigger].initialMood
       }
       else if (trigger in moodNames) {
         work.mood = trigger;
-        work.queue.push(new Message('trigger',`{enter_${trigger}}`));
+        work.queue.push(new Message('trigger', `{enter_${trigger}}`));
       }
       else {
         work.mood = "peace"
@@ -134,7 +133,9 @@ export function execute(state, work, message, sendMessage) {
   }
 
 
-  console.log("reply",reply)
+  console.log("reply", reply)
+  let replyText = reply.text;
+
   if (reply.text === null) {
     // NOT_FOUNDの生成
     // 各partの辞書にNOT_FOUNDを置くことができ、partOrderの
@@ -142,31 +143,35 @@ export function execute(state, work, message, sendMessage) {
     // すべてのパートに見つからなければmainのNOT_FOUNDを
     // レンダリング
 
+
+
     for (let partName of work.partOrder) {
       const part = state.parts[partName];
 
-      reply.text = renderer[part.kind](
+      replyText = renderer[part.kind](
         partName,
         state,
         work,
         "{NOT_FOUND}");
 
-      if (reply.text !== "{NOT_FOUND}") break;
+      if (replyText !== "{NOT_FOUND}") break;
     }
 
-    if (reply.text === "{NOT_FOUND}") {
-      reply.text = render("{NOT_FOUND}", state.main);
+    if (replyText === "{NOT_FOUND}") {
+      replyText = render("{NOT_FOUND}", state.main);
     }
-    console.log("state.main",state.main)
-
-    reply.text.replace('{bot}',work.displayName);
-    reply.text.replace('{user}',message.name);
+    console.log("state.main", state.main)
   }
+
+  replyText = replyText
+    .replace('{bot}', work.displayName)
+    .replace('{user}', message.name or 'あなた');
+  console.log("reply2", replyText)
 
   sendMessage(new Message(
     'speech',
     {
-      text: reply.text,
+      text: replyText,
       name: state.displayName,
       person: "bot",
       avatarPath: state.config.avatarPath,
@@ -174,7 +179,7 @@ export function execute(state, work, message, sendMessage) {
       site: work.site,
     }
   ));
-  console.log("returning",work)  
+  console.log("returning", work)
   return work;
 }
 

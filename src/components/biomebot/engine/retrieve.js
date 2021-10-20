@@ -67,7 +67,7 @@ export function retrieve(message, cache, coeffs) {
     textScore = apply(cache.tfidf, 1, x => dot(x, ntfidf));
   } catch (error) {
     textScore = [];
-    console.log("invalid cache.tfidf,tfidf=", cache.tfidf, "error=", error)
+    // console.log("invalid cache.tfidf,tfidf=", cache.tfidf, "error=", error)
   }
 
   // --------------------------------------------------------
@@ -80,12 +80,10 @@ export function retrieve(message, cache, coeffs) {
   // cache.fvとmessage.featuresの各要素ごとに積→共通した項が１になる　fv.length×features.lengthのmatrixができる
   
   const fmtx = apply(cache.fv, 1, x => dotMultiply(x, message.features));
-  console.log("fmtx",fmtx,"textScore",textScore);
   // 先頭をtextscore,以降をfeatureのスコアとした配列を作る
   const textScoreIndex = index(range(0, count(textScore)), 0);
   let totalScore = subset(fmtx, textScoreIndex, matrixFromColumns(textScore));
   
-  console.log("message.features=", message.features, "cache.fv=", cache.fv, "fmtx=", fmtx, "totalScore=", totalScore)
   try {
     totalScore = apply(totalScore, 1, x => dotMultiply(x, coeffs.weights));
     
