@@ -165,9 +165,10 @@ export function execute(state, work, message, sendMessage) {
 
   replyText = replyText
     .replace('{bot}', work.displayName)
-    .replace('{user}', message.name or 'あなた');
-  console.log("reply2", replyText)
-
+    .replace('{user}', message.name || 'あなた');
+  // ecosystemにはmessage.nameがない。そのような返答は起きるべきでないが、
+  // フォールバックとして「あなた」を使用。
+  
   sendMessage(new Message(
     'speech',
     {

@@ -148,6 +148,7 @@ export default function IndexPage({ data }) {
       const q = fsQuery(collection(firestore, "parklog"),
         orderBy('timestamp'), limit(100));
 
+        console.log("subscribing")
       unsubscribe = onSnapshot(q, (snap) => {
         let arr = [];
         snap.forEach((doc) => {
