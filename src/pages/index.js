@@ -7,7 +7,7 @@
 
 */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { graphql, navigate } from "gatsby";
 
 import Landing from '../components/Landing/Landing';
@@ -116,6 +116,7 @@ export default function IndexPage({ data }) {
   const [parkLog, setParkLog] = useState([]);
   const [forestLog, setForestLog] = useState([]);
   const [roomLog, setRoomLog] = useState([]);
+  const unsubscribeRef = useRef();
 
   const config = data.site.siteMetadata.chatbot;
 
@@ -139,34 +140,34 @@ export default function IndexPage({ data }) {
   }, [config.logViewLength]);
 
   useEffect(() => {
-    let isCancelled = false;
-    let unsubscribe;
-
-    if (!firebaseApp && !isCancelled) {
+    if (!firebaseApp) {
       initializeFirebaseApp();
+    };
 
+    return (()=>{
+      console.log("unsubscribing")
+      if(unsubscribeRef.current) { unsubscribeRef.current(); }
+    })
+  }, []);
+
+  useEffect(() => {
+    if (appState === 'authOk' && !unsubscribeRef.current) {
       const q = fsQuery(collection(firestore, "parklog"),
         orderBy('timestamp'), limit(100));
 
-        console.log("subscribing")
-      unsubscribe = onSnapshot(q, (snap) => {
+      unsubscribeRef.current = onSnapshot(q, (snap) => {
         let arr = [];
         snap.forEach((doc) => {
           let m = new Message(doc.data());
           m.id = doc.id;
           arr.push(m)
         });
-        console.log("snap=", arr)
         setParkLog(arr);
       });
-    };
+    }
 
-    return (() => {
-      isCancelled = true;
-      unsubscribe();
-    });
+  }, [appState])
 
-  }, []);
 
   function handleWriteLog(message) {
     (async () => {

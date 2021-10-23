@@ -3,15 +3,14 @@ debug note
 
 1. チャットルーム
 
+* chromeだと書き込みはできてるがsnapshotが更新されない
 * 返答が生成されない
-*{NOT_FOUND}が展開されてない
+* {NOT_FOUND}が展開されてない
 
 * triggerに応答していない？
 * queueが消費されてない？
 
 
-
-* {user}が展開されてない
 
 * {enter_night}にgreetingsが応答している
 
@@ -19,6 +18,8 @@ debug note
 
 
 # 以下対応済み
+* {user}が展開されてない
+
 * <br>で改行されていない
 * CreateFairyで画像が見切れている
 
