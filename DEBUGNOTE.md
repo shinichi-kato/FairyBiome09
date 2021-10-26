@@ -3,7 +3,7 @@ debug note
 
 1. チャットルーム
 
-* chromeだと書き込みはできてるがsnapshotが更新されない
+
 * 返答が生成されない
 * {NOT_FOUND}が展開されてない
 
@@ -18,6 +18,7 @@ debug note
 
 
 # 以下対応済み
+* chromeだと書き込みはできてるがsnapshotが更新されない
 * {user}が展開されてない
 
 * <br>で改行されていない
