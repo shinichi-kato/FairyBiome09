@@ -51,15 +51,14 @@ export function retrieve(message, cache, coeffs) {
   if (sumWv === 0) {
     return { index: null, score: 0 };
   }
-
   // tfidf計算
   const tf = divide(wv, sumWv);
   const tfidf = dotMultiply(tf, cache.idf);
-
+  console.log("tfidf=",tfidf)
   // 正規化
 
   const n = norm(tfidf);
-  const ntfidf = map(tfidf, x => (divide(1, n)));
+  const ntfidf = map(tfidf, x => (divide(x, n)));
 
   // message.textに対するinScript各行の類似度
   let textScore = [];
@@ -67,9 +66,10 @@ export function retrieve(message, cache, coeffs) {
     textScore = apply(cache.tfidf, 1, x => dot(x, ntfidf));
   } catch (error) {
     textScore = [];
-    // console.log("invalid cache.tfidf,tfidf=", cache.tfidf, "error=", error)
+    console.log("invalid cache.tfidf,tfidf=", cache.tfidf, "error=", error)
   }
 
+  console.log("textScore=",textScore)
   // --------------------------------------------------------
   //
   // messageに含まれるその他の特徴量の類似度
