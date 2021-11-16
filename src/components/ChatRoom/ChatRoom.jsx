@@ -122,7 +122,7 @@ export default function ChatRoom(props) {
         throw new Error(`invalid site ${ecosystem.site}`)
     }
     return (
-      <LogViewer log={log} />
+      <LogViewer log={log} botBackgroundColor={bot.current.state.config.backgroundColor}/>
     )
   }
     , [props.forestLog, props.parkLog, props.roomLog, ecosystem.site]);
@@ -168,6 +168,7 @@ export default function ChatRoom(props) {
         <Box>
           <FairyPanel
             panelWidth={panelWidth[panelSize]}
+            backgroundColor={bot.current.state.config.backgroundColor}
             photoURL={bot.current.photoURL}
           />
         </Box>

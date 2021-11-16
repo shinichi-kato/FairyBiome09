@@ -23,6 +23,8 @@ function LeftBalloon(props) {
 		`${message.avatarPath}`;
 	const texts = message.text?.split('<br/>') || ["undefined"];
 
+  
+
 	return (
 		<Box
 			display="flex"
@@ -42,7 +44,8 @@ function LeftBalloon(props) {
           borderRadius: "15px 15px 15px 0px",
           padding: "0.5em",
           marginLeft: 4,
-          backgroundColor: theme=>theme.palette.secondary.light,
+          backgroundColor: 
+            props.backgroundColor ? props.backgroundColor : theme=>theme.palette.secondary.light,
         }}
 			>
         {texts.map((text,index)=><Typography variant="body1" key={index}>{text}</Typography>)}
@@ -127,7 +130,8 @@ export default function LogViewer(props) {
 
 		switch (message.person) {
 			case 'user': return <RightBalloon key={message.id} message={message} />
-			case 'bot':
+			case 'bot': return <LeftBalloon key={message.id} message={message}
+        backgroundColor={props.botBackgroundColor} />
 			case 'other': return <LeftBalloon key={message.id} message={message} />
 			default: return <SystemMessage key={message.id} message={message} />
 		}

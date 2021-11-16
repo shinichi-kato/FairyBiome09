@@ -48,6 +48,14 @@ export function execute(state, work, message, sendMessage) {
 
   console.log("execute: user message= ",message);
   let reply = { text: null, drop: null, hoist: null };
+  
+  // hub behavior チェック
+
+  const util = state.config.hubBehavior.utilization;
+  if(util >= Math.random){
+    return work;
+  }
+
 
   // shift queue
   

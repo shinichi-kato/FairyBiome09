@@ -22,7 +22,7 @@ module.exports = {
     palette: [
       // based on autism color palette
       // https://www.color-hex.com/color-palette/10394
-      '#3bb150', '#f5eb50', '#a52228', '#7acedc', '#212962', '#b68611'
+      '#3bb150bb', '#f5eb50bb', '#a52228bb', '#7acedcbb', '#212962bb', '#b68611bb'
     ]
   },
   plugins: [

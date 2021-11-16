@@ -3,17 +3,11 @@ debug note
 
 1. チャットルーム
 
-* {enter_??}が届いていない？返答できてない？
+* エディタからチャットルームに戻る or F5再起動時にwork.parts is undefinedになることがある。
+logの内容も読まれていない。room.js:106で参照
 
-* 返答が生成されない
-* {NOT_FOUND}が展開されてない
-
-* triggerに応答していない？
 * queueが消費されてない？
 
-
-
-* {enter_night}にgreetingsが応答している
 
 2. エディタ
 
