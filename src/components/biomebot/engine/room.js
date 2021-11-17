@@ -176,6 +176,7 @@ export function execute(state, work, message, sendMessage) {
       name: state.displayName,
       person: "bot",
       avatarPath: state.config.avatarPath,
+      backgroundColor: state.config.backgroundColor,
       mood: work.mood,
       site: work.site,
     }

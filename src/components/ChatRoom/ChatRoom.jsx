@@ -16,6 +16,7 @@ import { EcosystemContext } from '../Ecosystem/EcosystemProvider';
 import { Message } from '../message';
 
 import useLocalStorage from '../use-localstorage';
+import { ariaHidden } from '@mui/core';
 
 const panelWidth=[120, 160, 192];
 
@@ -80,6 +81,7 @@ export default function ChatRoom(props) {
       person: 'user',
       mood: 'peace',
       avatarPath: auth.photoURL,
+      backgroundColor: "",
       site: ecosystem.site,
     }));
 
@@ -122,7 +124,7 @@ export default function ChatRoom(props) {
         throw new Error(`invalid site ${ecosystem.site}`)
     }
     return (
-      <LogViewer log={log} botBackgroundColor={bot.current.state.config.backgroundColor}/>
+      <LogViewer log={log}/>
     )
   }
     , [props.forestLog, props.parkLog, props.roomLog, ecosystem.site]);

@@ -1,12 +1,19 @@
-import React, {useContext} from 'react';
+import React, { useContext } from 'react';
 
-import {AuthContext} from "../Auth/AuthProvider";
+import { AuthContext } from "../Auth/AuthProvider";
 
 import Avatar from '@mui/material/Avatar';
 import Chip from '@mui/material/Chip';
 import EditIcon from '@mui/icons-material/Edit';
 
-export default function UserAccount(){
+function readBackgroundColor() {
+  if (window) {
+    return window.localStorage.getItem('backgroundColor');
+  }
+  return null;
+}
+
+export default function UserAccount() {
   const auth = useContext(AuthContext);
 
   return (
@@ -14,11 +21,12 @@ export default function UserAccount(){
       avatar={
         <Avatar
           aria-label="user"
-          src={`../../avatar/${auth.photoURL}`} alt={auth.photoURL}/>
+          src={`../../avatar/${auth.photoURL}`} alt={auth.photoURL} />
+          sx={{ backgroundColor: readBackgroundColor()}}
       }
-      label={auth.displayName}
-      onClick={auth.openUpdateDialog}
-      deleteIcon={<EditIcon />}
-    />
+label = { auth.displayName }
+onClick = { auth.openUpdateDialog }
+deleteIcon = {< EditIcon />}
+/>
   )
 }

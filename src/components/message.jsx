@@ -178,6 +178,7 @@ export class Message {
         this.name = ""
         this.timestamp = null;
         this.avatarPath = "";
+        this.backgroundColor = "";
 
         if (line.length > 1) {
           const feats = line[1].split(' ');
@@ -195,6 +196,7 @@ export class Message {
         this.id = mode.id;
         this.timestamp = mode.timestamp;
         this.avatarPath = mode.avatarPath;
+        this.backgroundColor = mode.backgroundColor;
         if ("features" in mode) {
           this.features = [...mode.features];
         }
@@ -221,6 +223,7 @@ export class Message {
           this.name = data.name;
           this.timestamp = new Date();
           this.avatarPath = data.avatarPath;
+          this.backgroundColor = data.backgroundColor;
 
           this.setFeature(data.person);
           this.setFeature(data.mood || "peace");
@@ -235,6 +238,7 @@ export class Message {
           this.name = null;
           this.timestamp = new Date();
           this.avatarPath = "";
+          this.backgroundColor = "";
 
           this.setFeature(data.person);
           this.setFeature(data.mood);
@@ -250,6 +254,7 @@ export class Message {
           this.name = mode;
           this.timestamp = new Date();
           this.avatarPath = "";
+          this.backgroundColor = "";
 
           break;
         }

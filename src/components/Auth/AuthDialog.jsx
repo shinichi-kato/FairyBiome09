@@ -13,6 +13,8 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 import AvatarSelector from './AvatarSelector';
 
+import useLocalStorage from '../use-localstorage';
+
 
 const TITLE = {
   'signIn':'ユーザ認証',
@@ -97,6 +99,10 @@ export default function AuthDialog(props){
 
   function handleClose(){
     props.handleClose();
+  }
+
+  function handleChangeBackgroundColor(color){
+
   }
 
   let isButtonValid = false;
@@ -228,6 +234,7 @@ export default function AuthDialog(props){
               <AvatarSelector 
                 photoURL={photoURL}
                 handleChangePhotoURL={handleChangePhotoURL}
+                handleChangeBackgroundColor={handleChangeBackgroundColor}
               />
             </Grid>
           </Grid>
