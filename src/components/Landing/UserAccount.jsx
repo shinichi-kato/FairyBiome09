@@ -21,8 +21,8 @@ export default function UserAccount() {
       avatar={
         <Avatar
           aria-label="user"
-          src={`../../avatar/${auth.photoURL}`} alt={auth.photoURL} />
-          sx={{ backgroundColor: readBackgroundColor()}}
+          src={`../../avatar/${auth.photoURL}`} alt={auth.photoURL}
+          sx={{ backgroundColor: readBackgroundColor() }} />
       }
 label = { auth.displayName }
 onClick = { auth.openUpdateDialog }

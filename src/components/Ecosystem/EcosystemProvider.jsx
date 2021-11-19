@@ -3,6 +3,7 @@ import { Noise } from 'noisejs';
 import { useStaticQuery, graphql } from "gatsby";
 import useInterval from '../use-interval';
 import Container from '@mui/material/Container';
+// import Box from '@mui/material/Box';
 import { getDateRad, getHourRad } from '../calendar-rad.jsx';
 
 
@@ -213,7 +214,7 @@ export default function EcosystemProvider(props) {
       return d;
     })
 
-  }, config.updateInterval,true);
+  }, config.updateInterval, true);
 
   function getPressure(timestamp, changeRate) {
     // ある時刻における気圧を返す
@@ -236,10 +237,10 @@ export default function EcosystemProvider(props) {
 
   function handleChangeSite(s) {
     // forest実装後に外すこと
-    if(s !== 'forest'){
+    if (s !== 'forest') {
       setSite(s);
     }
-    console.log("handleChangeSite",s)
+    console.log("handleChangeSite", s)
   }
 
   function handleChangeDispatched() {
@@ -249,6 +250,21 @@ export default function EcosystemProvider(props) {
   // const weatherBg = `url(images/ecosystem/weather/${WEATHER_ICONS[weather]})`;
   const sceneBg = `url(images/ecosystem/${site}-${dayPart}.svg)`;
   const skyBg = `url(images/ecosystem/sky/${weather}-${dayPart}.svg)`;
+
+  //   <Container
+  //   fixed
+  //   maxWidth="xs"
+  //   disableGutters
+  //   sx={{
+  //     height: "100vh",
+  //     backgroundImage: `${sceneBg},${skyBg}`,
+  //     backgroundSize: `cover,cover`,
+  //     backgroundRepeat: `no-repeat,no-repeat`,
+  //   }}
+  // >
+  //   {props.children}
+
+  // </Container>
 
   return (
     <EcosystemContext.Provider

@@ -17,6 +17,16 @@ const theme = createTheme({
       default: '#fff',
     },
   },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides:{
+        body: {
+          maxWidth: '600px',
+          margin: 'auto'
+        }
+      }
+    }
+  }
 });
 
 export default theme;

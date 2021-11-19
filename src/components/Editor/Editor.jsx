@@ -101,15 +101,13 @@ export default function Editor() {
     <Box
       display="flex"
       sx={{
-        width: "100vw",
         height: "calc( 100vh - 48px )",
         backgroundColor: "#e0e0e0",
         overflow: "hidden",
-        position: "relative"
+        position: "relative",
+        flexGrow: 1,
       }}
       flexDirection="column"
-      position="relative"
-      flexGrow={1}
     >
       <AppBar position="static">
         <Toolbar>
@@ -137,7 +135,7 @@ export default function Editor() {
       </AppBar>
       <Box
         sx={{
-          width: 480,
+          width: "100%",
           flexGrow: 1,
           overflowY: "scroll",
           overflowX: "hidden"

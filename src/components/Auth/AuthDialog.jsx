@@ -12,22 +12,23 @@ import KeyIcon from '@mui/icons-material/VpnKey';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 import AvatarSelector from './AvatarSelector';
+import ColorSelector from '../Editor/ColorSelector';
 
 import useLocalStorage from '../use-localstorage';
 
 
 const TITLE = {
-  'signIn':'ユーザ認証',
-  'signUp':'ユーザの新規登録',
-  'update':'ユーザ情報の変更'
+  'signIn': 'ユーザ認証',
+  'signUp': 'ユーザの新規登録',
+  'update': 'ユーザ情報の変更'
 };
-const BUTTON_TITLE={
-  'signIn':'サインイン',
-  'signUp':'サインアップ',
-  'update':'ユーザ情報の変更'
+const BUTTON_TITLE = {
+  'signIn': 'サインイン',
+  'signUp': 'サインアップ',
+  'update': 'ユーザ情報の変更'
 }
 
-export default function AuthDialog(props){
+export default function AuthDialog(props) {
   /*
     認証ダイアログ
     
@@ -52,86 +53,88 @@ export default function AuthDialog(props){
   const emailRef = useRef();
   const passwordRef = useRef();
   const displayNameRef = useRef();
-  const [photoURL,setPhotoURL] = useState(props.user.photoURL || "");
-  const [page,setPage] = useState(props.dialog ||  'signIn');
+  const [photoURL, setPhotoURL] = useState(props.user.photoURL || "");
+  const [page, setPage] = useState(props.dialog || 'signIn');
+  const [backgroundColor, setBackgroundColor] = useLocalStorage("backgroundColor", "#FFFFFFBB");
 
 
-    function handleClick(){
-    switch(page) {
-      case 'signIn' : {
+  function handleClick() {
+    switch (page) {
+      case 'signIn': {
         props.authenticate(
           emailRef.current.value,
           passwordRef.current.value);
         return
       }
-      case 'signUp' : {
+      case 'signUp': {
         props.createUser(
           emailRef.current.value,
           passwordRef.current.value);
         return;
       }
-      case 'update' : {
+      case 'update': {
         props.updateUserInfo(
           displayNameRef.current.value,
-          photoURL );
+          photoURL);
         return;
       }
-      default: 
+      default:
         throw new Error(`invalid page {page}`);
     }
   }
 
-  function handleSignOut(){
+  function handleSignOut() {
     props.handleSignOut();
   }
 
-  function handleToSignUp(){
+  function handleToSignUp() {
     setPage('signUp');
   }
 
-  function handleToSignIn(){
+  function handleToSignIn() {
     setPage('signIn');
   }
 
-  function handleChangePhotoURL(url){
+  function handleChangePhotoURL(url) {
     setPhotoURL(url);
   }
 
-  function handleClose(){
+  function handleClose() {
     props.handleClose();
   }
 
-  function handleChangeBackgroundColor(color){
-
+  function handleChangeBackgroundColor(c) {
+    setBackgroundColor(c);
   }
 
+
   let isButtonValid = false;
-  switch(page) {
-    case 'signUp': 
-      if (emailRef.current?.value !== "" 
+  switch (page) {
+    case 'signUp':
+      if (emailRef.current?.value !== ""
         && passwordRef.current?.value !== ""
         && displayNameRef.current?.value !== ""
         && photoURL !== "") {
-          isButtonValid = true;
-        }
+        isButtonValid = true;
+      }
       break;
-    
-      case 'signIn':
-        if (emailRef.current?.value !== ""
-          && passwordRef.current?.value !== ""){
-            isButtonValid = true;
-          }
-        break;
-      
-      case 'update':
-        if (photoURL !== "" 
-        && displayNameRef.current?.value !== ""){
-          isButtonValid = true;
-        }
-        break;
-      
-      default:
-        throw new Error(`invalid page ${page}`);
+
+    case 'signIn':
+      if (emailRef.current?.value !== ""
+        && passwordRef.current?.value !== "") {
+        isButtonValid = true;
+      }
+      break;
+
+    case 'update':
+      if (photoURL !== ""
+        && displayNameRef.current?.value !== "") {
+        isButtonValid = true;
+      }
+      break;
+
+    default:
+      throw new Error(`invalid page ${page}`);
   }
 
   return (
@@ -141,21 +144,22 @@ export default function AuthDialog(props){
           '& fieldset': {
             borderRadius: '50vh',
           },
-          margin: theme=>theme.spacing(1),
+          margin: theme => theme.spacing(1),
           width: 350,
           fontSize: 18,
           backgroundColor: '#f0f0f0',
           borderRadius: '50vh',
-      }}}
+        }
+      }}
       container
       direction="column"
       justifyContent="flex-start"
       alignItems="center"
       spacing={4}
     >
-      
+
       <Grid item xs={12}>
-        <Collapse in={page==='signIn'}>
+        <Collapse in={page === 'signIn'}>
           フレーバー画像
         </Collapse>
       </Grid>
@@ -171,41 +175,41 @@ export default function AuthDialog(props){
           fullWidth
           required
           placeholder="メールアドレス"
-          disabled={page==='update'}
+          disabled={page === 'update'}
           defaultValue={props.user.email}
           inputRef={emailRef}
           variant="outlined"
           InputProps={{
-            startAdornment:(
+            startAdornment: (
               <InputAdornment position="start">
-                <EmailIcon/>
+                <EmailIcon />
               </InputAdornment>
             )
           }}
         />
       </Grid>
-      { page !== 'update' &&
+      {page !== 'update' &&
         <Grid item xs={12} >
-        <TextField
-          type="password"
-          placeholder="パスワード"
-          defaultValue={props.user.password}
-          inputRef={passwordRef}
-          fullWidth
-          required
-          variant="outlined"
-          InputProps={{
-            startAdornment:(
-              <InputAdornment position="start">
-                <KeyIcon/>
-              </InputAdornment>
-            )
-          }}
-        />
-      </Grid>
+          <TextField
+            type="password"
+            placeholder="パスワード"
+            defaultValue={props.user.password}
+            inputRef={passwordRef}
+            fullWidth
+            required
+            variant="outlined"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <KeyIcon />
+                </InputAdornment>
+              )
+            }}
+          />
+        </Grid>
       }
       <Grid item xs={12}>
-        <Collapse in={page!=='signIn'}>
+        <Collapse in={page !== 'signIn'}>
           <Grid
             container
             direction="column"
@@ -222,19 +226,27 @@ export default function AuthDialog(props){
                 required
                 variant="outlined"
                 InputProps={{
-                  startAdornment:(
+                  startAdornment: (
                     <InputAdornment position="start">
-                      <AccountCircleIcon/>
+                      <AccountCircleIcon />
                     </InputAdornment>
                   )
                 }}
               />
             </Grid>
             <Grid item xs={12}>
-              <AvatarSelector 
+              <AvatarSelector
                 photoURL={photoURL}
                 handleChangePhotoURL={handleChangePhotoURL}
                 handleChangeBackgroundColor={handleChangeBackgroundColor}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              背景の色
+              <ColorSelector
+                defaultColor={backgroundColor}
+                color={backgroundColor}
+                handleChange={handleChangeBackgroundColor}
               />
             </Grid>
           </Grid>
@@ -245,15 +257,15 @@ export default function AuthDialog(props){
           variant="contained"
           size="large"
           sx={{
-            padding: theme=>theme.spacing(2),
+            padding: theme => theme.spacing(2),
             fontSize: 18,
             width: 350,
             borderRadius: '50vh',
           }}
-          disabled = {!isButtonValid}
+          disabled={!isButtonValid}
           onClick={handleClick}
         >
-          { BUTTON_TITLE[page] }
+          {BUTTON_TITLE[page]}
         </Button>
       </Grid>
       <Grid item xs={12}
@@ -261,15 +273,15 @@ export default function AuthDialog(props){
         spacing={0}
         direction="row"
         justifyContent="center"
-        alignItems="flex-start"        
+        alignItems="flex-start"
       >
-        { page === 'signIn' && 
+        {page === 'signIn' &&
           <>
             <Grid item>
               <Typography>新規ユーザ登録は</Typography>
             </Grid>
             <Grid>
-              <Link 
+              <Link
                 component="button"
                 onClick={handleToSignUp}>
                 こちら
@@ -277,12 +289,12 @@ export default function AuthDialog(props){
             </Grid>
           </>
         }
-        { page === 'signUp' &&
+        {page === 'signUp' &&
           <Grid item xs={12}>
             <Link
               component="button"
               onClick={handleToSignIn}>
-                サインイン
+              サインイン
             </Link>
           </Grid>
         }
@@ -290,18 +302,18 @@ export default function AuthDialog(props){
 
       <Grid item xs={12}>
         <Button
-          disabled={props.authState!=='ok'}
+          disabled={props.authState !== 'ok'}
           onClick={handleSignOut}>
-            サインアウト
+          サインアウト
         </Button>
       </Grid>
-        <Grid item>
+      <Grid item>
         <Button
-          disabled={props.authState!=='ok'}
+          disabled={props.authState !== 'ok'}
           onClick={handleClose}>
-            閉じる
+          閉じる
         </Button>
-      </Grid>       
+      </Grid>
     </Grid>
 
   )

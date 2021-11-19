@@ -16,7 +16,6 @@ import { EcosystemContext } from '../Ecosystem/EcosystemProvider';
 import { Message } from '../message';
 
 import useLocalStorage from '../use-localstorage';
-import { ariaHidden } from '@mui/core';
 
 const panelWidth=[120, 160, 192];
 
