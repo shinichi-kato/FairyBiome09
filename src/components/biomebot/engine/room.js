@@ -103,12 +103,14 @@ export function execute(state, work, message, sendMessage) {
 
       // triggerがmoodのどれかと同じであったらmoodをその名前で上書きする。
       // そうでなければpart.initialMoodにする。
-      if ('initialMood' in work.parts[trigger]) {
-        work.mood = work.parts[trigger].initialMood
+      if ('initialMood' in state.parts[trigger]) {
+        work.mood = state.parts[trigger].initialMood
       }
       else if (trigger in moodNames) {
         work.mood = trigger;
-        work.queue.push(new Message('trigger', `{enter_${trigger}}`));
+        work.queue.push({
+          message: new Message('trigger', `{enter_${trigger}}`),
+          emitter: sendMessage});
       }
       else {
         work.mood = "peace"
@@ -116,12 +118,24 @@ export function execute(state, work, message, sendMessage) {
 
       // 自発的Message投下
 
-      let msg = renderer[part.kind](partName, state, work,
+      let text = renderer[part.kind](partName, state, work,
         `{enter_${trigger}}`
       );
-      if (msg) {
-        work.queue.push(msg)
+      if (text) {
+        work.queue.push({
+          message: new Message('speech',
+            {
+              text: text,
+              name: state.displayName,
+              person: "bot",
+              avatarPath: state.config.avatarPath,
+              backgroundColor: state.config.backgroundColor,
+              mood: work.mood,
+              site: work.site,
+            }),
+          emitter: sendMessage});
       };
+
 
     }
 

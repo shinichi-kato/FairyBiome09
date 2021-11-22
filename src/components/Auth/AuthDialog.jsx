@@ -149,7 +149,8 @@ export default function AuthDialog(props) {
           fontSize: 18,
           backgroundColor: '#f0f0f0',
           borderRadius: '50vh',
-        }
+        },
+        width: "100%"
       }}
       container
       direction="column"

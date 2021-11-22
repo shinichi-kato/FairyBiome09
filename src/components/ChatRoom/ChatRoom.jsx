@@ -17,8 +17,10 @@ import { Message } from '../message';
 
 import useLocalStorage from '../use-localstorage';
 
-const panelWidth=[120, 160, 192];
+const panelWidth = [120, 160, 192];
 
+const userBackgroundColor = typeof window !== 'undefined' &&
+  window.localStorage.getItem('backgroundColor');
 
 export default function ChatRoom(props) {
   /*
@@ -31,6 +33,7 @@ export default function ChatRoom(props) {
   const bot = useRef(useContext(BiomebotContext));
   const [userInput, setUserInput] = useState("");
   const [panelSize, setPanelSize] = useLocalStorage("panelSize", 1);
+
 
   function handleChangeSite(site) {
     ecosystem.changeSite(site);
@@ -80,7 +83,7 @@ export default function ChatRoom(props) {
       person: 'user',
       mood: 'peace',
       avatarPath: auth.photoURL,
-      backgroundColor: "",
+      backgroundColor: userBackgroundColor,
       site: ecosystem.site,
     }));
 
@@ -91,6 +94,7 @@ export default function ChatRoom(props) {
       person: 'user',
       mood: 'peace',
       avatarPath: auth.photoURL,
+      backgroundColor: userBackgroundColor,
       site: ecosystem.site,
     }), props.writeLog);
 
@@ -99,11 +103,11 @@ export default function ChatRoom(props) {
   }
 
   function handleChangePanelSize(size) {
-    setPanelSize(prev=>{
+    setPanelSize(prev => {
       let newSize = prev + size;
-      newSize = newSize<0 ? 0 : newSize;
-      newSize = newSize<panelWidth.length ? newSize : panelWidth.length-1;
-      return newSize; 
+      newSize = newSize < 0 ? 0 : newSize;
+      newSize = newSize < panelWidth.length ? newSize : panelWidth.length - 1;
+      return newSize;
     });
   }
 
@@ -123,7 +127,7 @@ export default function ChatRoom(props) {
         throw new Error(`invalid site ${ecosystem.site}`)
     }
     return (
-      <LogViewer log={log}/>
+      <LogViewer log={log} />
     )
   }
     , [props.forestLog, props.parkLog, props.roomLog, ecosystem.site]);
@@ -132,6 +136,7 @@ export default function ChatRoom(props) {
     <UserPanel
       panelWidth={panelWidth[panelSize]}
       user={auth}
+      backgroundColor={userBackgroundColor}
     />
     , [auth, panelSize]);
 

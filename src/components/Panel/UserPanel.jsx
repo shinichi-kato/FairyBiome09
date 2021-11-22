@@ -19,7 +19,7 @@ export default function UserPanel(props) {
           width: width,
           height: width,
           borderRadius: "100% 0% 0% 100% / 100% 100% 0% 0%",
-          backgroundColor: theme => theme.palette.primary.main
+          backgroundColor: props.backgroundColor
         }}
         position="absolute"
         bottom={0}

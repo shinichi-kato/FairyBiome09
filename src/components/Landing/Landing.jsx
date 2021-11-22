@@ -51,7 +51,7 @@ export default function Landing(props) {
           style={{
             // sx未対応？
             width: "100%",
-            padding: theme => theme.spacing(1)
+            padding: 4
           }}
         />
       </Box>
