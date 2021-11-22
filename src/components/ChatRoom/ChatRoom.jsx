@@ -19,9 +19,6 @@ import useLocalStorage from '../use-localstorage';
 
 const panelWidth = [120, 160, 192];
 
-const userBackgroundColor = typeof window !== 'undefined' &&
-  window.localStorage.getItem('backgroundColor');
-
 export default function ChatRoom(props) {
   /*
     チャットルーム
@@ -33,6 +30,7 @@ export default function ChatRoom(props) {
   const bot = useRef(useContext(BiomebotContext));
   const [userInput, setUserInput] = useState("");
   const [panelSize, setPanelSize] = useLocalStorage("panelSize", 1);
+  const [userBgColor, setUserBgColor] = useLocalStorage("backgroundColor");
 
 
   function handleChangeSite(site) {
@@ -83,7 +81,7 @@ export default function ChatRoom(props) {
       person: 'user',
       mood: 'peace',
       avatarPath: auth.photoURL,
-      backgroundColor: userBackgroundColor,
+      backgroundColor: userBgColor,
       site: ecosystem.site,
     }));
 
@@ -94,7 +92,7 @@ export default function ChatRoom(props) {
       person: 'user',
       mood: 'peace',
       avatarPath: auth.photoURL,
-      backgroundColor: userBackgroundColor,
+      backgroundColor: userBgColor,
       site: ecosystem.site,
     }), props.writeLog);
 
@@ -136,9 +134,9 @@ export default function ChatRoom(props) {
     <UserPanel
       panelWidth={panelWidth[panelSize]}
       user={auth}
-      backgroundColor={userBackgroundColor}
+      backgroundColor={userBgColor}
     />
-    , [auth, panelSize]);
+    , [auth, panelSize, userBgColor]);
 
   return (
     <Box

@@ -6,6 +6,7 @@ export default function UserPanel(props) {
   const user = props.user;
   const width = props.panelWidth;
   const height = width * 1.5;
+  const backgroundColor = props.backgroundColor;
 
   return (
     <Box
@@ -19,7 +20,7 @@ export default function UserPanel(props) {
           width: width,
           height: width,
           borderRadius: "100% 0% 0% 100% / 100% 100% 0% 0%",
-          backgroundColor: props.backgroundColor
+          backgroundColor: `${backgroundColor}`
         }}
         position="absolute"
         bottom={0}
