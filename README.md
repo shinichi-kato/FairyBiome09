@@ -55,3 +55,7 @@ gatsby develop
 gatsby build
 firebase deploy
 ```
+
+# how to play
+
+
