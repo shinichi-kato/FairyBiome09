@@ -18,6 +18,12 @@ module.exports = {
     chatbot: {
       logViewLength: 100, // 表示するログの長さ
       logStoreLength: 10000, // 保存するログの長さ
+      forestEncounter: {
+        randomSeed: 243, // 1-65563
+        changeRate: 0.00000001, // 乱数の変化速度
+        tutor: 0.5, // 0~1乱数がこの値以下ならtutorに出会う
+        usersFairy: 0.8, // 次に乱数がこの値以下なら他の妖精に出会う
+      },
     },
     palette: [
       // based on autism color palette

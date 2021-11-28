@@ -251,22 +251,7 @@ export default function EcosystemProvider(props) {
   const sceneBg = `url(images/ecosystem/${site}-${dayPart}.svg)`;
   const skyBg = `url(images/ecosystem/sky/${weather}-${dayPart}.svg)`;
 
-  //   <Container
-  //   fixed
-  //   maxWidth="xs"
-  //   disableGutters
-  //   sx={{
-  //     height: "100vh",
-  //     backgroundImage: `${sceneBg},${skyBg}`,
-  //     backgroundSize: `cover,cover`,
-  //     backgroundRepeat: `no-repeat,no-repeat`,
-  //   }}
-  // >
-  //   {props.children}
-
-  // </Container>
-
-  return (
+   return (
     <EcosystemContext.Provider
       value={{
         pressure: pressure,

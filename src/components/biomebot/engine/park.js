@@ -4,7 +4,10 @@
   公園でのチャットボットの応答
 
   1. 時刻により睡眠・覚醒の状態が変化
-  2. hubBehaviorに従って返答するか☑
+     覚醒確率はcircadian.jsxで決まる。
+     外出中なのでsleepyにはなるがsleepにはならない。
+
+  2. hubBehaviorに従って返答するかチェック
   3. partOrderの順に返答生成ができるかチェック。
      返答を生成したらpartはpartOrder先頭に移動。retentionチェックを
      行い、drop判定になったらpartOrderの末尾に移動。

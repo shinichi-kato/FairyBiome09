@@ -1,5 +1,5 @@
 {
-    "botId": null,
+    "botId": "tutor@system",
     "config": {
         "description": "妖精の育て方を教える",
         "backgroundColor": "#EEEE44",

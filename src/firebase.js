@@ -23,3 +23,8 @@ export function initializeFirebaseApp(){
     firestore = getFirestore(firebaseApp);
   }
 }
+
+export function saveChatbot(obj){
+  // firestoreにチャットボットのデータを保存
+  await addDoc(collection(firestore, "chatbot"))
+}
