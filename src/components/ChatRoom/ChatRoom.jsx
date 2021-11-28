@@ -33,8 +33,16 @@ import { EcosystemContext } from '../Ecosystem/EcosystemProvider';
 import { Message } from '../message';
 
 import useLocalStorage from '../use-localstorage';
+import Noise from 'noisejs';
 
 const panelWidth = [120, 160, 192];
+const TUTOR_ID = 'tutor@system';
+
+function getRandom(changeRate) {
+  timestamp = new Date();
+  return (noiseRef.current.simplex2(changeRate * timestamp.getTime(),
+    0) + 1) * 0.5; // simplex2は-1〜+1の値を取る。それを0~1に換算
+}
 
 export default function ChatRoom(props) {
   /*
@@ -48,6 +56,9 @@ export default function ChatRoom(props) {
   const [userInput, setUserInput] = useState("");
   const [panelSize, setPanelSize] = useLocalStorage("panelSize", 1);
   const [userBgColor, setUserBgColor] = useLocalStorage("backgroundColor");
+  const writeLogRef = useRef(props.writeLog);
+  const config = props.config;
+  const noiseRef = useRef(new Noise(config.randomSeed));
 
 
   function handleChangeSite(site) {
@@ -56,15 +67,42 @@ export default function ChatRoom(props) {
 
   //---------------------------------------
   // チャットルームに入室したらdeploy
+  // forestに入った場合、ローカルのtimestampのほうがサーバーよりも新しく、
+  // かつ24h以内に保存されていなければ自動でローカルのチャットボットのデータを
+  // サーバーに保存する。props.configで定義した確率でチャットボットが出現
   //
 
-  const writeLogRef = useRef(props.writeLog);
 
   useEffect(() => {
     let isCancelled = false;
+    const site = ecosystem.site;
+
     if (!isCancelled) {
-      const site = ecosystem.site;
-      bot.current.deploy(site);
+      if (site === 'forest') {
+        const feConfig = config.forestEncounter;
+
+        (async () => {
+          // 自動セーブ
+
+
+          const dice = getRandom(feconfig.changeRate);
+          if (dice >= feConfig.tutor) {
+            // コードからチューターをロード
+            const res = await fetch(`../../chatbot/${TUTOR_ID}/chatbot.json`);
+            const obj = await res.json();
+            await bot.current.generate(obj, TUTOR_ID);
+
+          }
+          else if (dice >= feConfig.usersFairy) {
+            // サーバーからランダムに選んだfairyをロード
+          }
+
+          bot.current.deploy(site);
+        })()
+
+      } else {
+        bot.current.deploy(site);
+      }
     }
 
     return (() => { isCancelled = true; })

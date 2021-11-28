@@ -33,6 +33,12 @@ query indexq {
       chatbot {
         logViewLength
         logStoreLength
+        forestEncounter {
+          randomSeed
+          changeRate
+          turor
+          usersFairy
+        }
       }
     }
   }
@@ -89,7 +95,6 @@ async function writeLog(message) {
 
   return message;
 }
-
 
 export default function IndexPage({ data }) {
   /* 
@@ -221,6 +226,7 @@ export default function IndexPage({ data }) {
               forestLog={forestLog}
               parkLog={parkLog}
               handleExitRoom={handleExitRoom}
+              config={config}
             />
             :
             <Landing
