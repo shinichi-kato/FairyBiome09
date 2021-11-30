@@ -147,11 +147,12 @@
     ・一日最大一回、FairyBiome起動時にタイムスタンプを確認しサーバー側が新しかったら
     　ローカルにロードする。
   　・森に入るとチャットボットのデータは一日最大一回サーバーに保存される。
+  　・編集モードから抜けるときにサーバーに保存される。
 
 上述のチャットボット以外に、システムが利用するNPCチャットボットがある。これは特に
 サーバーには保存されない。
 チャットボットはローカルにも保存される。ユーザのチャットボットは最大一つまで保存され、
-PCチャットボットは保存される数に制限はない。
+NPCチャットボットは保存される数に制限はない。
 これらの動作を実装するため、チャットボットにはサーバーが付与するidと作成者のidを保持する。
 NPCには所有者のidを与えない。これにより、ローカルに保存できるデータのうち所有者idの
 あるものは一つだけに限定する。
@@ -650,6 +651,10 @@ export default function BiomebotProvider(props) {
 
   }
 
+  async function load(){
+    return await db.load(state.botId);
+  }
+
   const photoURL = `/chatbot/${stateRef.current.config.avatarPath}/${work.partOrder[0]}.svg`;
 
   return (
@@ -658,6 +663,7 @@ export default function BiomebotProvider(props) {
         execute: handleExecute,
         generate: generate,
         save: save,
+        load: load,
         addNewPart: addNewPart,
         loadScript: loadScript,
         deploy: deploy,

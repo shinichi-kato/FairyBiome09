@@ -13,8 +13,13 @@ import EmojiPeopleIcon from '@mui/icons-material/EmojiPeople';
 import FlashOnIcon from '@mui/icons-material/FlashOn';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import PartIcon from '@mui/icons-material/RecordVoiceOver';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 import BotMonitor from './BotMonitor';
+
+import { AuthContext } from "../Auth/AuthProvider";
+import { BiomebotContext } from '../biomebot/BiomebotProvider';
+import { generate } from '../../firebase';
 
 export const ItemPaper = styled(Paper)(({ theme }) => ({
   marginBottom: theme.spacing(2),
@@ -41,6 +46,8 @@ const menus = [
 ];
 
 export default function RootEditor(props) {
+  const auth = useContext(AuthContext);
+  const bot = useContext(BiomebotContext);
 
   let parts = [];
   for (let part in props.state.parts) {
@@ -67,17 +74,26 @@ export default function RootEditor(props) {
 
   }
 
+  function handleSave() {
+    // firestoreへの保存
+    (async () => {
+      // dbの内容をobjに変換
+      const obj = await bot.load();
+      await generate(obj, auth.uid);
+    })();
+  }
+
   return (
     <Box
       display="flex"
       flexDirection="column"
       sx={{
-        margin: theme=>theme.spacing(1),
-        width: theme=>(`calc(480px - ${theme.spacing(1)}px)`)
+        margin: theme => theme.spacing(1),
+        width: theme => (`calc(480px - ${theme.spacing(1)}px)`)
       }}
     >
       <ItemPaper
-         elevation={0}
+        elevation={0}
       >
         <Box alignSelf="center">
           <BotMonitor
@@ -87,20 +103,31 @@ export default function RootEditor(props) {
           />
         </Box>
       </ItemPaper>
-      <ItemPaper  elevation={0} >
+      <ItemPaper elevation={0} >
         <List aria-label="main menu">
           {lister(menus)}
           <ListSubheader>パート</ListSubheader>
           {lister(parts)}
           <ListItem button key="_newPart_"
             onClick={props.handleAddNewPart}
-            sx={{backgroundColor: theme=>theme.palette.primary}}
+            sx={{ backgroundColor: theme => theme.palette.primary }}
           >
             <ListItemText primary="パートの追加" />
           </ListItem>
         </List>
 
       </ItemPaper>
+
+      <FabContainerBox>
+        <Fab
+          variant="extended"
+          aria-label="save"
+          onClick={handleSave}
+          color="primary"
+        >
+          <CloudUploadIcon sx={{ marginRight: theme => theme.spacing(1), }} />保存{message}
+        </Fab>
+      </FabContainerBox>
 
     </Box>
   )

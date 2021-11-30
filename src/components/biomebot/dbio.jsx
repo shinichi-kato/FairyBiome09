@@ -67,7 +67,7 @@ class dbio {
   //
   //-----------------------------------------------------------------------
 
-  async generate(obj, uid) {
+  async generate(obj, uid, botId) {
     // chatbot.jsonから読み込んだobjの内容をindexDBとstateに書き込む。
     // チャットボットデータはobj.botIdが定義されているものと未定義のものがあり、
     // obj.botIdが定義されているのはNPCチャットボット。
@@ -77,13 +77,14 @@ class dbio {
     // 未定義のものはユーザ用のチャットボットでbotIdにはuidを用いる。
     // ユーザ用のチャットボットはユーザにつき同時に一つしか持てない。
     //
+    botId = obj.botId || botId;
 
-    const botId = obj.botId || uid;
     console.log("generate")
     /* config */
     await this.db.config.put({
       ...obj.config,
       botId: botId,
+      ownerId: uid,
       site: 'room',
       estimater: {}
     });
