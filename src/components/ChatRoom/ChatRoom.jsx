@@ -38,11 +38,6 @@ import Noise from 'noisejs';
 const panelWidth = [120, 160, 192];
 const TUTOR_ID = 'tutor@system';
 
-function getRandom(changeRate) {
-  timestamp = new Date();
-  return (noiseRef.current.simplex2(changeRate * timestamp.getTime(),
-    0) + 1) * 0.5; // simplex2は-1〜+1の値を取る。それを0~1に換算
-}
 
 export default function ChatRoom(props) {
   /*
@@ -60,6 +55,12 @@ export default function ChatRoom(props) {
   const config = props.config;
   const noiseRef = useRef(new Noise(config.randomSeed));
 
+  function getRandom(changeRate) {
+    let timestamp = new Date();
+    return (noiseRef.current.simplex2(changeRate * timestamp.getTime(),
+      0) + 1) * 0.5; // simplex2は-1〜+1の値を取る。それを0~1に換算
+  }
+  
 
   function handleChangeSite(site) {
     ecosystem.changeSite(site);
@@ -85,7 +86,7 @@ export default function ChatRoom(props) {
           // 自動セーブ
 
 
-          const dice = getRandom(feconfig.changeRate);
+          const dice = getRandom(feConfig.changeRate);
           if (dice >= feConfig.tutor) {
             // コードからチューターをロード
             const res = await fetch(`../../chatbot/${TUTOR_ID}/chatbot.json`);
@@ -107,7 +108,7 @@ export default function ChatRoom(props) {
 
     return (() => { isCancelled = true; })
 
-  }, [ecosystem.site]);
+  }, [ecosystem.site, config.forestEncounter]);
 
   // ---------------------------------------------
   // ecosystemが変化したらチャットボットにトリガーを送出

@@ -1,5 +1,5 @@
 import { initializeApp, getApp, getApps } from 'firebase/app';
-import { getFirestore, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, serverTimestamp, doc, setDoc, addDoc, collection } from 'firebase/firestore';
 
 export let firebaseApp = null;
 export let firestore = null;
@@ -52,7 +52,7 @@ class Fbio {
     //          └collection main
     //                 └doc(mainDict, timestamp)
 
-    if (obj.ownerId === 'system'){
+    if (obj.ownerId === 'system') {
       console.log("NPCチャットボットはfirestoreに保存しません")
       return false;
     }
@@ -82,24 +82,24 @@ class Fbio {
         featureWeights: p.featureWeights,
       }
     }
-    
+
     let botRef;
     if (obj.botId) {
       // botIdがある→以前保存されているので上書き
       botRef = doc(firestore, "bots", botId);
       await setDoc(botRef, data);
     }
-    else{
+    else {
       // botIdがない→新規作成でidを得る
       botRef = await addDoc(collection(firestore, "bots"), data);
     }
     // partScriptの保存:以降botIdを使って書き込み
-    const botId = botRef.id;
+    botId = botRef.id;
 
     const partRef = collection(botRef, "parts")
 
     // スクリプトの保存
-    for(let partName in obj.parts){
+    for (let partName in obj.parts) {
       await setDoc(partRef, obj.parts[partName], partName);
     }
   }

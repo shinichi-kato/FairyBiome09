@@ -36,7 +36,7 @@ query indexq {
         forestEncounter {
           randomSeed
           changeRate
-          turor
+          tutor
           usersFairy
         }
       }

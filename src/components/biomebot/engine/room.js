@@ -57,9 +57,9 @@ export function execute(state, work, message, sendMessage) {
   // phase 1. 覚醒チェック
   const isWake = checkWake(state.config.circadian);
   if(!isWake){
-    if(work.mood == 'sleepy'){
+    if(work.mood === 'sleepy'){
       work.mood = 'sleep';
-    } else if (work.mood != 'sleep'){
+    } else if (work.mood !== 'sleep'){
       work.mood = 'sleepy';
     }
   }else {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useContext } from "react";
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -7,6 +7,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
+import Fab from '@mui/material/Fab';
 
 import ArrowForwardIcon from '@mui/icons-material/ArrowForwardIos';
 import EmojiPeopleIcon from '@mui/icons-material/EmojiPeople';
@@ -14,12 +15,13 @@ import FlashOnIcon from '@mui/icons-material/FlashOn';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import PartIcon from '@mui/icons-material/RecordVoiceOver';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { FabContainerBox } from './StyledWigets';
 
 import BotMonitor from './BotMonitor';
 
 import { AuthContext } from "../Auth/AuthProvider";
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
-import { generate } from '../../firebase';
+import { fbio } from '../../firebase';
 
 export const ItemPaper = styled(Paper)(({ theme }) => ({
   marginBottom: theme.spacing(2),
@@ -48,6 +50,7 @@ const menus = [
 export default function RootEditor(props) {
   const auth = useContext(AuthContext);
   const bot = useContext(BiomebotContext);
+  const [message, setMessage] = useState("");
 
   let parts = [];
   for (let part in props.state.parts) {
@@ -79,7 +82,7 @@ export default function RootEditor(props) {
     (async () => {
       // dbの内容をobjに変換
       const obj = await bot.load();
-      await generate(obj, auth.uid);
+      await fbio.generate(obj, auth.uid);
     })();
   }
 
