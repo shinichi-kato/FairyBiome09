@@ -230,6 +230,7 @@ export default function ChatRoom(props) {
             panelWidth={panelWidth[panelSize]}
             backgroundColor={bot.current.state.config.backgroundColor}
             photoURL={bot.current.photoURL}
+            status={bot.current.state.status}
           />
         </Box>
         <Box>

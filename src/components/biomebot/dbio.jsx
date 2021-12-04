@@ -86,7 +86,7 @@ class dbio {
       botId: botId,
       ownerId: uid,
       site: 'room',
-      estimater: {}
+      estimator: {}
     });
 
     /* work */
@@ -144,7 +144,7 @@ class dbio {
       ...config,
       botId: botId,
       site: 'room',
-      estimater: {}
+      estimator: {}
     });
 
   }

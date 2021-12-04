@@ -63,7 +63,7 @@ class Fbio {
       config: obj.config,
       ownerId: uid,
       site: obj.site,
-      estimater: obj.estimeter,
+      estimator: obj.estimator,
       timestamp: serverTimestamp(),
       work: obj.work,
       parts: {},
@@ -82,7 +82,7 @@ class Fbio {
         featureWeights: p.featureWeights,
       }
     }
-
+    console.log(obj);
     let botRef;
     if (obj.botId) {
       // botIdがある→以前保存されているので上書き
