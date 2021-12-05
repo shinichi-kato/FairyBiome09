@@ -171,7 +171,7 @@ export default function EcosystemProvider(props) {
   const [weather, setWeather] = useState(); /* 仮想天気 */
   const [season, setSeason] = useState(); /* 季節 */
   const [site, setSite] = useState('room'); /* 場所 */
-  const [dayPart, setDayPart] = useState(); /* 昼、夜 */
+  const [dayPart, setDayPart] = useState(getDayPart(new Date())); /* 昼、夜 */
   const [change, setChange] = useState(null) /* weather,season,site,sceneの変化 */
 
 
@@ -248,7 +248,7 @@ export default function EcosystemProvider(props) {
   }
 
   // const weatherBg = `url(images/ecosystem/weather/${WEATHER_ICONS[weather]})`;
-  const sceneBg = `url(images/ecosystem/${site}-${dayPart}.svg)`;
+  const sceneBg = `url(images/ecosystem/set/${site}-${dayPart}.svg)`;
   const skyBg = `url(images/ecosystem/sky/${weather}-${dayPart}.svg)`;
 
    return (

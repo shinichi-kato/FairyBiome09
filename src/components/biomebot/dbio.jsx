@@ -67,24 +67,28 @@ class dbio {
   //
   //-----------------------------------------------------------------------
 
-  async generate(obj, uid, botId) {
-    // chatbot.jsonから読み込んだobjの内容をindexDBとstateに書き込む。
-    // チャットボットデータはobj.botIdが定義されているものと未定義のものがあり、
-    // obj.botIdが定義されているのはNPCチャットボット。
-    // ・ユーザ用のチャットボットはdbには同時に一つまでしか保存できない
-    // ・ユーザの作成したチャットボットはサーバーに保存できる。ユーザごとに
-    // 　保存できるのは最大10までとし、それを超えると古いものが削除される
-    // 未定義のものはユーザ用のチャットボットでbotIdにはuidを用いる。
-    // ユーザ用のチャットボットはユーザにつき同時に一つしか持てない。
-    //
-    botId = obj.botId || botId;
+  async generate(obj, uid) {
+
+    /* 
+      objの内容をindexDBとstateに書き込む。
+      ユーザはfirestoreにあるチャットボットのデータをロードするか、chatbot.jonを
+      読んでチャットボットを新規作成できる。またNPCチャットボットと会話するとき
+      にもシステムによりgenerateが行われる。NPCデータはindexDBにのみ保存され、
+      ユーザの作成したチャットボットは同時に最大一つのみindexDBに保存される。
+
+      これを実現するため、NPCチャットボットには@systemで終わるbotIdを設定する。
+      ユーザ用のチャットボットの場合chatbot.jsonではbotIdは未定義で本関数で
+      botIdにuidと同じ値を設定する。
+    */
+
+    botId = obj.botId || uid;
 
     console.log("generate")
     /* config */
     await this.db.config.put({
       ...obj.config,
       botId: botId,
-      ownerId: uid,
+      fsBotId: null,
       site: 'room',
       estimator: {}
     });
@@ -96,7 +100,6 @@ class dbio {
       site: "room",
       partOrder: [...obj.config.initialPartOrder],
     });
-
     /* main "id,[botId+key]" */
     await this.saveMain(botId, obj.main);
 
@@ -104,7 +107,6 @@ class dbio {
        scriptは以下で別途記憶
     */
     await this.savePart(botId, obj.parts);
-
     /* scriptはidをこちらで与え、next,prevも設定する */
 
     for (let partName of Object.keys(obj.parts)) {
@@ -144,7 +146,6 @@ class dbio {
       ...config,
       botId: botId,
       site: 'room',
-      estimator: {}
     });
 
   }
@@ -177,7 +178,7 @@ class dbio {
        scriptは別途記憶
     */
     let dictKeys = Object.keys(dict);
-    
+
     await this.db.parts.bulkPut(
       dictKeys.map(key => {
         const part = dict[key];
@@ -317,7 +318,7 @@ class dbio {
         [botId, partName, Dexie.minKey],
         [botId, partName, Dexie.maxKey])
       .delete();
-    
+
     let data = [];
     let i;
     for (i in script) {

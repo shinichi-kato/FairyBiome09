@@ -39,29 +39,36 @@ class Fbio {
   // --------------------------------------------------------------------
 
   async generate(obj, uid) {
-    // chatbot.jsonから読み込んだobjの内容をfirestoreに新規に書き込む。
-    // obj.botIdが未定義のものはデータベースにaddし、botIdとtimestampを返す。
-    // obj.botIdが定義されているものは上書きする。ownerIdが'system'の場合
-    // NPCチャットボットなのでfirestoreには保存しない。
-    // firestoreでは以下のようなツリー構造を用い、各docにはtimestampを設定する。
-    //
-    // collection bot
-    //    └doc (config, work, part, timestamp)
-    //          └collection script
-    //                └doc(partScript, timestamp)
-    //          └collection main
-    //                 └doc(mainDict, timestamp)
+    /* 
+       objの内容をfirestoreに新規に書き込む。
 
-    if (obj.ownerId === 'system') {
-      console.log("NPCチャットボットはfirestoreに保存しません")
-      return false;
-    }
+       ユーザはfirestoreにあるチャットボットをロードするか、chatbot.jsonから
+       チャットボットを新規作成できる。ユーザが作成したチャットボットの
+       データは最大10件保存でき、それ以上の数を保存しようとすると古いものが
+       削除される。firestoreへの保存は一日最大一回森に入ったとき、
+       チャットボット編集画面でアップロードを実行したときに行われる。
 
-    let botId = obj.botId;
+       firestoreに初めて保存される場合、config.fsBotIdとconfig.ownerIdがnullである。
+       まずconfig.ownerIdにはuidの値をコピーし、objの内容をaddした後idを取得して
+       config.fsBotIdにコピーする。
+
+       firestoreでは以下のようなツリー構造を用い、各docにはtimestampを設定する。
+      
+       collection bot
+          └doc (config, work, part, timestamp)
+                └collection script
+                      └doc(partScript, timestamp)
+                └collection main
+                       └doc(mainDict, timestamp)
+    */
+
+    
 
     let data = {
-      config: obj.config,
-      ownerId: uid,
+      config: {
+        ...obj.config,
+        ownerId: uid
+      },
       site: obj.site,
       estimator: obj.estimator,
       timestamp: serverTimestamp(),
@@ -79,14 +86,14 @@ class Fbio {
         precision: p.precision,
         retention: p.retention,
         cacheTimestamp: p.cacheTimestamp,
-        featureWeights: p.featureWeights,
+        featureWeights: p.featureWeights || null,
       }
     }
-    console.log(obj);
+    console.log(obj,data);
     let botRef;
-    if (obj.botId) {
+    if (obj.config.fsBotId) {
       // botIdがある→以前保存されているので上書き
-      botRef = doc(firestore, "bots", botId);
+      botRef = doc(firestore, "bots", obj.config.fsBotId);
       await setDoc(botRef, data);
     }
     else {
@@ -94,7 +101,7 @@ class Fbio {
       botRef = await addDoc(collection(firestore, "bots"), data);
     }
     // partScriptの保存:以降botIdを使って書き込み
-    botId = botRef.id;
+    let fsBotId = botRef.id;
 
     const partRef = collection(botRef, "parts")
 
@@ -102,6 +109,8 @@ class Fbio {
     for (let partName in obj.parts) {
       await setDoc(partRef, obj.parts[partName], partName);
     }
+
+    return fsBotId;
   }
 
 }
