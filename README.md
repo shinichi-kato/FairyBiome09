@@ -11,12 +11,17 @@ FairyBiome
 
 fairyBiomeはfirebaseをサーバーとして動作します。インストール及びデプロイにはfirebaseのプロジェクトが必要です。
 
+nvm
+npm v14.17.4
+npm install gatsby-cli
+npm install -g firebase-tools
 googleアカウント
 firebaseプロジェクト
 
 # install 
 
 ```
+nvm
 npm install
 ```
 

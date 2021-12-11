@@ -71,17 +71,19 @@ class dbio {
 
     /* 
       objの内容をindexDBとstateに書き込む。
+      
       ユーザはfirestoreにあるチャットボットのデータをロードするか、chatbot.jonを
-      読んでチャットボットを新規作成できる。またNPCチャットボットと会話するとき
-      にもシステムによりgenerateが行われる。NPCデータはindexDBにのみ保存され、
-      ユーザの作成したチャットボットは同時に最大一つのみindexDBに保存される。
+      読んでチャットボットを新規作成できる。chatbot.jsonからロードしたデータの
+      うち、NPCチャットボットに限り@systemで終わるbotIddが付与されており、
+      generate()時にbotIdが未定義の場合には uid と同じ値が与えられる。
+      これによりローカルには任意の数のNPCチャットボットと最大一つのユーザ用
+      チャットボットが記憶できる。
 
-      これを実現するため、NPCチャットボットには@systemで終わるbotIdを設定する。
-      ユーザ用のチャットボットの場合chatbot.jsonではbotIdは未定義で本関数で
-      botIdにuidと同じ値を設定する。
-    */
+      なお、firestoreに一度保存されたデータにはfsBotIdが付与されるが、botIdとは
+      独立に管理される。
+      */
 
-    botId = obj.botId || uid;
+    const botId = obj.botId || uid;
 
     console.log("generate")
     /* config */
