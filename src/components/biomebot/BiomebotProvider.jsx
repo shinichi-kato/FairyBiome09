@@ -262,7 +262,7 @@ export const defaultSettings = {
 
 // 更新頻度は低くdbには保存しないデータ
 const initialState = {
-  status: "unload", // unload->deploying->start->run
+  status: "unload", // unload->deploying->ready->run
   botId: null,
   displayName: "",
   config: {},
@@ -314,16 +314,15 @@ function reducer(state, action) {
         ...state.cache,
         [partName]: { ...action.cache }
       };
-
-      // キャッシュ計算中はstatusがdeploying, 計算終了時にstartになる
+      // キャッシュ計算中はstatusがdeploying, 計算終了時にreadyになる
       const cacheKeys = Object.keys(cache);
       const partsKeys = Object.keys(state.parts);
-      const status = cacheKeys.length === partsKeys.length
-        ? "ready" : "deploying";
+      
+      const status = cacheKeys.length === partsKeys.length ? "ready" : "deploying";
 
       return {
         ...state,
-        cache,
+        cache: { ...cache},
         status: status
       }
     }
@@ -657,7 +656,7 @@ export default function BiomebotProvider(props) {
 
   const photoURL = `/chatbot/${stateRef.current.config.avatarPath}/${work.partOrder[0]}.svg`;
 
-  return (
+   return (
     <BiomebotContext.Provider
       value={{
         execute: handleExecute,

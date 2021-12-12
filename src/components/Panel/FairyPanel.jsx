@@ -24,6 +24,7 @@ export default function FairyPanel(props) {
     bgColor = '#00000000';
   }
 
+  
   return (
     <Box
       sx={{
@@ -42,7 +43,7 @@ export default function FairyPanel(props) {
         bottom={0}
         left={0}
       />
-      {status === 'ready' &&
+      {(status === 'ready' || status === 'loaded') &&
         <Box
           sx={{
             width: width,

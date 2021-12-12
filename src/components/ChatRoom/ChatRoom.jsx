@@ -33,7 +33,7 @@ import { EcosystemContext } from '../Ecosystem/EcosystemProvider';
 import { Message } from '../message';
 
 import useLocalStorage from '../use-localstorage';
-import Noise from 'noisejs';
+import { Noise } from 'noisejs';
 
 const panelWidth = [120, 160, 192];
 const TUTOR_ID = 'tutor@system';
@@ -60,7 +60,7 @@ export default function ChatRoom(props) {
     return (noiseRef.current.simplex2(changeRate * timestamp.getTime(),
       0) + 1) * 0.5; // simplex2は-1〜+1の値を取る。それを0~1に換算
   }
-  
+
 
   function handleChangeSite(site) {
     ecosystem.changeSite(site);
@@ -75,38 +75,33 @@ export default function ChatRoom(props) {
 
 
   useEffect(() => {
-    let isCancelled = false;
     const site = ecosystem.site;
 
-    if (!isCancelled) {
-      if (site === 'forest') {
-        const feConfig = config.forestEncounter;
+    if (site === 'forest') {
+      const feConfig = config.forestEncounter;
 
-        (async () => {
-          // 自動セーブ
+      (async () => {
+        // 自動セーブ
 
 
-          const dice = getRandom(feConfig.changeRate);
-          if (dice >= feConfig.tutor) {
-            // コードからチューターをロード
-            const res = await fetch(`../../chatbot/${TUTOR_ID}/chatbot.json`);
-            const obj = await res.json();
-            await bot.current.generate(obj, TUTOR_ID);
+        const dice = getRandom(feConfig.changeRate);
+        if (dice >= feConfig.tutor) {
+          // コードからチューターをロード
+          const res = await fetch(`../../chatbot/${TUTOR_ID}/chatbot.json`);
+          const obj = await res.json();
+          await bot.current.generate(obj, TUTOR_ID);
 
-          }
-          else if (dice >= feConfig.usersFairy) {
-            // サーバーからランダムに選んだfairyをロード
-          }
+        }
+        else if (dice >= feConfig.usersFairy) {
+          // サーバーからランダムに選んだfairyをロード
+        }
 
-          bot.current.deploy(site);
-        })()
+        await bot.current.deploy(site);
+      })()
 
-      } else {
-        bot.current.deploy(site);
-      }
+    } else {
+      bot.current.deploy(site);
     }
-
-    return (() => { isCancelled = true; })
 
   }, [ecosystem.site, config.forestEncounter]);
 
@@ -193,6 +188,7 @@ export default function ChatRoom(props) {
       backgroundColor={userBgColor}
     />
     , [auth, panelSize, userBgColor]);
+    
 
   return (
     <Box
