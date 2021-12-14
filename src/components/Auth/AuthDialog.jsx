@@ -40,13 +40,15 @@ export default function AuthDialog(props) {
       ---------------------------------------------------
       email          編集可        編集可       表示
       password       編集可        編集可       非表示
-      photoURL                    編集可       編集可
-      displayName                 編集可       編集可
+      photoURL                     編集可       編集可
+      displayName                  編集可       編集可
+      bgColor                      編集可       編集可
       リンク表示       signUp      signIn      　なし
       サインアウト     (props.auth.StateがOKの場合 あり)
       閉じる          (props.auth.StateがOKの場合 あり)
 
-    編集可の項目はすべて有効な状態でないと実行ボタンが押せない
+    編集可の項目はすべて有効な状態でないと実行ボタンが押せない.
+    displayNameとbgColorガミ定義の場合update画面に遷移
 
   */
 
@@ -121,7 +123,8 @@ export default function AuthDialog(props) {
 
     case 'signIn':
       if (emailRef.current?.value !== ""
-        && passwordRef.current?.value !== "") {
+        && passwordRef.current?.value !== ""
+        ) {
         isButtonValid = true;
       }
       break;

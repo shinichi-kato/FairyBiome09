@@ -6,7 +6,7 @@ export default function UserPanel(props) {
   const user = props.user;
   const width = props.panelWidth;
   const height = width * 1.5;
-  const backgroundColor = props.backgroundColor;
+  const backgroundColor = user.userBgColor;
 
   return (
     <Box

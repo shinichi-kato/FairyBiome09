@@ -32,7 +32,6 @@ import { AuthContext } from "../Auth/AuthProvider";
 import { EcosystemContext } from '../Ecosystem/EcosystemProvider';
 import { Message } from '../message';
 
-import useLocalStorage from '../use-localstorage';
 import { Noise } from 'noisejs';
 
 const panelWidth = [120, 160, 192];
@@ -50,7 +49,6 @@ export default function ChatRoom(props) {
   const bot = useRef(useContext(BiomebotContext));
   const [userInput, setUserInput] = useState("");
   const [panelSize, setPanelSize] = useLocalStorage("panelSize", 1);
-  const [userBgColor, setUserBgColor] = useLocalStorage("backgroundColor");
   const writeLogRef = useRef(props.writeLog);
   const config = props.config;
   const noiseRef = useRef(new Noise(config.randomSeed));
@@ -132,7 +130,7 @@ export default function ChatRoom(props) {
       person: 'user',
       mood: 'peace',
       avatarPath: auth.photoURL,
-      backgroundColor: userBgColor,
+      backgroundColor: auth.userBgColor,
       site: ecosystem.site,
     }));
 
@@ -143,7 +141,7 @@ export default function ChatRoom(props) {
       person: 'user',
       mood: 'peace',
       avatarPath: auth.photoURL,
-      backgroundColor: userBgColor,
+      backgroundColor: auth.userBgColor,
       site: ecosystem.site,
     }), props.writeLog);
 
@@ -185,9 +183,8 @@ export default function ChatRoom(props) {
     <UserPanel
       panelWidth={panelWidth[panelSize]}
       user={auth}
-      backgroundColor={userBgColor}
     />
-    , [auth, panelSize, userBgColor]);
+    , [auth, panelSize]);
     
 
   return (

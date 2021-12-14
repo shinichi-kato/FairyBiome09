@@ -7,6 +7,7 @@ import {
   createUserWithEmailAndPassword, signInWithEmailAndPassword
 } from "firebase/auth";
 
+import useLocalStorage from '../../use-localstorage';
 import loadable from '@loadable/component';
 const AuthDialog = loadable(() => import('./AuthDialog'));
 
@@ -25,6 +26,7 @@ const initialState = {
   },
   authState: "notYet", // notYet-run-ok-error
   message: "",
+  userBgColor: null,
   firestore: null,
   firebaseApp: null,
   openDialog: false
@@ -49,10 +51,13 @@ function reducer(state, action) {
     }
 
     case 'ok': {
+      const authState =
+        !action.userBgColor || action.user.displayName === "update" ? '':'ok';
       return {
         user: action.user,
-        authState: "ok",
+        authState: authState,
         message: "",
+        userBgColor: action.userBgColor,
         openDialog: false,
         firestore: state.firestore,
         firebaseApp: state.firebaseApp,
@@ -69,6 +74,7 @@ function reducer(state, action) {
       return {
         ...state,
         displayName: action.displayName,
+        userBgColor: action.userBgColor,
         photoURL: action.photoURL,
         openDialog: false,
       };
@@ -114,7 +120,8 @@ export default function AuthProvider(props) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const firebase = props.firebase;
   const firestore = props.firestore;
-  
+  const [userBgColor, setUserBgColor] = useLocalStorage("backgroundColor");
+   
   const handleAuthOk = useRef(props.handleAuthOk);
 
   // -----------------------------------------------
@@ -137,7 +144,7 @@ export default function AuthProvider(props) {
         const auth = getAuth();
         onAuthStateChanged(auth, user => {
           if (user) {
-            dispatch({ type: "ok", user: user });
+            dispatch({ type: "ok", user:user, userBgColor:userBgColor});
             handleAuthOk.current();
           } else {
             dispatch({ type: "error", message: "ユーザが認証されていません" });
@@ -193,10 +200,11 @@ export default function AuthProvider(props) {
       });
   }
 
-  function updateUserInfo(displayName, photoURL) {
+  function updateUserInfo(displayName, photoURL, bgColor) {
     const auth = getAuth();
     const user = auth.currentUser;
     if (user) {
+      setUserBgColor(bgColor)
       updateProfile(user, {
         displayName: displayName || user.displayName,
         photoURL: photoURL || user.photoURL
@@ -206,7 +214,8 @@ export default function AuthProvider(props) {
         dispatch({
           type: "updateUserInfo",
           displayName: displayName,
-          photoURL: photoURL
+          photoURL: photoURL,
+          userBgColor: bgColor,
         });
       }).catch(error => {
         dispatch({ type: "error", message: error.code });
