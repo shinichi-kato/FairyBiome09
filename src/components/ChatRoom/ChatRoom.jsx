@@ -31,6 +31,7 @@ import { BiomebotContext } from '../biomebot/BiomebotProvider';
 import { AuthContext } from "../Auth/AuthProvider";
 import { EcosystemContext } from '../Ecosystem/EcosystemProvider';
 import { Message } from '../message';
+import useLocalStorage from '../use-localstorage';
 
 import { Noise } from 'noisejs';
 
@@ -130,7 +131,7 @@ export default function ChatRoom(props) {
       person: 'user',
       mood: 'peace',
       avatarPath: auth.photoURL,
-      backgroundColor: auth.userBgColor,
+      backgroundColor: auth.backgroundColor,
       site: ecosystem.site,
     }));
 
@@ -141,7 +142,7 @@ export default function ChatRoom(props) {
       person: 'user',
       mood: 'peace',
       avatarPath: auth.photoURL,
-      backgroundColor: auth.userBgColor,
+      backgroundColor: auth.backgroundColor,
       site: ecosystem.site,
     }), props.writeLog);
 

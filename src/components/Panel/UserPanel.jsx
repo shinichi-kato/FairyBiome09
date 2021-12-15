@@ -6,7 +6,9 @@ export default function UserPanel(props) {
   const user = props.user;
   const width = props.panelWidth;
   const height = width * 1.5;
-  const backgroundColor = user.userBgColor;
+  const backgroundColor = user.backgroundColor;
+  const photoURL = user.photoURL;
+  console.log(user)
 
   return (
     <Box
@@ -39,8 +41,8 @@ export default function UserPanel(props) {
             width: width,
             height: height,
           }}
-          src={`/avatar/${user.photoURL}`}
-          alt={user.photoURL} />
+          src={`/avatar/${photoURL}`}
+          alt={photoURL} />
       </Box>
 
     </Box>

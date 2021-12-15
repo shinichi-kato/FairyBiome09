@@ -7,7 +7,7 @@ import {
   createUserWithEmailAndPassword, signInWithEmailAndPassword
 } from "firebase/auth";
 
-import useLocalStorage from '../../use-localstorage';
+import useLocalStorage from '../use-localstorage';
 import loadable from '@loadable/component';
 const AuthDialog = loadable(() => import('./AuthDialog'));
 
@@ -26,7 +26,7 @@ const initialState = {
   },
   authState: "notYet", // notYet-run-ok-error
   message: "",
-  userBgColor: null,
+  bakckgroundColor: null,
   firestore: null,
   firebaseApp: null,
   openDialog: false
@@ -52,12 +52,12 @@ function reducer(state, action) {
 
     case 'ok': {
       const authState =
-        !action.userBgColor || action.user.displayName === "update" ? '':'ok';
+        !action.backgroundColor || action.user.displayName === "update" ? '' : 'ok';
       return {
         user: action.user,
         authState: authState,
         message: "",
-        userBgColor: action.userBgColor,
+        backgroundColor: action.backgroundColor,
         openDialog: false,
         firestore: state.firestore,
         firebaseApp: state.firebaseApp,
@@ -74,7 +74,7 @@ function reducer(state, action) {
       return {
         ...state,
         displayName: action.displayName,
-        userBgColor: action.userBgColor,
+        backgroundColor: action.backgroundColor,
         photoURL: action.photoURL,
         openDialog: false,
       };
@@ -120,8 +120,8 @@ export default function AuthProvider(props) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const firebase = props.firebase;
   const firestore = props.firestore;
-  const [userBgColor, setUserBgColor] = useLocalStorage("backgroundColor");
-   
+  const [backgroundColor, setBackgroundColor] = useLocalStorage("userBgColor");
+
   const handleAuthOk = useRef(props.handleAuthOk);
 
   // -----------------------------------------------
@@ -135,29 +135,33 @@ export default function AuthProvider(props) {
     let isCancelled = false;
 
     if (!isCancelled && firebase && firestore) {
-        dispatch({
-          type: "init",
-          firebaseApp: firebase,
-          firestore: firestore
-        });
+      dispatch({
+        type: "init",
+        firebaseApp: firebase,
+        firestore: firestore
+      });
 
-        const auth = getAuth();
-        onAuthStateChanged(auth, user => {
-          if (user) {
-            dispatch({ type: "ok", user:user, userBgColor:userBgColor});
-            handleAuthOk.current();
-          } else {
-            dispatch({ type: "error", message: "ユーザが認証されていません" });
-          }
-        })
+      const auth = getAuth();
+      onAuthStateChanged(auth, user => {
+        if (user) {
+          dispatch({
+            type: "ok",
+            user: user,
+            backgroundColor: backgroundColor
+          });
+          handleAuthOk.current();
+        } else {
+          dispatch({ type: "error", message: "ユーザが認証されていません" });
+        }
+      })
 
-      }
+    }
 
     return () => {
       isCancelled = true;
     }
 
-  }, [firebase, firestore]);
+  }, [firebase, firestore, backgroundColor]);
 
 
   function authenticate(email, password) {
@@ -165,7 +169,11 @@ export default function AuthProvider(props) {
     const auth = getAuth();
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        dispatch({ type: "ok", user: userCredential.user });
+        dispatch({
+          type: "ok",
+          user: userCredential.user,
+          backgroundColor: backgroundColor
+        });
         handleAuthOk.current();
       })
       .catch(error => {
@@ -190,7 +198,11 @@ export default function AuthProvider(props) {
     const auth = getAuth();
     createUserWithEmailAndPassword(auth, email, password)
       .then(userCredential => {
-        dispatch({ type: "ok", user: userCredential.user });
+        dispatch({
+          type: "ok",
+          user: userCredential.user,
+          backgroundColor: backgroundColor
+        });
         handleAuthOk.current();
       })
       .catch(error => {
@@ -204,7 +216,7 @@ export default function AuthProvider(props) {
     const auth = getAuth();
     const user = auth.currentUser;
     if (user) {
-      setUserBgColor(bgColor)
+      setBackgroundColor(bgColor);
       updateProfile(user, {
         displayName: displayName || user.displayName,
         photoURL: photoURL || user.photoURL
@@ -215,7 +227,7 @@ export default function AuthProvider(props) {
           type: "updateUserInfo",
           displayName: displayName,
           photoURL: photoURL,
-          userBgColor: bgColor,
+          backgroundColor: bgColor,
         });
       }).catch(error => {
         dispatch({ type: "error", message: error.code });
@@ -253,8 +265,9 @@ export default function AuthProvider(props) {
     <AuthContext.Provider
       value={{
         displayName: state.user.displayName,
-        authState:state.authState,
+        authState: state.authState,
         photoURL: state.user.photoURL,
+        backgroundColor: state.backgroundColor,
         firestore: state.firestore,
         openUpdateDialog: openUpdateDialog,
         uid: state.user.uid,
@@ -267,6 +280,7 @@ export default function AuthProvider(props) {
             authState={state.authState}
             dialog={state.openDialog}
             user={state.user}
+            backgroundColor={state.backgroundColor}
             update={state.isUpdate}
             createUser={createUser}
             authenticate={authenticate}

@@ -14,8 +14,6 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AvatarSelector from './AvatarSelector';
 import ColorSelector from '../Editor/ColorSelector';
 
-import useLocalStorage from '../use-localstorage';
-
 
 const TITLE = {
   'signIn': 'ユーザ認証',
@@ -57,8 +55,7 @@ export default function AuthDialog(props) {
   const displayNameRef = useRef();
   const [photoURL, setPhotoURL] = useState(props.user.photoURL || "");
   const [page, setPage] = useState(props.dialog || 'signIn');
-  const [backgroundColor, setBackgroundColor] = useLocalStorage("backgroundColor", "#FFFFFFBB");
-
+  const [backgroundColor, setBackgroundColor] = useState(props.backgroundColor);
 
   function handleClick() {
     switch (page) {
@@ -77,7 +74,8 @@ export default function AuthDialog(props) {
       case 'update': {
         props.updateUserInfo(
           displayNameRef.current.value,
-          photoURL);
+          photoURL,
+          backgroundColor);
         return;
       }
       default:
