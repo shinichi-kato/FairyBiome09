@@ -69,7 +69,6 @@ class Fbio {
         ...obj.config,
         ownerId: uid
       },
-      site: obj.site,
       estimator: obj.estimator,
       timestamp: serverTimestamp(),
       work: obj.work,
@@ -89,7 +88,6 @@ class Fbio {
         featureWeights: p.featureWeights || null,
       }
     }
-    console.log(obj,data);
     let botRef;
     if (obj.config.fsBotId) {
       // botIdがある→以前保存されているので上書き
@@ -107,10 +105,30 @@ class Fbio {
 
     // スクリプトの保存
     for (let partName in obj.parts) {
-      await setDoc(partRef, obj.parts[partName], partName);
+      const data = {
+        ...obj.parts[partName],
+        featureWeights: obj.parts[partName].featureWeights || null
+      };
+      console.log(data)
+      await setDoc(doc(partRef, partName), data);
     }
 
     return fsBotId;
+  }
+
+  async loadBots(userId){
+    /* 同じuserIdのbotを新しい順に最大5件表示 */
+    const botsRef = collection(firestore, "bots");
+    const q = query(botsRef, 
+        where("ownerId", "==", userId),
+        orderBy("timestamp"),
+        limit(5));
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      console.log(doc.id, " => ", doc.data());
+    });
   }
 
 }
