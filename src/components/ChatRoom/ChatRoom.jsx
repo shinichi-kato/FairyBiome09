@@ -66,7 +66,7 @@ export default function ChatRoom(props) {
   }
 
   //---------------------------------------
-  // チャットルームに入室したらdeploy
+  // チャットルームに入室したらloadしてdeploy
   // forestに入った場合、ローカルのtimestampのほうがサーバーよりも新しく、
   // かつ24h以内に保存されていなければ自動でローカルのチャットボットのデータを
   // サーバーに保存する。props.configで定義した確率でチャットボットが出現
@@ -75,11 +75,10 @@ export default function ChatRoom(props) {
 
   useEffect(() => {
     const site = ecosystem.site;
+    (async () => {
+      if (site === 'forest') {
+        const feConfig = config.forestEncounter;
 
-    if (site === 'forest') {
-      const feConfig = config.forestEncounter;
-
-      (async () => {
         // 自動セーブ
 
 
@@ -96,13 +95,15 @@ export default function ChatRoom(props) {
         }
 
         await bot.current.deploy(site);
-      })()
 
-    } else {
-      bot.current.deploy(site);
-    }
+      } else {
+        await bot.current.load(auth.uid);
+        await bot.current.deploy(site);
+      }
+    })();
 
-  }, [ecosystem.site, config.forestEncounter]);
+
+  }, [auth.uid, ecosystem.site, config.forestEncounter]);
 
   // ---------------------------------------------
   // ecosystemが変化したらチャットボットにトリガーを送出
@@ -186,7 +187,7 @@ export default function ChatRoom(props) {
       user={auth}
     />
     , [auth, panelSize]);
-    
+
 
   return (
     <Box

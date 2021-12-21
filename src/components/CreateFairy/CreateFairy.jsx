@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { navigate } from "gatsby";
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -14,6 +14,7 @@ import WarningIcon from '@mui/icons-material/Warning';
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
 import { AuthContext } from "../Auth/AuthProvider";
 import { ImageListItemBar } from "@mui/material";
+import { fbio } from '../../firebase';
 
 
 const STATE_TABLE = {
@@ -27,6 +28,13 @@ const STATE_TABLE = {
 
 export default function CreateFairy(props) {
   /* 
+    チャットボットを既存データから読み込む。
+    読み込むデータは/static/chatbotのうちbotIdの付与されていないデータ、
+    またはfirestore上でuserが作成したものである。
+
+    チャットボットを新規作成したときに名前と背景色を設定する。
+    ※これから実装
+
     アプリの状態がappStateで渡されてくる。
     props.appState        表示要素
     ---------------------------------------------------------
@@ -36,6 +44,8 @@ export default function CreateFairy(props) {
     'continue'      タイトル ユーザアカウント 上書き確認メッセージ
     'exec'          タイトル ユーザアカウント チャットボット選択画面    
     'ready'          タイトル ユーザアカウント 戻るボタン
+
+    このページを表示するurlへの直リンクの場合/へ転送
     
     props.chatbots = [
       {   name: string,
@@ -48,7 +58,8 @@ export default function CreateFairy(props) {
   const auth = useContext(AuthContext);
   const bot = useContext(BiomebotContext);
   const appState = STATE_TABLE[props.appState];
-
+  
+  const [allChatbots,setAllChatbots] = useState(props.chatbots);
   const [currentDirectory, setCurrentDirectory] = useState(null);
   const [currentDescription, setCurrentDescription] = useState(null);
 
@@ -57,6 +68,14 @@ export default function CreateFairy(props) {
   //     navigate('/content/prologue1/');
   //   }
   // },[appState]);
+
+  useEffect(()=>{
+    if(allChatbots.length === props.chatbots.length && auth.uid){
+      (async () => {
+      setAllChatbots([...props.chatbots, ...await fbio.lsBots(auth.uid)])
+      })()
+    }
+  },[auth.uid,allChatbots])
 
   function handleAccept() {
     navigate('/content/prologue1/');
@@ -152,8 +171,8 @@ export default function CreateFairy(props) {
             >
               <ImageList
                 sx={{
-                  flexWrap: 'nowrap',
                   width: 500,
+                  height: 500,
                   // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
                   transform: 'translateZ(0)',
                 }}

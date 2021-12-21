@@ -1,5 +1,9 @@
 import { initializeApp, getApp, getApps } from 'firebase/app';
-import { getFirestore, serverTimestamp, doc, setDoc, addDoc, collection } from 'firebase/firestore';
+import { 
+  getFirestore, serverTimestamp,
+  doc, setDoc, addDoc, collection,
+  query, where, orderBy, limit, getDocs
+} from 'firebase/firestore';
 
 export let firebaseApp = null;
 export let firestore = null;
@@ -116,8 +120,32 @@ class Fbio {
     return fsBotId;
   }
 
-  async loadBots(userId){
-    /* 同じuserIdのbotを新しい順に最大5件表示 */
+  async listBots(userId){
+    /* 同じuserIdのbotを新しい順に最大5件読み込む。返すデータは/pages/create.jsの
+    graphql`
+      {
+        allJson {
+          nodes {
+            main {
+              NAME
+              CREATOR_NAME
+            }
+            parent {
+              ... on File {
+                relativeDirectory
+              }
+            }
+            config {
+              backgroundColor
+              description
+            }
+          }
+        }
+      }
+    `
+      と互換にする
+
+    */
     const botsRef = collection(firestore, "bots");
     const q = query(botsRef, 
         where("ownerId", "==", userId),
@@ -125,10 +153,28 @@ class Fbio {
         limit(5));
 
     const querySnapshot = await getDocs(q);
+    let nodes = [];
+
     querySnapshot.forEach((doc) => {
       // doc.data() is never undefined for query doc snapshots
-      console.log(doc.id, " => ", doc.data());
+      const d = doc.data();
+      //データ整形から実装
+      nodes.push({
+        main:{
+          NAME: d.main.NAME,
+          CREATOR_NAME: d.main.CREATOR_NAME,
+        },
+        parent: {
+          relativeDirectory: d.parent.relativeDirectory
+        },
+        config: {
+          backgroundColor: d.config.backgroundColor,
+          description: d.config.description
+        }
+      })
     });
+
+    return nodes;
   }
 
 }

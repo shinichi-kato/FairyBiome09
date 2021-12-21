@@ -202,7 +202,7 @@ export default function IndexPage({ data }) {
     setAppState('authOk');
     navigate('/create/');
   }
-
+  console.log("appState",appState)
   return (
 
     <AuthProvider

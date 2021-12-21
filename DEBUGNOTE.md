@@ -20,7 +20,7 @@ debug note
 
 
 3. 他
-
+* AuthDialogでサインアップができない
 * CreateFairy:74でuidが与えられていない。仕様が要調整
 * etimatorがconfig内に書かれてindexDBに保存されている。要除去
 * /editを直でアクセスすると真っ白

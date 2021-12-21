@@ -438,7 +438,6 @@ export default function BiomebotProvider(props) {
             key: prev.key + 1,
             queue: prev.queue.slice(1)
           };
-          // console.log("biomebotProvider: topmessage=",top.message);
 
           return {
             key: prev.key + 1,
@@ -451,48 +450,24 @@ export default function BiomebotProvider(props) {
 
   // --------------------------------------------
   // 認証後に何もロードされていなければユーザのチャットボットをdbからロード
-  //
+  // 
 
-  useEffect(() => {
-    let isCancelled = false;
+  // useEffect(() => {
+  //   let isCancelled = false;
 
-    if (!isCancelled && appState === 'authOk') {
-      (async () => {
-        if (auth.uid && !stateRef.current.botId){
-          const snap = await db.load(auth.uid);
-          if(snap){
-            dispatch({ type: 'connect', snap: snap });
+  //   if (!isCancelled && appState === 'authOk') {
+  //     (async () => {
+  //       if (auth.uid && !stateRef.current.botId){
+  //         await load(auth.uid);
 
-            const snapWork = snap.work;
-            console.log("on load setWork:", snapWork)
-            setWork(prev => ({
-              key: prev.key + 1,
-              mentalLevel: snapWork.mentalLevel,
-              moment: snapWork.moment,
-              mood: snapWork.mood,
-              partOrder: [...snapWork.partOrder],
-              queue: [...snapWork.queue],
-              site: snapWork.site,
-              updatedAt: snapWork.updatedAt
-            }));
-            handleBotFound.current();           
-          }
-          else {
-            handleBotNotFound.current();
-          }
-        }
+  //     })();
 
-        if(stateRef.current.botId){
-          handleBotFound.current();
-        }
-  
-      })()
+  //   }
 
-    }
+  //   return () => { isCancelled = true }
 
-    return () => { isCancelled = true }
+  // }, [appState, auth.uid, state]);
 
-  }, [appState, auth.uid, state]);
 
   const handleExecute = (message, emitter) => {
     // 外部からの入力を受付け、必要な場合返答を送出する。
@@ -650,8 +625,29 @@ export default function BiomebotProvider(props) {
 
   }
 
-  async function load(){
-    return await db.load(state.botId);
+  async function load(botId){
+    /* dbに保存されたbotを読み込む。
+      firestoreから読み込む場合は一旦dbに保存する
+    */
+    const snap = await db.load(botId);
+    if(snap){
+      dispatch({ type: 'connect', snap: snap });
+
+      const snapWork = snap.work;
+      console.log("on load setWork:", snapWork)
+      setWork(prev => ({
+        key: prev.key + 1,
+        mentalLevel: snapWork.mentalLevel,
+        moment: snapWork.moment,
+        mood: snapWork.mood,
+        partOrder: [...snapWork.partOrder],
+        queue: [...snapWork.queue],
+        site: snapWork.site,
+        updatedAt: snapWork.updatedAt
+      }));
+      return true;
+    }
+    return false;
   }
 
   const photoURL = `/chatbot/${stateRef.current.config.avatarPath}/${work.partOrder[0]}.svg`;

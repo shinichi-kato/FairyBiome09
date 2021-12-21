@@ -42,6 +42,7 @@ export default function CreatePage({ location, data }) {
     'new'           チャットボットが見つからない場合、新規作成
     'continue'      既存チャットボットがある場合、上書き    
     'exec'        プロローグページで「チャットボットを作る」をクリックした
+    'done'        チャットボットが選択され、名前と背景色を設定
   */
   const [appState, setAppState] = useState('landing');
 
@@ -71,6 +72,7 @@ export default function CreatePage({ location, data }) {
 
     if(!firebaseApp && !firestore && !isCancelled){
       initializeFirebaseApp();
+      
     }
 
     return (()=>{ 
