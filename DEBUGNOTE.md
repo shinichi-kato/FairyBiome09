@@ -2,7 +2,8 @@ debug note
 ==============
 
 1. チャットルーム
-
+* チャットボットを新たにロードしても反映されない
+* ティピカをロードしても反映されない
 * 誰もいない森から帰ってきたあと、自分のチャットボットが戻らない
 * 公園で吹き出しが白い
 * チャットボットのdeployが完了するまでpanelは表示しない
@@ -20,14 +21,18 @@ debug note
 
 
 3. 他
+
+
 * AuthDialogでサインアップができない
-* CreateFairy:74でuidが与えられていない。仕様が要調整
+
 * etimatorがconfig内に書かれてindexDBに保存されている。要除去
-* /editを直でアクセスすると真っ白
+* /editを直でアクセスすると真っ白ー＞BiomebotProviderでhandleBotFound()が呼ばれてるかチェックすること
 * チャットボットをテンプレートから新規作成したときには名前と背景色を設定
 * チャットボットを新規作成するときにfirestoreからもロード可能に
 
 # 以下対応済み
+* CreateFairy:74でuidが与えられていない。仕様が要調整
+* 起動時にwindow is undefinedになるー＞ecosystemでundefined-night.svgを参照しようとしている->undefinedはビルド時の警告。実態はstateの遷移ミス
 * ユーザを新規作成したときにアバターと背景を選ぶ
 * editorで保存ボタンがウィンドウ右隅に表示される
 * エディタからチャットルームに戻る or F5再起動時にwork.parts is undefinedになることがある。

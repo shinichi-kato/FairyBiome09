@@ -169,8 +169,9 @@ export default function AuthDialog(props) {
         <Typography
           variant="h4"
         >
-          {TITLE[page]}
+          {TITLE[page]}{props.authState}
         </Typography>
+        
       </Grid>
       <Grid item xs={12}>
         <TextField

@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 
 import {
-  getAuth, onAuthStateChanged, updateProfile,
+  getAuth, onAuthStateChanged, updateProfile, signOut,
   createUserWithEmailAndPassword, signInWithEmailAndPassword
 } from "firebase/auth";
 
@@ -121,6 +121,7 @@ export default function AuthProvider(props) {
   const firebase = props.firebase;
   const firestore = props.firestore;
   const [backgroundColor, setBackgroundColor] = useLocalStorage("userBgColor");
+  const unsubscribeRef = useRef();
 
   const handleAuthOk = useRef(props.handleAuthOk);
 
@@ -142,7 +143,7 @@ export default function AuthProvider(props) {
       });
 
       const auth = getAuth();
-      onAuthStateChanged(auth, user => {
+      unsubscribeRef.current = onAuthStateChanged(auth, user => {
         if (user) {
           dispatch({
             type: "ok",
@@ -159,6 +160,7 @@ export default function AuthProvider(props) {
 
     return () => {
       isCancelled = true;
+      if(unsubscribeRef.current) { unsubscribeRef.current();}
     }
 
   }, [firebase, firestore, backgroundColor]);
@@ -249,7 +251,7 @@ export default function AuthProvider(props) {
 
   }
 
-  function signOut() {
+  function handleSignOut() {
     const auth = getAuth();
     signOut(auth).then(() => {
       dispatch({ type: "signOut" });
@@ -284,7 +286,7 @@ export default function AuthProvider(props) {
             update={state.isUpdate}
             createUser={createUser}
             authenticate={authenticate}
-            signOut={signOut}
+            handleSignOut={handleSignOut}
             updateUserInfo={updateUserInfo}
             handleClose={closeAuthDialog}
           />

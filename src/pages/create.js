@@ -25,6 +25,13 @@ export const query = graphql`
         }
       }
     }
+    site {
+      siteMetadata {
+        chatbot {
+          allowUserOwnSystemBot
+        }
+      }
+    }
   }
 `
 
@@ -43,10 +50,21 @@ export default function CreatePage({ location, data }) {
     'continue'      既存チャットボットがある場合、上書き    
     'exec'        プロローグページで「チャットボットを作る」をクリックした
     'done'        チャットボットが選択され、名前と背景色を設定
+
+    ■チャットボットのロード
+    チャットボットは/staticとfirestoreからロードできる。
+    またdata.site.siteMetadata.chatbot.allowUserOwnSystemBotが有効なら
+    /staticのうちidの末尾が@systemになっているものをユーザ用に（uidを与えて)
+    ロードできる。
+
+    
   */
   const [appState, setAppState] = useState('landing');
 
+  // firestoreからチャットボットを読み込み/staticと混ぜるあたりを実装
+  // locationにstaticまたはserverの文字列を入れて区別
   const chatbots = data.allJson.nodes.map(node => ({
+    location: 'static',
     name: node.main.NAME,
     creator: node.main.CREATOR_NAME,
     directory: node.parent.relativeDirectory,

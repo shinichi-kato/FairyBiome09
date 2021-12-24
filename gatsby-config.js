@@ -16,6 +16,7 @@ module.exports = {
       updateInterval: 6000, // msec, 天候表示のアップデート周期
     },
     chatbot: {
+      allowUserOwnSystemBot: true, // @systemのボットをユーザがロードできる(開発用)
       logViewLength: 100, // 表示するログの長さ
       logStoreLength: 10000, // 保存するログの長さ
       forestEncounter: {

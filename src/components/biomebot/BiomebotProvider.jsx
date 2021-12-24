@@ -145,9 +145,9 @@
     
     ・ユーザ所有のチャットボットを生成した時点でサーバーへの保管が実行され、idが付与される。
     ・一日最大一回、FairyBiome起動時にタイムスタンプを確認しサーバー側が新しかったら
-    　ローカルにロードする。
-  　・森に入るとチャットボットのデータは一日最大一回サーバーに保存される。
-  　・編集モードから抜けるときにサーバーに保存される。
+     ローカルにロードする。
+   ・森に入るとチャットボットのデータは一日最大一回サーバーに保存される。
+   ・編集モードから抜けるときにサーバーに保存される。
 
 上述のチャットボット以外に、システムが利用するNPCチャットボットがある。これは特に
 サーバーには保存されない。
@@ -317,12 +317,12 @@ function reducer(state, action) {
       // キャッシュ計算中はstatusがdeploying, 計算終了時にreadyになる
       const cacheKeys = Object.keys(cache);
       const partsKeys = Object.keys(state.parts);
-      
+
       const status = cacheKeys.length === partsKeys.length ? "ready" : "deploying";
 
       return {
         ...state,
-        cache: { ...cache},
+        cache: { ...cache },
         status: status
       }
     }
@@ -413,9 +413,9 @@ export default function BiomebotProvider(props) {
     ...defaultSettings.work
   });
 
-  const appState = props.appState;
-  const handleBotFound = useRef(props.handleBotFound);
-  const handleBotNotFound = useRef(props.handleBotNotFound);
+  // const appState = props.appState;
+  // const handleBotFound = useRef(props.handleBotFound);
+  // const handleBotNotFound = useRef(props.handleBotNotFound);
 
   // ----------------------------------------------
   // stateが関数内関数（クロージャ）内で使われているためのworkaround
@@ -452,21 +452,23 @@ export default function BiomebotProvider(props) {
   // 認証後に何もロードされていなければユーザのチャットボットをdbからロード
   // 
 
-  // useEffect(() => {
-  //   let isCancelled = false;
+  useEffect(() => {
+    let isCancelled = false;
 
-  //   if (!isCancelled && appState === 'authOk') {
-  //     (async () => {
-  //       if (auth.uid && !stateRef.current.botId){
-  //         await load(auth.uid);
+    if (!isCancelled && props.appState === 'authOk') {
+      (async () => {
+        if (auth.uid && !stateRef.current.botId) {
+          if (await load(auth.uid)){
+            props.handleBotFound();
+          }
+        }
+      })();
 
-  //     })();
+    }
 
-  //   }
+    return () => { isCancelled = true }
 
-  //   return () => { isCancelled = true }
-
-  // }, [appState, auth.uid, state]);
+  }, [props.appState, auth.uid, state]);
 
 
   const handleExecute = (message, emitter) => {
@@ -568,7 +570,7 @@ export default function BiomebotProvider(props) {
     setWork(prev => ({
       ...prev,
       key: prev.key + 1,
-      site: site 
+      site: site
     }));
 
   }
@@ -625,12 +627,12 @@ export default function BiomebotProvider(props) {
 
   }
 
-  async function load(botId){
+  async function load(botId) {
     /* dbに保存されたbotを読み込む。
       firestoreから読み込む場合は一旦dbに保存する
     */
     const snap = await db.load(botId);
-    if(snap){
+    if (snap) {
       dispatch({ type: 'connect', snap: snap });
 
       const snapWork = snap.work;
@@ -652,7 +654,7 @@ export default function BiomebotProvider(props) {
 
   const photoURL = `/chatbot/${stateRef.current.config.avatarPath}/${work.partOrder[0]}.svg`;
 
-   return (
+  return (
     <BiomebotContext.Provider
       value={{
         execute: handleExecute,

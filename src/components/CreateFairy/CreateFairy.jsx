@@ -58,8 +58,8 @@ export default function CreateFairy(props) {
   const auth = useContext(AuthContext);
   const bot = useContext(BiomebotContext);
   const appState = STATE_TABLE[props.appState];
-  
-  const [allChatbots,setAllChatbots] = useState(props.chatbots);
+
+  const [fsChatbots, setFsChatbots] = useState(props.chatbots);
   const [currentDirectory, setCurrentDirectory] = useState(null);
   const [currentDescription, setCurrentDescription] = useState(null);
 
@@ -69,13 +69,13 @@ export default function CreateFairy(props) {
   //   }
   // },[appState]);
 
-  useEffect(()=>{
-    if(allChatbots.length === props.chatbots.length && auth.uid){
+  useEffect(() => {
+    if (fsChatbots.length === props.chatbots.length && auth.uid) {
       (async () => {
-      setAllChatbots([...props.chatbots, ...await fbio.lsBots(auth.uid)])
+        setFsChatbots([...props.chatbots, ...await fbio.listBots(auth.uid)])
       })()
     }
-  },[auth.uid,allChatbots])
+  }, [auth.uid, fsChatbots, props.chatbots])
 
   function handleAccept() {
     navigate('/content/prologue1/');
@@ -105,7 +105,7 @@ export default function CreateFairy(props) {
     <>
       <AppBar position="static">
         <Toolbar>
-          <Typography variant="h6" sx={{flexGrow: 1}}>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
             新しい妖精
           </Typography>
           {appState > 0 &&
@@ -124,7 +124,7 @@ export default function CreateFairy(props) {
         display="flex"
         flexDirection="column"
         alignItems="center"
-        sx={{ paddingTop: "3em",}}
+        sx={{ paddingTop: "3em", }}
       >
         {props.appState === 'continue' &&
           <>
@@ -138,8 +138,8 @@ export default function CreateFairy(props) {
             </Box>
             <Box>
               すでに妖精{bot.displayName}のデータがあります。<br />
-            新しく妖精を作ると{bot.displayName}は消滅します。<br />
-            よろしいですか？
+              新しく妖精を作ると{bot.displayName}は消滅します。<br />
+              よろしいですか？
             </Box>
             <Box>
               <Button
@@ -165,7 +165,7 @@ export default function CreateFairy(props) {
                 flexWrap: 'wrap',
                 justifyContent: 'space-around',
                 overflow: 'hidden',
-                backgroundColor: theme=>theme.palette.background.paper,
+                backgroundColor: theme => theme.palette.background.paper,
                 width: '100%',
               }}
             >
@@ -178,7 +178,7 @@ export default function CreateFairy(props) {
                 }}
                 cols={3}
               >
-                {props.chatbots.map(chatbot => (
+                {fsChatbots.map(chatbot => (
                   <ImageListItem key={chatbot.name}
                     onClick={() => handleClickTile(chatbot.directory)}
                     sx={{
@@ -230,7 +230,7 @@ export default function CreateFairy(props) {
                 variant="contained"
                 onClick={handleReturn}>
                 戻る
-            </Button>
+              </Button>
             </Box>
           </>
         }

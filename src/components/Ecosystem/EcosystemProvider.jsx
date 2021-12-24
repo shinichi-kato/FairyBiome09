@@ -52,7 +52,7 @@ const SEVERE_WEATHERS = {
 const SOLTICE = {
   sunrise: {
     summer: {
-      dateRad: getDateRad(6, 15),　// 夏至の日
+      dateRad: getDateRad(6, 15), // 夏至の日
       hourRad: getHourRad(5, 0),  // 夏至の日の出時刻
     },
     winter: {
@@ -63,11 +63,11 @@ const SOLTICE = {
   sunset: {
     summer: {
       dateRad: null, // winter.dateRadの半年後
-      hourRad: getHourRad(19, 0),　// 夏至の日没時刻
+      hourRad: getHourRad(19, 0), // 夏至の日没時刻
     },
     winter: {
       dateRad: getDateRad(12, 1), // 冬至の日
-      hourRad: getHourRad(17, 0),　// 冬至の日没時刻
+      hourRad: getHourRad(17, 0), // 冬至の日没時刻
     },
   }
 };
