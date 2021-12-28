@@ -104,7 +104,7 @@ export default function IndexPage({ data }) {
 
     appState
     ---------------------------------------------------------
-    'landing'       起動時はlanding状態。
+    'landing'       アプリ起動時。初期化などを実行中。
     'authOk'        firebaseのauthが完了するとauthOkになり、ローカルの
                     チャットボットを探す。
     'new'           チャットボットが見つからない場合、タイトルページに「はじめから」が
@@ -115,6 +115,14 @@ export default function IndexPage({ data }) {
   
     IndexPageコンポーネントではroomおよびforestのログを管理し、
     他のコンポーネントがログにアクセスする手段を提供する。
+
+    site      チャットルーム入室時の挙動
+    ---------------------------------------------------------------------------
+    room      indexDBに保存されユーザが所有するチャットボットを読み込む
+    park      indexDBに保存されユーザが所有するチャットボットを読み込む
+    forest    indexDBやfirestoreに保存されたいずれかのチャットボットを読み込む
+              チャットボット不在の場合もある
+    ---------------------------------------------------------------------------
   */
 
   const [appState, setAppState] = useState('Landing');
@@ -125,24 +133,27 @@ export default function IndexPage({ data }) {
 
   const config = data.site.siteMetadata.chatbot;
 
-  useEffect(() => {
-    let isCancelled = false;
+  // --------------------------------------------------------------
+  // ログdbの初期化
 
-    if (!db && !isCancelled) {
+  useEffect(() => {
+    if (!db) {
       db = new Dexie('Log');
       db.version(1).stores({
         room: "++id,timestamp", // id, timestamp, message
         forest: "++id,timestamp", // id, timestamp, message
       });
-
-      (async () => {
-        setForestLog(await readLocalLog('forest', config.logViewLength));
-        setRoomLog(await readLocalLog('room', config.logViewLength));
-      })();
     }
 
-    return () => { isCancelled = true };
+    (async () => {
+      setForestLog(await readLocalLog('forest', config.logViewLength));
+      setRoomLog(await readLocalLog('room', config.logViewLength));
+    })();
+
   }, [config.logViewLength]);
+
+  // --------------------------------------------------------------
+  // firebaseの初期化
 
   useEffect(() => {
     if (!firebaseApp) {
@@ -156,7 +167,7 @@ export default function IndexPage({ data }) {
   }, []);
 
   useEffect(() => {
-    if (appState === 'authOk' && !unsubscribeRef.current) {
+    if (appState !== 'landing' && !unsubscribeRef.current) {
       const q = fsQuery(collection(firestore, "parklog"),
         orderBy('timestamp'), limit(100));
 

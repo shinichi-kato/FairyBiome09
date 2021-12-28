@@ -19,7 +19,7 @@
             "type": "node",
             "request": "launch",
             "protocol": "inspector",
-            "program": "${workspaceRoot}/node_modules/gatsby/dist/bin/gatsby",
+            "program": "${workspaceFolder}/node_modules/gatsby/dist/bin/gatsby",
             "args": [
                 "develop"
             ],
@@ -27,14 +27,15 @@
             "runtimeArgs": [
                 "--nolazy"
             ],
-            "sourceMaps": false
+            "sourceMaps": false,
+            "command": "echo ${workspaceFolder}"
         },
         {
             "name": "Gatsby build",
             "type": "node",
             "request": "launch",
             "protocol": "inspector",
-            "program": "${workspaceRoot}/node_modules/gatsby/dist/bin/gatsby",
+            "program": "${workspaceFolder}/node_modules/gatsby/dist/bin/gatsby",
             "args": [
                 "build"
             ],
@@ -46,7 +47,7 @@
         },
         {
             "name": "Launch Chrome",
-            "type": "chrome",
+            "type": "pwa-chrome",
             "request": "launch",
             "url": "http://localhost:8000",
             "webRoot": "${workspaceFolder}"

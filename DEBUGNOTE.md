@@ -24,6 +24,7 @@ debug note
 
 
 * AuthDialogでサインアップができない
+* authOkで止まるー＞backgroundCOlorの代入をdispatchのokから外した
 
 * etimatorがconfig内に書かれてindexDBに保存されている。要除去
 * /editを直でアクセスすると真っ白ー＞BiomebotProviderでhandleBotFound()が呼ばれてるかチェックすること

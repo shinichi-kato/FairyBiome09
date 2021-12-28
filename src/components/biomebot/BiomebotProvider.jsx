@@ -414,12 +414,13 @@ export default function BiomebotProvider(props) {
   });
 
   // const appState = props.appState;
-  // const handleBotFound = useRef(props.handleBotFound);
-  // const handleBotNotFound = useRef(props.handleBotNotFound);
+  const handleBotFound = useRef(props.handleBotFound);
+  const handleBotNotFound = useRef(props.handleBotNotFound);
 
   // ----------------------------------------------
   // stateが関数内関数（クロージャ）内で使われているためのworkaround
   // stateが変わるごとにstateRefは最新の値を指すようにする
+  // ※↑stateはアドレス不変のはず。なにかおかしい
   // またstateがわかるごとにqueueの監視を行い、queueが空でなければ
   // handleExecuteを行う
 
@@ -448,25 +449,21 @@ export default function BiomebotProvider(props) {
     }
   }, [state, work, work.queue]);
 
-  // --------------------------------------------
+  // ----------------------------------------------------------------------
   // 認証後に何もロードされていなければユーザのチャットボットをdbからロード
+  // 
   // 
 
   useEffect(() => {
-    let isCancelled = false;
-
-    if (!isCancelled && props.appState === 'authOk') {
+    if (props.appState !== 'landing' && !state.botId && auth.uid) {
       (async () => {
-        if (auth.uid && !stateRef.current.botId) {
           if (await load(auth.uid)){
-            props.handleBotFound();
+            handleBotFound.current();
+          } else {
+            handleBotNotFound.current();
           }
-        }
-      })();
-
+        })();
     }
-
-    return () => { isCancelled = true }
 
   }, [props.appState, auth.uid, state]);
 

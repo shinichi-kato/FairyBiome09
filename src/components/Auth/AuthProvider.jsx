@@ -13,7 +13,12 @@ const AuthDialog = loadable(() => import('./AuthDialog'));
 
 export const AuthContext = createContext();
 
-
+function getLocalStorageItem(item){
+  if(typeof window !== "undefined"){
+    return window.localStorage.getItem(item);
+  }
+  return null;
+}
 
 const initialState = {
   user: {
@@ -57,7 +62,7 @@ function reducer(state, action) {
         user: action.user,
         authState: authState,
         message: "",
-        backgroundColor: action.backgroundColor,
+        backgroundColor: state.backgroundColor,
         openDialog: false,
         firestore: state.firestore,
         firebaseApp: state.firebaseApp,
@@ -117,7 +122,10 @@ function reducer(state, action) {
 }
 
 export default function AuthProvider(props) {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, {
+    ...initialState,
+    backgroundColor:getLocalStorageItem('userBgColor')});
+  
   const firebase = props.firebase;
   const firestore = props.firestore;
   const [backgroundColor, setBackgroundColor] = useLocalStorage("userBgColor");
@@ -133,9 +141,7 @@ export default function AuthProvider(props) {
   // -----------------------------------------------
 
   useEffect(() => {
-    let isCancelled = false;
-
-    if (!isCancelled && firebase && firestore) {
+    if (firebase && firestore) {
       dispatch({
         type: "init",
         firebaseApp: firebase,
@@ -148,7 +154,6 @@ export default function AuthProvider(props) {
           dispatch({
             type: "ok",
             user: user,
-            backgroundColor: backgroundColor
           });
           handleAuthOk.current();
         } else {
@@ -159,11 +164,10 @@ export default function AuthProvider(props) {
     }
 
     return () => {
-      isCancelled = true;
       if(unsubscribeRef.current) { unsubscribeRef.current();}
     }
 
-  }, [firebase, firestore, backgroundColor]);
+  }, [firebase, firestore ]);
 
 
   function authenticate(email, password) {
@@ -174,7 +178,6 @@ export default function AuthProvider(props) {
         dispatch({
           type: "ok",
           user: userCredential.user,
-          backgroundColor: backgroundColor
         });
         handleAuthOk.current();
       })
@@ -203,7 +206,6 @@ export default function AuthProvider(props) {
         dispatch({
           type: "ok",
           user: userCredential.user,
-          backgroundColor: backgroundColor
         });
         handleAuthOk.current();
       })
