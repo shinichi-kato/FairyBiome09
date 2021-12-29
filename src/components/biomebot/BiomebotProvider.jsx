@@ -262,7 +262,7 @@ export const defaultSettings = {
 
 // 更新頻度は低くdbには保存しないデータ
 const initialState = {
-  status: "unload", // unload->deploying->ready->run
+  status: "unload", 
   botId: null,
   displayName: "",
   config: {},
@@ -275,6 +275,7 @@ const initialState = {
 };
 
 function reducer(state, action) {
+  console.log("action",action)
   switch (action.type) {
     case 'init': {
       return initialState;
@@ -319,7 +320,7 @@ function reducer(state, action) {
       const partsKeys = Object.keys(state.parts);
 
       const status = cacheKeys.length === partsKeys.length ? "ready" : "deploying";
-
+      console.log("status",status)
       return {
         ...state,
         cache: { ...cache },
@@ -405,6 +406,17 @@ function reducer(state, action) {
 }
 
 export default function BiomebotProvider(props) {
+  // -----------------------------------------------------
+  //
+  // state      
+  // -----------------------------------------------------
+  // unload     初期化状態
+  // loaded     データがロードされた
+  // deploying  tfidf行列のキャッシュ計算/読み込み中
+  // ready      tfidf行列の準備が完了した
+  // -----------------------------------------------------
+  
+
   const auth = useContext(AuthContext);
 
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -424,13 +436,13 @@ export default function BiomebotProvider(props) {
   // またstateがわかるごとにqueueの監視を行い、queueが空でなければ
   // handleExecuteを行う
 
-  const stateRef = useRef(state);
+  // const stateRef = useRef(state);
 
   useEffect(() => {
-    stateRef.current = state;
+    // stateRef.current = state;
 
     if (state.status === 'ready') {
-      // console.log("qlength", work.queue.length)
+      console.log("qlength", work.queue.length)
       if (work.queue.length > 0) {
         setWork(prev => {
           const top = prev.queue[0];
@@ -447,26 +459,72 @@ export default function BiomebotProvider(props) {
         });
       }
     }
-  }, [state, work, work.queue]);
+  }, [state, state.status, work, work.queue]);
 
   // ----------------------------------------------------------------------
-  // 認証後に何もロードされていなければユーザのチャットボットをdbからロード
-  // 
+  // 認証後にユーザのチャットボットが存在するか確認
+  // チャットボット不在の状態もあるのでロードはしない
   // 
 
   useEffect(() => {
-    if (props.appState !== 'landing' && !state.botId && auth.uid) {
+    if (props.appState === 'authOk' && !state.botId && auth.uid) {
+      // クロージャなのでref化した関数を使用
       (async () => {
-          if (await load(auth.uid)){
-            handleBotFound.current();
-          } else {
-            handleBotNotFound.current();
-          }
-        })();
+        if (await db.isExist(auth.uid)) {
+          handleBotFound.current();
+        } else {
+          handleBotNotFound.current();
+        }
+      })();
     }
 
   }, [props.appState, auth.uid, state]);
 
+  // ------------------------------------------------------------------------
+  // チャットボットがロードされたらデプロイする
+  //
+
+  useEffect(() => {
+    if (state.status === 'loaded') {
+      for (let partName in state.parts) {
+
+        // 各パートのscriptを読んでcacheに変換
+        // webWorkerが別スレッドで処理し、結果をstateに読み込む
+        if (!(partName in workers)) {
+          workers[partName] = new matrixizeWorker();
+        }
+        const worker = workers[partName];
+
+        worker.onmessage = function (event) {
+          const result = event.data;
+          if (result) {
+            db.loadCache(state.botId, result.partName)
+              .then(cache => {
+                dispatch({
+                  type: 'readCache',
+                  partName: result.partName,
+                  cache: cache
+                });
+              })
+
+          }
+        };
+
+        worker.postMessage({ botId: state.botId, partName });
+      }
+      if (work.site === "") {
+        // スタートデッキの実行
+        // * 未実装 *
+      }
+
+      // setWork(prev => ({
+      //   ...prev,
+      //   key: prev.key + 1,
+      // }));
+
+    }
+
+  }, [state.status, state.parts, work.site]);
 
   const handleExecute = (message, emitter) => {
     // 外部からの入力を受付け、必要な場合返答を送出する。
@@ -474,8 +532,8 @@ export default function BiomebotProvider(props) {
 
     message.text = textToInternalRepr(segmenter.segment(message.text));
 
-    const currentState = stateRef.current;
-    if (currentState.status !== 'ready') {
+    // const currentState = stateRef.current;
+    if (state.status !== 'ready') {
       setWork(prev => ({
         ...prev,
         key: prev.key + 1,
@@ -487,14 +545,14 @@ export default function BiomebotProvider(props) {
     } else {
       setWork(prevWork => ({
         key: prevWork.key + 1,
-        ...executes[work.site](currentState, prevWork, message, emitter)
+        ...executes[work.site](state, prevWork, message, emitter)
       })
       );
     }
   }
 
 
-  async function generate(obj, avatarPath) {
+  async function generate(obj, avatarPath, site) {
     // avatarPathをobjに組み込む
     obj.config.avatarPath = avatarPath;
 
@@ -516,7 +574,7 @@ export default function BiomebotProvider(props) {
         partOrder: [...obj.config.initialPartOrder],
         mentalLevel: obj.config.initialMentalLevel,
         moment: 0,
-        site: "room",
+        site: site,
         mood: "peace",
         queue: [],
         futurePostings: [],
@@ -529,47 +587,35 @@ export default function BiomebotProvider(props) {
     await db.addPart(state.botId);
   }
 
-  async function deploy(site) {
+  async function load(botId,site) {
+    // チャットボットを読み込む。
+    // 読み込みが完了したらuseEffectで自動deployされる。
+    console.log("loading",botId)
+    if (botId) {
+      const snap = await db.load(botId);
+      if (snap) {
+        dispatch({ type: 'connect', snap: snap });
 
-    for (let partName in state.parts) {
-
-      // 各パートのscriptを読んでcacheに変換
-      // webWorkerが別スレッドで処理し、結果をstateに読み込む
-      if (!(partName in workers)) {
-        workers[partName] = new matrixizeWorker();
+        const snapWork = snap.work;
+        console.log("on load setWork:", snapWork)
+        setWork(prev => ({
+          key: prev.key + 1,
+          mentalLevel: snapWork.mentalLevel,
+          moment: snapWork.moment,
+          mood: snapWork.mood,
+          partOrder: [...snapWork.partOrder],
+          queue: [...snapWork.queue],
+          site: site,
+          updatedAt: snapWork.updatedAt,
+          futurePosting: [],
+          botId: botId
+        }));
       }
-      const worker = workers[partName];
-
-      worker.onmessage = function (event) {
-        const result = event.data;
-        if (result) {
-          db.loadCache(stateRef.current.botId, result.partName)
-            .then(cache => {
-              dispatch({
-                type: 'readCache',
-                partName: result.partName,
-                cache: cache
-              });
-            })
-
-        }
-      };
-
-      worker.postMessage({ botId: stateRef.current.botId, partName });
-
+      else {
+        console.log("not loaded")
+      }
+      console.log("state",state)
     }
-
-    if (work.site === "") {
-      // スタートデッキの実行
-      // * 未実装 *
-    }
-
-    setWork(prev => ({
-      ...prev,
-      key: prev.key + 1,
-      site: site
-    }));
-
   }
 
 
@@ -624,32 +670,8 @@ export default function BiomebotProvider(props) {
 
   }
 
-  async function load(botId) {
-    /* dbに保存されたbotを読み込む。
-      firestoreから読み込む場合は一旦dbに保存する
-    */
-    const snap = await db.load(botId);
-    if (snap) {
-      dispatch({ type: 'connect', snap: snap });
 
-      const snapWork = snap.work;
-      console.log("on load setWork:", snapWork)
-      setWork(prev => ({
-        key: prev.key + 1,
-        mentalLevel: snapWork.mentalLevel,
-        moment: snapWork.moment,
-        mood: snapWork.mood,
-        partOrder: [...snapWork.partOrder],
-        queue: [...snapWork.queue],
-        site: snapWork.site,
-        updatedAt: snapWork.updatedAt
-      }));
-      return true;
-    }
-    return false;
-  }
-
-  const photoURL = `/chatbot/${stateRef.current.config.avatarPath}/${work.partOrder[0]}.svg`;
+  const photoURL = `/chatbot/${state.config.avatarPath}/${work.partOrder[0]}.svg`;
 
   return (
     <BiomebotContext.Provider
@@ -657,10 +679,9 @@ export default function BiomebotProvider(props) {
         execute: handleExecute,
         generate: generate,
         save: save,
-        load: load,
         addNewPart: addNewPart,
         loadScript: loadScript,
-        deploy: deploy,
+        load: load,
         state: state,
         work: work,
         photoURL: photoURL,

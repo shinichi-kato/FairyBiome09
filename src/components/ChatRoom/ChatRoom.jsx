@@ -47,7 +47,7 @@ export default function ChatRoom(props) {
   */
   const auth = useContext(AuthContext);
   const ecosystem = useContext(EcosystemContext);
-  const bot = useRef(useContext(BiomebotContext));
+  const bot = useContext(BiomebotContext);
   const [userInput, setUserInput] = useState("");
   const [panelSize, setPanelSize] = useLocalStorage("panelSize", 1);
   const writeLogRef = useRef(props.writeLog);
@@ -74,33 +74,33 @@ export default function ChatRoom(props) {
 
 
   useEffect(() => {
+
     const site = ecosystem.site;
-    (async () => {
-      if (site === 'forest') {
-        const feConfig = config.forestEncounter;
+    if (site === 'forest') {
+      const feConfig = config.forestEncounter;
 
-        // 自動セーブ
+      // 自動セーブ
 
 
-        const dice = getRandom(feConfig.changeRate);
-        if (dice >= feConfig.tutor) {
-          // コードからチューターをロード
+      const dice = getRandom(feConfig.changeRate);
+      if (dice >= feConfig.tutor) {
+        // コードからチューターをロード
+        (async () => {
           const res = await fetch(`../../chatbot/${TUTOR_ID}/chatbot.json`);
           const obj = await res.json();
-          await bot.current.generate(obj, TUTOR_ID);
-
-        }
-        else if (dice >= feConfig.usersFairy) {
-          // サーバーからランダムに選んだfairyをロード
-        }
-
-        await bot.current.deploy(site);
-
-      } else {
-        await bot.current.load(auth.uid);
-        await bot.current.deploy(site);
+          await bot.generate(obj, TUTOR_ID, site);
+        })();
       }
-    })();
+      else if (dice >= feConfig.usersFairy) {
+        // サーバーからランダムに選んだfairyをロード
+      }
+
+
+    } else {
+      (async () => {
+        await bot.load(auth.uid, site);
+      })();
+    }
 
 
   }, [auth.uid, ecosystem.site, config.forestEncounter]);
@@ -112,7 +112,7 @@ export default function ChatRoom(props) {
   useEffect(() => {
 
     if (ecosystem.change !== null) {
-      bot.current.execute(
+      bot.execute(
         new Message('trigger', `{enter_${ecosystem.change}}`),
         writeLogRef.current
       );
@@ -137,7 +137,7 @@ export default function ChatRoom(props) {
     }));
 
     // 後でtextの中身を直接いじるので同一内容のMessageを新たに作って渡す
-    bot.current.execute(new Message('speech', {
+    bot.execute(new Message('speech', {
       text: userInput,
       name: auth.displayName,
       person: 'user',
@@ -223,9 +223,9 @@ export default function ChatRoom(props) {
         <Box>
           <FairyPanel
             panelWidth={panelWidth[panelSize]}
-            backgroundColor={bot.current.state.config.backgroundColor}
-            photoURL={bot.current.photoURL}
-            status={bot.current.state.status}
+            backgroundColor={bot.state.config.backgroundColor}
+            photoURL={bot.photoURL}
+            status={bot.state.status}
           />
         </Box>
         <Box>

@@ -300,6 +300,14 @@ class dbio {
     return null;
   }
 
+  async isExist(botId){
+    const config = await this.db.config.where({ botId: botId }).first();
+    if (config) {
+      return true;
+    }
+    return false;
+  }
+
   async loadScript(botId, partName) {
     /* botId,partNameで指定されたscriptを読んで配列化して返す */
 
