@@ -1,7 +1,7 @@
 
 //@ts-check
 /*
-  室内でのチャットボットの応答
+  ユーザ１名、チャットボット１名のみの環境でのチャットボットの応答
 
   1. 時刻により睡眠・覚醒の状態が変化
     覚醒確率がcircadian.jsxで定義される。覚醒時に覚醒チェックに失敗すると
@@ -17,6 +17,9 @@
      それにより、mood名と違うパートが一時的に先頭になってもそれが
      retentionチェックでdropしたらmood名と同じパートが再び先頭になる。
 
+  実装予定
+  ・ユーザに質問して答えを記憶するパート
+  ・ユーザとの会話を記憶して返答に使うパート
 */
 import { randomInt } from "mathjs";
 import { retrieve } from './retrieve';
@@ -111,7 +114,7 @@ export function execute(state, work, message, sendMessage) {
     // トリガーを捕捉
     let trigger = ""
     reply.text = reply.text.replace(RE_ENTER, (_, p1) => {
-      // ※クロージャ注意
+      // 関数内関数だが外に持ち出していないのでクロージャではない
       trigger = p1;
       return "";
     });

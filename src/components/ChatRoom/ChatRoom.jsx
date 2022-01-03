@@ -46,13 +46,17 @@ export default function ChatRoom(props) {
 
   */
   const auth = useContext(AuthContext);
-  const ecosystem = useContext(EcosystemContext);
-  const bot = useContext(BiomebotContext);
+
   const [userInput, setUserInput] = useState("");
   const [panelSize, setPanelSize] = useLocalStorage("panelSize", 1);
-  const writeLogRef = useRef(props.writeLog);
   const config = props.config;
   const noiseRef = useRef(new Noise(config.randomSeed));
+  
+  const ecosystem = useContext(EcosystemContext);
+  const ecosystemRef = useRef(ecosystem);
+  const bot = useContext(BiomebotContext);
+  const botRef = useRef(bot);
+
 
   function getRandom(changeRate) {
     let timestamp = new Date();
@@ -62,7 +66,7 @@ export default function ChatRoom(props) {
 
 
   function handleChangeSite(site) {
-    ecosystem.changeSite(site);
+    ecosystemRef.current.changeSite(site);
   }
 
   //---------------------------------------
@@ -75,7 +79,7 @@ export default function ChatRoom(props) {
 
   useEffect(() => {
 
-    const site = ecosystem.site;
+    const site = ecosystemRef.current.site;
     if (site === 'forest') {
       const feConfig = config.forestEncounter;
 
@@ -88,7 +92,7 @@ export default function ChatRoom(props) {
         (async () => {
           const res = await fetch(`../../chatbot/${TUTOR_ID}/chatbot.json`);
           const obj = await res.json();
-          await bot.generate(obj, TUTOR_ID, site);
+          await botRef.current.generate(obj, TUTOR_ID, site);
         })();
       }
       else if (dice >= feConfig.usersFairy) {
@@ -98,27 +102,39 @@ export default function ChatRoom(props) {
 
     } else {
       (async () => {
-        await bot.load(auth.uid, site);
+        await botRef.current.load(auth.uid, site);
       })();
     }
 
 
-  }, [auth.uid, ecosystem.site, config.forestEncounter]);
+  }, [
+    auth.uid,
+    ecosystemRef.current.site,
+    botRef, ecosystemRef,
+    config.forestEncounter]);
 
-  // ---------------------------------------------
+  // -------------------------------------------------------------------
+  //
   // ecosystemが変化したらチャットボットにトリガーを送出
   // bot.deploy()が完了するまで保留される
+  // props.writeLogの元関数handleWriteLogは毎回生成されるため、最新の
+  // handleWriteLogに追従するためrefの更新を行う
+  // 参考：
+  // https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updated-in-the-nested-function
+  //
+
+  const writeLogRef = useRef(props.writelog);
 
   useEffect(() => {
 
-    if (ecosystem.change !== null) {
-      bot.execute(
-        new Message('trigger', `{enter_${ecosystem.change}}`),
+    if (ecosystemRef.current.change !== null) {
+      botRef.current.execute(
+        new Message('trigger', `{enter_${ecosystemRef.current.change}}`),
         writeLogRef.current
       );
-      ecosystem.changeDispatched();
+      ecosystemRef.current.changeDispatched();
     }
-  }, [ecosystem]);
+  }, [ecosystemRef.current.change]);
 
 
   function handleChangeUserInput(event) {
@@ -133,18 +149,18 @@ export default function ChatRoom(props) {
       mood: 'peace',
       avatarPath: auth.photoURL,
       backgroundColor: auth.backgroundColor,
-      site: ecosystem.site,
+      site: ecosystemRef.current.site,
     }));
 
-    // 後でtextの中身を直接いじるので同一内容のMessageを新たに作って渡す
-    bot.execute(new Message('speech', {
+    // 後でtextの中身を直接いじるのでMessageのコピーを新たに作って渡す
+    botRef.current.execute(new Message('speech', {
       text: userInput,
       name: auth.displayName,
       person: 'user',
       mood: 'peace',
       avatarPath: auth.photoURL,
       backgroundColor: auth.backgroundColor,
-      site: ecosystem.site,
+      site: ecosystemRef.current.site,
     }), props.writeLog);
 
     setUserInput("");
@@ -179,7 +195,7 @@ export default function ChatRoom(props) {
       <LogViewer log={log} />
     )
   }
-    , [props.forestLog, props.parkLog, props.roomLog, ecosystem.site]);
+    , [ecosystem.site, props.forestLog, props.parkLog, props.roomLog]);
 
   const memorizedUserPanel = useMemo(() =>
     <UserPanel
@@ -256,7 +272,7 @@ export default function ChatRoom(props) {
           elevation={0}
         >
           <AppMenu
-            site={ecosystem.site}
+            site={ecosystemRef.current.site}
             handleExitRoom={props.handleExitRoom}
             handleChangePanelSize={handleChangePanelSize}
             handleChangeSite={handleChangeSite}

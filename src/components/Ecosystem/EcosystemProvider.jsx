@@ -174,6 +174,10 @@ export default function EcosystemProvider(props) {
   const [dayPart, setDayPart] = useState(getDayPart(new Date())); /* 昼、夜 */
   const [change, setChange] = useState(null) /* weather,season,site,sceneの変化 */
 
+  //---------------------------------------------------------------------------
+  // 
+  // 定期的に環境の変化を生成
+  //
 
   useEffect(() => {
     console.log("ecosystem changeMonitor: ", change);

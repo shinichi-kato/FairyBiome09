@@ -179,7 +179,8 @@ import React, {
   useRef,
   useEffect,
   useReducer,
-  useState
+  useState,
+  useCallback,
 } from 'react';
 
 import { AuthContext } from "../Auth/AuthProvider";
@@ -187,8 +188,8 @@ import { featureIndex } from '../message';
 
 import { db } from './dbio';
 import matrixizeWorker from "./engine/matrixize.worker";
-import * as room from "./engine/room";
-import * as park from "./engine/park";
+import * as dialogue from "./engine/dialogue";
+import * as polylogue from "./engine/polylogue";
 import { textToInternalRepr } from './internal-repr';
 import { TinySegmenter } from './tinysegmenter';
 
@@ -198,8 +199,9 @@ let segmenter = new TinySegmenter();
 
 let workers = {};
 let executes = {
-  'room': room.execute,
-  'park': park.execute,
+  'room': dialogue.execute,
+  'park': polylogue.execute,
+  'forest': dialogue.execute,
 }
 
 
@@ -426,23 +428,18 @@ export default function BiomebotProvider(props) {
   });
 
   // const appState = props.appState;
-  const handleBotFound = useRef(props.handleBotFound);
+  const handleBotFound = useRef(props.handleBotFound);  // 外に持ち出したのでクロージャになる
   const handleBotNotFound = useRef(props.handleBotNotFound);
 
-  // ----------------------------------------------
-  // stateが関数内関数（クロージャ）内で使われているためのworkaround
-  // stateが変わるごとにstateRefは最新の値を指すようにする
-  // ※↑stateはアドレス不変のはず。なにかおかしい
-  // またstateがわかるごとにqueueの監視を行い、queueが空でなければ
-  // handleExecuteを行う
-
-  // const stateRef = useRef(state);
+  // ------------------------------------------------------------------------
+  //
+  //  稼働状態のチャットボットがqueueを消費する
+  //
 
   useEffect(() => {
-    // stateRef.current = state;
 
     if (state.status === 'ready') {
-      console.log("qlength", work.queue.length)
+      console.log("remaining queues", work.queue.length)
       if (work.queue.length > 0) {
         setWork(prev => {
           const top = prev.queue[0];
@@ -524,7 +521,7 @@ export default function BiomebotProvider(props) {
 
     }
 
-  }, [state.status, state.parts, work.site]);
+  }, [state.botId, state.status, state.parts, work.site]);
 
   const handleExecute = (message, emitter) => {
     // 外部からの入力を受付け、必要な場合返答を送出する。
@@ -587,7 +584,7 @@ export default function BiomebotProvider(props) {
     await db.addPart(state.botId);
   }
 
-  async function load(botId,site) {
+  const load = useCallback(async (botId,site) => {
     // チャットボットを読み込む。
     // 読み込みが完了したらuseEffectで自動deployされる。
     console.log("loading",botId)
@@ -614,9 +611,8 @@ export default function BiomebotProvider(props) {
       else {
         console.log("not loaded")
       }
-      console.log("state",state)
     }
-  }
+  },[])
 
 
   async function save(dest, obj, partName) {
