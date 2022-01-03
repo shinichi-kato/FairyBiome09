@@ -1,6 +1,9 @@
 debug note
 ==============
 
+参考リンク
+https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updated-in-the-nested-function
+
 1. チャットルーム
 * チャットボットを新たにロードしても反映されない
 * ティピカをロードしても反映されない
