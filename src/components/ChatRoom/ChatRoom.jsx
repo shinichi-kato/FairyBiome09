@@ -79,7 +79,7 @@ export default function ChatRoom(props) {
 
   useEffect(() => {
 
-    const site = ecosystemRef.current.site;
+    const site = ecosystem.site;
     if (site === 'forest') {
       const feConfig = config.forestEncounter;
 
@@ -87,15 +87,17 @@ export default function ChatRoom(props) {
 
 
       const dice = getRandom(feConfig.changeRate);
-      if (dice >= feConfig.tutor) {
+      console.log("dice",dice,feConfig,dice<=feConfig.tutor)
+      if (dice <= feConfig.tutor) {
         // コードからチューターをロード
         (async () => {
           const res = await fetch(`../../chatbot/${TUTOR_ID}/chatbot.json`);
           const obj = await res.json();
+          console.log(obj)
           await botRef.current.generate(obj, TUTOR_ID, site);
         })();
       }
-      else if (dice >= feConfig.usersFairy) {
+      else if (dice <= feConfig.usersFairy) {
         // サーバーからランダムに選んだfairyをロード
       }
 
@@ -109,7 +111,7 @@ export default function ChatRoom(props) {
 
   }, [
     auth.uid,
-    ecosystemRef.current.site,
+    ecosystem.site,
     botRef, ecosystemRef,
     config.forestEncounter]);
 
@@ -149,7 +151,7 @@ export default function ChatRoom(props) {
       mood: 'peace',
       avatarPath: auth.photoURL,
       backgroundColor: auth.backgroundColor,
-      site: ecosystemRef.current.site,
+      site: ecosystem.site,
     }));
 
     // 後でtextの中身を直接いじるのでMessageのコピーを新たに作って渡す
@@ -160,7 +162,7 @@ export default function ChatRoom(props) {
       mood: 'peace',
       avatarPath: auth.photoURL,
       backgroundColor: auth.backgroundColor,
-      site: ecosystemRef.current.site,
+      site: ecosystem.site,
     }), props.writeLog);
 
     setUserInput("");
@@ -272,7 +274,7 @@ export default function ChatRoom(props) {
           elevation={0}
         >
           <AppMenu
-            site={ecosystemRef.current.site}
+            site={ecosystem.site}
             handleExitRoom={props.handleExitRoom}
             handleChangePanelSize={handleChangePanelSize}
             handleChangeSite={handleChangeSite}

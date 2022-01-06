@@ -5,17 +5,10 @@ debug note
 https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updated-in-the-nested-function
 
 1. チャットルーム
+
 * チャットボットを新たにロードしても反映されない
 * ティピカをロードしても反映されない
-* 誰もいない森から帰ってきたあと、自分のチャットボットが戻らない
-* 公園で吹き出しが白い
-* チャットボットのdeployが完了するまでpanelは表示しない
-ｰ>なぜか初回にreadCacheディスパッチが発火せず
-とりあえずloadedのときにpanel表示する変更
-->fairypanelの背景が灰色のママ
 * 森に入ったときに出現するチャットボットの決定ロジック
-
-
 * queueが消費されてない？
 
 
@@ -24,7 +17,6 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 
 3. 他
-
 
 * AuthDialogでサインアップができない
 * authOkで止まるー＞backgroundCOlorの代入をdispatchのokから外した
@@ -35,6 +27,13 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 * チャットボットを新規作成するときにfirestoreからもロード可能に
 
 # 以下対応済み
+* 部屋と公園ではチャットボットがロードされるがforestではされない
+* 誰もいない森から帰ってきたあと、自分のチャットボットが戻らない
+* 公園で吹き出しが白い
+* チャットボットのdeployが完了するまでpanelは表示しない
+ｰ>なぜか初回にreadCacheディスパッチが発火せず
+とりあえずloadedのときにpanel表示する変更
+->fairypanelの背景が灰色のママ
 * CreateFairy:74でuidが与えられていない。仕様が要調整
 * 起動時にwindow is undefinedになるー＞ecosystemでundefined-night.svgを参照しようとしている->undefinedはビルド時の警告。実態はstateの遷移ミス
 * ユーザを新規作成したときにアバターと背景を選ぶ

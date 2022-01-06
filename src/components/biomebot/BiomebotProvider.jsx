@@ -264,7 +264,7 @@ export const defaultSettings = {
 
 // 更新頻度は低くdbには保存しないデータ
 const initialState = {
-  status: "unload", 
+  status: "unload",
   botId: null,
   displayName: "",
   config: {},
@@ -277,7 +277,7 @@ const initialState = {
 };
 
 function reducer(state, action) {
-  console.log("action",action)
+  console.log("action", action)
   switch (action.type) {
     case 'init': {
       return initialState;
@@ -322,7 +322,7 @@ function reducer(state, action) {
       const partsKeys = Object.keys(state.parts);
 
       const status = cacheKeys.length === partsKeys.length ? "ready" : "deploying";
-      console.log("status",status)
+      console.log("status", status)
       return {
         ...state,
         cache: { ...cache },
@@ -417,7 +417,7 @@ export default function BiomebotProvider(props) {
   // deploying  tfidf行列のキャッシュ計算/読み込み中
   // ready      tfidf行列の準備が完了した
   // -----------------------------------------------------
-  
+
 
   const auth = useContext(AuthContext);
 
@@ -529,7 +529,6 @@ export default function BiomebotProvider(props) {
 
     message.text = textToInternalRepr(segmenter.segment(message.text));
 
-    // const currentState = stateRef.current;
     if (state.status !== 'ready') {
       setWork(prev => ({
         ...prev,
@@ -548,9 +547,17 @@ export default function BiomebotProvider(props) {
     }
   }
 
+  async function addNewPart() {
+    await db.addPart(state.botId);
+  }
 
-  async function generate(obj, avatarPath, site) {
-    // avatarPathをobjに組み込む
+  const generate = useCallback(async (obj, avatarPath, site) => {
+    // staticに保存されたチャットボット情報を新規に読み込む。
+    //
+    // contextに含める関数がuseContextする側のコンポーネントでのuseEffect内で
+    // 使われる場合、useEffectの内容が非同期的に処理されても適切に
+    // アップデートされた状態に保つためuseCallback化する。それにより
+    // 利用側コンポーネントのuseEffectでdeps煮含める必要がなくなる。   // avatarPathをobjに組み込む
     obj.config.avatarPath = avatarPath;
 
     // displayNameを復元
@@ -578,16 +585,18 @@ export default function BiomebotProvider(props) {
         botId: auth.uid,
 
       }));
-  }
+  }, [auth.uid]);
 
-  async function addNewPart() {
-    await db.addPart(state.botId);
-  }
-
-  const load = useCallback(async (botId,site) => {
+  const load = useCallback(async (botId, site) => {
     // チャットボットを読み込む。
     // 読み込みが完了したらuseEffectで自動deployされる。
-    console.log("loading",botId)
+    //
+    // contextに含める関数がuseContextする側のコンポーネントでのuseEffect内で
+    // 使われる場合、useEffectの内容が非同期的に処理されても適切に
+    // アップデートされた状態に保つためuseCallback化する。それにより
+    // 利用側コンポーネントのuseEffectでdeps煮含める必要がなくなる。
+
+    console.log("loading", botId)
     if (botId) {
       const snap = await db.load(botId);
       if (snap) {
@@ -612,7 +621,7 @@ export default function BiomebotProvider(props) {
         console.log("not loaded")
       }
     }
-  },[])
+  }, [])
 
 
   async function save(dest, obj, partName) {

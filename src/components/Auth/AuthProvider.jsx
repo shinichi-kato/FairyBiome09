@@ -1,3 +1,10 @@
+/* 
+firebase auth provider
+
+チャットシステムは1学級程度の規模のクローズドなコミュニティの中で運用する。
+そのためにfirebaseのauthを基盤とする。
+
+*/
 import React, {
   useEffect, useReducer, useRef, createContext,
 } from 'react';
@@ -13,13 +20,6 @@ const AuthDialog = loadable(() => import('./AuthDialog'));
 
 export const AuthContext = createContext();
 
-function getLocalStorageItem(item){
-  if(typeof window !== "undefined"){
-    return window.localStorage.getItem(item);
-  }
-  return null;
-}
-
 const initialState = {
   user: {
     displayName: "",
@@ -29,16 +29,36 @@ const initialState = {
     emailVerified: null,
     providerData: null,
   },
-  authState: "notYet", // notYet-run-ok-error
+  authState: "notYet",
   message: "",
-  bakckgroundColor: null,
+  backgroundColor: null,
   firestore: null,
   firebaseApp: null,
-  openDialog: false
+  page: false,
 };
 
 function reducer(state, action) {
-  // console.log("AuthProvider:",action,state)
+  /*
+    state            内容
+    --------------------------------------------------------------
+    notYet     認証前（認証できるか未確定)
+        
+    waiting    レスポンスまち
+    ok         認証完了
+    absent     指定したユーザが存在しない
+    error      認証プロセスの通信失敗他
+    ---------------------------------------------------------------
+
+    page
+    ---------------------------------------------------------------
+    false      非表示
+    'signUp'   email, password, displayName,背景色,アイコン設定
+    'signIn'   email, password入力
+    'update'   displayName,背景色,アイコン設定
+    ---------------------------------------------------------------
+
+    */
+
   switch (action.type) {
     case 'init': {
       return {
@@ -48,97 +68,106 @@ function reducer(state, action) {
       }
     }
 
-    case "run": {
+    case 'initialAuthTimeout': {
       return {
         ...state,
-        authState: "run",
-      };
+        page: 'signIn'
+      }
     }
 
-    case 'ok': {
-      const authState =
-        !action.backgroundColor || action.user.displayName === "update" ? '' : 'ok';
+    case 'waiting': {
       return {
+        ...state,
+        authState: 'waiting',
+      }
+    }
+
+    case 'signIn': {
+      return {
+        ...state,
         user: action.user,
-        authState: authState,
+        authState: "ok",
         message: "",
-        backgroundColor: state.backgroundColor,
-        openDialog: false,
-        firestore: state.firestore,
-        firebaseApp: state.firebaseApp,
+        page: false,
       }
     }
 
-    case "signOut": {
-      return {
-        ...initialState,
-      };
-    }
-
-    case "updateUserInfo": {
+    case 'createUser': {
       return {
         ...state,
-        displayName: action.displayName,
+        authState: "ok",
+        user: action.user,
         backgroundColor: action.backgroundColor,
-        photoURL: action.photoURL,
-        openDialog: false,
-      };
+        page: false,
+      }
     }
 
-    case "error": {
+    case 'updateUserInfo': {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          displayName: action.displayName,
+          photoURL: action.photoURL,
+        },
+        backgroundColor: action.backgroundColor,
+        page: 'update',
+      }
+    }
+
+    case 'toSignUp': {
       return {
         ...initialState,
-        authState: "error",
-        openDialog: "signIn",
-        message: action.message,
-        firebaseApp: state.firebaseApp,
-      };
-    }
-
-    case "openUpdateDialog": {
-      return {
-        ...state,
-        openDialog: "update",
+        page: 'signUp'
       }
     }
 
-    case "openDialog": {
+    case 'toSignIn': {
       return {
         ...state,
-        openDialog: "signIn"
+        page: 'signIn'
+      }
+    }
+    
+    case 'toUpdate': {
+      return {
+        ...state,
+        page: 'update'
       }
     }
 
-    case "closeDialog": {
+    case 'close': {
       return {
         ...state,
-        openDialog: false
+        page: false,
       }
     }
+
+
 
     default:
       throw new Error(`invalid action ${action.type}`);
   }
 }
 
-export default function AuthProvider(props) {
+export default function AuthPorvider(props) {
+  const [backgroundColor, setBackgroundColor] = useLocalStorage("userBgColor", "#FFFFFF");
   const [state, dispatch] = useReducer(reducer, {
     ...initialState,
-    backgroundColor:getLocalStorageItem('userBgColor')});
-  
+    backgroundColor: backgroundColor
+  });
+
   const firebase = props.firebase;
   const firestore = props.firestore;
-  const [backgroundColor, setBackgroundColor] = useLocalStorage("userBgColor");
+
   const unsubscribeRef = useRef();
 
   const handleAuthOk = useRef(props.handleAuthOk);
 
-  // -----------------------------------------------
+  // ------------------------------------------------------------
   //
-  //   ユーザ認証とfirestoreのListen
+  // 初期化＆ユーザ認証状態のリッスン
   //
-  //
-  // -----------------------------------------------
 
   useEffect(() => {
     if (firebase && firestore) {
@@ -152,118 +181,139 @@ export default function AuthProvider(props) {
       unsubscribeRef.current = onAuthStateChanged(auth, user => {
         if (user) {
           dispatch({
-            type: "ok",
+            type: "signIn",
             user: user,
           });
           handleAuthOk.current();
         } else {
           dispatch({ type: "error", message: "ユーザが認証されていません" });
         }
-      })
+      });
 
+      let id = setTimeout(() => { initialAuthTimeout(id) }, 1000);
     }
 
     return () => {
-      if(unsubscribeRef.current) { unsubscribeRef.current();}
+      if (unsubscribeRef.current) { unsubscribeRef.current(); }
     }
 
-  }, [firebase, firestore ]);
+  }, [firebase, firestore]);
 
-
-  function authenticate(email, password) {
-    dispatch({ type: "run" });
-    const auth = getAuth();
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        dispatch({
-          type: "ok",
-          user: userCredential.user,
-        });
-        handleAuthOk.current();
-      })
-      .catch(error => {
-        switch (error.code) {
-          case "auth/user-not-found":
-            dispatch({ type: "error", message: "ユーザが登録されていません" });
-            break;
-          case "auth/wrong-password":
-            dispatch({ type: "error", message: "パスワードが違います" });
-            break;
-          case "auth/invalid-email":
-            dispatch({ type: "error", message: "不正なemailアドレスです" });
-            break;
-          default:
-            dispatch({ type: "error", message: `${error.code}: ${error.message}` });
-        }
-      });
+  function initialAuthTimeout(id) {
+    dispatch({ type: 'initialAuthTimeout' });
+    clearTimeout(id);
   }
 
-  function createUser(email, password) {
-    dispatch({ type: "run" });
+  // -----------------------------------------------------------
+  //
+  // ユーザ新規作成
+  // アカウント作成＋ユーザ情報更新
+  //
+
+  async function createUser(email, password, displayName, photoURL, bgColor) {
+
+    dispatch({ type: 'waiting' });
+
     const auth = getAuth();
-    createUserWithEmailAndPassword(auth, email, password)
-      .then(userCredential => {
-        dispatch({
-          type: "ok",
-          user: userCredential.user,
-        });
-        handleAuthOk.current();
-      })
-      .catch(error => {
-        // 失敗したらエラーメッセージ出力
-        // ※成功したらonAuthStateChangeで捕捉
-        dispatch({ type: "error", message: error.message });
-      });
+    const userCred = await createUserWithEmailAndPassword(auth, email, password)
+      .catch(e => renderError(e));
+
+    // ↑成功するとsign in そのユーザでサインインされる
+
+    const user = auth.currentUser;
+
+    await updateProfile(user, { displayName, photoURL })
+      .catch(e => renderError(e));
+
+    dispatch({
+      type: 'createUser',
+      user: userCred,
+      backgroundColor: bgColor
+    });
+
   }
 
-  function updateUserInfo(displayName, photoURL, bgColor) {
+
+  // -----------------------------------------------------------
+  //
+  // ユーザ情報更新
+  //
+
+  async function updateUserInfo(displayName, photoURL, bgColor) {
+
+    dispatch({ type: 'waiting' });
+
     const auth = getAuth();
     const user = auth.currentUser;
-    if (user) {
-      setBackgroundColor(bgColor);
-      updateProfile(user, {
-        displayName: displayName || user.displayName,
-        photoURL: photoURL || user.photoURL
-      }).then(() => {
-        // userの更新はonAuthStateChangedで捕捉するが、タイミングがUIに
-        // 追いつかないため内部的にも書き換えを実行
-        dispatch({
-          type: "updateUserInfo",
-          displayName: displayName,
-          photoURL: photoURL,
-          backgroundColor: bgColor,
-        });
-      }).catch(error => {
-        dispatch({ type: "error", message: error.code });
-      });
-    }
+    setBackgroundColor(bgColor);
+
+    await updateProfile(user, {
+      displayName: displayName,
+      photoURL: photoURL
+    })
+      .cathc(e => renderError(e));
+
+    dispatch({
+      type: "updateuserInfo",
+      displayName: displayName,
+      photoURL: photoURL,
+      backgroundColor: bgColor
+    })
   }
 
-  function openUpdateDialog() {
-    dispatch({ type: "openUpdateDialog" });
-  }
+  // -----------------------------------------------------------
+  //
+  // サインイン
+  //
 
-  function closeAuthDialog() {
+  async function authenticate(email, password) {
 
-    if (state.authState === 'ok') {
-      dispatch({ type: "closeDialog" })
-    } else {
-      dispatch({ type: "error", message: "無効な操作です" })
-    }
+    dispatch({ type: "waiting" });
 
-  }
-
-  function handleSignOut() {
     const auth = getAuth();
-    signOut(auth).then(() => {
-      dispatch({ type: "signOut" });
-    }).catch(error => {
-      dispatch({ type: "error", message: error.message });
-    });
+    const userCred = await signInWithEmailAndPassword(auth, email, password)
+      .catch(e => renderError(e));
+
+    dispatch({ type: "signIn", user: userCred });
+    handleAuthOk.current();
+
   }
 
+  // ----------------------------------------------------------
+  // サインアウト
+  //
 
+  async function handleSignOut() {
+    const auth = getAuth();
+    await signOut(auth)
+      .catch(e => renderError(e));
 
+    dispatch({ type: "toSignIn" });
+  }
+
+  //----------------------------------------------------------
+  // 画面遷移
+  //
+
+  async function handleToSignUp() {
+    // 一旦サインアウトしてからサインアップ
+    const auth = getAuth();
+    await signOut(auth)
+      .catch(e => renderError(e))
+    dispatch({ type: 'toSignUp' });
+  }
+
+  function handleToSignIn() {
+    dispatch({ type: 'toSignIn' });
+  }
+
+  function handleClose(){
+    dispatch({ type: 'close'})
+  }
+
+  function openUpdateDialog(){
+    dispatch({ type: 'toUpdate'});
+  }
 
   return (
     <AuthContext.Provider
@@ -273,29 +323,26 @@ export default function AuthProvider(props) {
         photoURL: state.user.photoURL,
         backgroundColor: state.backgroundColor,
         firestore: state.firestore,
-        openUpdateDialog: openUpdateDialog,
         uid: state.user.uid,
+        openUpdateDialog: openUpdateDialog,
       }}
     >
       {
-        state.openDialog !== false
+        state.page !== false
           ?
           <AuthDialog
-            authState={state.authState}
-            dialog={state.openDialog}
-            user={state.user}
-            backgroundColor={state.backgroundColor}
-            update={state.isUpdate}
+            state={state}
             createUser={createUser}
-            authenticate={authenticate}
-            handleSignOut={handleSignOut}
             updateUserInfo={updateUserInfo}
-            handleClose={closeAuthDialog}
+            authenticate={authenticate}
+            signOut={handleSignOut}
+            toSignIn={handleToSignIn}
+            toSignUp={handleToSignUp}
+            close={handleClose}
           />
           :
           props.children
       }
     </AuthContext.Provider>
   )
-
 }

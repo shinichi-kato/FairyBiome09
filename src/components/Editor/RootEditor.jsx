@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -87,8 +87,19 @@ export default function RootEditor(props) {
         ...obj.config,
         fsBotId: fsBotId
       });
+      setMessage("ok");
     })();
   }
+
+  useEffect(() => {
+    let id;
+    if (message !== "") {
+      id = setTimeout(() => setMessage(""), 5000);
+    }
+    return () => {
+      clearTimeout(id);
+    }
+  }, [message]);
 
   return (
     <Box

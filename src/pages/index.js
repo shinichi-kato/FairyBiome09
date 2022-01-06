@@ -204,7 +204,6 @@ export default function IndexPage({ data }) {
     })()
   }
 
-  function handleAuthOk() { setAppState('authOk'); }
   function handleBotFound() { setAppState('continue'); }
   function handleBotNotFound() { setAppState('new'); }
   function handleContinue() { setAppState('chatroom'); }
@@ -220,7 +219,7 @@ export default function IndexPage({ data }) {
     <AuthProvider
       firebase={firebaseApp}
       firestore={firestore}
-      handleAuthOk={handleAuthOk}
+      handleAuthOk={()=>setAppState('authOk')}
     >
       <EcosystemProvider
         writeLog={handleWriteLog}
