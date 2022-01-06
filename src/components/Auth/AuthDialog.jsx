@@ -6,6 +6,7 @@ import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import Collapse from '@mui/material/Collapse'
+import { alpha } from '@mui/material/styles';
 
 import EmailIcon from '@mui/icons-material/Email';
 import PasswordIcon from '@mui/icons-material/Password';
@@ -37,12 +38,51 @@ export default function AuthDialog(props) {
 
   const page = props.state.page;
   const user = props.state.user;
+  const authState = props.state.authState;
 
   const [backgroundColor, setBackgroundColor] = useState(props.state.backgroundColor);
   const [photoURL, setPhotoURL] = useState(user.photoURL || "");
 
   function handleChangeBackgroundColor(c) {
     setBackgroundColor(c);
+  }
+
+  function handleChangePhotoURL(url) {
+    setPhotoURL(url);
+  }
+
+  // --------------------------------------------------------------
+  // メインボタン
+  //
+
+  let isButtonValid = false;
+  switch (page) {
+    case 'signUp':
+      if (emailRef.current?.value !== ""
+        && passwordRef.current?.value !== ""
+        && displayNameRef.current?.value !== ""
+        && photoURL !== "") {
+        isButtonValid = true;
+      }
+      break;
+
+    case 'signIn':
+      if (emailRef.current?.value !== ""
+        && passwordRef.current?.value !== ""
+        ) {
+        isButtonValid = true;
+      }
+      break;
+
+    case 'update':
+      if (photoURL !== ""
+        && displayNameRef.current?.value !== "") {
+        isButtonValid = true;
+      }
+      break;
+
+    default:
+      throw new Error(`invalid page ${page}`);
   }
 
   function handleClick() {
@@ -59,7 +99,7 @@ export default function AuthDialog(props) {
           passwordRef.current.value,
           displayNameRef.current.value,
           photoURL,
-          bakckgroundColor);
+          backgroundColor);
         return;
       }
       case 'update': {
@@ -151,7 +191,7 @@ export default function AuthDialog(props) {
             <Grid item xs={12}>
               <TextField
                 placeholder="名前"
-                defaultValue={props.user.displayName}
+                defaultValue={user.displayName}
                 inputRef={displayNameRef}
                 fullWidth
                 required
@@ -197,7 +237,7 @@ export default function AuthDialog(props) {
           disabled={!isButtonValid}
           onClick={handleClick}
         >
-          {BUTTON_TITLE[page]}
+          {TITLE[page]}
         </Button>
       </Grid>
       <Grid item xs={12}

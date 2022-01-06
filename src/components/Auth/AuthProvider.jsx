@@ -20,6 +20,12 @@ const AuthDialog = loadable(() => import('./AuthDialog'));
 
 export const AuthContext = createContext();
 
+const ERROR_MESSAGE_MAP = {
+  "auth/user-not-found": "ユーザが登録されていません",
+  "auth/wrong-password": "パスワードが違います",
+  "auth/invalid-email": "無効なemailアドレスです",
+}
+
 const initialState = {
   user: {
     displayName: "",
@@ -111,7 +117,7 @@ function reducer(state, action) {
           photoURL: action.photoURL,
         },
         backgroundColor: action.backgroundColor,
-        page: 'update',
+        page: false,
       }
     }
 
@@ -128,7 +134,7 @@ function reducer(state, action) {
         page: 'signIn'
       }
     }
-    
+
     case 'toUpdate': {
       return {
         ...state,
@@ -140,6 +146,13 @@ function reducer(state, action) {
       return {
         ...state,
         page: false,
+      }
+    }
+
+    case 'error': {
+      return {
+        ...state,
+        message: action.message
       }
     }
 
@@ -200,7 +213,11 @@ export default function AuthPorvider(props) {
   }, [firebase, firestore]);
 
   function initialAuthTimeout(id) {
-    dispatch({ type: 'initialAuthTimeout' });
+    const auth = getAuth();
+    if (!auth.currentUser){
+      dispatch({ type: 'initialAuthTimeout' });
+
+    }
     clearTimeout(id);
   }
 
@@ -251,10 +268,10 @@ export default function AuthPorvider(props) {
       displayName: displayName,
       photoURL: photoURL
     })
-      .cathc(e => renderError(e));
+      .catch(e => renderError(e));
 
     dispatch({
-      type: "updateuserInfo",
+      type: "updateUserInfo",
       displayName: displayName,
       photoURL: photoURL,
       backgroundColor: bgColor
@@ -307,12 +324,20 @@ export default function AuthPorvider(props) {
     dispatch({ type: 'toSignIn' });
   }
 
-  function handleClose(){
-    dispatch({ type: 'close'})
+  function handleClose() {
+    dispatch({ type: 'close' })
   }
 
-  function openUpdateDialog(){
-    dispatch({ type: 'toUpdate'});
+  function openUpdateDialog() {
+    dispatch({ type: 'toUpdate' });
+  }
+
+  function renderError(error) {
+    const message = ERROR_MESSAGE_MAP[error.code] ?
+      ERROR_MESSAGE_MAP[error.code]
+      :
+      `${error.code}: ${error.message}`
+    dispatch({ type: "error", message: message });
   }
 
   return (
