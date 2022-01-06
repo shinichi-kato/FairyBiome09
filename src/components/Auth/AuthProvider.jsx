@@ -14,16 +14,33 @@ import {
   createUserWithEmailAndPassword, signInWithEmailAndPassword
 } from "firebase/auth";
 
-import useLocalStorage from '../use-localstorage';
+
 import loadable from '@loadable/component';
 const AuthDialog = loadable(() => import('./AuthDialog'));
 
 export const AuthContext = createContext();
 
+function getLocalStorageItem(key, defaultValue) {
+  if (typeof window !== 'undefined') {
+    return window.localStorage.getItem(key, defaultValue);
+  }
+}
+
+function setLocalStorageItem(key, value) {
+  if (typeof window !== 'undefined') {
+    return window.localStorage.setItem(key, value);
+  }
+}
+
 const ERROR_MESSAGE_MAP = {
   "auth/user-not-found": "ユーザが登録されていません",
   "auth/wrong-password": "パスワードが違います",
   "auth/invalid-email": "無効なemailアドレスです",
+};
+
+const CREATEUSER_ERROR = {
+  "auth/invalid-password": "パスワードは6文字以上必要です",
+  "auth/email-already-exists": "このemailは登録済みです",
 }
 
 const initialState = {
@@ -45,14 +62,14 @@ const initialState = {
 
 function reducer(state, action) {
   /*
-    state            内容
+    authState  signOut          内容
     --------------------------------------------------------------
-    notYet     認証前（認証できるか未確定)
+    notYet     no       認証前（認証できるか未確定)
         
-    waiting    レスポンスまち
-    ok         認証完了
-    absent     指定したユーザが存在しない
-    error      認証プロセスの通信失敗他
+    waiting    no       レスポンスまち
+    ok         enable   認証完了
+    absent              指定したユーザが存在しない
+    error               認証プロセスの通信失敗他
     ---------------------------------------------------------------
 
     page
@@ -77,6 +94,7 @@ function reducer(state, action) {
     case 'initialAuthTimeout': {
       return {
         ...state,
+        authState: 'notYet',
         page: 'signIn'
       }
     }
@@ -98,12 +116,21 @@ function reducer(state, action) {
       }
     }
 
+    case 'signInAndToUpdate': {
+      return {
+        ...state,
+        user: action.user,
+        authState: "notYet",
+        message: "",
+        page: "update"
+      }
+    }
+
     case 'createUser': {
       return {
         ...state,
-        authState: "ok",
+        authState: "notYet",
         user: action.user,
-        backgroundColor: action.backgroundColor,
         page: false,
       }
     }
@@ -116,6 +143,7 @@ function reducer(state, action) {
           displayName: action.displayName,
           photoURL: action.photoURL,
         },
+        authState: "ok",
         backgroundColor: action.backgroundColor,
         page: false,
       }
@@ -124,7 +152,8 @@ function reducer(state, action) {
     case 'toSignUp': {
       return {
         ...initialState,
-        page: 'signUp'
+        page: 'signUp',
+        message: action.message || ""
       }
     }
 
@@ -164,11 +193,7 @@ function reducer(state, action) {
 }
 
 export default function AuthPorvider(props) {
-  const [backgroundColor, setBackgroundColor] = useLocalStorage("userBgColor", "#FFFFFF");
-  const [state, dispatch] = useReducer(reducer, {
-    ...initialState,
-    backgroundColor: backgroundColor
-  });
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   const firebase = props.firebase;
   const firestore = props.firestore;
@@ -180,6 +205,10 @@ export default function AuthPorvider(props) {
   // ------------------------------------------------------------
   //
   // 初期化＆ユーザ認証状態のリッスン
+  // ・ユーザが新規作成されたあとはdisplayNameとphotoURLが空欄。
+  // その場合はサインインしてupdate画面に遷移
+  // ・ユーザが未登録の場合、onAuthStateChangedが発火しないはず。
+  // その場合1秒待ってsignUpに遷移
   //
 
   useEffect(() => {
@@ -193,11 +222,24 @@ export default function AuthPorvider(props) {
       const auth = getAuth();
       unsubscribeRef.current = onAuthStateChanged(auth, user => {
         if (user) {
-          dispatch({
-            type: "signIn",
-            user: user,
-          });
-          handleAuthOk.current();
+          if (!user.displayName || !user.photoURL) {
+            dispatch({
+              type: "signInAndToUpdate",
+              user: user,
+              backgroundColor: getLocalStorageItem(`bgColor@${user.uid}`, '#ffffff')
+            });
+            return;
+          }
+          else {
+            dispatch({
+              type: "signIn",
+              user: user,
+              backgroundColor: getLocalStorageItem(`bgColor@${user.uid}`, '#ffffff')
+            });
+            handleAuthOk.current();
+            return;
+          }
+
         } else {
           dispatch({ type: "error", message: "ユーザが認証されていません" });
         }
@@ -214,7 +256,7 @@ export default function AuthPorvider(props) {
 
   function initialAuthTimeout(id) {
     const auth = getAuth();
-    if (!auth.currentUser){
+    if (!auth.currentUser) {
       dispatch({ type: 'initialAuthTimeout' });
 
     }
@@ -224,7 +266,8 @@ export default function AuthPorvider(props) {
   // -----------------------------------------------------------
   //
   // ユーザ新規作成
-  // アカウント作成＋ユーザ情報更新
+  // emailとpasswordを用い、作成が失敗した(emailが登録済み、
+  // パスワードが短すぎる等)の場合入力し直しを促す
   //
 
   async function createUser(email, password, displayName, photoURL, bgColor) {
@@ -233,20 +276,22 @@ export default function AuthPorvider(props) {
 
     const auth = getAuth();
     const userCred = await createUserWithEmailAndPassword(auth, email, password)
-      .catch(e => renderError(e));
-
-    // ↑成功するとsign in そのユーザでサインインされる
-
-    const user = auth.currentUser;
-
-    await updateProfile(user, { displayName, photoURL })
-      .catch(e => renderError(e));
+      .catch(error => {
+        if (CREATEUSER_ERROR[error.code]) {
+          dispatch({ type: 'toSignUp', message: CREATEUSER_ERROR[error.code] });
+          
+        }
+        else {
+          renderError(error)
+        }
+      });
 
     dispatch({
       type: 'createUser',
-      user: userCred,
-      backgroundColor: bgColor
+      user: userCred.user,
     });
+
+    setLocalStorageItem(`bgColor@${userCred.user.uid}`, '#ffffff')
 
   }
 
@@ -262,7 +307,7 @@ export default function AuthPorvider(props) {
 
     const auth = getAuth();
     const user = auth.currentUser;
-    setBackgroundColor(bgColor);
+    setLocalStorageItem(`bgColor@${state.user.uid}`, bgColor)
 
     await updateProfile(user, {
       displayName: displayName,
@@ -291,7 +336,7 @@ export default function AuthPorvider(props) {
     const userCred = await signInWithEmailAndPassword(auth, email, password)
       .catch(e => renderError(e));
 
-    dispatch({ type: "signIn", user: userCred });
+    dispatch({ type: "signIn", user: userCred.user });
     handleAuthOk.current();
 
   }
@@ -331,6 +376,10 @@ export default function AuthPorvider(props) {
   function openUpdateDialog() {
     dispatch({ type: 'toUpdate' });
   }
+
+  //------------------------------------------------------------
+  // エラーメッセージのレンダリング
+  //
 
   function renderError(error) {
     const message = ERROR_MESSAGE_MAP[error.code] ?

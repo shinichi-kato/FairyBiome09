@@ -26,9 +26,11 @@ export default function AuthDialog(props) {
       
       page    email    password displayName photo    bgColor
       ----------------------------------------------------------
-      signUp  editable editable editable    editable editable 
+      signUp  editable editable 
       update  read     read     editable    editable editable                           
       signIn  editable editable
+
+      
 
   */
 
@@ -59,9 +61,7 @@ export default function AuthDialog(props) {
   switch (page) {
     case 'signUp':
       if (emailRef.current?.value !== ""
-        && passwordRef.current?.value !== ""
-        && displayNameRef.current?.value !== ""
-        && photoURL !== "") {
+        && passwordRef.current?.value !== ""){
         isButtonValid = true;
       }
       break;
@@ -180,7 +180,7 @@ export default function AuthDialog(props) {
         />
       </Grid>
       <Grid item xs={12}>
-        <Collapse in={page !== 'signIn'}>
+        <Collapse in={page === 'update'}>
           <Grid
             container
             direction="column"
@@ -224,6 +224,7 @@ export default function AuthDialog(props) {
           </Grid>
         </Collapse>
       </Grid>
+      <Grid item xs={12}>{props.state.message}</Grid>
       <Grid item xs={12}>
         <Button
           variant="contained"
@@ -274,7 +275,7 @@ export default function AuthDialog(props) {
 
       <Grid item xs={12}>
         <Button
-          disabled={authState === 'ok'}
+          disabled={authState !== 'ok'}
           onClick={props.signOut}>
           サインアウト
         </Button>
