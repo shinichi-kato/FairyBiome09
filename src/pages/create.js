@@ -86,16 +86,11 @@ export default function CreatePage({ location, data }) {
   function handleDone() { setAppState('done') }
 
   useEffect(()=>{
-    let isCancelled = false;
 
-    if(!firebaseApp && !firestore && !isCancelled){
+    if(!firebaseApp){
       initializeFirebaseApp();
       
     }
-
-    return (()=>{ 
-      isCancelled = true;
-    });
   }, []);
 
   return (

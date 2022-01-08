@@ -1,5 +1,5 @@
 import { initializeApp, getApp, getApps } from 'firebase/app';
-import { 
+import {
   getFirestore, serverTimestamp,
   doc, setDoc, addDoc, collection,
   query, where, orderBy, limit, getDocs
@@ -66,7 +66,7 @@ class Fbio {
                        └doc(mainDict, timestamp)
     */
 
-    
+
 
     let data = {
       config: {
@@ -120,7 +120,7 @@ class Fbio {
     return fsBotId;
   }
 
-  async listBots(userId){
+  async listBots(userId) {
     /* 同じuserIdのbotを新しい順に最大5件読み込む。返すデータは/pages/create.jsの
     graphql`
       {
@@ -147,10 +147,10 @@ class Fbio {
 
     */
     const botsRef = collection(firestore, "bots");
-    const q = query(botsRef, 
-        where("ownerId", "==", userId),
-        orderBy("timestamp"),
-        limit(5));
+    const q = query(botsRef,
+      where("config.ownerId", "==", userId),
+      orderBy("timestamp"),
+      limit(5));
 
     const querySnapshot = await getDocs(q);
     let nodes = [];
@@ -160,20 +160,15 @@ class Fbio {
       const d = doc.data();
       //データ整形から実装
       nodes.push({
-        main:{
-          NAME: d.main.NAME,
-          CREATOR_NAME: d.main.CREATOR_NAME,
-        },
-        parent: {
-          relativeDirectory: d.parent.relativeDirectory
-        },
-        config: {
-          backgroundColor: d.config.backgroundColor,
-          description: d.config.description
-        }
+        location: 'cloud',
+        name: d.main.NAME,
+        creator: d.main.CREATOR_NAME,
+        directory: d.config.avatarPath,
+        backgroundColor: d.config.backgroundColor,
+        description: d.config.description,
       })
     });
-
+    console.log("fsで取得したボット", nodes)
     return nodes;
   }
 

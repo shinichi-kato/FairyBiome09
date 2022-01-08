@@ -24,9 +24,10 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 * etimatorがconfig内に書かれてindexDBに保存されている。要除去
 * /editを直でアクセスすると真っ白ー＞BiomebotProviderでhandleBotFound()が呼ばれてるかチェックすること
 * チャットボットをテンプレートから新規作成したときには名前と背景色を設定
-* チャットボットを新規作成するときにfirestoreからもロード可能に
+
 
 # 以下対応済み
+* チャットボットを新規作成するときにfirestoreからもロード可能に
 * 部屋と公園ではチャットボットがロードされるがforestではされない
 * 誰もいない森から帰ってきたあと、自分のチャットボットが戻らない
 * 公園で吹き出しが白い

@@ -34,7 +34,7 @@
     name: "しまりす",
     person: "user",
     mood: "peace", // 省略可, デフォルト "peace"
-    avatarPath: "/avatar/person.svg"
+    avatarPath: "static/avatar/person.svg"
   });
 
   発言時刻は自動で付与される。

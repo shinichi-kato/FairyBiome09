@@ -30,7 +30,9 @@ export default function CreateFairy(props) {
   /* 
     チャットボットを既存データから読み込む。
     読み込むデータは/static/chatbotのうちbotIdの付与されていないデータ、
-    またはfirestore上でuserが作成したものである。
+    またはfirestore上でuserが保存したものである。/static/chatbotの情報は
+    props経由で取得し、fs上のデータはこのコンポーネントでロードする。
+
 
     チャットボットを新規作成したときに名前と背景色を設定する。
     ※これから実装
@@ -63,14 +65,10 @@ export default function CreateFairy(props) {
   const [currentDirectory, setCurrentDirectory] = useState(null);
   const [currentDescription, setCurrentDescription] = useState(null);
 
-  // useEffect(()=>{
-  //   if(appState === 0){
-  //     navigate('/content/prologue1/');
-  //   }
-  // },[appState]);
+
 
   useEffect(() => {
-    if (fsChatbots.length === props.chatbots.length && auth.uid) {
+    if (auth.uid) {
       (async () => {
         setFsChatbots([...props.chatbots, ...await fbio.listBots(auth.uid)])
       })()
