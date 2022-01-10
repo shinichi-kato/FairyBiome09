@@ -7,14 +7,21 @@ import IconButton from '@mui/material/IconButton';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import ImageList from '@mui/material/ImageList';
-import ImageListItem from '@mui/material/ImageListItem';
-import WarningIcon from '@mui/icons-material/Warning';
+
+
+
+// import InputAdornment from '@mui/material/InputAdornment';
+// import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
 import { AuthContext } from "../Auth/AuthProvider";
-import { ImageListItemBar } from "@mui/material";
-import { fbio } from '../../firebase';
+import { firestore } from '../../firebase';
+import {
+  query, collection, where, orderBy, limit, onSnapshot, getDoc
+} from 'firebase/firestore';
+import ContinueStep from "./ContinueStep";
+import SelectStep from "./SelectStep";
+import SettingsStep from "./SettingsStep";
 
 
 const STATE_TABLE = {
@@ -23,7 +30,9 @@ const STATE_TABLE = {
   'authOk': 2,
   'continue': 3,
   'exec': 4,
-  'done': 5
+  'select': 5,
+  'settings': 6,
+  'done': 7
 };
 
 export default function CreateFairy(props) {
@@ -31,21 +40,26 @@ export default function CreateFairy(props) {
     チャットボットを既存データから読み込む。
     読み込むデータは/static/chatbotのうちbotIdの付与されていないデータ、
     またはfirestore上でuserが保存したものである。/static/chatbotの情報は
-    props経由で取得し、fs上のデータはこのコンポーネントでロードする。
+    props経由で取得し、fs上のデータはこのコンポーネントで購読する。
+
+    botはlocationとidの組み合わせ特定され、locationはcloudまたはstaticで
+    cloudの場合はidはbotIdとなる。staticの場合はidがフォルダ名となる。
+
 
 
     チャットボットを新規作成したときに名前と背景色を設定する。
     ※これから実装
 
     アプリの状態がappStateで渡されてくる。
-    props.appState        表示要素
+    appState        表示要素
     ---------------------------------------------------------
     'new'           プロローグにnavigate
     'landing'       タイトル
     'authOk'        タイトル ユーザアカウント
     'continue'      タイトル ユーザアカウント 上書き確認メッセージ
-    'exec'          タイトル ユーザアカウント チャットボット選択画面    
-    'ready'          タイトル ユーザアカウント 戻るボタン
+    'exec'          タイトル ユーザアカウント チャットボット選択画面
+    'settings'      タイトル ユーザアカウント 名前と背景色設定
+    'done'          タイトル ユーザアカウント 戻るボタン
 
     このページを表示するurlへの直リンクの場合/へ転送
     
@@ -62,37 +76,91 @@ export default function CreateFairy(props) {
   const appState = STATE_TABLE[props.appState];
 
   const [fsChatbots, setFsChatbots] = useState(props.chatbots);
-  const [currentDirectory, setCurrentDirectory] = useState(null);
-  const [currentDescription, setCurrentDescription] = useState(null);
+  const [botIdentifier, setBotIdentifier] = useState(
+    {location:null,botId:null,avatarPath:null}
+  );
+  const [botName,setBotName] = useState('');
+  const [backgroundColor, setBackgroundColor] = useState('');
 
+  const appStateByName = props.appState;
 
+  // --------------------------------------------------------
+  // firestoreに格納されたボットの検索
+  // そのサブスクリプションを開始
 
   useEffect(() => {
+    let unsubscribe = null;
+
     if (auth.uid) {
-      (async () => {
-        setFsChatbots([...props.chatbots, ...await fbio.listBots(auth.uid)])
-      })()
+      const botsRef = collection(firestore, "bots");
+      const q = query(botsRef,
+        where("config.ownerId", "==", auth.uid),
+        orderBy("timestamp"),
+        limit(5));
+
+      unsubscribe = onSnapshot(q, (snap) => {
+        let arr = [];
+        snap.forEach((doc) => {
+          const d = doc.data();
+          arr.push({
+            location: 'cloud',
+            id: doc.id,
+            name: d.main.NAME,
+            creator: d.main.CREATOR_NAME,
+            directory: d.config.avatarPath,
+            backgroundColor: d.config.backgroundColor,
+            description: d.config.description,
+          })
+        });
+        setFsChatbots([...props.chatbots, arr]);
+      })
     }
-  }, [auth.uid, fsChatbots, props.chatbots])
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    }
+  }, [auth.uid, props.chatbots])
 
   function handleAccept() {
     navigate('/content/prologue1/');
   }
 
-  function handleClickTile(directory, description) {
-    setCurrentDirectory(directory)
-    setCurrentDescription(description);
+  function handleSelectBot(location, id, avatarPath) {
+    setBotIdentifier({location:location, id:id, avatarPath:avatarPath});
   }
 
-  function handleClickLoad() {
-    fetch(`../../chatbot/${currentDirectory}/chatbot.json`)
-      .then(res => res.json())
-      .then(obj => {
-        bot.generate(obj, currentDirectory)
-          .then(() => {
-            props.handleDone();
-          });
-      });
+  function handleChangeBotName(n){
+    setBotName(n);
+  }
+
+  function handleChangeBackgroundColor(c){
+    setBackgroundColor(c);
+  }
+
+  function handleGenerate() {
+    const {location,botId}=botIdentifier;
+    (async ()=>{
+      if (location === 'cloud'){
+        // firestoreから読み込み
+        const docRef = doc(firestore, "bots", botId);
+        const docSnap = await getDoc(docRef);
+        const obj = docSnap.data();
+
+        // partsの読み込み
+        for(let partName of Object.keys(obj.parts)){
+          // saveもloadも未実装
+        }
+
+      } else if (location === 'static'){
+        // staticフォルダから読み込み
+        const res = await fetch(`../../chatbot/${id}/chatbot.json`);
+        const obj = await res.json();
+        await bot.generate(boj,id);
+        props.handleDone();
+      }
+  
+    })();
   }
 
   function handleReturn() {
@@ -124,104 +192,38 @@ export default function CreateFairy(props) {
         alignItems="center"
         sx={{ paddingTop: "3em", }}
       >
-        {props.appState === 'continue' &&
-          <>
-            <Box>
-              <WarningIcon
-                style={{
-                  color: "#faa475",
-                  fontSize: 60
-                }}
-              />
-            </Box>
-            <Box>
-              すでに妖精{bot.displayName}のデータがあります。<br />
-              新しく妖精を作ると{bot.displayName}は消滅します。<br />
-              よろしいですか？
-            </Box>
-            <Box>
-              <Button
-                variant="contained"
-                onClick={handleAccept}>
-                今の妖精を消して新しい妖精を作る
-              </Button>
-            </Box>
-            <Box>
-              <Button
-                onClick={handleReturn}
-              >
-                中止
-              </Button>
-            </Box>
-          </>
+        {appStateByName === 'continue' &&
+          <ContinueStep
+            displayName={bot.displayName}
+            handleAccept={handleAccept}
+            handleReturn={handleReturn}
+          />
         }
-        {props.appState === 'exec' &&
-          <>
-            <Box
-              sx={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                justifyContent: 'space-around',
-                overflow: 'hidden',
-                backgroundColor: theme => theme.palette.background.paper,
-                width: '100%',
-              }}
-            >
-              <ImageList
-                sx={{
-                  width: 500,
-                  height: 500,
-                  // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
-                  transform: 'translateZ(0)',
-                }}
-                cols={3}
-              >
-                {fsChatbots.map(chatbot => (
-                  <ImageListItem key={chatbot.name}
-                    onClick={() => handleClickTile(chatbot.directory)}
-                    sx={{
-                      border: "4px solid",
-                      borderColor: chatbot.directory === currentDirectory ? 'primary.main' : '#FFFFFF',
-                    }}
-                  >
-                    <img src={`../../chatbot/${chatbot.directory}/peace.svg`}
-                      style={{
-                        backgroundColor: chatbot.backgroundColor,
-                        width: 200,
-                      }}
-                      alt={chatbot.directory}
-                    />
-                    <ImageListItemBar
-                      title={chatbot.name}
-                      subtitle={chatbot.description}
-                      sx={{
-                        flexGrow: 1,
-                      }}
-                    />
-                  </ImageListItem>
-                ))}
-
-              </ImageList>
-            </Box>
-            <Box>
-              {currentDescription}
-            </Box>
-            <Box>
-              <Button
-                variant="contained"
-                fullWidth
-                onClick={handleClickLoad}
-                disabled={currentDirectory === null}
-              >
-                この妖精と仲間になる
-              </Button>
-            </Box>
-          </>
+        {appStateByName === 'exec' &&
+          <SelectStep
+            fsChatbots={fsChatbots}
+            handleSelectBot={handleSelectBot}
+            botIdentifier={botIdentifier}
+            handleNext={() => props.handleMove('settings')}
+          />
         }
-        {props.appState === 'done' &&
+        {
+          appStateByName === 'settings' &&
+          <SettingsStep
+            botIdentifier={botIdentifier}
+            botName={botName}
+            handleChangeBotName={handleChangeBotName}
+            defaultColor={'#dddddd'}
+            color={backgroundColor}
+            handleChangeColor={handleChangeBackgroundColor}
+            handleGenerate={handleGenerate}
+            handlePrev={()=>props.handleMove('exec')}
+          />
+        }
+        {appStateByName === 'done' &&
           <>
             <Box>
-              {bot.state.displayName} が仲間になっています
+              {bot.state.displayName} が仲間になりました
             </Box>
             <Box>
               <Button

@@ -155,6 +155,7 @@ export default function IndexPage({ data }) {
 
   // --------------------------------------------------------------
   // firebaseの初期化
+  // parkログのサブスクリプションを開始
 
   useEffect(() => {
     if (!firebaseApp) {

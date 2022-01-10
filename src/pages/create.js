@@ -47,9 +47,10 @@ export default function CreatePage({ location, data }) {
     'authOk'        firebaseのauthが完了するとauthOkになり、ローカルの
                     チャットボットを探す。
     'new'           チャットボットが見つからない場合、新規作成
-    'continue'      既存チャットボットがある場合、上書き    
-    'exec'        プロローグページで「チャットボットを作る」をクリックした
-    'done'        チャットボットが選択され、名前と背景色を設定
+    'continue'      既存チャットボット上書き確認の後ストーリー画面へ遷移    
+    'exec'          ストーリー表示画面からの遷移でチャットボット選択
+    'setting'        チャットボットが選択され、名前と背景色を設定
+    'done'          完了確認
 
     ■チャットボットのロード
     チャットボットは/staticとfirestoreからロードできる。
@@ -61,11 +62,13 @@ export default function CreatePage({ location, data }) {
   */
   const [appState, setAppState] = useState('landing');
 
-  // firestoreからチャットボットを読み込み/staticと混ぜるあたりを実装
-  // locationにstaticまたはserverの文字列を入れて区別
+  // staticのチャットボット情報を取得。locationを'static'とすることで
+  // firestore上のデータと区別する。この情報はbotのデータを識別するためだけに
+  // 使用し、そのためbotIdにはディレクトリ名を用いる。
   const chatbots = data.allJson.nodes.map(node => ({
     location: 'static',
     name: node.main.NAME,
+    id: node.parent.relativeDirectory,
     creator: node.main.CREATOR_NAME,
     directory: node.parent.relativeDirectory,
     backgroundColor: node.config.backgroundColor,
@@ -82,8 +85,7 @@ export default function CreatePage({ location, data }) {
     setAppState('new');
     navigate('/content/prologue1/');
   }
-
-  function handleDone() { setAppState('done') }
+  function handleMove(state) { setAppState(state) }
 
   useEffect(()=>{
 
@@ -106,7 +108,7 @@ export default function CreatePage({ location, data }) {
       >
         <CreateFairy
           appState={appState}
-          handleDone={handleDone}
+          handleMove={handleMove}
           chatbots={chatbots}
         />
       </BiomebotProvider>
