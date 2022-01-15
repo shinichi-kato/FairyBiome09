@@ -1,7 +1,7 @@
 import { initializeApp, getApp, getApps } from 'firebase/app';
 import {
   getFirestore, serverTimestamp,
-  doc, setDoc, addDoc, collection,
+  doc, setDoc, addDoc, collection, getDoc
 } from 'firebase/firestore';
 
 export let firebaseApp = null;
@@ -30,18 +30,21 @@ export function initializeFirebaseApp() {
 class Fbio {
   constructor() {
 
-    this.generate = this.generate.bind(this);
+    this.load = this.load.bind(this);
+    this.loadScript = this.loadScript.bind(this);
+    this.save = this.save.bind(this);
+    this.saveScript = this.saveScript.bind(this);
   }
 
   // --------------------------------------------------------------------
   //
   //
-  //  firestoreへの書き込み関数
+  //  firestoreへのチャットボットデータの書き込み
   //
   //
   // --------------------------------------------------------------------
 
-  async generate(obj, uid) {
+  async save(obj, uid) {
     /* 
        objの内容をfirestoreに新規に書き込む。
 
@@ -64,8 +67,6 @@ class Fbio {
                 └collection main
                        └doc(mainDict, timestamp)
     */
-
-
 
     let data = {
       config: {
@@ -91,10 +92,12 @@ class Fbio {
         featureWeights: p.featureWeights || null,
       }
     }
+
+    let fsBotId = obj.config.fsBotId;
     let botRef;
-    if (obj.config.fsBotId) {
+    if (fsBotId) {
       // botIdがある→以前保存されているので上書き
-      botRef = doc(firestore, "bots", obj.config.fsBotId);
+      botRef = doc(firestore, "bots", fsBotId);
       await setDoc(botRef, data);
     }
     else {
@@ -102,30 +105,61 @@ class Fbio {
       botRef = await addDoc(collection(firestore, "bots"), data);
     }
     // partScriptの保存:以降botIdを使って書き込み
-    let fsBotId = botRef.id;
-
-    const partRef = collection(botRef, "parts")
+    fsBotId = botRef.id;
 
     // スクリプトの保存
     for (let partName in obj.parts) {
-      const data = {
-        ...obj.parts[partName],
-        featureWeights: obj.parts[partName].featureWeights || null
-      };
-      console.log(data)
-      await setDoc(doc(partRef, partName), data);
+      await this.saveScript(fsBotId, partName, obj.parts[partName].script);
     }
 
     return fsBotId;
   }
 
-  async saveScript(id,partName){
-    const scriptsRef=collection(firestore,'bots/{id}');
-     
+  async saveScript(id, partName, script) {
+    /*
+      obj形式の場合scriptの内容は以下のようになっている。その場合順番を保持して
+      firestoreに書き込む。
+
+     [
+        {
+            "in": "{enter_greeting}",
+            "out": "こんにちは。{user}さん。どうしたんですか？"
+        },
+        {
+            "in": "{enter_morning}",
+            "out": "おはようございます！"
+        },
+                
+      */
+    const scriptsRef = collection(firestore, 'bots/{id}');
+
+    await setDoc(doc(scriptsRef, partName), script);
+
   }
 
-  async loadScript(id, partName){
-    const scriptsRef= collection(firestore,'bots/{id}')
+  // --------------------------------------------------------------------
+  //
+  //
+  //  firestoreからのチャットボットデータの読み込み
+  //
+  //
+  // --------------------------------------------------------------------
+
+  async load(botId) {
+
+    const docRef = doc(firestore, "bots", botId);
+    const docSnap = await getDoc(docRef);
+    const obj = docSnap.data();
+
+    // partsの読み込み
+    for (let partName of Object.keys(obj.parts)) {
+      // load未実装
+      // saveは fbioに記述loadも移す
+    }
+  }
+
+  async loadScript(id, partName) {
+    const scriptsRef = collection(firestore, 'bots/{id}')
   }
 
 }

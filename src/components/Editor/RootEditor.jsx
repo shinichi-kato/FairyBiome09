@@ -82,7 +82,7 @@ export default function RootEditor(props) {
     (async () => {
       // dbの内容をobjに変換
       const obj = await bot.load();
-      const fsBotId = await fbio.generate(obj, auth.uid);
+      const fsBotId = await fbio.save(obj, auth.uid);
       await bot.save('config', {
         ...obj.config,
         fsBotId: fsBotId

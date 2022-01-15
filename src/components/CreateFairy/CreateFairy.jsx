@@ -1,4 +1,10 @@
 import React, { useContext, useState, useEffect } from "react";
+
+import { firestore, fbio } from '../../firebase';
+import {
+  query, collection, where, orderBy, limit, onSnapshot, 
+} from 'firebase/firestore';
+
 import { navigate } from "gatsby";
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -6,22 +12,13 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-
-
-
-// import InputAdornment from '@mui/material/InputAdornment';
-// import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-
-import { BiomebotContext } from '../biomebot/BiomebotProvider';
-import { AuthContext } from "../Auth/AuthProvider";
-import { firestore } from '../../firebase';
-import {
-  query, collection, where, orderBy, limit, onSnapshot, getDoc
-} from 'firebase/firestore';
 import ContinueStep from "./ContinueStep";
 import SelectStep from "./SelectStep";
 import SettingsStep from "./SettingsStep";
+import DoneStep from './DoneStep';
+
+import { BiomebotContext } from '../biomebot/BiomebotProvider';
+import { AuthContext } from "../Auth/AuthProvider";
 
 
 const STATE_TABLE = {
@@ -77,10 +74,10 @@ export default function CreateFairy(props) {
 
   const [fsChatbots, setFsChatbots] = useState(props.chatbots);
   const [botIdentifier, setBotIdentifier] = useState(
-    {location:null,botId:null,avatarPath:null}
+    { location: null, id: null, avatarPath: null }
   );
-  const [botName,setBotName] = useState('');
-  const [backgroundColor, setBackgroundColor] = useState('');
+  const [botName, setBotName] = useState('');
+  const [backgroundColor, setBackgroundColor] = useState('#eeeeee');
 
   const appStateByName = props.appState;
 
@@ -99,7 +96,7 @@ export default function CreateFairy(props) {
         limit(5));
 
       unsubscribe = onSnapshot(q, (snap) => {
-        let arr = [];
+        let arr = [...props.chatbots];
         snap.forEach((doc) => {
           const d = doc.data();
           arr.push({
@@ -112,11 +109,12 @@ export default function CreateFairy(props) {
             description: d.config.description,
           })
         });
-        setFsChatbots([...props.chatbots, arr]);
+        setFsChatbots([...arr]);
       })
     }
     return () => {
       if (unsubscribe) {
+        console.log("unsubscribed chatbots snap")
         unsubscribe();
       }
     }
@@ -127,39 +125,43 @@ export default function CreateFairy(props) {
   }
 
   function handleSelectBot(location, id, avatarPath) {
-    setBotIdentifier({location:location, id:id, avatarPath:avatarPath});
+    setBotIdentifier({ location: location, id: id, avatarPath: avatarPath });
   }
 
-  function handleChangeBotName(n){
-    setBotName(n);
+  function handleChangeBotName(e) {
+    setBotName(e.target.value);
   }
 
-  function handleChangeBackgroundColor(c){
+  function handleChangeBackgroundColor(c) {
     setBackgroundColor(c);
   }
 
   function handleGenerate() {
-    const {location,botId}=botIdentifier;
-    (async ()=>{
-      if (location === 'cloud'){
-        // firestoreから読み込み
-        const docRef = doc(firestore, "bots", botId);
-        const docSnap = await getDoc(docRef);
-        const obj = docSnap.data();
+    const { location, id } = botIdentifier;
+    console.log(location,id);
 
-        // partsの読み込み
-        for(let partName of Object.keys(obj.parts)){
-          // saveもloadも未実装
-        }
+    (async () => {
+      let obj;
 
-      } else if (location === 'static'){
+      if (location === 'cloud') {
+        obj = await fbio.load(id);
+
+      } else if (location === 'static') {
+
         // staticフォルダから読み込み
-        const res = await fetch(`../../chatbot/${id}/chatbot.json`);
-        const obj = await res.json();
-        await bot.generate(boj,id);
-        props.handleDone();
+        const res = await fetch(`/chatbot/${id}/chatbot.json`);
+        obj = await res.json();
+        console.log("loading static",obj)
+        
       }
-  
+
+      obj.config.backgroundColor = backgroundColor;
+      obj.main.NAME = botName;
+
+
+      await bot.generate(obj, id);
+      props.handleMove('done');
+
     })();
   }
 
@@ -217,22 +219,14 @@ export default function CreateFairy(props) {
             color={backgroundColor}
             handleChangeColor={handleChangeBackgroundColor}
             handleGenerate={handleGenerate}
-            handlePrev={()=>props.handleMove('exec')}
+            handlePrev={() => props.handleMove('exec')}
           />
         }
         {appStateByName === 'done' &&
-          <>
-            <Box>
-              {bot.state.displayName} が仲間になりました
-            </Box>
-            <Box>
-              <Button
-                variant="contained"
-                onClick={handleReturn}>
-                戻る
-              </Button>
-            </Box>
-          </>
+          <DoneStep
+            bot={bot}
+            handleReturn={handleReturn}
+          />
         }
       </Box>
     </>

@@ -6,12 +6,12 @@ import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItem';
 
 function isBotIdentical(a,b){
-  return (a.location === b.location && a.botId === b.botId);
+  return (a.location === b.location && a.id === b.id);
 }
 
 export default function SelectStep(props) {
   return (
-    <>
+    <div>
       <Box
         sx={{
           display: 'flex',
@@ -31,9 +31,13 @@ export default function SelectStep(props) {
           }}
           cols={3}
         >
-          {props.fsChatbots.map(chatbot => (
-            <ImageListItem key={chatbot.name}
-              onClick={() => props.handleSelectBot(chatbot.location, chatbot.id)}
+          {props.fsChatbots.map((chatbot,index) => (
+            <ImageListItem key={index}
+              onClick={() => props.handleSelectBot(
+                chatbot.location,
+                chatbot.id,
+                chatbot.directory
+              )}
               sx={{
                 border: "4px solid",
                 borderColor: isBotIdentical(chatbot,props.botIdentifier) ? 'primary.main' : '#FFFFFF',
@@ -64,7 +68,7 @@ export default function SelectStep(props) {
           disabled={props.botIdentifier.botId===null}
         >この妖精にする</Button>
       </Box>
-    </>
+    </div>
 
   )
 }

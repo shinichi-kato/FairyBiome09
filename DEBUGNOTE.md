@@ -5,7 +5,7 @@ debug note
 https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updated-in-the-nested-function
 
 1. チャットルーム
-
+* 挨拶が生成されない
 * チャットボットを新たにロードしても反映されない
 * ティピカをロードしても反映されない
 * 森に入ったときに出現するチャットボットの決定ロジック
@@ -18,15 +18,18 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 3. 他
 
+* チャットボットのスクリプトがfirestoreに保存されていない
 * AuthDialogでサインアップができない
 * authOkで止まるー＞backgroundCOlorの代入をdispatchのokから外した
 
 * etimatorがconfig内に書かれてindexDBに保存されている。要除去
 * /editを直でアクセスすると真っ白ー＞BiomebotProviderでhandleBotFound()が呼ばれてるかチェックすること
-* チャットボットをテンプレートから新規作成したときには名前と背景色を設定
+
 
 
 # 以下対応済み
+* チャットボットをテンプレートから新規作成したときには名前と背景色を設定
+* チャットボット選択画面で一つのボットを選択できない
 * チャットボットを新規作成するときにfirestoreからもロード可能に
 * 部屋と公園ではチャットボットがロードされるがforestではされない
 * 誰もいない森から帰ってきたあと、自分のチャットボットが戻らない

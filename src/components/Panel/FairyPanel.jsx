@@ -30,18 +30,19 @@ export default function FairyPanel(props) {
       sx={{
         width: width,
         height: height,
+        position: "relative"
       }}
-      position="relative">
+      >
       <Box
         sx={{
           width: width,
           height: width,
           borderRadius: "0% 100% 100% 0% / 100% 100% 0% 0%",
           backgroundColor: bgColor,
+          position: "absolute",
+          bottom:0,
+          left:0,
         }}
-        position="absolute"
-        bottom={0}
-        left={0}
       />
       {(status === 'ready' || status === 'loaded') &&
         <Box

@@ -48,8 +48,9 @@ export default function CreatePage({ location, data }) {
                     チャットボットを探す。
     'new'           チャットボットが見つからない場合、新規作成
     'continue'      既存チャットボット上書き確認の後ストーリー画面へ遷移    
-    'exec'          ストーリー表示画面からの遷移でチャットボット選択
-    'setting'        チャットボットが選択され、名前と背景色を設定
+    'exec'          ストーリー表示画面からの遷移。selectに移動
+    'select'        チャットボット選択
+    'setting'       名前と背景色を設定
     'done'          完了確認
 
     ■チャットボットのロード
@@ -75,7 +76,8 @@ export default function CreatePage({ location, data }) {
     description: node.config.description
   }));
 
-  if (location.search === '?exec' && appState !== 'done' && appState !== 'exec') {
+  console.log("state",appState)
+  if (location.search === '?exec' && (appState === 'landing' || appState === 'continue')) {
     setAppState('exec');
   }
 
@@ -94,6 +96,7 @@ export default function CreatePage({ location, data }) {
       
     }
   }, []);
+
 
   return (
     <AuthProvider

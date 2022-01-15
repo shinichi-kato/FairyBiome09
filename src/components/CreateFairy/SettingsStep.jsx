@@ -4,12 +4,30 @@ import TextField from '@mui/material/TextField';
 import { alpha } from '@mui/material/styles';
 import ColorSelector from '../Editor/ColorSelector';
 import Button from '@mui/material/Button';
+import FairyPanel from '../Panel/FairyPanel';
 
 
 
 export default function SettingsStep(props) {
+  const color = props.color;
+  const photoURL = props.botIdentifier.avatarPath;
+
   return (
-    <>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center"
+      }}
+    >
+      <Box>
+        <FairyPanel
+          status="ready"
+          panelWidth={192}
+          backgroundColor={color}
+          photoURL={`/chatbot/${photoURL}/peace.svg`}
+        />
+      </Box>
       <Box
         sx={{
           '& .MuiTextField-root': {
@@ -45,7 +63,7 @@ export default function SettingsStep(props) {
         <Button
           variant="contained"
           color="primary"
-          onClick={props.handleNext}>
+          onClick={props.handleGenerate}>
           OK
         </Button>
       </Box>
@@ -55,6 +73,6 @@ export default function SettingsStep(props) {
           戻る
         </Button>
       </Box>
-    </>
+    </Box>
   )
 }
