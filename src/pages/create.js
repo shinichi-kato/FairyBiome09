@@ -35,6 +35,16 @@ export const query = graphql`
   }
 `
 
+const appStateByNumber = {
+  'landing': 0,
+  'authOk': 1,
+  'new': 2,
+  'continue': 3,
+  'exec': 4,
+  'settings': 5,
+  'done': 6
+};
+
 export default function CreatePage({ location, data }) {
   /* 
     チャットボット新規作成ページ 
@@ -48,8 +58,7 @@ export default function CreatePage({ location, data }) {
                     チャットボットを探す。
     'new'           チャットボットが見つからない場合、新規作成
     'continue'      既存チャットボット上書き確認の後ストーリー画面へ遷移    
-    'exec'          ストーリー表示画面からの遷移。selectに移動
-    'select'        チャットボット選択
+    'exec'          ストーリー表示画面からの遷移。チャットボット選択
     'setting'       名前と背景色を設定
     'done'          完了確認
 
@@ -76,11 +85,11 @@ export default function CreatePage({ location, data }) {
     description: node.config.description
   }));
 
-  console.log("state",appState)
-  if (location.search === '?exec' && (appState === 'landing' || appState === 'continue')) {
+ 
+  if (location.search === '?exec' && appStateByNumber[appState] < 4) {
     setAppState('exec');
   }
-
+  console.log("state",appState)
   function handleBotFound() { setAppState('continue'); }
   function handleAuthOk() { setAppState('authOk'); }
   function handleBotNotFound() {

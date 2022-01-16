@@ -46,7 +46,7 @@ class Fbio {
 
   async save(obj, uid) {
     /* 
-       objの内容をfirestoreに新規に書き込む。
+       objの内容をfirestoreに新規または上書き保存。
 
        ユーザはfirestoreにあるチャットボットをロードするか、chatbot.jsonから
        チャットボットを新規作成できる。ユーザが作成したチャットボットの
@@ -67,7 +67,7 @@ class Fbio {
                 └collection main
                        └doc(mainDict, timestamp)
     */
-
+    console.log(obj, uid)
     let data = {
       config: {
         ...obj.config,
@@ -117,8 +117,7 @@ class Fbio {
 
   async saveScript(id, partName, script) {
     /*
-      obj形式の場合scriptの内容は以下のようになっている。その場合順番を保持して
-      firestoreに書き込む。
+      obj形式の場合scriptの内容は以下のようになっている。
 
      [
         {
@@ -129,11 +128,31 @@ class Fbio {
             "in": "{enter_morning}",
             "out": "おはようございます！"
         },
-                
-      */
-    const scriptsRef = collection(firestore, 'bots/{id}');
 
-    await setDoc(doc(scriptsRef, partName), script);
+      この順番を保持してfirestoreに書き込む。firestoreはネストした配列を
+      サポートしないので 
+      {
+        id: 0,
+        in: [...in],
+        out: [...out],
+      }        
+      というオブジェクトに変換して保存する 
+      */
+    const scriptsRef = collection(firestore, `bots/${id}/scripts`);
+
+    let s = {};
+    for (let i = 0, l = script.length; i < l; i++) {
+      const n = script[i];
+      s[i] = { in: n.in, out: n.out }
+    }
+
+    console.log("script", partName, script, s)
+
+    await setDoc(doc(scriptsRef, partName),
+      {
+        script: script,
+        timestamp: serverTimestamp()
+      });
 
   }
 
@@ -146,7 +165,7 @@ class Fbio {
   // --------------------------------------------------------------------
 
   async load(botId) {
-
+    // save周りができたのでここからコーディング
     const docRef = doc(firestore, "bots", botId);
     const docSnap = await getDoc(docRef);
     const obj = docSnap.data();

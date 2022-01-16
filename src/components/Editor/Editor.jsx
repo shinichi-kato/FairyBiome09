@@ -1,4 +1,4 @@
-import React, { useContext, useReducer } from "react";
+import React, { useContext, useEffect, useReducer, useRef } from "react";
 import { navigate } from 'gatsby';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -25,6 +25,28 @@ const initialState = {
   page: "root",
   part: null
 };
+
+const route = {
+  'root': {
+    back: null,
+  },
+  'config': {
+    back: 'root'
+  },
+  'work': {
+    back: 'root'
+  },
+  'main': {
+    back: 'root'
+  },
+  'part': {
+    back: 'root'
+  },
+  'script': {
+    back: 'part'
+  }
+};
+
 
 function reducer(state, action) {
   switch (action.type) {
@@ -58,26 +80,17 @@ export default function Editor() {
 
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  const route = {
-    'root': {
-      back: null,
-    },
-    'config': {
-      back: 'root'
-    },
-    'work': {
-      back: 'root'
-    },
-    'main': {
-      back: 'root'
-    },
-    'part': {
-      back: 'root'
-    },
-    'script': {
-      back: 'part'
+  // ------------------------------------------------------------------
+  // botが読み込まれていなければindexDBから読み込む
+  //
+
+  useEffect(() => {
+    if (bot.state.status === 'unload') {
+      bot.load(auth.uid);
     }
-  };
+  }, [bot, auth.uid]);
+
+
 
   function handleChangePage(page, part) {
     dispatch({ type: 'ChangePage', page: page, part: part });

@@ -31,6 +31,10 @@
 import Dexie from "dexie";
 import { reviver } from 'mathjs';
 
+function toArray(data){
+  return typeof data === 'string' ? [data] : data; 
+}
+
 class dbio {
   constructor() {
     this.db = new Dexie('Biomebot');
@@ -309,7 +313,10 @@ class dbio {
   }
 
   async loadScript(botId, partName) {
-    /* botId,partNameで指定されたscriptを読んで配列化して返す */
+    /* 
+      botId,partNameで指定されたscriptを読んで配列化して返す.
+      ※未実装：next順でソート
+    */
 
     return await this.db.scripts.where('[botId+partName+id]')
       .between(
@@ -336,7 +343,7 @@ class dbio {
         id: i,
         botId: botId, // compound key
         partName: partName,
-        in: script[i].in, out: script[i].out,
+        in: toArray(script[i].in), out: toArray(script[i].out),
         next: i + 1,
         prev: i - 1,
       });

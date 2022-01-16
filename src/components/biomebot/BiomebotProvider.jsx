@@ -431,32 +431,6 @@ export default function BiomebotProvider(props) {
   const handleBotFound = useRef(props.handleBotFound);  // 外に持ち出したのでクロージャになる
   const handleBotNotFound = useRef(props.handleBotNotFound);
 
-  // ------------------------------------------------------------------------
-  //
-  //  稼働状態のチャットボットがqueueを消費する
-  //
-
-  useEffect(() => {
-
-    if (state.status === 'ready') {
-      console.log("remaining queues", work.queue.length)
-      if (work.queue.length > 0) {
-        setWork(prev => {
-          const top = prev.queue[0];
-          const newWork = {
-            ...prev,
-            key: prev.key + 1,
-            queue: prev.queue.slice(1)
-          };
-
-          return {
-            key: prev.key + 1,
-            ...executes[work.site](state, newWork, top.message, top.emitter),
-          }
-        });
-      }
-    }
-  }, [state, state.status, work, work.queue]);
 
   // ----------------------------------------------------------------------
   // 認証後にユーザのチャットボットが存在するか確認
@@ -523,6 +497,36 @@ export default function BiomebotProvider(props) {
 
   }, [state.botId, state.status, state.parts, work.site]);
 
+
+
+  // ------------------------------------------------------------------------
+  //
+  //  稼働状態のチャットボットがqueueを消費する
+  //
+
+  useEffect(() => {
+
+    if (state.status === 'ready') {
+      console.log("remaining queues", work.queue.length)
+      if (work.queue.length > 0) {
+        setWork(prev => {
+          const top = prev.queue[0];
+          const newWork = {
+            ...prev,
+            key: prev.key + 1,
+            queue: prev.queue.slice(1)
+          };
+
+          return {
+            key: prev.key + 1,
+            ...executes[work.site](state, newWork, top.message, top.emitter),
+          }
+        });
+      }
+    }
+  }, [state, state.status, work, work.queue]);
+
+
   const handleExecute = (message, emitter) => {
     // 外部からの入力を受付け、必要な場合返答を送出する。
     // deploy完了前に呼び出された場合はqueueに積む
@@ -552,12 +556,14 @@ export default function BiomebotProvider(props) {
   }
 
   const generate = useCallback(async (obj, avatarPath, site) => {
-    // staticに保存されたチャットボット情報を新規に読み込む。
+    // staticやfirestoreに保存されたチャットボット情報を新規に読み込む。
     //
     // contextに含める関数がuseContextする側のコンポーネントでのuseEffect内で
     // 使われる場合、useEffectの内容が非同期的に処理されても適切に
     // アップデートされた状態に保つためuseCallback化する。それにより
-    // 利用側コンポーネントのuseEffectでdeps煮含める必要がなくなる。   // avatarPathをobjに組み込む
+    // 利用側コンポーネントのuseEffectでdepsに含める必要がなくなる。 
+
+    // avatarPathをobjに組み込む
     obj.config.avatarPath = avatarPath;
 
     // displayNameを復元
@@ -594,9 +600,12 @@ export default function BiomebotProvider(props) {
     // contextに含める関数がuseContextする側のコンポーネントでのuseEffect内で
     // 使われる場合、useEffectの内容が非同期的に処理されても適切に
     // アップデートされた状態に保つためuseCallback化する。それにより
-    // 利用側コンポーネントのuseEffectでdeps煮含める必要がなくなる。
+    // 利用側コンポーネントのuseEffectでdepsに含める必要がなくなる。
 
     console.log("loading", botId)
+
+    site ||= 'room';
+
     if (botId) {
       const snap = await db.load(botId);
       if (snap) {
@@ -616,6 +625,7 @@ export default function BiomebotProvider(props) {
           futurePosting: [],
           botId: botId
         }));
+        return snap;
       }
       else {
         console.log("not loaded")

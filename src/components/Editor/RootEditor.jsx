@@ -47,6 +47,15 @@ const menus = [
   },
 ];
 
+function toArray(data){
+  // scriptのノードは略記のため文字列またはリストとして格納してある。
+  // in: "not_found"
+  // または
+  // in: ["not_found","??"]
+  // リストはそのまま、文字列は要素が一つのリストに変換して返す
+  return  typeof data === 'string' ? [data] : data;
+}
+
 export default function RootEditor(props) {
   const auth = useContext(AuthContext);
   const bot = useContext(BiomebotContext);
@@ -78,10 +87,47 @@ export default function RootEditor(props) {
   }
 
   function handleSave() {
-    // firestoreへの保存
+    /* 
+      indexDB上に保存したchatbotのデータをfirestoreに保存。
+      スクリプトはscriptデータベースに保存されており、indexedDBから得たデータは
+      下記のようになっている。
+      {
+        botId: "ujYHlovaabQW72AZsXOBUZHHuDN2"
+        id: "0"
+        in: "{NOT_FOUND}"
+        next: "01"
+        out: Array(6)
+        0: "にゃはは！"
+        1: "にゃお〜"
+        2: "にゃにゃ"
+        3: "..."
+        4: "どういうことにゃ？"
+        5: "そうにゃの"
+        length: 6
+        [[Prototype]]: Array(0)
+        partName: "cheer"
+        prev: null
+      },. ...
+
+      これをobj形式
+      {
+          "in": "{enter_night}",
+          "out": ["ΦwΦキラーン・・","{enter_cheer}遊ぼう！"]
+      },  ...
+      に変換してobjに加える。firestoreに保存することでfirestore上のidが得られる。
+      id値を更新してconfigを上書きする。
+    */
+
     (async () => {
-      // dbの内容をobjに変換
-      const obj = await bot.load();
+      let obj = await bot.load(auth.uid);
+      for(let partName in obj.parts){
+        const s = await bot.loadScript(partName);
+
+        obj.parts[partName].script = s.map(n=>(
+          {in: toArray(n.in), out: toArray(n.out)}
+        ));
+      }
+
       const fsBotId = await fbio.save(obj, auth.uid);
       await bot.save('config', {
         ...obj.config,

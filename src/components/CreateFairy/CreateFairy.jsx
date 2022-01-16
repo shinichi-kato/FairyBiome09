@@ -151,6 +151,10 @@ export default function CreateFairy(props) {
         // staticフォルダから読み込み
         const res = await fetch(`/chatbot/${id}/chatbot.json`);
         obj = await res.json();
+
+        // staticフォルダから読んだ場合はbotIdをauth.uidにする。これにより
+        // localにはユーザごとに持てるチャットボットを最大1体に限定
+        obj.botId = auth.uid;
         console.log("loading static",obj)
         
       }

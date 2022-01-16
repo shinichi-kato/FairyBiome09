@@ -10,14 +10,18 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 * ティピカをロードしても反映されない
 * 森に入ったときに出現するチャットボットの決定ロジック
 * queueが消費されてない？
-
+* 公園で全員の吹き出しが白い
 
 2. エディタ
 
+firestoreへのsaveでエラー
+スクリプトをdbio.loadScriptでnextの順に並べてデータ取得
 
+3. create
+ぼっと選択画面でタイムスタンプも表示
 
-3. 他
-
+4. 他
+* landing画面でユーザとボットのアバター表示
 * チャットボットのスクリプトがfirestoreに保存されていない
 * AuthDialogでサインアップができない
 * authOkで止まるー＞backgroundCOlorの代入をdispatchのokから外した
@@ -33,7 +37,7 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 * チャットボットを新規作成するときにfirestoreからもロード可能に
 * 部屋と公園ではチャットボットがロードされるがforestではされない
 * 誰もいない森から帰ってきたあと、自分のチャットボットが戻らない
-* 公園で吹き出しが白い
+
 * チャットボットのdeployが完了するまでpanelは表示しない
 ｰ>なぜか初回にreadCacheディスパッチが発火せず
 とりあえずloadedのときにpanel表示する変更
