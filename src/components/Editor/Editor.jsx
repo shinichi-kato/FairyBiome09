@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer, useRef } from "react";
+import React, { useContext, useEffect, useReducer } from "react";
 import { navigate } from 'gatsby';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';

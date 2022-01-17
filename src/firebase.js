@@ -1,7 +1,7 @@
 import { initializeApp, getApp, getApps } from 'firebase/app';
 import {
   getFirestore, serverTimestamp,
-  doc, setDoc, addDoc, collection, getDoc
+  doc, setDoc, addDoc, collection, getDoc, getDocs
 } from 'firebase/firestore';
 
 export let firebaseApp = null;
@@ -26,6 +26,7 @@ export function initializeFirebaseApp() {
     firestore = getFirestore(firebaseApp);
   }
 }
+
 
 class Fbio {
   constructor() {
@@ -66,8 +67,14 @@ class Fbio {
                       └doc(partScript, timestamp)
                 └collection main
                        └doc(mainDict, timestamp)
+       
+       ■ ランダムにチャットボットを選ぶ
+       forestではfirestoreに保存されたチャットボットのうちランダムに選んだ一体と
+       会話ができる場合がある。複数のチャットボットからランダムに一つを選ぶ操作を
+       1回のクエリで実行するため各データにはrandomIndexという値を設定する。
+
     */
-    console.log(obj, uid)
+
     let data = {
       config: {
         ...obj.config,
@@ -77,7 +84,8 @@ class Fbio {
       timestamp: serverTimestamp(),
       work: obj.work,
       parts: {},
-      main: obj.main
+      main: obj.main,
+      randomIndex: getRandomVal()
     };
 
     for (let partName in obj.parts) {
@@ -129,24 +137,9 @@ class Fbio {
             "out": "おはようございます！"
         },
 
-      この順番を保持してfirestoreに書き込む。firestoreはネストした配列を
-      サポートしないので 
-      {
-        id: 0,
-        in: [...in],
-        out: [...out],
-      }        
-      というオブジェクトに変換して保存する 
+
       */
     const scriptsRef = collection(firestore, `bots/${id}/scripts`);
-
-    let s = {};
-    for (let i = 0, l = script.length; i < l; i++) {
-      const n = script[i];
-      s[i] = { in: n.in, out: n.out }
-    }
-
-    console.log("script", partName, script, s)
 
     await setDoc(doc(scriptsRef, partName),
       {
@@ -172,15 +165,59 @@ class Fbio {
 
     // partsの読み込み
     for (let partName of Object.keys(obj.parts)) {
-      // load未実装
-      // saveは fbioに記述loadも移す
+      obj.parts[partName].script = await this.loadScript(botId, partName);
     }
+
+    return obj;
   }
 
   async loadScript(id, partName) {
-    const scriptsRef = collection(firestore, 'bots/{id}')
+    const scriptsRef = collection(firestore, `bots/${id}/scripts`);
+    return await getDoc(doc(scriptsRef, partName));
+
   }
 
+  // --------------------------------------------------------------------
+  //
+  //
+  //  firestoreからランダムに選んだチャットボットデータを一つ読み込む
+  //
+  //
+  // --------------------------------------------------------------------
+
+  async randomLoad() {
+    const botsRef = collection(firestore, "bots");
+    const q = query(botsRef,
+      where("randomIndex", "<", getRandomVal()),
+      orderBy("randomIndex"),
+      limit(1));
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach(doc => {
+
+      const botId = doc.id;
+      const obj = doc.data();
+
+      // partsの読み込み
+      for (let partName of Object.keys(obj.parts)) {
+        obj.parts[partName].script = await this.loadScript(botId, partName);
+      }
+
+      return obj;
+    })
+
+    return false;
+  }
 }
 
+
 export const fbio = new Fbio();
+
+
+function getRandomValue() {
+  let randomVals = new Uint32Array(1);
+  if (typeof window !== 'undefined') {
+    window.crypto.getRandomValues(randomVals);
+  }
+  return randomVals[0];
+}

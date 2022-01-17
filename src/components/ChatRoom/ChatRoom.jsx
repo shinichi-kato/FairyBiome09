@@ -31,6 +31,7 @@ import { BiomebotContext } from '../biomebot/BiomebotProvider';
 import { AuthContext } from "../Auth/AuthProvider";
 import { EcosystemContext } from '../Ecosystem/EcosystemProvider';
 import { Message } from '../message';
+import { fbio } from '../../firebase'; 
 import useLocalStorage from '../use-localstorage';
 
 import { Noise } from 'noisejs';
@@ -49,6 +50,7 @@ export default function ChatRoom(props) {
 
   const [userInput, setUserInput] = useState("");
   const [panelSize, setPanelSize] = useLocalStorage("panelSize", 1);
+
   const config = props.config;
   const noiseRef = useRef(new Noise(config.randomSeed));
   
@@ -69,11 +71,21 @@ export default function ChatRoom(props) {
     ecosystemRef.current.changeSite(site);
   }
 
-  //---------------------------------------
+ 
+  //----------------------------------------------------------------------------------------
+  //
   // チャットルームに入室したらloadしてdeploy
   // forestに入った場合、ローカルのtimestampのほうがサーバーよりも新しく、
   // かつ24h以内に保存されていなければ自動でローカルのチャットボットのデータを
-  // サーバーに保存する。props.configで定義した確率でチャットボットが出現
+  // サーバーに保存する。props.configで定義した確率でチャットボットが出現。
+  //  設定例
+  //　config.forestEncounter={
+  //    usersFairy: 0.3
+  //    tutor: 0.8
+  //  }
+  //  この例ではダイスを降って0~0.3の場合firestore上のボットをまずロードしようとする。
+  // それが失敗するか、ダイスの値が0.3~0.8の場合はtutorをロードする。
+  // ダイスの値が0.8~0.9の場合は何もロードしない。
   //
 
 
@@ -85,22 +97,34 @@ export default function ChatRoom(props) {
 
       // 自動セーブ
 
-
       const dice = getRandom(feConfig.changeRate);
       console.log("dice",dice,feConfig,dice<=feConfig.tutor)
-      if (dice <= feConfig.tutor) {
-        // コードからチューターをロード
-        (async () => {
-          const res = await fetch(`../../chatbot/${TUTOR_ID}/chatbot.json`);
-          const obj = await res.json();
-          console.log(obj)
-          await botRef.current.generate(obj, TUTOR_ID, site);
-        })();
-      }
-      else if (dice <= feConfig.usersFairy) {
-        // サーバーからランダムに選んだfairyをロード
-      }
 
+      (async () => {
+        let obj,botId;
+
+        if (dice <= feConfig.usersFairy) {
+          // diceがusesFairyより小さければfirestoreのボットをランダムにロード
+
+          obj = await fbio.randomLoad();
+          if (obj){
+            botId = auth.uid;
+          }
+        }
+
+        // firestoreからロードできなかった場合のfallbackを兼ねて
+        // コードからチューターをロード
+        if (!obj && dice <= feConfig.tutor) {
+          const res = await fetch(`../../chatbot/${TUTOR_ID}/chatbot.json`);
+          obj = await res.json();
+          botId = TUTOR_ID;
+        }
+
+        if(obj){
+          await botRef.current.generate(obj, botId, site);
+        }
+
+      })();
 
     } else {
       (async () => {

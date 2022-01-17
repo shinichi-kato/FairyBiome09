@@ -5,16 +5,14 @@ debug note
 https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updated-in-the-nested-function
 
 1. チャットルーム
+* firestore上のボットを読み込む（これから実装)
 * 挨拶が生成されない
-* チャットボットを新たにロードしても反映されない
-* ティピカをロードしても反映されない
-* 森に入ったときに出現するチャットボットの決定ロジック
+
 * queueが消費されてない？
 * 公園で全員の吹き出しが白い
 
 2. エディタ
 
-firestoreへのsaveでエラー
 スクリプトをdbio.loadScriptでnextの順に並べてデータ取得
 
 3. create
@@ -32,6 +30,8 @@ firestoreへのsaveでエラー
 
 
 # 以下対応済み
+* 森に入ったときに出現するチャットボットの決定ロジック
+* firestoreへのsaveでエラー
 * チャットボットをテンプレートから新規作成したときには名前と背景色を設定
 * チャットボット選択画面で一つのボットを選択できない
 * チャットボットを新規作成するときにfirestoreからもロード可能に
