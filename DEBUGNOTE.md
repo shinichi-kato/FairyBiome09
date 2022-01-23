@@ -5,8 +5,11 @@ debug note
 https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updated-in-the-nested-function
 
 1. チャットルーム
-* firestore上のボットを読み込む（これから実装)
-* 挨拶が生成されない
+
+* forest のrandomloadでコケる
+* セリフが１文字ごとsplitされてる
+* ボットを新しくしてもローカルのログが残る
+* 挨拶が生成されない→生成はされるが表示されない。sendmessageまわり？
 
 * queueが消費されてない？
 * 公園で全員の吹き出しが白い
@@ -30,6 +33,7 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 
 # 以下対応済み
+* botをindexedDBに保存したときにavatarPathにuidが代入される
 * 森に入ったときに出現するチャットボットの決定ロジック
 * firestoreへのsaveでエラー
 * チャットボットをテンプレートから新規作成したときには名前と背景色を設定

@@ -120,6 +120,8 @@ export default function CreateFairy(props) {
     }
   }, [auth.uid, props.chatbots])
 
+
+
   function handleAccept() {
     navigate('/content/prologue1/');
   }
@@ -137,7 +139,7 @@ export default function CreateFairy(props) {
   }
 
   function handleGenerate() {
-    const { location, id } = botIdentifier;
+    const { location, id, avatarPath } = botIdentifier;
     console.log(location,id);
 
     (async () => {
@@ -153,10 +155,12 @@ export default function CreateFairy(props) {
         obj = await res.json();
 
         // staticフォルダから読んだ場合はbotIdをauth.uidにする。これにより
-        // localにはユーザごとに持てるチャットボットを最大1体に限定
+        // localにはユーザごとに持てるチャットボットを最大1体に限定する。
+        // またavatarPathはstaticが格納されているフォルダにする。
+
         obj.botId = auth.uid;
+        obj.config.avatarPath = id;
         console.log("loading static",obj)
-        
       }
 
       obj.config.backgroundColor = backgroundColor;

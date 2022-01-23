@@ -1,7 +1,8 @@
 import { initializeApp, getApp, getApps } from 'firebase/app';
 import {
   getFirestore, serverTimestamp,
-  doc, setDoc, addDoc, collection, getDoc, getDocs
+  doc, setDoc, addDoc, collection, getDoc, getDocs,
+  query, where, orderBy, limit
 } from 'firebase/firestore';
 
 export let firebaseApp = null;
@@ -35,6 +36,7 @@ class Fbio {
     this.loadScript = this.loadScript.bind(this);
     this.save = this.save.bind(this);
     this.saveScript = this.saveScript.bind(this);
+    this.randomLoad = this.randomLoad.bind(this);
   }
 
   // --------------------------------------------------------------------
@@ -85,7 +87,7 @@ class Fbio {
       work: obj.work,
       parts: {},
       main: obj.main,
-      randomIndex: getRandomVal()
+      randomIndex: getRandomValue()
     };
 
     for (let partName in obj.parts) {
@@ -158,7 +160,6 @@ class Fbio {
   // --------------------------------------------------------------------
 
   async load(botId) {
-    // save周りができたのでここからコーディング
     const docRef = doc(firestore, "bots", botId);
     const docSnap = await getDoc(docRef);
     const obj = docSnap.data();
@@ -173,7 +174,8 @@ class Fbio {
 
   async loadScript(id, partName) {
     const scriptsRef = collection(firestore, `bots/${id}/scripts`);
-    return await getDoc(doc(scriptsRef, partName));
+    const script = await getDoc(doc(scriptsRef, partName));
+    return script.data();
 
   }
 
@@ -188,23 +190,29 @@ class Fbio {
   async randomLoad() {
     const botsRef = collection(firestore, "bots");
     const q = query(botsRef,
-      where("randomIndex", "<", getRandomVal()),
+      where("randomIndex", "<", getRandomValue()),
       orderBy("randomIndex"),
       limit(1));
 
     const querySnapshot = await getDocs(q);
+
+    const bots = [];
+    console.log("qsnapshot",querySnapshot)
     querySnapshot.forEach(doc => {
+      bots.push({ botId: doc.id, data: doc.data() });
+    })
 
-      const botId = doc.id;
-      const obj = doc.data();
+    for (let bot of bots) {
 
-      // partsの読み込み
+      const obj = bot.data;
+      const botId = bot.botId;
+
       for (let partName of Object.keys(obj.parts)) {
         obj.parts[partName].script = await this.loadScript(botId, partName);
       }
-
+      console.log("randomLoad:",obj)
       return obj;
-    })
+    }
 
     return false;
   }

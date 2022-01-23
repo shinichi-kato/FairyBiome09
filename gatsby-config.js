@@ -22,8 +22,8 @@ module.exports = {
       forestEncounter: {
         randomSeed: 243, // 1-65563
         changeRate: 0.00000001, // 乱数の変化速度
-        usersFairy: 0.25, // 0~1乱数がこの値以下ならfirestore上の妖精に出会う
-        tutor: 0.95, // 次に乱数がこの値以下ならtutorに出会う
+        usersFairy: 0.98, // 0~1.00: 乱数がこの値以下ならfirestore上の妖精に出会う
+        tutor: 0.99, // 0~1.00: 次に乱数がこの値以下ならtutorに出会う
       },
     },
     palette: [

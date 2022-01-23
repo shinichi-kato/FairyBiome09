@@ -27,13 +27,13 @@ export default function SettingsStep(props) {
         />
       </Box>
       <Box>
-        {props.bot.displayName} が仲間になりました
+        {props.bot.state.displayName} が仲間になりました
       </Box>
       <Box>
         <Button
           variant="contained"
           onClick={props.handleReturn}>
-          OOK
+          OK
         </Button>
       </Box>
     </Box>

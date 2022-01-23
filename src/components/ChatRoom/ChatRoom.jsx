@@ -98,7 +98,7 @@ export default function ChatRoom(props) {
       // 自動セーブ
 
       const dice = getRandom(feConfig.changeRate);
-      console.log("dice",dice,feConfig,dice<=feConfig.tutor)
+      console.log("dice",dice,feConfig,dice<=feConfig.tutor);
 
       (async () => {
         let obj,botId;
@@ -141,7 +141,7 @@ export default function ChatRoom(props) {
 
   // -------------------------------------------------------------------
   //
-  // ecosystemが変化したらチャットボットにトリガーを送出
+  // siteが変化したらチャットボットにトリガーを送出
   // bot.deploy()が完了するまで保留される
   // props.writeLogの元関数handleWriteLogは毎回生成されるため、最新の
   // handleWriteLogに追従するためrefの更新を行う
@@ -153,14 +153,14 @@ export default function ChatRoom(props) {
 
   useEffect(() => {
 
-    if (ecosystemRef.current.change !== null) {
+    if (ecosystemRef.current.change !== null && botRef.state?.status === 'ready') {
       botRef.current.execute(
         new Message('trigger', `{enter_${ecosystemRef.current.change}}`),
         writeLogRef.current
       );
       ecosystemRef.current.changeDispatched();
     }
-  }, [ecosystemRef.current.change]);
+  }, [ecosystemRef.current.change, botRef.current.status]);
 
 
   function handleChangeUserInput(event) {

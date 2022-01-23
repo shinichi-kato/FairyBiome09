@@ -555,7 +555,7 @@ export default function BiomebotProvider(props) {
     await db.addPart(state.botId);
   }
 
-  const generate = useCallback(async (obj, avatarPath, site) => {
+  const generate = useCallback(async (obj, id, site) => {
     // staticやfirestoreに保存されたチャットボット情報を新規に読み込む。
     //
     // contextに含める関数がuseContextする側のコンポーネントでのuseEffect内で
@@ -563,14 +563,11 @@ export default function BiomebotProvider(props) {
     // アップデートされた状態に保つためuseCallback化する。それにより
     // 利用側コンポーネントのuseEffectでdepsに含める必要がなくなる。 
 
-    // avatarPathをobjに組み込む
-    obj.config.avatarPath = avatarPath;
-
     // displayNameを復元
     obj.displayName = obj.main.NAME;
 
     // indexDBへの書き込み
-    await db.generate(obj, auth.uid);
+    await db.generate(obj, id);
 
     // stateへの書き込み
     dispatch({ type: 'connect', snap: obj });
@@ -588,10 +585,10 @@ export default function BiomebotProvider(props) {
         mood: "peace",
         queue: [],
         futurePostings: [],
-        botId: auth.uid,
+        botId: id,
 
       }));
-  }, [auth.uid]);
+  }, []);
 
   const load = useCallback(async (botId, site) => {
     // チャットボットを読み込む。
