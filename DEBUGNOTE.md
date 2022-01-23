@@ -6,10 +6,8 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 1. チャットルーム
 
-* forest のrandomloadでコケる
-* セリフが１文字ごとsplitされてる
+* ecosystemのchangeが2回実行されている
 * ボットを新しくしてもローカルのログが残る
-* 挨拶が生成されない→生成はされるが表示されない。sendmessageまわり？
 
 * queueが消費されてない？
 * 公園で全員の吹き出しが白い
@@ -22,6 +20,8 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 ぼっと選択画面でタイムスタンプも表示
 
 4. 他
+* 再入室するとdialog.js:209でSendMessage is not a functionになる
+* セリフが１文字ごとsplitされてる
 * landing画面でユーザとボットのアバター表示
 * チャットボットのスクリプトがfirestoreに保存されていない
 * AuthDialogでサインアップができない
@@ -33,6 +33,8 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 
 # 以下対応済み
+* chatroom.jsx:152でprops.writeLogを正しくuseEffectに渡せていない
+* forest のrandomloadでコケる
 * botをindexedDBに保存したときにavatarPathにuidが代入される
 * 森に入ったときに出現するチャットボットの決定ロジック
 * firestoreへのsaveでエラー

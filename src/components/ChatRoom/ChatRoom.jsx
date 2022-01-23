@@ -15,7 +15,7 @@
 
 */
 
-import React, { useContext, useRef, useEffect, useState, useMemo } from 'react';
+import React, { useContext, useRef, useEffect, useState, useMemo, useCallback } from 'react';
 import { alpha } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
@@ -117,6 +117,7 @@ export default function ChatRoom(props) {
         if (!obj && dice <= feConfig.tutor) {
           const res = await fetch(`../../chatbot/${TUTOR_ID}/chatbot.json`);
           obj = await res.json();
+          obj.config.avatarPath = TUTOR_ID;
           botId = TUTOR_ID;
         }
 
@@ -142,25 +143,24 @@ export default function ChatRoom(props) {
   // -------------------------------------------------------------------
   //
   // siteが変化したらチャットボットにトリガーを送出
-  // bot.deploy()が完了するまで保留される
   // props.writeLogの元関数handleWriteLogは毎回生成されるため、最新の
   // handleWriteLogに追従するためrefの更新を行う
   // 参考：
   // https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updated-in-the-nested-function
   //
 
-  const writeLogRef = useRef(props.writelog);
+  const writeLog = props.writeLog;
 
   useEffect(() => {
-
-    if (ecosystemRef.current.change !== null && botRef.state?.status === 'ready') {
+    console.log("change捕捉",ecosystemRef.current.change,writeLog)
+    if (ecosystemRef.current.change !== null) {
       botRef.current.execute(
         new Message('trigger', `{enter_${ecosystemRef.current.change}}`),
-        writeLogRef.current
+        writeLog
       );
-      ecosystemRef.current.changeDispatched();
+      ecosystem.changeDispatched();
     }
-  }, [ecosystemRef.current.change, botRef.current.status]);
+  }, [ecosystemRef.current.change, ecosystem.change,writeLog]);
 
 
   function handleChangeUserInput(event) {

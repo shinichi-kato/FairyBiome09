@@ -1,4 +1,4 @@
-import React, { useState, createContext, useRef, useEffect } from 'react';
+import React, { useState, createContext, useRef, useEffect, useCallback } from 'react';
 import { Noise } from 'noisejs';
 import { useStaticQuery, graphql } from "gatsby";
 import useInterval from '../use-interval';
@@ -243,9 +243,10 @@ export default function EcosystemProvider(props) {
     setSite(s);
   }
 
-  function handleChangeDispatched() {
+  // useContextするコンポーネントのuseEffectで使われるため、callback化
+  const handleChangeDispatched = useCallback(() => {
     setChange(null);
-  }
+  }, []);
 
   // const weatherBg = `url(images/ecosystem/weather/${WEATHER_ICONS[weather]})`;
   const sceneBg = `url(images/ecosystem/set/${site}-${dayPart}.svg)`;

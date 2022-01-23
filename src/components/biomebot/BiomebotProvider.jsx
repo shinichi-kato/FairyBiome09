@@ -616,7 +616,7 @@ export default function BiomebotProvider(props) {
           moment: snapWork.moment,
           mood: snapWork.mood,
           partOrder: [...snapWork.partOrder],
-          queue: [...snapWork.queue],
+          queue: [...prev.queue,...snapWork.queue],
           site: site,
           updatedAt: snapWork.updatedAt,
           futurePosting: [],

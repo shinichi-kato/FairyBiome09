@@ -139,7 +139,7 @@ export default function CreateFairy(props) {
   }
 
   function handleGenerate() {
-    const { location, id, avatarPath } = botIdentifier;
+    const { location, id } = botIdentifier;
     console.log(location,id);
 
     (async () => {

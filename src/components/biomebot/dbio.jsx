@@ -286,7 +286,11 @@ class dbio {
         .where('[botId+key]')
         .between([botId, Dexie.minKey], [botId, Dexie.maxKey])
         .each(item => {
-          main[item.key] = item.val
+          if (item.key in main){
+            main[item.key].push(item.val);
+          }else{
+            main[item.key] = [item.val];
+          }
         });
 
 

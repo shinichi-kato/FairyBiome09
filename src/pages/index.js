@@ -8,7 +8,7 @@
   
 */
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef,useCallback } from "react";
 import { graphql, navigate } from "gatsby";
 
 import Landing from '../components/Landing/Landing';
@@ -187,7 +187,7 @@ export default function IndexPage({ data }) {
   }, [appState])
 
 
-  function handleWriteLog(message) {
+  const handleWriteLog = useCallback(message => {
     (async () => {
       const m = await writeLog(message);
       switch (message.site) {
@@ -203,7 +203,7 @@ export default function IndexPage({ data }) {
           throw new Error(`invalid site ${message.site}`)
       }
     })()
-  }
+  },[]);
 
   function handleBotFound() { setAppState('continue'); }
   function handleBotNotFound() { setAppState('new'); }
