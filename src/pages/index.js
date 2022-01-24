@@ -188,6 +188,10 @@ export default function IndexPage({ data }) {
 
 
   const handleWriteLog = useCallback(message => {
+    /* ログの書き込み
+      この関数自体には依存関係がないが、context消費側のuseEffect()内で利用されるため
+      callback化する。それによりrenderが繰り返されてもアドレスが変わらなくなる。
+    */
     (async () => {
       const m = await writeLog(message);
       switch (message.site) {

@@ -137,7 +137,7 @@ onmessage = function (event) {
       }
     }
 
-    console.log(partName, ": loaded in=", inScript, "out=", outScript.length, "entries", "tagDict", tagDict)
+    // console.log(partName, ": loaded in=", inScript, "out=", outScript.length, "entries", "tagDict", tagDict)
 
     // inScriptは辞書の1エントリに対して複数の入力,複数の出力があってもよい。tfidfや
     // fvは入力につき1つ定義され、入力にどのoutScirptおよびfvが対応するかを示す
@@ -206,7 +206,7 @@ onmessage = function (event) {
 
     const num_of_columns = tf.size()[0];
     const df = apply(wv, 0, x => sum(isPositive(x)) / num_of_columns);
-    console.log("matrixize: tf=",tf,"df=",df)
+    // console.log("matrixize: tf=",tf,"df=",df)
     let idf = map(df, x => Math.log(1 + 1 / x));
     let tfidf = multiply(tf, diag(idf));
 

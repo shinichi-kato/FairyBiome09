@@ -1,4 +1,10 @@
-import React, { useState, createContext, useRef, useEffect, useCallback } from 'react';
+import React, {
+  useState,
+  createContext,
+  useRef,
+  useEffect,
+  useReducer
+} from 'react';
 import { Noise } from 'noisejs';
 import { useStaticQuery, graphql } from "gatsby";
 import useInterval from '../use-interval';
@@ -12,7 +18,7 @@ void undefined; /* for detect undefind */
 export const EcosystemContext = createContext();
 
 const query = graphql`
-query j {
+query {
   allFile(filter: {sourceInstanceName: {eq: "images"}, relativeDirectory: {eq: "ecosystem"}}) {
     edges {
       node {
@@ -122,6 +128,40 @@ function getDayPart(now) {
 
 }
 
+const initialState = {
+  change: null,
+  site: 'room'
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'change': {
+      return {
+        ...state,
+        change: action.what,
+      }
+    }
+
+    case 'site': {
+      return {
+        site: action.site,
+        change: action.site,
+      }
+    }
+
+    case 'dispatched': {
+      return {
+        site: state.site,
+        change: null,
+      }
+    }
+
+    default:
+      throw new Error(`invalid action ${action.type}`);
+  }
+
+}
+
 export default function EcosystemProvider(props) {
   /*
     EcosystemProviderは
@@ -170,9 +210,8 @@ export default function EcosystemProvider(props) {
   const [pressure, setPressure] = useState(); /* 仮想気圧 0〜1 */
   const [weather, setWeather] = useState(); /* 仮想天気 */
   const [season, setSeason] = useState(); /* 季節 */
-  const [site, setSite] = useState('room'); /* 場所 */
   const [dayPart, setDayPart] = useState(getDayPart(new Date())); /* 昼、夜 */
-  const [change, setChange] = useState(null) /* weather,season,site,sceneの変化 */
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   //---------------------------------------------------------------------------
   // 
@@ -180,8 +219,8 @@ export default function EcosystemProvider(props) {
   //
 
   useEffect(() => {
-    console.log("ecosystem changeMonitor: ", change);
-  }, [change])
+    console.log("ecosystem changeMonitor: ", state.change);
+  }, [state.change])
 
   useInterval(() => {
     const now = new Date();
@@ -192,7 +231,7 @@ export default function EcosystemProvider(props) {
 
     setSeason(prevState => {
       if (prevState !== s) {
-        setChange(s);
+        dispatch({type:'change', what:s});
       };
       return s;
     });
@@ -202,10 +241,10 @@ export default function EcosystemProvider(props) {
     setWeather(prevState => {
       if (prevState !== w) {
         if (prevState in SEVERE_WEATHERS) {
-          setChange(`exit_${w}`)
+          dispatch({type:'change', what:`exit_${w}`});
         }
         else {
-          setChange(w);
+          dispatch({type:'change', what: w});
         }
       };
       return w;
@@ -213,7 +252,7 @@ export default function EcosystemProvider(props) {
 
     setDayPart(prevState => {
       if (prevState !== d) {
-        setChange(d);
+        dispatch({type:'change', what:d});
       }
       return d;
     })
@@ -239,31 +278,21 @@ export default function EcosystemProvider(props) {
     return weather;
   }
 
-  function handleChangeSite(s) {
-    setSite(s);
-  }
-
-  // useContextするコンポーネントのuseEffectで使われるため、callback化
-  const handleChangeDispatched = useCallback(() => {
-    setChange(null);
-  }, []);
-
   // const weatherBg = `url(images/ecosystem/weather/${WEATHER_ICONS[weather]})`;
-  const sceneBg = `url(images/ecosystem/set/${site}-${dayPart}.svg)`;
+  const sceneBg = `url(images/ecosystem/set/${state.site}-${dayPart}.svg)`;
   const skyBg = `url(images/ecosystem/sky/${weather}-${dayPart}.svg)`;
 
-   return (
+  return (
     <EcosystemContext.Provider
       value={{
         pressure: pressure,
         season: season,
         getWeather: getWeather,
         getPressure: getPressure,
-        site: site,
         getDayPart: getDayPart,
-        change: change,
-        changeDispatched: handleChangeDispatched,
-        changeSite: handleChangeSite,
+        site: state.site,
+        change: state.change,
+        dispatch: dispatch
       }}
     >
       <Container

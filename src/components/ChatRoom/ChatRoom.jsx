@@ -15,7 +15,7 @@
 
 */
 
-import React, { useContext, useRef, useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useContext, useRef, useEffect, useState, useMemo } from 'react';
 import { alpha } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
@@ -68,7 +68,7 @@ export default function ChatRoom(props) {
 
 
   function handleChangeSite(site) {
-    ecosystemRef.current.changeSite(site);
+    ecosystem.dispatch({type:'change', what:site});
   }
 
  
@@ -150,17 +150,18 @@ export default function ChatRoom(props) {
   //
 
   const writeLog = props.writeLog;
+  const change = ecosystem.change;
+  const dispatch = ecosystem.dispatch;
 
   useEffect(() => {
-    console.log("change捕捉",ecosystemRef.current.change,writeLog)
-    if (ecosystemRef.current.change !== null) {
+    if (change !== null) {
       botRef.current.execute(
-        new Message('trigger', `{enter_${ecosystemRef.current.change}}`),
+        new Message('trigger', `{enter_${change}}`),
         writeLog
       );
-      ecosystem.changeDispatched();
+      dispatch({type:'dispatched'});
     }
-  }, [ecosystemRef.current.change, ecosystem.change,writeLog]);
+  }, [change, dispatch, writeLog]);
 
 
   function handleChangeUserInput(event) {
