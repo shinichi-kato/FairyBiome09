@@ -3,10 +3,27 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
-import ImageListItemBar from '@mui/material/ImageListItem';
+import ImageListItemBar from '@mui/material/ImageListItemBar';
+import CloudDoneIcon from '@mui/icons-material/CloudDone';
 
-function isBotIdentical(a,b){
+function isBotIdentical(a, b) {
   return (a.location === b.location && a.id === b.id);
+}
+
+function toPastStr(date) {
+  /* 0〜59分前の場合「x分前」、1〜23時間前の場合「x時間前」、1日以上の場合「x日前」表示 */
+  const now = new Date();
+  let delta = (now.getTime() - date.getTime()) / (1000 * 60);
+  if (delta < 60) {
+    return `${parseInt(delta)}分前`
+  }
+  delta /= 60;
+  if (delta < 24) {
+    return `${parseInt(delta)}時間前`
+  }
+  delta /= 24;
+  return `${parseInt(delta)}日前`
+
 }
 
 export default function SelectStep(props) {
@@ -31,7 +48,7 @@ export default function SelectStep(props) {
           }}
           cols={3}
         >
-          {props.fsChatbots.map((chatbot,index) => (
+          {props.fsChatbots.map((chatbot, index) => (
             <ImageListItem key={index}
               onClick={() => props.handleSelectBot(
                 chatbot.location,
@@ -40,7 +57,7 @@ export default function SelectStep(props) {
               )}
               sx={{
                 border: "4px solid",
-                borderColor: isBotIdentical(chatbot,props.botIdentifier) ? 'primary.main' : '#FFFFFF',
+                borderColor: isBotIdentical(chatbot, props.botIdentifier) ? 'primary.main' : '#FFFFFF',
               }}
             >
               <img src={`../../chatbot/${chatbot.directory}/peace.svg`}
@@ -51,11 +68,20 @@ export default function SelectStep(props) {
                 alt={chatbot.directory}
               />
               <ImageListItemBar
-                title={chatbot.name}
-                subtitle={chatbot.description}
-                sx={{
-                  flexGrow: 1,
-                }}
+                title={
+                  <Box
+                    sx={{ display:'flex', flexDirection:'row'}}
+                  >
+                    <Box sx={{ paddingRight: '4px'}}>
+                      {chatbot.location === 'cloud' && <CloudDoneIcon />}
+                    </Box>
+                    <Box>
+                      {chatbot.name}
+                    </Box>
+
+                  </Box>
+                }
+                subtitle={`${toPastStr(chatbot.timestamp)} - ${chatbot.description}`}
               />
             </ImageListItem>
           ))}
@@ -65,7 +91,7 @@ export default function SelectStep(props) {
       <Box>
         <Button
           onClick={props.handleNext}
-          disabled={props.botIdentifier.botId===null}
+          disabled={props.botIdentifier.botId === null}
         >この妖精にする</Button>
       </Box>
     </div>

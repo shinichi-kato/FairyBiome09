@@ -107,6 +107,7 @@ export default function CreateFairy(props) {
             directory: d.config.avatarPath,
             backgroundColor: d.config.backgroundColor,
             description: d.config.description,
+            timestamp: d.timestamp.toDate()
           })
         });
         setFsChatbots([...arr]);

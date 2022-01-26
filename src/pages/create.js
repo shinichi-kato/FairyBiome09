@@ -17,6 +17,7 @@ export const query = graphql`
         parent {
           ... on File {
             relativeDirectory
+            mtime
           }
         }
         config {
@@ -82,8 +83,10 @@ export default function CreatePage({ location, data }) {
     creator: node.main.CREATOR_NAME,
     directory: node.parent.relativeDirectory,
     backgroundColor: node.config.backgroundColor,
-    description: node.config.description
+    description: node.config.description,
+    timestamp:new Date(node.parent.mtime),
   }));
+
 
  
   if (location.search === '?exec' && appStateByNumber[appState] < 4) {
