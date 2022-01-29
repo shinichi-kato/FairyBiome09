@@ -11,7 +11,11 @@ function isBotIdentical(a, b) {
 }
 
 function toPastStr(date) {
-  /* 0〜59分前の場合「x分前」、1〜23時間前の場合「x時間前」、1日以上の場合「x日前」表示 */
+  /* 
+    UTCのdateについて
+    0〜59分前の場合「x分前」、1〜23時間前の場合「x時間前」、1日以上の場合「x日前」
+    の文字列を返す
+  */
   const now = new Date();
   let delta = (now.getTime() - date.getTime()) / (1000 * 60);
   if (delta < 60) {

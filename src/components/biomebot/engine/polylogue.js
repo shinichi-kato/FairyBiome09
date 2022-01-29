@@ -186,7 +186,7 @@ export function execute(state, work, message, sendMessage) {
     }
     console.log("state.main",state.main)
 
-    reply.text.replace('{bot}',work.displayName);
+    reply.text.replace('{bot}',state.displayName);
     reply.text.replace('{user}',message.name);
   }
 

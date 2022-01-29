@@ -199,7 +199,7 @@ export function execute(state, work, message, sendMessage) {
   }
 
   replyText = replyText
-    .replace('{bot}', work.displayName)
+    .replace('{bot}', state.displayName)
     .replace('{user}', message.name || 'あなた');
   // ecosystemにはmessage.nameがない。そのような返答は起きるべきでないが、
   // フォールバックとして「あなた」を使用。

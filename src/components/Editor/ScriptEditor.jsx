@@ -46,7 +46,7 @@ const columns = {
   ]
 };
 
-
+const isBlank = str => str.match(/^(|[ 　]+)$/) !== null;
 
 function rows2obj(rows, kind) {
 
@@ -55,7 +55,7 @@ function rows2obj(rows, kind) {
 
   // 新規行を入力するために自動追加した最終行が空白のままの場合、無視する
   const lastItem = rows[rows.length - 1];
-  if (lastItem.in === "" && lastItem.out === "") {
+  if (isBlank(lastItem.in) && isBlank(lastItem.out)) {
     obj.length -= 1;
   }
 
@@ -77,15 +77,15 @@ function rows2obj(rows, kind) {
     }
   }
 
-  // 全てのkindで空文字は許可しない
+  // 全てのkindで空文字やスペースのみは許可しない
   for (let i = 0, l = obj.length; i < l; i++) {
-    if (obj[i].in === "") {
+    if (isBlank(obj[i].in)) {
       return {
         state: 'error',
         message: `${i}行のINを記入してください`
       }
     }
-    if (obj[i].out === "") {
+    if (isBlank(obj[i].out)) {
       return {
         state: 'error',
         message: `${i} 行のOUTを記入してください`
