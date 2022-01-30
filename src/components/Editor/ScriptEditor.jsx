@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect, useCallback } from "react";
 import Box from '@mui/material/Box';
 import Fab from '@mui/material/Fab';
 import SaveIcon from '@mui/icons-material/SaveAlt';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, jaJP } from '@mui/x-data-grid';
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
 import { Typography } from "@mui/material";
 import { ItemPaper, FabContainerBox } from './StyledWigets';
@@ -30,21 +30,34 @@ const description = {
 
 const columns = {
   'knowledge': [
-    { field: 'id', headerName: '行番号', hide: true },
+    { field: 'id', headerName: '行番号', flex: 0.2 },
     { field: 'in', headerName: 'IN', flex: 0.4, editable: true },
     { field: 'out', headerName: 'OUT', flex: 1, editable: true },
   ],
   'episode': [
     { field: 'id', headerName: '行番号', flex: 0.2 },
-    { field: 'in', headerName: 'IN', flex: 0.4, hide: true },
+    { field: 'in', headerName: 'IN', flex: 0.4 },
     { field: 'out', headerName: 'セリフ', flex: 1, editable: true },
   ],
   'curiosity': [
-    { field: 'id', headerName: '行番号', hide: true },
+    { field: 'id', headerName: '行番号', flex: 0.2 },
     { field: 'in', headerName: 'IN', flex: 0.4, editable: true },
     { field: 'out', headerName: 'OUT', flex: 1, editable: true },
   ]
 };
+
+const initialColumnVisibilityModels = {
+  'knowledge': {
+    id: false, in: true, out: true
+  },
+  'episode': {
+    id: false, in: false, out: true,
+  },
+  'curiosity': {
+    id: false, in: true, out: true,
+  }
+};
+
 
 const isBlank = str => str.match(/^(|[ 　]+)$/) !== null;
 
@@ -53,11 +66,6 @@ function rows2obj(rows, kind) {
   let obj = [];
   obj.length = rows.length;
 
-  // 新規行を入力するために自動追加した最終行が空白のままの場合、無視する
-  const lastItem = rows[rows.length - 1];
-  if (isBlank(lastItem.in) && isBlank(lastItem.out)) {
-    obj.length -= 1;
-  }
 
   if (kind === 'episode') {
     // episode記憶の場合は前行のOUTを今の行のINにする
@@ -123,17 +131,25 @@ function maxId(rows) {
 
 }
 
-export default function ScriptEditor(props) {
+export default function ScriptEditor({ partName }) {
   const bot = useContext(BiomebotContext);
   const [rows, setRows] = useState([]);
   const [message, setMessage] = useState("");
-  const partName = props.partName
+  const [loading, setLoading] = useState(false);
   const part = bot.state.parts[partName];
 
+  // ---------------------------------------------------
+  //
+  // スクリプトのロード
+  //
+  
   useEffect(() => {
+
     (async () => {
+      setLoading(true);
       const data = await bot.loadScript(partName);
       setRows(obj2rows(data));
+      setLoading(false);
     })()
   }, [bot, partName]);
 
@@ -157,7 +173,12 @@ export default function ScriptEditor(props) {
 
   function handleSave() {
     (async () => {
-      const result = rows2obj(rows, part.kind);
+      // in,outともに空白の行は削除
+      let newRows = rows.filter(row => !isBlank(row.in) || !isBlank(row.out));
+
+      setRows(newRows);
+
+      const result = rows2obj(newRows, part.kind);
       if (result.state === 'ok') {
 
         await bot.save('script', result.obj, partName);
@@ -187,6 +208,7 @@ export default function ScriptEditor(props) {
 
   const dataInvalid = message.length !== 0 && message !== "ok";
 
+
   return (
     <Box
       display="flex"
@@ -195,12 +217,13 @@ export default function ScriptEditor(props) {
     >
       <ItemPaper elevation={0} >
         <Box>
-          <Typography variant="h5">スクリプト {props.partName}</Typography>
+          <Typography variant="h5">スクリプト {partName}</Typography>
           <Typography variant="body2">カンマ(,)で区切ると値を複数設定できます</Typography>
         </Box>
         <Box>
           {description[partName]}
         </Box>
+
         <Box
           sx={{ height: "500px" }}
         >
@@ -208,8 +231,15 @@ export default function ScriptEditor(props) {
             height={500}
             rows={rows}
             columns={columns[part.kind]}
+            initialState={{
+              columns: {
+                columnVisibilityModel: initialColumnVisibilityModels[part.kind]
+              }
+            }}
             hideFooterSelectedRowCount
+            loading={loading}
             onCellEditCommit={handleCellEditCommit}
+            localeText={jaJP.components.MuiDataGrid.defaultProps.localeText}
           />
         </Box>
       </ItemPaper>

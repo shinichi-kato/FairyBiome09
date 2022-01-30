@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 
 import { firestore, fbio } from '../../firebase';
 import {
-  query, collection, where, orderBy, limit, onSnapshot, 
+  query, collection, where, orderBy, limit, onSnapshot,
 } from 'firebase/firestore';
 
 import { navigate } from "gatsby";
@@ -84,6 +84,7 @@ export default function CreateFairy(props) {
   // --------------------------------------------------------
   // firestoreに格納されたボットの検索
   // そのサブスクリプションを開始
+  // 暫定的に全ユーザに全チャットボットが見える
 
   useEffect(() => {
     let unsubscribe = null;
@@ -91,7 +92,7 @@ export default function CreateFairy(props) {
     if (auth.uid) {
       const botsRef = collection(firestore, "bots");
       const q = query(botsRef,
-        where("config.ownerId", "==", auth.uid),
+        // where("config.ownerId", "==", auth.uid),
         orderBy("timestamp"),
         limit(5));
 
@@ -140,8 +141,19 @@ export default function CreateFairy(props) {
   }
 
   function handleGenerate() {
+    /* 
+      チャットボットの生成
+      ----------------------------------------------------------------
+
+      staticまたはfirestoreから読み込んだデータで新しいチャットボットを生成。
+      新規作成なので
+      ・descriptionは空文字
+      ・CREATOR_NAMEはユーザ名
+      に変更する
+
+    */
     const { location, id } = botIdentifier;
-    console.log(location,id);
+    console.log(location, id);
 
     (async () => {
       let obj;
@@ -158,15 +170,16 @@ export default function CreateFairy(props) {
         // staticフォルダから読んだ場合はbotIdをauth.uidにする。これにより
         // localにはユーザごとに持てるチャットボットを最大1体に限定する。
         // またavatarPathはstaticが格納されているフォルダにする。
-
+      
         obj.botId = auth.uid;
         obj.config.avatarPath = id;
-        console.log("loading static",obj)
+        console.log("loading static", obj)
       }
 
       obj.config.backgroundColor = backgroundColor;
+      obj.config.description = "";
       obj.main.NAME = botName;
-
+      obj.main.CREATOR_NAME = auth.displayName;
 
       await bot.generate(obj, id);
       props.handleMove('done');

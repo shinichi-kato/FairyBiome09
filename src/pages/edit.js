@@ -64,7 +64,6 @@ export default function EditPage({ location, data }) {
         <Container
           fixed
           disableGutters
-          maxWidth="xs"
           sx={{
             height: "100vh",
           }}

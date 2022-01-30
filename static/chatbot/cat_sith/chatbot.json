@@ -54,7 +54,7 @@
             "script": [
                 {
                     "in": "{enter_greeting}",
-                    "out": "こんにちは。{user}さん。どうしたんですか？"
+                    "out": "こんにちは。{user}さん。"
                 },
                 {
                     "in": "{enter_morning}",

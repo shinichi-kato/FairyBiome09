@@ -7,21 +7,21 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 1. チャットルーム
 
 * 挨拶が発火しない
-* {bot}がundefined
+
 * ボットの返答にディレイをかける
 * ボットを新しくしてもローカルのログが残る
 * 公園で全員の吹き出しが白い
 
 2. エディタ
-
+* idが初期に非表示にならない
 * スクリプトをdbio.loadScriptでnextの順に並べてデータ取得
 * どんな{}が展開されるのかわからない
 
 3. create
+* systemのボットとfirestoreのボットの区別
 
 
 4. 他
-* firestoreからロード
 * landing画面でユーザとボットのアバター表示
 * AuthDialogでサインアップができない
 
@@ -31,6 +31,7 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 
 # 以下対応済み
+* {bot}がundefined
 * 最終行が空白かどうか、見た目わかりにくい -> /^( |[ 　]+)$/は無効とみなす
 * ぼっと選択画面でタイムスタンプも表示
 * チャットボットのスクリプトがfirestoreに保存されていない

@@ -319,15 +319,41 @@ class dbio {
   async loadScript(botId, partName) {
     /* 
       botId,partNameで指定されたscriptを読んで配列化して返す.
+      scriptの各行は
+      {
+        id: i,
+        botId: botId, // compound key
+        partName: partName,
+        in: toArray(script[i].in), out: toArray(script[i].out),
+        next: i + 1,
+        prev: i - 1,
+      }
+      となっている。元の順序を復元するにはid=0から始まり、nextをたどって並べる
+      必要がある。
       ※未実装：next順でソート
     */
 
-    return await this.db.scripts.where('[botId+partName+id]')
-      .between(
-        [botId, partName, Dexie.minKey],
-        [botId, partName, Dexie.maxKey])
-      .toArray();
+    // let src =  await this.db.scripts.where('[botId+partName+id]')
+    //   .between(
+    //     [botId, partName, Dexie.minKey],
+    //     [botId, partName, Dexie.maxKey])
+    //   .toArray();
+    
+    let src=[];
+    let id=0;
 
+    do {
+      let line = await this.db.scripts.where({
+        id:id,
+        botId:botId,
+        partName:partName
+      }).limit(1).first();
+      src.push(line);
+      id = line.next;
+  
+    } while(id !== -1)
+        
+    return src;
   }
 
   async saveScript(botId, partName, script) {
@@ -341,8 +367,8 @@ class dbio {
       .delete();
 
     let data = [];
-    let i;
-    for (i in script) {
+    let i,l=script.length;
+    for (i=0; i<l; i++) {
       data.push({
         id: i,
         botId: botId, // compound key
@@ -353,8 +379,7 @@ class dbio {
       });
     }
 
-    data[0] = { ...data[0], prev: null };
-    data[i] = { ...data[i], next: null };
+    data[i-1].next = -1;
 
     await this.db.scripts.bulkAdd(data);
   }

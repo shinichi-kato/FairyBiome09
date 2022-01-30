@@ -85,7 +85,12 @@ export default function SelectStep(props) {
 
                   </Box>
                 }
-                subtitle={`${toPastStr(chatbot.timestamp)} - ${chatbot.description}`}
+                subtitle={
+                  chatbot.location === 'cloud' ? 
+                    `${toPastStr(chatbot.timestamp)} - 作者:${chatbot.creator} ${chatbot.description}`
+                    :
+                    `${toPastStr(chatbot.timestamp)} - ${chatbot.description}`
+                  }
               />
             </ImageListItem>
           ))}
