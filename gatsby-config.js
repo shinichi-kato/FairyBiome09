@@ -8,6 +8,7 @@ module.exports = {
   },
   siteMetadata: {
     title: `FairyBiome`,
+    version: "0.9.1",
     description: `Small community chat with Ecosystem + Chatbot `,
     author: `skato21r@iris.eonet.ne.jp`,
     ecosystem: {
@@ -34,7 +35,6 @@ module.exports = {
   },
   plugins: [
     `gatsby-plugin-top-layout`,
-    `gatsby-plugin-remove-serviceworker`,
     `gatsby-plugin-react-helmet`,
     `gatsby-plugin-mui-emotion`,
     {
@@ -79,31 +79,24 @@ module.exports = {
         ignore: ["**/\.*"],
       },
     },
-    // {
-    //   resolve: "gatsby-source-filesystem",
-    //   options: {
-    //     path: `${__dirname}/static/chatbot`,
-    //     name: "chatbot",
-    //     ignore: ["**/\.*"],
-    //   },
-    // },
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `FairyBiome-0.9`,
+        name: `Chatroom FairyBiome`,
         short_name: `FairyBiome`,
         start_url: `/`,
         background_color: `#663399`,
         theme_color: `#663399`,
-        display: `minimal-ui`,
+        display: `standalone`,
         icon: `src/images/fairybiome-icon.png`, // This path is relative to the root of the site.
       },
     },
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     // `gatsby-plugin-offline`,
+    // `gatsby-plugin-remove-serviceworker`,
     {
       resolve: "gatsby-plugin-react-svg",
       options: {

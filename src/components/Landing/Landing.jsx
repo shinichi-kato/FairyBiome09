@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import EditIcon from '@mui/icons-material/EditOutlined';
 import ChatIcon from '@mui/icons-material/ChatOutlined';
+import Typography from '@mui/material/Typography';
 
 import FairyBiomeCrest from './fairybiome-crest.inline.svg';
 import UserAccount from './UserAccount';
@@ -39,7 +40,7 @@ export default function Landing(props) {
   function handleToEdit() {
     navigate("/edit");
   }
-
+  console.log(process.env.GATSBY_APP_VERSION)
   return (
     <Box
       display="flex"
@@ -89,6 +90,11 @@ export default function Landing(props) {
           onClick={handleToEdit}>
           チャットボットのデータ編集
         </MenuButton>
+      </Box>
+      <Box>
+        <Typography variant="caption">
+          ver. {props.version}
+        </Typography>
       </Box>
     </Box>
   )

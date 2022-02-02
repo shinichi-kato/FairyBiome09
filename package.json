@@ -11,7 +11,8 @@
     "start": "gatsby develop",
     "build": "gatsby build",
     "serve": "gatsby serve",
-    "clean": "gatsby clean"
+    "clean": "gatsby clean",
+    "check-env": "node -e 'console.log(process.env)' | grep npm"
   },
   "dependencies": {
     "@emotion/react": "^11.7.1",
@@ -29,6 +30,7 @@
     "gatsby": "^4.6.0",
     "gatsby-plugin-manifest": "^4.6.0",
     "gatsby-plugin-mdx": "^3.6.0",
+    "gatsby-plugin-offline": "^5.6.0",
     "gatsby-plugin-react-helmet": "^5.6.0",
     "gatsby-plugin-react-svg": "^3.1.0",
     "gatsby-plugin-remove-serviceworker": "^1.0.0",

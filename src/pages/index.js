@@ -31,6 +31,7 @@ export const query = graphql`
 query indexq {
   site {
     siteMetadata {
+      version
       chatbot {
         logViewLength
         logStoreLength
@@ -133,6 +134,7 @@ export default function IndexPage({ data }) {
   const unsubscribeRef = useRef();
 
   const config = data.site.siteMetadata.chatbot;
+  const version = data.site.siteMetadata.version;
 
   // --------------------------------------------------------------
   // ログdbの初期化
@@ -249,6 +251,7 @@ export default function IndexPage({ data }) {
               appState={appState}
               handleNew={handleNew}
               handleContinue={handleContinue}
+              version={version}
             />
           }
         </BiomebotProvider>
