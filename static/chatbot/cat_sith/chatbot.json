@@ -18,7 +18,8 @@
             "utilization": 0.4,
             "precision": 0.4,
             "retention": 0.4
-        }
+        },
+        "keepAlive": 10
     },
     "work": {
         "updatedAt": "",

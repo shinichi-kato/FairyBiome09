@@ -226,6 +226,7 @@ export const defaultSettings = {
       precision: 1,
       retention: 0
     },
+    keepAlive: 10,
   },
   main: {
     "NAME": "uninitialized",
@@ -682,6 +683,11 @@ export default function BiomebotProvider(props) {
 
   }
 
+  function exportJson(){
+    // db上のデータをjson形式で出力
+    return {}
+  } 
+
 
   const photoURL = `/chatbot/${state.config.avatarPath}/${work.partOrder[0]}.svg`;
 
@@ -694,6 +700,7 @@ export default function BiomebotProvider(props) {
         addNewPart: addNewPart,
         loadScript: loadScript,
         load: load,
+        exportJson: exportJson,
         state: state,
         work: work,
         photoURL: photoURL,

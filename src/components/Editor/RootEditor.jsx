@@ -7,6 +7,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
+
 import Fab from '@mui/material/Fab';
 
 import ArrowForwardIcon from '@mui/icons-material/ArrowForwardIos';
@@ -15,9 +16,12 @@ import FlashOnIcon from '@mui/icons-material/FlashOn';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import PartIcon from '@mui/icons-material/RecordVoiceOver';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+
+
 import { FabContainerBox } from './StyledWigets';
 
 import BotMonitor from './BotMonitor';
+import ToolMenu from './ToolMenu';
 
 import { AuthContext } from "../Auth/AuthProvider";
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
@@ -47,13 +51,13 @@ const menus = [
   },
 ];
 
-function toArray(data){
+function toArray(data) {
   // scriptのノードは略記のため文字列またはリストとして格納してある。
   // in: "not_found"
   // または
   // in: ["not_found","??"]
   // リストはそのまま、文字列は要素が一つのリストに変換して返す
-  return  typeof data === 'string' ? [data] : data;
+  return typeof data === 'string' ? [data] : data;
 }
 
 export default function RootEditor(props) {
@@ -120,11 +124,11 @@ export default function RootEditor(props) {
 
     (async () => {
       let obj = await bot.load(auth.uid);
-      for(let partName in obj.parts){
+      for (let partName in obj.parts) {
         const s = await bot.loadScript(partName);
 
-        obj.parts[partName].script = s.map(n=>(
-          {in: toArray(n.in), out: toArray(n.out)}
+        obj.parts[partName].script = s.map(n => (
+          { in: toArray(n.in), out: toArray(n.out) }
         ));
       }
 
@@ -136,6 +140,10 @@ export default function RootEditor(props) {
       setMessage("ok");
     })();
   }
+
+
+
+
 
   useEffect(() => {
     let id;
@@ -158,7 +166,18 @@ export default function RootEditor(props) {
     >
       <ItemPaper
         elevation={0}
+        sx={{
+          display: "flex",
+          flexDirection: "column"
+        }}
       >
+        <Box 
+        sx={{alignSelf:"flex-end"}}>
+          <ToolMenu 
+            handleImport={props.handleImport}
+            handleExport={props.handleExport}
+          />
+        </Box>
         <Box alignSelf="center">
           <BotMonitor
             photoURL={props.photoURL}
@@ -181,6 +200,7 @@ export default function RootEditor(props) {
         </List>
 
       </ItemPaper>
+
 
       <FabContainerBox>
         <Fab

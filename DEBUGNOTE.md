@@ -4,10 +4,14 @@ debug note
 参考リンク
 https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updated-in-the-nested-function
 
+* keep_aliveの置き場所はconfig, main , gatsby-config.jsのどこに
+するか決める
+
 1. チャットルーム
 
-* 一定時間会話しなかったら挨拶を発火させる
-
+* dialogで一定時間会話しなかったら会話終了とみなす
+* 会話が始まっていない場合挨拶を発火させる
+* ボットの精神パワー実装
 * ボットの返答にディレイをかける
 * ボットを新しくしてもローカルのログが残る
 * 公園で全員の吹き出しが白い
@@ -15,7 +19,8 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 2. エディタ
 * スクリプトをdbio.loadScriptでnextの順に並べてデータ取得
 * どんな{}が展開されるのかユーザにわからない
-* json形式でのインポート・エクスポート
+* json形式でのインポート
+* json形式でのエクスポート
 
 3. create
 * systemのボットとfirestoreのボットの区別

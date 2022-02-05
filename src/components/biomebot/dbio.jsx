@@ -145,6 +145,7 @@ class dbio {
             "precision": 0.5,
             "retention": 0.4
         }
+        "keepAlive": 10
     },
     */
 

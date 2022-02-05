@@ -11,6 +11,7 @@ import PartOrder from './PartOrder';
 
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
 import FactorInput from "./FactorInput";
+import NonNegIntegerInput from "./NonNegIntegerInput";
 
 
 const hourMarks = [
@@ -64,6 +65,7 @@ export default function ConfigEditor() {
   const [utilization, setUtilization] = useState(config.hubBehavior.utilization);
   const [precision, setPrecision] = useState(config.hubBehavior.precision);
   const [retention, setRetention] = useState(config.hubBehavior.retention);
+  const [keepAlive, setKeepAlive] = useState(config.keepAlive);
 
   const [message, setMessage] = useState("");
 
@@ -77,22 +79,20 @@ export default function ConfigEditor() {
       count: prevState.count + 1,  // partsの順序が変わるだけだと更新が効かないためダミーのカウンタを使う
     }));
 
-  function handleChangeUtilization(event) {
-    const value = event.target.value;
-    // ここで0.0~1.00のバリデーション
+  function handleChangeUtilization(value) {
     setUtilization(value);
   }
 
-  function handleChangePrecision(event) {
-    const value = event.target.value;
-    // ここで0.00~1.00のバリデーション
+  function handleChangePrecision(value) {
     setPrecision(value);
   }
 
-  function handleChangeRetention(event) {
-    const value = event.target.value;
-    // ここで0.0〜1.00のバリデーション
+  function handleChangeRetention(value) {
     setRetention(value);
+  }
+
+  function handleChangeKeepAlive(value) {
+      setKeepAlive(value);
   }
 
   function handleSave() {
@@ -110,7 +110,8 @@ export default function ConfigEditor() {
         utilization: parseFloat(utilization),
         precision: parseFloat(precision),
         retention: parseFloat(retention),
-      }
+      },
+      keepAlive: Number(keepAlive)
     };
 
     (async () => {
@@ -272,6 +273,16 @@ export default function ConfigEditor() {
           description={<>
             一度しゃべり始めた人は自分の話題が一段落するまで続けて話そうとします。チャットボットでその様子を
             決める数値が持続性です。持続性は次も話そうとする確率を示します。
+          </>}
+        />
+      </ItemPaper>
+      <ItemPaper>
+        <NonNegIntegerInput
+          label="会話の生存時間(分)"
+          value={keepAlive}
+          handleChange={handleChangeKeepAlive}
+          description={<>
+            チャットボットとの会話はユーザが最後に発言してから、この生存時間の間は続いているとみなします。
           </>}
         />
       </ItemPaper>

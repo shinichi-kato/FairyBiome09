@@ -90,6 +90,28 @@ export default function Editor() {
     }
   }, [bot, auth.uid]);
 
+  // ------------------------------------------------------------------------------------
+  //
+  // json I/O
+  //
+
+  function handleImport(){
+    
+  }
+
+  function handleExport(){
+    (async () => {
+      const json = bot.exportJson();
+      const blob = new Blob([json],{type:'application/json'});
+      const href = await URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = href;
+      link.download = "chatbot.json";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    })();
+  }
 
 
   function handleChangePage(page, part) {
@@ -112,15 +134,16 @@ export default function Editor() {
 
   return (
     <Box
-      display="flex"
       sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
         height: "calc( 100vh - 48px )",
         backgroundColor: "#e0e0e0",
         overflow: "hidden",
         position: "relative",
         flexGrow: 1,
       }}
-      flexDirection="column"
     >
       <AppBar position="static">
         <Toolbar>
@@ -151,7 +174,9 @@ export default function Editor() {
           width: "100%",
           flexGrow: 1,
           overflowY: "scroll",
-          overflowX: "hidden"
+          overflowX: "hidden",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         <Box >
@@ -163,6 +188,8 @@ export default function Editor() {
               photoURL={bot.photoURL}
               handleChangePage={handleChangePage}
               handleAddNewPart={handleAddNewPart}
+              handleExport={handleExport}
+              handleImpoirt={handleImport}
             />
           }
           {
@@ -191,7 +218,9 @@ export default function Editor() {
             />
           }
         </Box>
-        <Box>
+        <Box
+          sx={{alignSelf:"center"}}
+        >
           <FooterSvg />
         </Box>
       </Box>
