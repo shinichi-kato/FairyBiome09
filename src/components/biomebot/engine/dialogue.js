@@ -7,12 +7,15 @@
     覚醒確率がcircadian.jsxで定義される。覚醒時に覚醒チェックに失敗すると
     sleepy状態になる。sleepy状態で覚醒チェックに失敗するとsleep状態になる。
     sleep状態で声をかけられると覚醒状態になる。
-  　　
-  2. partOrderの順に返答生成ができるかチェック。
+  
+  2. 前回のユーザ返答からkeepAlive分を超えて経過していたらユーザは新たに
+     会話を始めたとみなして状態をリセットする
+       　　
+  3. partOrderの順に返答生成ができるかチェック。
      返答を生成したらpartはpartOrder先頭に移動。retentionチェックを
      行い、drop判定になったらpartOrderの末尾に移動。
 
-  3. moodが切り替わったらmoodと同名のパートが先頭になる。
+  4. moodが切り替わったらmoodと同名のパートが先頭になる。
      このパートはdrop/hoistの影響を受けない。 
      それにより、mood名と違うパートが一時的に先頭になってもそれが
      retentionチェックでdropしたらmood名と同じパートが再び先頭になる。
@@ -21,7 +24,7 @@
   ・ユーザに質問して答えを記憶するパート
   ・ユーザとの会話を記憶して返答に使うパート
 */
-import { randomInt } from "mathjs";
+import { config, randomInt } from "mathjs";
 import { retrieve } from './retrieve';
 import * as knowledge from './knowledge-part';
 import { Message } from '../../message';
@@ -73,7 +76,27 @@ export function execute(state, work, message, sendMessage) {
 
   // shift queue
 
+  // pahse 2. keepAliveチェック
+  const now = new Date();
+  if(work.userLastAccess+state.config.keepAlive*60*1000< now.getTime())){
+    // 会話を新規にスタート
+    work = {
+      key: work.key+1,
+      mentalLevel: work.mentalLevel,
+      moment: 0,
+      partOrder: [...state.config.initialPartOrder],
+      mood: state.config.initialPartOrder[0],
+      status: work.status,
+      site: work.site,
+      queue: [],
+      futurePostings: [],
+      userLastAccess: work.userLastAccess
+    }
 
+  }
+
+
+  // phase 3. partが返答するかチェック
   // moodと同名のpartがあればそれをpartOrder先頭に移動
   hoist(work.mood, work.partOrder);
 
@@ -218,6 +241,8 @@ export function execute(state, work, message, sendMessage) {
       site: work.site,
     }
   ));
+
+  work.userLastAccess = new Date();
   console.log("returning", work)
   
   return work;

@@ -4,8 +4,6 @@ debug note
 参考リンク
 https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updated-in-the-nested-function
 
-* keep_aliveの置き場所はconfig, main , gatsby-config.jsのどこに
-するか決める
 
 1. チャットルーム
 

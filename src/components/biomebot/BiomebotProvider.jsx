@@ -246,6 +246,7 @@ export const defaultSettings = {
     mood: "peace",
     queue: [], // 複数にわけた出力を保持
     futurePostings: [], // 
+    userLastAccess: 0 // date.getTime()
   },
   parts: {
     "peace": {
@@ -342,7 +343,8 @@ function reducer(state, action) {
           circadian: { ...config.circadian },
           initialMenatalLevel: config.initialMentalLevel,
           initialPartOrder: [...config.initialPartOrder],
-          hubBehavior: { ...config.hubBehavior }
+          hubBehavior: { ...config.hubBehavior },
+          keepAlive: config.keepAlive
         }
       }
     }
@@ -351,13 +353,6 @@ function reducer(state, action) {
       return {
         ...state,
         main: { ...action.main }
-      }
-    }
-
-    case 'saveWork': {
-      return {
-        ...state,
-        work: { ...action.work }
       }
     }
 
@@ -587,7 +582,7 @@ export default function BiomebotProvider(props) {
         queue: [],
         futurePostings: [],
         botId: id,
-
+        userLastAccess: 0
       }));
   }, []);
 
@@ -621,7 +616,8 @@ export default function BiomebotProvider(props) {
           site: site,
           updatedAt: snapWork.updatedAt,
           futurePosting: [],
-          botId: botId
+          botId: botId,
+          userLastAccess: snapWork.userLastAccess
         }));
         return snap;
       }
@@ -650,7 +646,10 @@ export default function BiomebotProvider(props) {
 
       case 'work': {
         await db.saveWork(state.botId, obj);
-        dispatch({ type: 'saveWork', work: obj });
+        setWork(prev=>({
+          key: prev.key+1,
+          ...obj
+        }));
         return;
       }
 

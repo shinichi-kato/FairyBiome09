@@ -111,7 +111,7 @@ export default function ConfigEditor() {
         precision: parseFloat(precision),
         retention: parseFloat(retention),
       },
-      keepAlive: Number(keepAlive)
+      keepAlive: parseInt(keepAlive)
     };
 
     (async () => {
