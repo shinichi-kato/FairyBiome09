@@ -608,8 +608,8 @@ export default function BiomebotProvider(props) {
         console.log("on load setWork:", snapWork)
         setWork(prev => ({
           key: prev.key + 1,
-          mentalLevel: snapWork.mentalLevel,
-          moment: snapWork.moment,
+          mentalLevel: parseInt(snapWork.mentalLevel),
+          moment: parseInt(snapWork.moment),
           mood: snapWork.mood,
           partOrder: [...snapWork.partOrder],
           queue: [...prev.queue,...snapWork.queue],
@@ -617,7 +617,7 @@ export default function BiomebotProvider(props) {
           updatedAt: snapWork.updatedAt,
           futurePosting: [],
           botId: botId,
-          userLastAccess: snapWork.userLastAccess
+          userLastAccess: parseInt(snapWork.userLastAccess)
         }));
         return snap;
       }

@@ -28,7 +28,8 @@
         "moment": 0,
         "mood": "peace",
         "queue": [],
-        "timerPostings": []
+        "timerPostings": [],
+        "userLastAccess": 0
     },
     "main": {
         "NAME": "ティピカ",

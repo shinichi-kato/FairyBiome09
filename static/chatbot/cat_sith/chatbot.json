@@ -19,7 +19,7 @@
             "precision": 0.4,
             "retention": 0.4
         },
-        "keepAlive": 10
+        "keepAlive": 1
     },
     "work": {
         "updatedAt": "",
@@ -28,7 +28,8 @@
         "moment": 0,
         "mood": "peace",
         "queue": [],
-        "timerPostings": []
+        "timerPostings": [],
+        "userLastAccess": 0
     },
     "main": {
         "NAME": "アズキ",
@@ -54,7 +55,7 @@
             "featureWeights": null,
             "script": [
                 {
-                    "in": "{enter_greeting}",
+                    "in": "{on_enter_part}",
                     "out": "こんにちは。{user}さん。"
                 },
                 {

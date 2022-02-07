@@ -7,8 +7,7 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 1. チャットルーム
 
-* dialogで一定時間会話しなかったら会話終了とみなす
-* 会話が始まっていない場合挨拶を発火させる
+* 会話が始まっていない場合挨拶を発火-> {on_enter_part}に返答しない
 * ボットの精神パワー実装
 * ボットの返答にディレイをかける
 * ボットを新しくしてもローカルのログが残る
@@ -34,6 +33,7 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 
 # 以下対応済み
+* dialogで一定時間会話しなかったら会話終了とみなす
 * idが初期に非表示にならない -> DataGridにもともと機能があった
 * {bot}がundefined
 * 最終行が空白かどうか、見た目わかりにくい -> /^( |[ 　]+)$/は無効とみなす

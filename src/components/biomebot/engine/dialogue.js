@@ -24,7 +24,7 @@
   ・ユーザに質問して答えを記憶するパート
   ・ユーザとの会話を記憶して返答に使うパート
 */
-import { config, randomInt } from "mathjs";
+import { randomInt } from "mathjs";
 import { retrieve } from './retrieve';
 import * as knowledge from './knowledge-part';
 import { Message } from '../../message';
@@ -78,8 +78,9 @@ export function execute(state, work, message, sendMessage) {
 
   // pahse 2. keepAliveチェック
   const now = new Date();
-  if(work.userLastAccess+state.config.keepAlive*60*1000< now.getTime())){
+  if(work.userLastAccess+state.config.keepAlive*60*1000< now.getTime()){
     // 会話を新規にスタート
+    console.log("chatbot restarted")
     work = {
       key: work.key+1,
       mentalLevel: work.mentalLevel,
@@ -88,11 +89,16 @@ export function execute(state, work, message, sendMessage) {
       mood: state.config.initialPartOrder[0],
       status: work.status,
       site: work.site,
-      queue: [],
+      queue: [ ...work.queue, {
+        message:new Message("trigger","{on_enter_part}"),
+        emitter: sendMessage
+      }],
       futurePostings: [],
       userLastAccess: work.userLastAccess
     }
 
+  }else{
+    console.log("keep alive",work.userLastAccess,state.config.keepAlive)
   }
 
 
@@ -134,7 +140,7 @@ export function execute(state, work, message, sendMessage) {
       reply.hoist = null;
     }
 
-    // トリガーを捕捉
+    // bot発言に含まれるパート遷移トリガーを捕捉
     let trigger = ""
     reply.text = reply.text.replace(RE_ENTER, (_, p1) => {
       // 関数内関数だが外に持ち出していないのでクロージャではない
@@ -241,8 +247,8 @@ export function execute(state, work, message, sendMessage) {
       site: work.site,
     }
   ));
-
-  work.userLastAccess = new Date();
+  
+  work.userLastAccess = now.getTime();
   console.log("returning", work)
   
   return work;

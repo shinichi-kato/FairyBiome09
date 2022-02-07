@@ -40,7 +40,6 @@ export default function Landing(props) {
   function handleToEdit() {
     navigate("/edit");
   }
-  console.log(process.env.GATSBY_APP_VERSION)
   return (
     <Box
       display="flex"
