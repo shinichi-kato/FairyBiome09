@@ -48,7 +48,6 @@ function setify(rows, column) {
 
 function maxId(rows) {
   let ids = rows.map(row => row.id);
-  console.log(ids)
   return Math.max(...ids);
 
 }

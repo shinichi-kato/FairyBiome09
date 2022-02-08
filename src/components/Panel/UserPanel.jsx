@@ -8,7 +8,6 @@ export default function UserPanel(props) {
   const height = width * 1.5;
   const backgroundColor = user.backgroundColor;
   const photoURL = user.photoURL;
-  console.log(user)
 
   return (
     <Box

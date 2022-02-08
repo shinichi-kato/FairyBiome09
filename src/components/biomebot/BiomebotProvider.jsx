@@ -279,7 +279,6 @@ const initialState = {
 };
 
 function reducer(state, action) {
-  console.log("action", action)
   switch (action.type) {
     case 'init': {
       return initialState;
@@ -528,7 +527,7 @@ export default function BiomebotProvider(props) {
     // deploy完了前に呼び出された場合はqueueに積む
 
     message.text = textToInternalRepr(segmenter.segment(message.text));
-
+    console.log("message text",message.text)
     if (state.status !== 'ready') {
       setWork(prev => ({
         ...prev,
@@ -595,7 +594,6 @@ export default function BiomebotProvider(props) {
     // アップデートされた状態に保つためuseCallback化する。それにより
     // 利用側コンポーネントのuseEffectでdepsに含める必要がなくなる。
 
-    console.log("loading", botId)
 
     site ||= 'room';
 
@@ -605,7 +603,6 @@ export default function BiomebotProvider(props) {
         dispatch({ type: 'connect', snap: snap });
 
         const snapWork = snap.work;
-        console.log("on load setWork:", snapWork)
         setWork(prev => ({
           key: prev.key + 1,
           mentalLevel: parseInt(snapWork.mentalLevel),
@@ -622,7 +619,6 @@ export default function BiomebotProvider(props) {
         return snap;
       }
       else {
-        console.log("not loaded")
       }
     }
   }, [])

@@ -10,7 +10,7 @@
   
   2. 前回のユーザ返答からkeepAlive分を超えて経過していたらユーザは新たに
      会話を始めたとみなして状態をリセットする
-       　　
+        　
   3. partOrderの順に返答生成ができるかチェック。
      返答を生成したらpartはpartOrder先頭に移動。retentionチェックを
      行い、drop判定になったらpartOrderの末尾に移動。
@@ -29,7 +29,10 @@ import { retrieve } from './retrieve';
 import * as knowledge from './knowledge-part';
 import { Message } from '../../message';
 import checkWake from '../circadian';
+import { textToInternalRepr } from '../internal-repr';
+import { TinySegmenter } from '../tinysegmenter';
 
+let segmenter = new TinySegmenter();
 
 const RE_ENTER = /{enter_([A-Za-z][a-zA-Z_]*)}/;
 const RE_TAG = /{[a-zA-Z][a-zA-Z0-9_]*}/g;
@@ -62,14 +65,14 @@ export function execute(state, work, message, sendMessage) {
 
   // phase 1. 覚醒チェック
   const isWake = checkWake(state.config.circadian);
-  if(!isWake){
-    if(work.mood === 'sleepy'){
+  if (!isWake) {
+    if (work.mood === 'sleepy') {
       work.mood = 'sleep';
-    } else if (work.mood !== 'sleep'){
+    } else if (work.mood !== 'sleep') {
       work.mood = 'sleepy';
     }
-  }else {
-    if(work.mood === 'sleepy' || work.mood === 'sleep'){
+  } else {
+    if (work.mood === 'sleepy' || work.mood === 'sleep') {
       work.mood = 'wake';
     }
   }
@@ -78,27 +81,30 @@ export function execute(state, work, message, sendMessage) {
 
   // pahse 2. keepAliveチェック
   const now = new Date();
-  if(work.userLastAccess+state.config.keepAlive*60*1000< now.getTime()){
+  if (work.userLastAccess + state.config.keepAlive * 60 * 1000 < now.getTime()) {
     // 会話を新規にスタート
     console.log("chatbot restarted")
     work = {
-      key: work.key+1,
+      key: work.key + 1,
       mentalLevel: work.mentalLevel,
       moment: 0,
       partOrder: [...state.config.initialPartOrder],
       mood: state.config.initialPartOrder[0],
       status: work.status,
       site: work.site,
-      queue: [ ...work.queue, {
-        message:new Message("trigger","{on_enter_part}"),
+      queue: [...work.queue, {
+        message: getTriggerMessage({
+          name: message.name,
+          text: "{on_enter_part}"
+        }),
         emitter: sendMessage
       }],
       futurePostings: [],
       userLastAccess: work.userLastAccess
     }
 
-  }else{
-    console.log("keep alive",work.userLastAccess,state.config.keepAlive)
+  } else {
+    console.log("keep alive", work.userLastAccess, state.config.keepAlive)
   }
 
 
@@ -161,8 +167,12 @@ export function execute(state, work, message, sendMessage) {
       else if (trigger in moodNames) {
         work.mood = trigger;
         work.queue.push({
-          message: new Message('trigger', `{enter_${trigger}}`),
-          emitter: sendMessage});
+          message: getTriggerMessage({
+            name: message.name,
+            text: `{enter_${trigger}}`
+          }),
+          emitter: sendMessage
+        });
       }
       else {
         work.mood = "peace"
@@ -185,7 +195,8 @@ export function execute(state, work, message, sendMessage) {
               mood: work.mood,
               site: work.site,
             }),
-          emitter: sendMessage});
+          emitter: sendMessage
+        });
       };
 
 
@@ -234,7 +245,7 @@ export function execute(state, work, message, sendMessage) {
     .replace('{user}', message.name || 'あなた');
   // ecosystemにはmessage.nameがない。そのような返答は起きるべきでないが、
   // フォールバックとして「あなた」を使用。
-  
+
   sendMessage(new Message(
     'speech',
     {
@@ -247,10 +258,10 @@ export function execute(state, work, message, sendMessage) {
       site: work.site,
     }
   ));
-  
+
   work.userLastAccess = now.getTime();
   console.log("returning", work)
-  
+
   return work;
 }
 
@@ -284,4 +295,15 @@ function render(tag, dict) {
   item = item.replace(RE_TAG, (whole, itemTag) => render(itemTag, dict));
 
   return item;
+}
+
+function getTriggerMessage(data) {
+  // チャットボットに対してトリガーを入力。
+  // 入力文字列はinternalReprに変換を行う
+  let message = new Message("trigger",{
+    name: data.name,
+    text: textToInternalRepr(segmenter.segment(data.text))
+  });
+
+  return message;
 }

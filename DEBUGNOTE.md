@@ -7,7 +7,7 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 1. チャットルーム
 
-* 会話が始まっていない場合挨拶を発火-> {on_enter_part}に返答しない
+* cat_sithの画像が足りてない
 * ボットの精神パワー実装
 * ボットの返答にディレイをかける
 * ボットを新しくしてもローカルのログが残る
@@ -33,6 +33,9 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 
 # 以下対応済み
+* ユーザ名が展開されてない -> triggerにユーザ名を入れる変更
+* 会話が始まっていない場合挨拶を発火-> {on_enter_part}に返答しない
+　-> 自発メッセージをinternelReprしてなかった
 * dialogで一定時間会話しなかったら会話終了とみなす
 * idが初期に非表示にならない -> DataGridにもともと機能があった
 * {bot}がundefined

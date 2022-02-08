@@ -52,9 +52,7 @@
   const msg = new Message("trigger","{TRIGGER_WEATHER_halfClouds}"})
 
   ## チャットボットの内的状態の変化
-  const msg = new Message("trigger",{
-    trigger: "WAKEUP"
-  })
+  const msg = new Message("trigger",”{on_enter_part}");
 
   ## システムメッセージ
   const msg = new Message("system"),{
@@ -234,8 +232,14 @@ export class Message {
         }
 
         case 'trigger': {
-          this.text = data;
-          this.name = null;
+          if(typeof data === 'string'){
+            this.text = data;
+            this.name = null;
+          }else{
+            this.text = data.text;
+            this.name = data.name;
+          }
+
           this.timestamp = new Date();
           this.avatarPath = "";
           this.backgroundColor = "";

@@ -6,11 +6,6 @@
 
 */
 
-/*
-debugメモ
-キャッシュがうまく生成していないときにapplyでエラーになることがある。
-エラーメッセージにはretrieve.js 125:60とか表示されるが、125行がどこか特定できず
-*/
 
 import {
   zeros, apply, sum, dot, dotMultiply,
@@ -31,12 +26,14 @@ export function retrieve(message, cache, coeffs) {
   // tfidf,df,vocabを利用してtextに一番似ているdictの行番号を返す
 
   if (typeOf(cache.tfidf) !== 'Matrix' || cache.fv.length === 0) {
+    console.log("cache empty")
     return { index: null, score: 0 };
   }
 
   // wv
   const vocabLength = Object.keys(cache.vocab).length;
   if (vocabLength === 0) {
+    console.log("vocab empty")
     return { index: null, score: 0 };
   }
 
@@ -49,12 +46,13 @@ export function retrieve(message, cache, coeffs) {
   }
   const sumWv = sum(wv)
   if (sumWv === 0) {
+    console.log(`vocab no match with"${message.text}"`)
     return { index: null, score: 0 };
   }
   // tfidf計算
   const tf = divide(wv, sumWv);
   const tfidf = dotMultiply(tf, cache.idf);
-  console.log("tfidf=",tfidf)
+  // console.log("tfidf=",tfidf)
   // 正規化
 
   const n = norm(tfidf);
