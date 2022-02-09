@@ -115,6 +115,10 @@
             "featureWights": null,
             "script": [
                 {
+                    "in": "{on_enter_part}",
+                    "out": "質問コーナー。"
+                },
+                {
                     "in": [
                         "好きなものは"
                     ],
@@ -235,6 +239,22 @@
                 {
                     "in": "{enter_snow}",
                     "out":["にゃ？白いのがたくさん降ってきたよ？！"]
+                }
+            ]
+        },
+        "sleepy":{
+            "kind": "knowledge",
+            "momentUpper": 100,
+            "momentLower": 0,
+            "precision": 0.3,
+            "retention": 0.6,
+            "scriptTimestamp": null,
+            "cacheTimestamp": null,
+            "featureWeights": null,
+            "script": [
+                {
+                    "in": "{on_enter_part}",
+                    "out": ["にゃっ・・・・・は・・"]
                 }
             ]
         }

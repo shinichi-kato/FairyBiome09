@@ -2,17 +2,17 @@ import React from "react";
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import LinearProgress from '@mui/material/LinearProgress';
+import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 
 
 
-const GaugeLinearProgress = styled(LinearProgress)(({theme}) => ({
-	root: {
-		height: 10,
-		borderRadius: 5,
-	},
-	bar: {
-		borderRadius: 5,
+const GaugeLinearProgress = styled(LinearProgress)(({ theme }) => ({
+
+	height: 20,
+	borderRadius: 10,
+
+	[`& .${linearProgressClasses.bar}`]: {
+		borderRadius: 10,
 	},
 }));
 
@@ -22,7 +22,6 @@ export default function BotMonitor(props) {
 		props.botState: bot.state
 	*/
 	const work = props.work;
-
 	return (
 		<Box
 			display="flex"
@@ -31,15 +30,15 @@ export default function BotMonitor(props) {
 		>
 			<Box
 				sx={{
-          width: 192,
-          height: 256
-        }}
+					width: 192,
+					height: 256
+				}}
 			>
 				<img
 					style={{
-            width: 192,
-            height: 256
-          }}
+						width: 192,
+						height: 256
+					}}
 					src={props.photoURL}
 					alt={props.photoURL} />
 			</Box>
@@ -47,28 +46,32 @@ export default function BotMonitor(props) {
 				<Typography variant="h4">{props.state.displayName}</Typography>
 			</Box>
 			<Box
-				display="flex"
-				flexDirection="row"
+				sx={{
+					display: "flex",
+					flexDirection: "column",
+					alignItems: "stretch",
+				}}
 			>
 				<Box >
 					心のパワー（最大値）
 				</Box>
 				<Box>
-					<GaugeLinearProgress variant="determinate" value={parseInt(work.mentalLevel)} />
+					<GaugeLinearProgress
+						variant="determinate"
+						value={parseInt(work.mentalLevel)}
+					/>
 				</Box>
-			</Box>
-			<Box
-				display="flex"
-				flexDirection="row"
-			>
 				<Box >
 					心のパワー（現在の値）
 				</Box>
 				<Box>
-					<GaugeLinearProgress variant="determinate" value={parseInt(work.moment)} />
+					<GaugeLinearProgress
+						variant="determinate"
+						value={parseInt(work.moment)}
+					/>
 				</Box>
 			</Box>
-			
+
 		</Box>
 	)
 }

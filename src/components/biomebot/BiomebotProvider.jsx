@@ -526,6 +526,8 @@ export default function BiomebotProvider(props) {
     // 外部からの入力を受付け、必要な場合返答を送出する。
     // deploy完了前に呼び出された場合はqueueに積む
 
+    // ※ここでinternalRepr化するのは複数ヶ所に分散して。
+    // dialogue.jsのような処理本体でやるべき
     message.text = textToInternalRepr(segmenter.segment(message.text));
     console.log("message text",message.text)
     if (state.status !== 'ready') {

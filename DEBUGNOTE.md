@@ -7,8 +7,7 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 1. チャットルーム
 
-* cat_sithの画像が足りてない
-* ボットの精神パワー実装
+* ユーザ名が展開されてない -> triggerにユーザ名を入れる変更 ->初回？
 * ボットの返答にディレイをかける
 * ボットを新しくしてもローカルのログが残る
 * 公園で全員の吹き出しが白い
@@ -33,7 +32,8 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 
 # 以下対応済み
-* ユーザ名が展開されてない -> triggerにユーザ名を入れる変更
+* ボットの精神パワー実装
+
 * 会話が始まっていない場合挨拶を発火-> {on_enter_part}に返答しない
 　-> 自発メッセージをinternelReprしてなかった
 * dialogで一定時間会話しなかったら会話終了とみなす

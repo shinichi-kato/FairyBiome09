@@ -83,7 +83,7 @@ export function execute(state, work, message, sendMessage) {
   const now = new Date();
   if (work.userLastAccess + state.config.keepAlive * 60 * 1000 < now.getTime()) {
     // 会話を新規にスタート
-    console.log("chatbot restarted")
+    console.log("restarting chat")
     work = {
       key: work.key + 1,
       mentalLevel: work.mentalLevel,
@@ -104,7 +104,7 @@ export function execute(state, work, message, sendMessage) {
     }
 
   } else {
-    console.log("keep alive", work.userLastAccess, state.config.keepAlive)
+    console.log("chat keeps alive", work.userLastAccess, state.config.keepAlive)
   }
 
 
@@ -260,6 +260,8 @@ export function execute(state, work, message, sendMessage) {
   ));
 
   work.userLastAccess = now.getTime();
+  work.moment += work.moment<work.mentalLevel ? 1 : 0;
+  work.mentalLevel += work.moment === 10 ? 1 : 0;
   console.log("returning", work)
 
   return work;

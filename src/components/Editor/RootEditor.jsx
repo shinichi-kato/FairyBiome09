@@ -181,8 +181,8 @@ export default function RootEditor(props) {
         <Box alignSelf="center">
           <BotMonitor
             photoURL={props.photoURL}
-            state={props.state}
-            work={props.work}
+            state={bot.state}
+            work={bot.work}
           />
         </Box>
       </ItemPaper>
