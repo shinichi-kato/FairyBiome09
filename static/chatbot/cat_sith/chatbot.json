@@ -108,14 +108,17 @@
             "kind": "knowledge",
             "momentUpper": 100,
             "momentLower": 0,
-            "precision": 0.3,
-            "retention": 0.2,
+            "precision": 0.2,
+            "retention": 0.3,
             "scriptTimestamp": null,
             "cacheTimestamp": null,
             "featureWights": null,
             "script": [
                 {
-                    "in": "{on_enter_part}",
+                    "in": [
+                        "{on_enter_part}","質問","聞きたいことが",
+                        "ねえねえ"
+                    ],
                     "out": "質問コーナー。"
                 },
                 {
@@ -162,6 +165,10 @@
             "cacheTimestamp": null,
             "featureWights": null,
             "script": [
+                {
+                    "in": "{on_enter_part}",
+                    "out": "楽しくなってきたよ！"
+                },
                 {
                     "in": "{NOT_FOUND}",
                     "out": [

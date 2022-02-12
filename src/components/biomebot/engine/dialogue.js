@@ -242,9 +242,9 @@ export function execute(state, work, message, sendMessage) {
 
   replyText = replyText
     .replace('{bot}', state.displayNmae)
-    .replace('{user}', message.name || 'あなた');
+    .replace('{user}', message.name || state.main.CREATOR_NAME || 'ユーザーさん');
   // ecosystemにはmessage.nameがない。そのような返答は起きるべきでないが、
-  // フォールバックとして「あなた」を使用。
+  // fallbacktとして作成者名を使用。
 
   sendMessage(new Message(
     'speech',

@@ -22,6 +22,8 @@ export default function BotMonitor(props) {
 		props.botState: bot.state
 	*/
 	const work = props.work;
+	const mentalLevel = parseInt(work.mentalLevel);
+	const moment = parseInt(work.moment);
 	return (
 		<Box
 			display="flex"
@@ -53,21 +55,15 @@ export default function BotMonitor(props) {
 				}}
 			>
 				<Box >
-					心のパワー（最大値）
+					心のエネルギー {moment} / {mentalLevel} 
 				</Box>
-				<Box>
+				<Box
+					sx={{alignSelf: "stretch"}}
+				>
 					<GaugeLinearProgress
-						variant="determinate"
-						value={parseInt(work.mentalLevel)}
-					/>
-				</Box>
-				<Box >
-					心のパワー（現在の値）
-				</Box>
-				<Box>
-					<GaugeLinearProgress
-						variant="determinate"
-						value={parseInt(work.moment)}
+						variant="buffer"
+						value={moment}
+						valueBuffer={mentalLevel}
 					/>
 				</Box>
 			</Box>

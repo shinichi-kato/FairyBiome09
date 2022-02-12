@@ -156,7 +156,10 @@ export default function ChatRoom(props) {
   useEffect(() => {
     if (change !== null) {
       botRef.current.execute(
-        new Message('trigger', `{enter_${change}}`),
+        new Message('trigger', {
+          name:auth.displayName,
+          text:`{enter_${change}}`
+        }),
         writeLog
       );
       dispatch({type:'dispatched'});
