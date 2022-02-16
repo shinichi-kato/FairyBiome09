@@ -7,13 +7,15 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 1. チャットルーム
 
-* 表情の変化が怪しい
-* ユーザ名が展開されてない -> triggerにユーザ名を入れる変更 ->初回は展開されてない？
+* 表情の変化が怪しい→script=part=アバター
+
 * ボットの返答にディレイをかける
 * ボットを新しくしてもローカルのログが残る
 * 公園で全員の吹き出しが白い
 
 2. エディタ
+* パートエディタで対応するsvgがあるかヒントを表示（ここから）
+　参照：https://qiita.com/m3816/items/56b9b6b6f340265cbfab
 * スクリプトをdbio.loadScriptでnextの順に並べてデータ取得
 * どんな{}が展開されるのかユーザにわからない
 * json形式でのインポート
@@ -34,7 +36,7 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 # 以下対応済み
 * ボットの精神パワー実装
-
+* ユーザ名が展開されてない -> triggerにユーザ名を入れる変更 ->初回は展開されてない？
 * 会話が始まっていない場合挨拶を発火-> {on_enter_part}に返答しない
 　-> 自発メッセージをinternelReprしてなかった
 * dialogで一定時間会話しなかったら会話終了とみなす

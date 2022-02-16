@@ -10,12 +10,15 @@
   
   2. 前回のユーザ返答からkeepAlive分を超えて経過していたらユーザは新たに
      会話を始めたとみなして状態をリセットする
-        　
-  3. partOrderの順に返答生成ができるかチェック。
+   
+  3. {enter_パート名}というトリガーが送られてきた場合、そのパートをHoist
+     するとともに、INが{on_enter_part}である発言を行う。
+
+  4. partOrderの順に返答生成ができるかチェック。
      返答を生成したらpartはpartOrder先頭に移動。retentionチェックを
      行い、drop判定になったらpartOrderの末尾に移動。
 
-  4. moodが切り替わったらmoodと同名のパートが先頭になる。
+  5. moodが切り替わったらmoodと同名のパートが先頭になる。
      このパートはdrop/hoistの影響を受けない。 
      それにより、mood名と違うパートが一時的に先頭になってもそれが
      retentionチェックでdropしたらmood名と同じパートが再び先頭になる。
@@ -107,12 +110,22 @@ export function execute(state, work, message, sendMessage) {
     console.log("chat keeps alive", work.userLastAccess, state.config.keepAlive)
   }
 
+  // phase 3. 明示的パート遷移
+  let match = message.text.match(/^{enter_([^}]+)}$/);
+  let partName = "";
+  if(match){
+    partName=match[1];
+    if (partName in state.parts){
+      hoist(partName, work.partOrder);
+      message.text = "{on_enter_part}"
+    }
+  }
 
-  // phase 3. partが返答するかチェック
+  // phase 4. partが返答するかチェック
   // moodと同名のpartがあればそれをpartOrder先頭に移動
   hoist(work.mood, work.partOrder);
 
-  for (let partName of work.partOrder) {
+  for ( partName of work.partOrder) {
     const part = state.parts[partName];
 
     // moment値+0~9のランダム値がmomentUpperとmomentLowerの
@@ -169,7 +182,7 @@ export function execute(state, work, message, sendMessage) {
         work.queue.push({
           message: getTriggerMessage({
             name: message.name,
-            text: `{enter_${trigger}}`
+            text: `{on_enter_part}`
           }),
           emitter: sendMessage
         });
@@ -213,14 +226,14 @@ export function execute(state, work, message, sendMessage) {
   console.log("reply", reply)
   let replyText = reply.text;
 
-  if (reply.text === null) {
+  if (reply.text === null && message.text.match(/^{[A-Za-z_]+}$/)) {
     // NOT_FOUNDの生成
+    // 入力文字列がトリガ /^{[a-z_]+}$/ の場合は null を返す。
+    // そうでなければ以下の処理を行う。
     // 各partの辞書にNOT_FOUNDを置くことができ、partOrderの
     // 順にpartの辞書を探し、見つかったらそれをレンダリング。
     // すべてのパートに見つからなければmainのNOT_FOUNDを
     // レンダリング
-
-
 
     for (let partName of work.partOrder) {
       const part = state.parts[partName];
