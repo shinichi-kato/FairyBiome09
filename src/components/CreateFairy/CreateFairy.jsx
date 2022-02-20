@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 
 import { firestore, fbio } from '../../firebase';
 import {
-  query, collection, where, orderBy, limit, onSnapshot,
+  query, collection, orderBy, limit, onSnapshot,
 } from 'firebase/firestore';
 
 import { navigate } from "gatsby";

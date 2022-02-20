@@ -22,7 +22,6 @@
     partOrder: [],
     mentalLevel: 100,
     moment: 0,
-    mood: "peace",
     queue: [],
     futurePostings: []
   },
@@ -60,7 +59,6 @@ class dbio {
     this.saveScript = this.saveScript.bind(this);
     this.saveCache = this.saveCache.bind(this);
     this.loadCache = this.loadCache.bind(this);
-    this.readEstimator = this.readEstimator.bind(this);
   }
 
   //-----------------------------------------------------------------------
@@ -96,7 +94,6 @@ class dbio {
       botId: botId,
       fsBotId: null,
       site: 'room',
-      estimator: {}
     });
 
     /* work */
@@ -193,6 +190,7 @@ class dbio {
           botId: botId,
           name: key,
           kind: part.kind,
+          avatar: part.avatar,
           cacheTimestamp: part.cacheTimestamp,
           featureWeights: part.featureWeights,
           momentLower: part.momentLower,
@@ -302,7 +300,6 @@ class dbio {
         parts: parts,
         main: main,
         displayName: displayName.val,
-        estimator: await this.readEstimator(botId)
       }
     }
 
@@ -435,34 +432,7 @@ class dbio {
     }
   }
 
-  async readEstimator(botId) {
-    /*  main辞書から入力文字列評価用の NEGATIVE_LABEL, POSITIVE_LABELを
-        取得し、辞書を生成。 
-        mainのスキームは id,[botId+key] なのでコンパウンドキー */
-    let negatives = await this.db.main
-      .where('[botId+key]').equals([botId, 'NEGATIVE_LABEL'])
-      .toArray();
 
-    negatives = negatives.reduce((obj, data) => {
-
-      obj[data.val] = true;
-      return obj;
-    }, {});
-
-    let positives = await this.db.main
-      .where('[botId+key]').equals([botId, 'POSITIVE_LABEL'])
-      .toArray();
-
-    positives = positives.reduce((obj, data) => {
-      obj[data.val] = true;
-      return obj;
-    }, {});
-
-    return {
-      negatives: negatives,
-      positives: positives,
-    }
-  }
 }
 
 

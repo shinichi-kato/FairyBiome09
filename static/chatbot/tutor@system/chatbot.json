@@ -26,7 +26,6 @@
         "partOrder": [],
         "mentalLevel": 100,
         "moment": 0,
-        "mood": "peace",
         "queue": [],
         "timerPostings": [],
         "userLastAccess": 0
@@ -34,11 +33,6 @@
     "main": {
         "NAME": "ティピカ",
         "CREATOR_NAME": "system",
-        "POSITIVE_LABEL": [
-            "いいね",
-            "おっけー"
-        ],
-        "NEGATIVE_LABEL": "死ね",
         "START_DECK": "",
         "END_DECK": "",
         "{NOT_FOUND}": ["そうなんですか？"]
@@ -177,6 +171,33 @@
                 }
             ]            
         },
+        "down":{
+            "kind": "knowledge",
+            "avatar":"down",
+            "momentUpper": 100,
+            "momentLower": 20,
+            "precision": 0.3,
+            "retention": 0.2,
+            "scriptTimestamp": null,
+            "cacheTimestamp": null,
+            "featureWights": null,
+            "script": [
+                {
+                    "in": "{NOT_FOUND}",
+                    "out": [
+                        "うーん","・・・"
+                    ]
+                },
+                {
+                    "in": [
+                        "死ね"
+                    ],
+                    "out": [
+                        "そんなこと言っちゃだめですよ^_^"
+                    ]
+                }
+            ]            
+        },        
         "peace":{
             "kind": "knowledge",
             "avatar":"peace",

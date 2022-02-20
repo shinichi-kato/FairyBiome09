@@ -164,7 +164,7 @@ export default function ChatRoom(props) {
       );
       dispatch({type:'dispatched'});
     }
-  }, [change, dispatch, writeLog]);
+  }, [change, dispatch, writeLog, auth.displayName]);
 
 
   function handleChangeUserInput(event) {

@@ -98,7 +98,7 @@ export default function Editor({avatarDictSnap}) {
       }
       setAvatarList(list);
     }
-  }, [bot, auth.uid]);
+  }, [bot, auth.uid, avatarDictSnap]);
 
   // ------------------------------------------------------------------------------------
   //

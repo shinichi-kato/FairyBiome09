@@ -26,7 +26,6 @@
         "partOrder": [],
         "mentalLevel": 10,
         "moment": 0,
-        "mood": "peace",
         "queue": [],
         "timerPostings": [],
         "userLastAccess": 0
@@ -107,7 +106,7 @@
         },
         "faq": {
             "kind": "knowledge",
-            "avatar": "peace",
+            "avatar": "speaking",
             "momentUpper": 100,
             "momentLower": 0,
             "precision": 0.2,
@@ -175,15 +174,43 @@
                 {
                     "in": "{NOT_FOUND}",
                     "out": [
-                        "にゃはは！","にゃお〜","にゃにゃ","...","どういうことにゃ？","そうにゃの"
+                        "にゃお〜","にゃにゃ","...","どういうことにゃ？","そうにゃの"
                     ]
                 },
                 {
-                    "in": [
-                        "あはは"
-                    ],
+                    "in": ["いいね","あはは！"],
                     "out": [
-                        "{enter_cheer}"
+                        "にゃはは!{positive}"
+                    ]
+                }
+   
+            ]            
+        },
+        "down":{
+            "kind": "knowledge",
+            "avatar": "down",
+            "momentUpper": 40,
+            "momentLower": 0,
+            "precision": 0.3,
+            "retention": 0.2,
+            "scriptTimestamp": null,
+            "cacheTimestamp": null,
+            "featureWights": null,
+            "script": [
+                {
+                    "in": "{on_enter_part}",
+                    "out": "・・・"
+                },
+                {
+                    "in": "{NOT_FOUND}",
+                    "out": [
+                        "そうなのかにゃあ","うーん"
+                    ]
+                },
+                {
+                    "in": ["死ね"],
+                    "out": [
+                        "え・・・{negative}"
                     ]
                 }
             ]            

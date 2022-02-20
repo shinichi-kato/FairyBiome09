@@ -50,6 +50,7 @@ export default function EditPage({ location, data }) {
     navigate('/create/');
   }
 
+
   useEffect(() => {
     let isCancelled = false;
 
@@ -80,7 +81,7 @@ export default function EditPage({ location, data }) {
             height: "100vh",
           }}
         >
-          {appState === 'continue' && <Editor avatarDictSnap={data.allFiles.nodes}/>}
+          {appState === 'continue' && <Editor avatarDictSnap={data.allFile.nodes}/>}
         </Container>
       </BiomebotProvider>
     </AuthProvider>

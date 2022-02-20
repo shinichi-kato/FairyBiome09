@@ -5,8 +5,8 @@
 
   1. 時刻により睡眠・覚醒の状態が変化
     覚醒確率がcircadian.jsxで定義される。覚醒時に覚醒チェックに失敗すると
-    sleepy状態になる。sleepy状態で覚醒チェックに失敗するとsleep状態になる。
-    sleep状態で声をかけられると覚醒状態になる。
+    sleepyパートに遷移する。sleepy状態で覚醒チェックに失敗するとsleepパートに
+    遷移する。sleep状態で声をかけられるとwakeパートに遷移する。
   
   2. 前回のユーザ返答からkeepAlive分を超えて経過していたらユーザは新たに
      会話を始めたとみなして状態をリセットする
@@ -18,7 +18,10 @@
      返答を生成したらpartはpartOrder先頭に移動。retentionチェックを
      行い、drop判定になったらpartOrderの末尾に移動。
 
-  5.(廃止) moodが切り替わったらmoodと同名のパートが先頭になる。
+  (検討中) チャットボットが生成した発言にを感情性パート(cheer,down)の入力として
+     与える 
+
+  (廃止) moodが切り替わったらmoodと同名のパートが先頭になる。
      このパートはdrop/hoistの影響を受けない。 
      それにより、mood名と違うパートが一時的に先頭になってもそれが
      retentionチェックでdropしたらmood名と同じパートが再び先頭になる。
@@ -58,17 +61,33 @@ export function execute(state, work, message, sendMessage) {
   let reply = { text: null, drop: null, hoist: null };
 
   // phase 1. 覚醒チェック
+  const topPart = work.partOrder[0];
   const isWake = checkWake(state.config.circadian);
+  let newTopPart = null;
+
   if (!isWake) {
-    if (work.mood === 'sleepy') {
-      work.mood = 'sleep';
-    } else if (work.mood !== 'sleep') {
-      work.mood = 'sleepy';
+    if (topPart === 'sleepy') {
+      newTopPart = 'sleep';
+
+    } else if (topPart !== 'sleep') {
+      newTopPart = 'sleepy';
     }
   } else {
-    if (work.mood === 'sleepy' || work.mood === 'sleep') {
-      work.mood = 'wake';
+    if (topPart === 'sleepy' || topPart === 'sleep') {
+      newTopPart = 'wake';
     }
+  }
+
+  if(newTopPart){
+    work.queue.push(
+      {
+        message: getTriggerMessage({
+          name: message.name,
+          text: `{enter_${newTopPart}}`
+        }),
+        emitter: sendMessage
+      }
+    )
   }
 
   // shift queue
@@ -83,7 +102,6 @@ export function execute(state, work, message, sendMessage) {
       mentalLevel: work.mentalLevel,
       moment: 0,
       partOrder: [...state.config.initialPartOrder],
-      mood: state.config.initialPartOrder[0].avatar,
       status: work.status,
       site: work.site,
       queue: [...work.queue, {
@@ -113,11 +131,11 @@ export function execute(state, work, message, sendMessage) {
   }
 
   // phase 4. partが返答するかチェック
-  // moodと同名のpartがあればそれをpartOrder先頭に移動
+  // (廃止)moodと同名のpartがあればそれをpartOrder先頭に移動
   // hoist(work.mood, work.partOrder);
-
+  let part;
   for ( partName of work.partOrder) {
-    const part = state.parts[partName];
+    part = state.parts[partName];
 
     // moment値+0~9のランダム値がmomentUpperとmomentLowerの
     // 間に入っていたらOK
@@ -161,10 +179,9 @@ export function execute(state, work, message, sendMessage) {
     // 各種トリガー処理
     if (trigger !== "" && trigger in state.parts) {
       // partと同名のトリガーを検出したら、そのpartを先頭にする。
+      // このwork.partOrder改変によりforループが壊れるため、
+      // hoist後は必ずbreakする
       hoist(trigger, work.partOrder);
-
-      // moodはavatarと同じにする
-      work.mood = state.parts[trigger].avatar;
 
       // パートの{on_enter_part}を実行
       let text = renderer[part.kind](partName, state, work,
@@ -179,7 +196,7 @@ export function execute(state, work, message, sendMessage) {
               person: "bot",
               avatarPath: state.config.avatarPath,
               backgroundColor: state.config.backgroundColor,
-              mood: work.mood,
+              mood: part.avatar,
               site: work.site,
             }),
           emitter: sendMessage
@@ -241,7 +258,7 @@ export function execute(state, work, message, sendMessage) {
       person: "bot",
       avatarPath: state.config.avatarPath,
       backgroundColor: state.config.backgroundColor,
-      mood: work.mood,
+      mood: part.avatar,
       site: work.site,
     }
   ));

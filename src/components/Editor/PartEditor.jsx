@@ -9,11 +9,11 @@ import Fab from '@mui/material/Fab';
 import Button from '@mui/material/Button';
 import SaveIcon from '@mui/icons-material/SaveAlt';
 
-import {ItemPaper, ParamSlider, FabContainerBox}  from './StyledWigets';
+import { ItemPaper, ParamSlider, FabContainerBox } from './StyledWigets';
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
 
 import FactorInput from './FactorInput';
-import AvatarSelector from './AvatarSelector'; 
+import AvatarSelector from './AvatarSelector';
 
 
 export default function PartEditor(props) {
@@ -53,8 +53,8 @@ export default function PartEditor(props) {
   const handleChangePrecision = value => setPrecision(value);
   const handleChangeRetention = value => setRetention(value);
 
-  function handleToScript(){
-    props.handleChangePage('script',props.partName);
+  function handleToScript() {
+    props.handleChangePage('script', props.partName);
   }
 
   function handleSave() {
@@ -72,15 +72,14 @@ export default function PartEditor(props) {
         momentLower: momentLower,
         precision: precision,
         retention: retention,
-
       }
-    }
+    };
 
-      (async () => {
-        await bot.save('part', newPartData);
-        setMessage(' - ok');
+    (async () => {
+      await bot.save('part', newPartData);
+      setMessage(' - ok');
 
-      })()
+    })()
 
   }
 
@@ -100,7 +99,7 @@ export default function PartEditor(props) {
     <Box
       display="flex"
       flexDirection="column"
-      sx={{margin: theme=>theme.spacing(1)}}
+      sx={{ margin: theme => theme.spacing(1) }}
     >
       <ItemPaper elevation={0} >
         <Box>
@@ -120,17 +119,21 @@ export default function PartEditor(props) {
         <Box>
           <Typography variant="body2">
             パートの名前は変更できます。他のパートと同じ名前は使えません。
-            またパート名は
           </Typography>
         </Box>
       </ItemPaper>
       <ItemPaper elevation={0}>
         <Box>
-          <AvatarSelector 
+          <Typography variant="h5">
+            表示するキャラクタ
+          </Typography>
+        </Box>
+        <Box>
+          <AvatarSelector
             avatarDir={bot.state.config.avatarPath}
             avatar={avatar}
             handleChangeAvatar={handleChangeAvatar}
-            avatarDict={props.avatarDict}
+            avatarList={props.avatarList}
           />
         </Box>
       </ItemPaper>
@@ -220,7 +223,7 @@ export default function PartEditor(props) {
           onClick={handleSave}
           color="primary"
         >
-          <SaveIcon sx={{marginRight: theme=>theme.spacing(1),}} />保存{message}
+          <SaveIcon sx={{ marginRight: theme => theme.spacing(1), }} />保存{message}
         </Fab>
       </FabContainerBox>
     </Box>

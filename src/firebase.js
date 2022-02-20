@@ -82,7 +82,6 @@ class Fbio {
         ...obj.config,
         ownerId: uid
       },
-      estimator: obj.estimator,
       timestamp: serverTimestamp(),
       work: obj.work,
       parts: {},

@@ -24,13 +24,13 @@ export default function AvatarSelector({
       col={3}>
       {avatarList.map((x, index) => (
         <ImageListItem key={index}
-          onClick={() => handleChangeAvatar()}
+          onClick={() => handleChangeAvatar(x)}
           sx={{
             border: "4px solid",
             borderColor: avatar === x ? 'primary.main' : '#FFFFFF',
           }}
         >
-          <img src={`{../../chatbot/${avatarDir}/${avatar.svg}`}
+          <img src={`../../chatbot/${avatarDir}/${x}.svg`}
             style={{
               width: 200,
             }}

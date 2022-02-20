@@ -6,7 +6,7 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 
 1. チャットルーム
-
+* {positive},{negative}が未実装
 * 表情の変化が怪しい→script=part=アバター
 
 * ボットの返答にディレイをかける

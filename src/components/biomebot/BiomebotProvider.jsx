@@ -13,7 +13,7 @@ Biomebotはこれらパートを受け持つチャットボットをそれぞれ
 
 ## 心のパート
 
-パートは以下のように階層とアルゴリズムで分類される。
+パートは以下のように階層と返答方式で分類される。
 
 階層による分類             概要
 ---------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ Biomebotはこれらパートを受け持つチャットボットをそれぞれ
 思考性パート               趣味の話、相手への思いやり、好奇心、挨拶などのパート
 ---------------------------------------------------------------------------------
 
-アルゴリズムによる分類     概要
+返答方式による分類     概要
 ---------------------------------------------------------------------------------
 episode                  ユーザとチャットボットの発言を自動で辞書化し返答に使う
 curiosity                辞書にない言葉をユーザから聞いて辞書化し返答に使う
@@ -35,7 +35,7 @@ knowledge                あらかじめ用意した辞書を使ってユーザ�
 感情性パートは強いネガティブ表現を受け取ったときに思わずしてしまうような反応で、
 様々な感情に伴って表出される。身体性パートと同様主にknowledge型でよいと思われる。
 思考性パートはより高次の精神活動による会話に対応し、ユーザとの人間関係や
-自己表現的なトピックを扱う。episode, curiosity, knowledgeのいずれもありうる。
+雑談、自己表現的なトピックを扱う。episode, curiosity, knowledgeのいずれもありうる。
 
 ### 覚醒/睡眠(身体性パート/knowledge型)
 
@@ -52,23 +52,24 @@ circadian:{
 覚醒状態確率    0%   50%  100%        100%   50%    0%
 
 deploy時に覚醒チェックを行い、覚醒/睡眠の状態を決める。
-このときwake状態であれば{ENTER_WAKE}がトリガされる。
-覚醒中は10分おきに覚醒チェックを行い、失敗すると{ENTER_SLEEPY}がトリガされる。
-SLEEPYでは発言ごとに覚醒チェックが行われ、失敗すると{ENTER_SLEEP}がトリガされる。
+このときwake状態であれば{enter_wake}がトリガされる。
+覚醒中は10分おきに覚醒チェックを行い、失敗すると{enter_sleepy}がトリガされる。
+sleepy状態では発言ごとに覚醒チェックが行われ、失敗すると{enter_sleep}が
+トリガされる。
 
 deploy時にsleep状態であればユーザ発言を受け取るごとに覚醒チェックを行い、
-成功したら{ENTER_WAKE}がトリガされる。
+成功したら{enter_wake}がトリガされる。
 
 
-### 喜怒哀楽(感情性パート/knowledge型)
+### 喜怒哀楽(感情性パート/主にknowledge型)
 
 感情の分類には一般に言われる喜怒哀楽(4種)やプルチックの感情の輪(24種)など
 様々な種類があるが、最も基本的なモデルとして高揚(cheer)と消沈(down)の2種類を
-考える。なお、感情の種類はユーザが任意にデザインしても構わない。後述の
-アバターも参照のこと。
-感情性パートはユーザの発言やチャットボット自身の発言により引き起こされる。
-また、{enter_happy}、{enter_down}というトリガにより明示的に遷移させることが
-できる。
+考える。
+感情性パートはユーザの発言により引き起こされる。また、{enter_cheer}、
+{enter_down}というトリガにより明示的に遷移させることができる。
+※検討中：感情性パートはチャットボット自身の発言によっても引き起こされる。
+
 
 ### 思考性パートの例
 
@@ -146,6 +147,8 @@ partOrderにしたがって評価される。
 {enter_peace}   パート名を指定するとそのパートに遷移する。
 {enter_rain}    天候や季節が変化したとき、いずれかのパートに
                 {on_enter_rain}のようなINがあればその時のOUTの内容を発言
+{positive}      mentalLevelやmomentにポジティブな影響が生じる
+{negative}      mentalLevelやmomentにネガティブな影響が生じる
 --------------------------------------------------------------------------
 
 
@@ -243,7 +246,6 @@ export const defaultSettings = {
   config: {
     description: "",
     backgroundColor: "#eeeeee",
-    estimatorLengthFactor: 0.6,
     avatarPath: "",
     circadian: {
       wake: 6,
@@ -275,7 +277,6 @@ export const defaultSettings = {
     mentalLevel: 100,
     site: "room",
     moment: 0,
-    mood: "peace",
     queue: [], // 複数にわけた出力を保持
     futurePostings: [], // 
     userLastAccess: 0 // date.getTime()
@@ -304,10 +305,7 @@ const initialState = {
   config: {},
   parts: {},
   cache: {},
-  estimator: {
-    positive: [],
-    negative: [],
-  }
+
 };
 
 function reducer(state, action) {
@@ -340,7 +338,6 @@ function reducer(state, action) {
         config: snap.config,
         main: snap.main,
         parts: { ...snap.parts },
-        estimator: snap.estimator,
       }
     }
 
@@ -611,7 +608,6 @@ export default function BiomebotProvider(props) {
         mentalLevel: obj.config.initialMentalLevel,
         moment: 0,
         site: site,
-        mood: "peace",
         queue: [],
         futurePostings: [],
         botId: id,
@@ -641,7 +637,6 @@ export default function BiomebotProvider(props) {
           key: prev.key + 1,
           mentalLevel: parseInt(snapWork.mentalLevel),
           moment: parseInt(snapWork.moment),
-          mood: snapWork.mood,
           partOrder: [...snapWork.partOrder],
           queue: [...prev.queue,...snapWork.queue],
           site: site,

@@ -13,11 +13,6 @@
      返答を生成したらpartはpartOrder先頭に移動。retentionチェックを
      行い、drop判定になったらpartOrderの末尾に移動。
 
-  4. (廃止)moodが切り替わったらmoodと同名のパートが先頭になる。
-     このパートはdrop/hoistの影響を受けない。 
-     それにより、mood名と違うパートが一時的に先頭になってもそれが
-     retentionチェックでdropしたらmood名と同じパートが再び先頭になる。
-
 */
 import { randomInt } from "mathjs";
 import { retrieve } from './retrieve';
@@ -57,11 +52,9 @@ export function execute(state, work, message, sendMessage) {
   // shift queue
   
 
-  // moodと同名のpartがあればそれをpartOrder先頭に移動
-  hoist(work.mood, work.partOrder);
-
+  let part;
   for (let partName of work.partOrder) {
-    const part = state.parts[partName];
+    part = state.parts[partName];
 
     // moment値+0~9のランダム値がmomentUpperとmomentLowerの
     // 間に入っていたらOK
@@ -108,8 +101,6 @@ export function execute(state, work, message, sendMessage) {
       // partと同名のトリガーを検出したら、そのpartを先頭にする。
       hoist(trigger, work.partOrder);
 
-      // moodはavatarと同じにする
-      work.mood = state.parts[trigger].avatar;
 
       // パートの{on_enter_part}を実行
       let text = renderer[part.kind](partName, state, work,
@@ -124,7 +115,7 @@ export function execute(state, work, message, sendMessage) {
               person: "bot",
               avatarPath: state.config.avatarPath,
               backgroundColor: state.config.backgroundColor,
-              mood: work.mood,
+              mood: part.avatar,
               site: work.site,
             }),
           emitter: sendMessage});
@@ -177,7 +168,7 @@ export function execute(state, work, message, sendMessage) {
       person: "bot",
       avatarPath: state.config.avatarPath,
       backgroundColor: state.config.backgroundColor,
-      mood: work.mood,
+      mood: part.avatar,
       site: work.site,
     }
   ));
