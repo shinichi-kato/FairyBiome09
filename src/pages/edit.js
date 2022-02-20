@@ -1,11 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { navigate } from "gatsby";
+import { navigate, graphql } from "gatsby";
 import Container from '@mui/material/Container';
 import Editor from '../components/Editor/Editor';
 
 import AuthProvider from "../components/Auth/AuthProvider";
 import BiomebotProvider from '../components/biomebot/BiomebotProvider';
 import { initializeFirebaseApp, firebaseApp, firestore } from '../firebase';
+
+export const query = graphql`
+query {
+  allFile(filter: {sourceInstanceName: {eq: "chatbot"}, ext: {eq: ".svg"}}) {
+    nodes {
+      relativeDirectory
+      name
+    }
+  }
+}
+`;
+
+
 
 export default function EditPage({ location, data }) {
   /* 
@@ -27,7 +40,6 @@ export default function EditPage({ location, data }) {
     IndexPageコンポーネントではroomおよびforestのログを管理し、
     他のコンポーネントがログにアクセスする手段を提供する。
   */
-
 
   const [appState, setAppState] = useState('Landing');
 
@@ -68,7 +80,7 @@ export default function EditPage({ location, data }) {
             height: "100vh",
           }}
         >
-          {appState === 'continue' && <Editor />}
+          {appState === 'continue' && <Editor avatarDictSnap={data.allFiles.nodes}/>}
         </Container>
       </BiomebotProvider>
     </AuthProvider>

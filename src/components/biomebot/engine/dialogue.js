@@ -18,7 +18,7 @@
      返答を生成したらpartはpartOrder先頭に移動。retentionチェックを
      行い、drop判定になったらpartOrderの末尾に移動。
 
-  5. moodが切り替わったらmoodと同名のパートが先頭になる。
+  5.(廃止) moodが切り替わったらmoodと同名のパートが先頭になる。
      このパートはdrop/hoistの影響を受けない。 
      それにより、mood名と違うパートが一時的に先頭になってもそれが
      retentionチェックでdropしたらmood名と同じパートが再び先頭になる。
@@ -40,15 +40,6 @@ let segmenter = new TinySegmenter();
 const RE_ENTER = /{enter_([A-Za-z][a-zA-Z_]*)}/;
 const RE_TAG = /{[a-zA-Z][a-zA-Z0-9_]*}/g;
 
-const moodNames = {
-  "peace": true,
-  "cheer": true,
-  "down": true,
-  "wake": true,
-  "sleepy": true,
-  "sleep": true,
-  "absent": true,
-};
 
 const replier = {
   knowledge: knowledge.reply,
@@ -92,7 +83,7 @@ export function execute(state, work, message, sendMessage) {
       mentalLevel: work.mentalLevel,
       moment: 0,
       partOrder: [...state.config.initialPartOrder],
-      mood: state.config.initialPartOrder[0],
+      mood: state.config.initialPartOrder[0].avatar,
       status: work.status,
       site: work.site,
       queue: [...work.queue, {
@@ -110,7 +101,7 @@ export function execute(state, work, message, sendMessage) {
     console.log("chat keeps alive", work.userLastAccess, state.config.keepAlive)
   }
 
-  // phase 3. 明示的パート遷移
+  // phase 3. 外部トリガによるパート遷移
   let match = message.text.match(/^{enter_([^}]+)}$/);
   let partName = "";
   if(match){
@@ -123,7 +114,7 @@ export function execute(state, work, message, sendMessage) {
 
   // phase 4. partが返答するかチェック
   // moodと同名のpartがあればそれをpartOrder先頭に移動
-  hoist(work.mood, work.partOrder);
+  // hoist(work.mood, work.partOrder);
 
   for ( partName of work.partOrder) {
     const part = state.parts[partName];
@@ -159,7 +150,7 @@ export function execute(state, work, message, sendMessage) {
       reply.hoist = null;
     }
 
-    // bot発言に含まれるパート遷移トリガーを捕捉
+    // bot発言に含まれる内部トリガーによるパート遷移
     let trigger = ""
     reply.text = reply.text.replace(RE_ENTER, (_, p1) => {
       // 関数内関数だが外に持ち出していないのでクロージャではない
@@ -172,29 +163,12 @@ export function execute(state, work, message, sendMessage) {
       // partと同名のトリガーを検出したら、そのpartを先頭にする。
       hoist(trigger, work.partOrder);
 
-      // triggerがmoodのどれかと同じであったらmoodをその名前で上書きする。
-      // そうでなければpart.initialMoodにする。
-      if ('initialMood' in state.parts[trigger]) {
-        work.mood = state.parts[trigger].initialMood
-      }
-      else if (trigger in moodNames) {
-        work.mood = trigger;
-        work.queue.push({
-          message: getTriggerMessage({
-            name: message.name,
-            text: `{on_enter_part}`
-          }),
-          emitter: sendMessage
-        });
-      }
-      else {
-        work.mood = "peace"
-      }
+      // moodはavatarと同じにする
+      work.mood = state.parts[trigger].avatar;
 
-      // 自発的Message投下
-
+      // パートの{on_enter_part}を実行
       let text = renderer[part.kind](partName, state, work,
-        `{enter_${trigger}}`
+        `{on_enter_part}`
       );
       if (text) {
         work.queue.push({

@@ -8,7 +8,7 @@
     覚醒確率がcircadian.jsxで定義される。覚醒時に覚醒チェックに失敗すると
     sleepy状態になる。sleepy状態で覚醒チェックに失敗するとsleep状態になる。
     sleep状態で声をかけられると覚醒状態になる。
-  　　
+   　
   2. partOrderの順に返答生成ができるかチェック。
      返答を生成したらpartはpartOrder先頭に移動。retentionチェックを
      行い、drop判定になったらpartOrderの末尾に移動。
@@ -57,14 +57,14 @@ export function execute(state, work, message, sendMessage) {
 
   // phase 1. 覚醒チェック
   const isWake = checkWake(state.config.circadian);
-  if(!isWake){
-    if(work.mood == 'sleepy'){
+  if (!isWake) {
+    if (work.mood == 'sleepy') {
       work.mood = 'sleep';
-    } else if (work.mood != 'sleep'){
+    } else if (work.mood != 'sleep') {
       work.mood = 'sleepy';
     }
-  }else {
-    if(work.mood === 'sleepy' || work.mood === 'sleep'){
+  } else {
+    if (work.mood === 'sleepy' || work.mood === 'sleep') {
       work.mood = 'wake';
     }
   }
@@ -109,10 +109,9 @@ export function execute(state, work, message, sendMessage) {
       reply.hoist = null;
     }
 
-    // トリガーを捕捉
+    // bot発言に含まれる内部トリガーによるパート遷移
     let trigger = ""
     reply.text = reply.text.replace(RE_ENTER, (_, p1) => {
-      // ※クロージャ注意
       trigger = p1;
       return "";
     });
@@ -122,26 +121,14 @@ export function execute(state, work, message, sendMessage) {
       // partと同名のトリガーを検出したら、そのpartを先頭にする。
       hoist(trigger, work.partOrder);
 
-      // triggerがmoodのどれかと同じであったらmoodをその名前で上書きする。
-      // そうでなければpart.initialMoodにする。
-      if ('initialMood' in state.parts[trigger]) {
-        work.mood = state.parts[trigger].initialMood
-      }
-      else if (trigger in moodNames) {
-        work.mood = trigger;
-        work.queue.push({
-          message: new Message('trigger', `{enter_${trigger}}`),
-          emitter: sendMessage});
-      }
-      else {
-        work.mood = "peace"
-      }
+      // moodはavatarと同じにする
+      work.mood = state.parts[trigger].avatar;
 
-      // 自発的Message投下
-
+      // パートの{on_enter_part}を実行
       let text = renderer[part.kind](partName, state, work,
-        `{enter_${trigger}}`
+        `{on_enter_part}`
       );
+
       if (text) {
         work.queue.push({
           message: new Message('speech',
@@ -154,7 +141,8 @@ export function execute(state, work, message, sendMessage) {
               mood: work.mood,
               site: work.site,
             }),
-          emitter: sendMessage});
+          emitter: sendMessage
+        });
       };
 
 
@@ -203,7 +191,7 @@ export function execute(state, work, message, sendMessage) {
     .replace('{user}', message.name || 'あなた');
   // ecosystemにはmessage.nameがない。そのような返答は起きるべきでないが、
   // フォールバックとして「あなた」を使用。
-  
+
   sendMessage(new Message(
     'speech',
     {

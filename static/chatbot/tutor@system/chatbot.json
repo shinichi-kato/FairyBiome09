@@ -46,6 +46,7 @@
     "parts": {
         "greeting": {
             "kind": "knowledge",
+            "avatar": "waving",
             "momentUpper": 15,
             "momentLower": 0,
             "precision": 0.3,
@@ -106,6 +107,7 @@
         },
         "faq": {
             "kind": "knowledge",
+            "avatar": "peace",
             "momentUpper": 100,
             "momentLower": 0,
             "precision": 0.3,
@@ -150,6 +152,7 @@
         },
         "cheer":{
             "kind": "knowledge",
+            "avatar":"cheer",
             "momentUpper": 100,
             "momentLower": 20,
             "precision": 0.3,
@@ -176,6 +179,7 @@
         },
         "peace":{
             "kind": "knowledge",
+            "avatar":"peace",
             "momentUpper": 100,
             "momentLower": 0,
             "precision": 0.3,

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 import { navigate } from 'gatsby';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -19,7 +19,6 @@ import { BiomebotContext } from '../biomebot/BiomebotProvider';
 import { AuthContext } from "../Auth/AuthProvider";
 
 import FooterSvg from './footer.inline.svg';
-
 
 const initialState = {
   page: "root",
@@ -61,7 +60,7 @@ function reducer(state, action) {
   }
 }
 
-export default function Editor() {
+export default function Editor({avatarDictSnap}) {
   /* 
     チャットボットエディタのフレームワーク
 
@@ -77,6 +76,7 @@ export default function Editor() {
   */
   const auth = useContext(AuthContext);
   const bot = useContext(BiomebotContext);
+  const [avatarList, setAvatarList] = useState([]);
 
   const [state, dispatch] = useReducer(reducer, initialState)
 
@@ -87,6 +87,16 @@ export default function Editor() {
   useEffect(() => {
     if (bot.state.status === 'unload') {
       bot.load(auth.uid);
+    } else {
+      const path = bot.state.config.avatarPath;
+      const list = [];
+
+      for(let node of avatarDictSnap){
+        if(node.relativeDirectory === path){
+          list.push(node.name);
+        }
+      }
+      setAvatarList(list);
     }
   }, [bot, auth.uid]);
 
@@ -208,6 +218,7 @@ export default function Editor() {
             state.page === 'part' &&
             <PartEditor
               partName={state.part}
+              avatarList={avatarList}
               handleChangePage={handleChangePage}
             />
           }

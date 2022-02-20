@@ -243,7 +243,7 @@ class dbio {
       botId: botId,
       name: newName,
       kind: "knowledge",
-      initialMood: "peace",
+      avatar: "peace",
       momentUpper: 15,
       momentLower: 0,
       precision: 0.3,

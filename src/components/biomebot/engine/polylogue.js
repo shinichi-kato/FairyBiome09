@@ -13,7 +13,7 @@
      返答を生成したらpartはpartOrder先頭に移動。retentionチェックを
      行い、drop判定になったらpartOrderの末尾に移動。
 
-  4. moodが切り替わったらmoodと同名のパートが先頭になる。
+  4. (廃止)moodが切り替わったらmoodと同名のパートが先頭になる。
      このパートはdrop/hoistの影響を受けない。 
      それにより、mood名と違うパートが一時的に先頭になってもそれが
      retentionチェックでdropしたらmood名と同じパートが再び先頭になる。
@@ -28,15 +28,7 @@ import { Message } from '../../message';
 const RE_ENTER = /{enter_([A-Za-z][a-zA-Z_]*)}/;
 const RE_TAG = /{[a-zA-Z][a-zA-Z0-9_]*}/g;
 
-const moodNames = {
-  "peace": true,
-  "cheer": true,
-  "down": true,
-  "wake": true,
-  "sleepy": true,
-  "sleep": true,
-  "absent": true,
-};
+
 
 const replier = {
   knowledge: knowledge.reply,
@@ -115,26 +107,13 @@ export function execute(state, work, message, sendMessage) {
     if (trigger !== "" && trigger in state.parts) {
       // partと同名のトリガーを検出したら、そのpartを先頭にする。
       hoist(trigger, work.partOrder);
-      
-      // triggerがmoodのどれかと同じであったらmoodをその名前で上書きする。
-      // そうでなければpart.initialMoodにする。
-      if ('initialMood' in state.parts[trigger]) {
-        work.mood = state.parts[trigger].initialMood 
-      }
-      else if (trigger in moodNames) {
-        work.mood = trigger;
-        work.queue.push({
-          message: new Message('trigger', `{enter_${trigger}}`),
-          emitter: sendMessage});
-      }
-      else {
-        work.mood = "peace"
-      }
 
-      // 自発的Message投下
+      // moodはavatarと同じにする
+      work.mood = state.parts[trigger].avatar;
 
+      // パートの{on_enter_part}を実行
       let text = renderer[part.kind](partName, state, work,
-        `{enter_${trigger}}`
+        `{on_enter_part}`
       );
       if (text) {
         work.queue.push({

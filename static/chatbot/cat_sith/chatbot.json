@@ -46,6 +46,7 @@
     "parts": {
         "greeting": {
             "kind": "knowledge",
+            "avatar": "tailraising",
             "momentUpper": 15,
             "momentLower": 0,
             "precision": 0.3,
@@ -106,6 +107,7 @@
         },
         "faq": {
             "kind": "knowledge",
+            "avatar": "peace",
             "momentUpper": 100,
             "momentLower": 0,
             "precision": 0.2,
@@ -157,6 +159,7 @@
         },
         "cheer":{
             "kind": "knowledge",
+            "avatar": "cheer",
             "momentUpper": 100,
             "momentLower": 20,
             "precision": 0.3,
@@ -187,6 +190,7 @@
         },
         "peace":{
             "kind": "knowledge",
+            "avatar": "peace",
             "momentUpper": 100,
             "momentLower": 0,
             "precision": 0.3,
@@ -251,10 +255,11 @@
         },
         "sleepy":{
             "kind": "knowledge",
+            "avatar": "sleepy",
             "momentUpper": 100,
             "momentLower": 0,
-            "precision": 0.3,
-            "retention": 0.6,
+            "precision": 0.2,
+            "retention": 0.3,
             "scriptTimestamp": null,
             "cacheTimestamp": null,
             "featureWeights": null,

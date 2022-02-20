@@ -13,13 +13,15 @@ import {ItemPaper, ParamSlider, FabContainerBox}  from './StyledWigets';
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
 
 import FactorInput from './FactorInput';
-
-const builtInMoods = {
-  'cheer': true, 'down': true, 'greeting': true, 'peace': true, 'sleepy': true, 'wake': true
-};
+import AvatarSelector from './AvatarSelector'; 
 
 
 export default function PartEditor(props) {
+  /*
+    パートの編集
+    パートが優先になったときにチャット画面上に表示されるアバターは
+    {パート名}.svgとなる。見つからなかった場合はdefault.svgが使われる
+  */
   const bot = useContext(BiomebotContext);
 
   const part = bot.state.parts[props.partName];
@@ -27,10 +29,7 @@ export default function PartEditor(props) {
   const [partName, setPartName] = useState(props.partName);
   const [nameDuplicated, setNameDuplicated] = useState(false);
   const [kind, setKind] = useState(part.kind);
-  const [initialMood, setInitialMood] = useState(
-    partName in builtInMoods ? partName : (part.initialMood || "peace")
-  );
-  const moodIsBuiltIn = partName in builtInMoods;
+  const [avatar, setAvatar] = useState(part.avatar);
 
   const [momentUpper, setMomentUpper] = useState(part.momentUpper);
   const [momentLower, setMomentLower] = useState(part.momentLower);
@@ -45,14 +44,10 @@ export default function PartEditor(props) {
       setNameDuplicated(newName in bot.state.parts);
     }
 
-    if (newName in builtInMoods) {
-      setInitialMood(newName);
-    }
-
   }
 
   const handleChangeKind = event => setKind(event.target.value);
-  const handleChangeInitialMood = event => setInitialMood(event.target.value);
+  const handleChangeAvatar = x => setAvatar(x);
   const handleChangeMomentUpper = (evnet, value) => setMomentUpper(value);
   const handleChangeMomentLower = (event, value) => setMomentLower(value);
   const handleChangePrecision = value => setPrecision(value);
@@ -72,7 +67,7 @@ export default function PartEditor(props) {
       prevName: props.partName,
       data: {
         kind: kind,
-        initialMood: initialMood,
+        avatar: avatar,
         momentUpper: momentUpper,
         momentLower: momentLower,
         precision: precision,
@@ -124,8 +119,19 @@ export default function PartEditor(props) {
         </Box>
         <Box>
           <Typography variant="body2">
-            パートの名前は変更できます。他のパートと同じ名前は使えません
+            パートの名前は変更できます。他のパートと同じ名前は使えません。
+            またパート名は
           </Typography>
+        </Box>
+      </ItemPaper>
+      <ItemPaper elevation={0}>
+        <Box>
+          <AvatarSelector 
+            avatarDir={bot.state.config.avatarPath}
+            avatar={avatar}
+            handleChangeAvatar={handleChangeAvatar}
+            avatarDict={props.avatarDict}
+          />
         </Box>
       </ItemPaper>
       <ItemPaper elevation={0} >
@@ -139,30 +145,6 @@ export default function PartEditor(props) {
         <Typography variant="body2">
           辞書を編集します。パートの名前を変更する場合は先にこの画面の保存ボタンを押してください。
         </Typography>
-      </ItemPaper>
-      <ItemPaper elevation={0}>
-        <Box>
-          <Typography>開始時のムード</Typography>
-        </Box>
-        <Box>
-          <form>
-            <RadioGroup aria-label="initial-mood" name="initialMood" value={initialMood} onChange={handleChangeInitialMood}
-            >
-              <FormControlLabel value="peace" control={<Radio />} label="peace (落ち着いている)" disabled={moodIsBuiltIn} />
-              <FormControlLabel value="cheer" control={<Radio />} label="cheer (盛り上がっている" disabled={moodIsBuiltIn} />
-              <FormControlLabel value="down" control={<Radio />} label="down (落ち込んでいる)" disabled={moodIsBuiltIn} />
-              <FormControlLabel value="greeting" control={<Radio />} label="greeting (挨拶)" disabled={moodIsBuiltIn} />
-              <FormControlLabel value="wake" control={<Radio />} label="wake (目がさめたところ)" disabled={moodIsBuiltIn} />
-              <FormControlLabel value="sleepy" control={<Radio />} label="sleepy (眠そう)" disabled={moodIsBuiltIn} />
-            </RadioGroup>
-          </form>
-        </Box>
-        <Box>
-          <Typography variant="body2">
-            このパートが返答をし始めた時に使われる表情です。
-            パートの名前がこれらのどれかと同じ場合は変更できません。
-          </Typography>
-        </Box>
       </ItemPaper>
       <ItemPaper elevation={0} >
         <Box>
