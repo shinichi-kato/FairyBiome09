@@ -79,15 +79,16 @@ export function execute(state, work, message, sendMessage) {
   }
 
   if(newTopPart){
-    work.queue.push(
-      {
-        message: getTriggerMessage({
-          name: message.name,
-          text: `{enter_${newTopPart}}`
-        }),
-        emitter: sendMessage
-      }
-    )
+    console.log(`queueing {enter_${newTopPart}}`)
+    // work.queue.push(
+    //   {
+    //     message: getTriggerMessage({
+    //       name: message.name,
+    //       text: `{enter_${newTopPart}}`
+    //     }),
+    //     emitter: sendMessage
+    //   }
+    // )
   }
 
   // shift queue
@@ -96,7 +97,7 @@ export function execute(state, work, message, sendMessage) {
   const now = new Date();
   if (work.userLastAccess + state.config.keepAlive * 60 * 1000 < now.getTime()) {
     // 会話を新規にスタート
-    console.log("restarting chat")
+    console.log("restarting chat. ")
     work = {
       key: work.key + 1,
       mentalLevel: work.mentalLevel,
@@ -129,10 +130,13 @@ export function execute(state, work, message, sendMessage) {
       message.text = "{on_enter_part}"
     }
   }
-
-  // phase 4. partが返答するかチェック
+  
   // (廃止)moodと同名のpartがあればそれをpartOrder先頭に移動
   // hoist(work.mood, work.partOrder);
+  
+  // phase 4. partが返答するかチェック
+  message.text = textToInternalRepr(segmenter.segment(message.text));
+
   let part;
   for ( partName of work.partOrder) {
     part = state.parts[partName];
@@ -178,31 +182,17 @@ export function execute(state, work, message, sendMessage) {
 
     // 各種トリガー処理
     if (trigger !== "" && trigger in state.parts) {
-      // partと同名のトリガーを検出したら、そのpartを先頭にする。
-      // このwork.partOrder改変によりforループが壊れるため、
-      // hoist後は必ずbreakする
-      hoist(trigger, work.partOrder);
-
-      // パートの{on_enter_part}を実行
-      let text = renderer[part.kind](partName, state, work,
-        `{on_enter_part}`
-      );
-      if (text) {
-        work.queue.push({
-          message: new Message('speech',
-            {
-              text: text,
-              name: state.displayName,
-              person: "bot",
-              avatarPath: state.config.avatarPath,
-              backgroundColor: state.config.backgroundColor,
-              mood: part.avatar,
-              site: work.site,
-            }),
+      // partと同名のトリガーを検出したら、そのpartを次回先頭にする。
+      console.log(`queueing {enter_${trigger}}`)
+      work.queue.push(
+        {
+          message: getTriggerMessage({
+            name: message.name,
+            text: `{enter_${trigger}}`
+          }),
           emitter: sendMessage
-        });
-      };
-
+        }
+      );
 
     }
 
@@ -308,7 +298,7 @@ function getTriggerMessage(data) {
   // 入力文字列はinternalReprに変換を行う
   let message = new Message("trigger",{
     name: data.name,
-    text: textToInternalRepr(segmenter.segment(data.text))
+    text: data.text
   });
 
   return message;

@@ -50,7 +50,7 @@
             "featureWights": null,
             "script": [
                 {
-                    "in": "{enter_greeting}",
+                    "in": "{on_enter_part}",
                     "out": "こんにちは。{user}さん。どうしたんですか？"
                 },
                 {

@@ -6,8 +6,9 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 
 1. チャットルーム
+* queueが無限になる。sleepy周りが変
 * {positive},{negative}が未実装
-* 表情の変化が怪しい→script=part=アバター
+
 
 * ボットの返答にディレイをかける
 * ボットを新しくしてもローカルのログが残る
@@ -35,6 +36,7 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 
 # 以下対応済み
+* 表情の変化が怪しい→script=part=アバター
 * ボットの精神パワー実装
 * ユーザ名が展開されてない -> triggerにユーザ名を入れる変更 ->初回は展開されてない？
 * 会話が始まっていない場合挨拶を発火-> {on_enter_part}に返答しない
