@@ -221,7 +221,7 @@ class dbio {
     const { prevName, data } = obj;
     // prevNameのデータを上書き
     await this.db.parts.where({ botId: botId, name: prevName })
-      .modify(...data);
+      .modify(data);
   }
 
   async addPart(botId) {

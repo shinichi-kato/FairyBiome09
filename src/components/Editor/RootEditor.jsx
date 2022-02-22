@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useMemo } from "react";
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -14,9 +14,11 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForwardIos';
 import EmojiPeopleIcon from '@mui/icons-material/EmojiPeople';
 import FlashOnIcon from '@mui/icons-material/FlashOn';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
-import PartIcon from '@mui/icons-material/RecordVoiceOver';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
+import BodyPartIcon from '@mui/icons-material/AccessibilityNew';
+import EmotionPartIcon from '@mui/icons-material/FavoriteBorder';
+import MindPartIcon from '@mui/icons-material/Sms';
 
 import { FabContainerBox } from './StyledWigets';
 
@@ -51,6 +53,14 @@ const menus = [
   },
 ];
 
+const partIconDict = {
+  'sleep': <BodyPartIcon />,
+  'sleepy': <BodyPartIcon />,
+  'wake': <BodyPartIcon />,
+  'cheer': <EmotionPartIcon />,
+  'down': <EmotionPartIcon />,
+};
+
 function toArray(data) {
   // scriptのノードは略記のため文字列またはリストとして格納してある。
   // in: "not_found"
@@ -65,15 +75,18 @@ export default function RootEditor(props) {
   const bot = useContext(BiomebotContext);
   const [message, setMessage] = useState("");
 
-  let parts = [];
-  for (let part in props.state.parts) {
-    parts.push({
-      icon: <PartIcon />,
+  const memorizedParts = useMemo(() => {
+    let parts = [];
+    for (let part in props.state.parts){
+      parts.push({
+      icon: part in partIconDict ? partIconDict[part] : <MindPartIcon />,
       title: part,
       page: "part",
       part: part,
-    })
+    })}
+    return parts;
   }
+  , [props.state.parts]);
 
   function lister(items) {
     return items.map(item =>
@@ -171,9 +184,9 @@ export default function RootEditor(props) {
           flexDirection: "column"
         }}
       >
-        <Box 
-        sx={{alignSelf:"flex-end"}}>
-          <ToolMenu 
+        <Box
+          sx={{ alignSelf: "flex-end" }}>
+          <ToolMenu
             handleImport={props.handleImport}
             handleExport={props.handleExport}
           />
@@ -190,7 +203,7 @@ export default function RootEditor(props) {
         <List aria-label="main menu">
           {lister(menus)}
           <ListSubheader>パート</ListSubheader>
-          {lister(parts)}
+          {lister(memorizedParts)}
           <ListItem button key="_newPart_"
             onClick={props.handleAddNewPart}
             sx={{ backgroundColor: theme => theme.palette.primary }}

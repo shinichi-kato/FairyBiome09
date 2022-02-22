@@ -196,15 +196,14 @@ export function execute(state, work, message, sendMessage) {
 
     }
 
-    // hoist / drop
-    drop(reply.drop, work.partOrder);
-    hoist(reply.hoist, work.partOrder);
-
     break;
   }
 
+  // hoist / drop
+  drop(reply.drop, work.partOrder);
+  hoist(reply.hoist, work.partOrder);
 
-  console.log("reply", reply)
+  console.log("reply", reply,"part",part)
   let replyText = reply.text;
 
   if (reply.text === null && message.text.match(/^{[A-Za-z_]+}$/)) {

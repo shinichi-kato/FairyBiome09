@@ -7,20 +7,25 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Fab from '@mui/material/Fab';
 import Button from '@mui/material/Button';
+
+
 import SaveIcon from '@mui/icons-material/SaveAlt';
+
+
 
 import { ItemPaper, ParamSlider, FabContainerBox } from './StyledWigets';
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
 
 import FactorInput from './FactorInput';
 import AvatarSelector from './AvatarSelector';
+import SpecialPartTags from './SpecialPartTags';
+
 
 
 export default function PartEditor(props) {
   /*
     パートの編集
-    パートが優先になったときにチャット画面上に表示されるアバターは
-    {パート名}.svgとなる。見つからなかった場合はdefault.svgが使われる
+    
   */
   const bot = useContext(BiomebotContext);
 
@@ -42,6 +47,14 @@ export default function PartEditor(props) {
     setPartName(newName);
     if (props.partName !== newName) {
       setNameDuplicated(newName in bot.state.parts);
+    }
+
+  }
+
+  function handleSetPartName(name){
+    setPartName(name);
+    if (props.partName !== name) {
+      setNameDuplicated(name in bot.state.parts);
     }
 
   }
@@ -119,6 +132,8 @@ export default function PartEditor(props) {
         <Box>
           <Typography variant="body2">
             パートの名前は変更できます。他のパートと同じ名前は使えません。
+            以下のパート名にするとチャットボットの状態に対応して動作します。
+            <SpecialPartTags handleSetPartName={handleSetPartName}/>
           </Typography>
         </Box>
       </ItemPaper>

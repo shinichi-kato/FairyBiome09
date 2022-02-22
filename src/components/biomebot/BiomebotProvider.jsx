@@ -225,12 +225,9 @@ import { db } from './dbio';
 import matrixizeWorker from "./engine/matrixize.worker";
 import * as dialogue from "./engine/dialogue";
 import * as polylogue from "./engine/polylogue";
-import { textToInternalRepr } from './internal-repr';
-import { TinySegmenter } from './tinysegmenter';
 
 export const BiomebotContext = createContext();
 
-let segmenter = new TinySegmenter();
 
 let workers = {};
 let executes = {
@@ -709,8 +706,10 @@ export default function BiomebotProvider(props) {
     return {}
   } 
 
-
-  const photoURL = `/chatbot/${state.config.avatarPath}/${work.partOrder[0]}.svg`;
+  const topPart = work.partOrder[0];
+  const currentPart = state.parts[topPart];
+  const avatar = currentPart ? currentPart.avatar : 'peace';
+  const photoURL = `/chatbot/${state.config.avatarPath}/${avatar}.svg`;
 
   return (
     <BiomebotContext.Provider
