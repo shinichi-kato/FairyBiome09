@@ -410,6 +410,24 @@ function reducer(state, action) {
       }
     }
 
+    case 'addPart': {
+      const {name, data} = action.data;
+
+      let partOrder = [...state.config.initialPartOrder, name];
+
+      return {
+        ...state,
+        config: {
+          ...state.config,
+          partOrder:partOrder,
+        },
+        parts: {
+          ...state.parts,
+          [name]: data,
+        }
+      }
+    }
+
     case 'updatePart': {
       const { prevName, data } = action.data;
       return {
@@ -572,7 +590,11 @@ export default function BiomebotProvider(props) {
   }
 
   async function addNewPart() {
-    await db.addPart(state.botId);
+    const newPart = await db.addPart(state.botId);
+    // partOrder末尾に新パート追加
+    dispatch({type:'addPart',...newPart});
+    // 空のスクリプトを追加<ーここから
+
   }
 
   const generate = useCallback(async (obj, id, site) => {

@@ -166,6 +166,14 @@ export default function ChatRoom(props) {
     }
   }, [change, dispatch, writeLog, auth.displayName]);
 
+  // ---------------------------------------------------------------
+  //
+  // parkLogにユーザと自分以外の書き込みがあったらチャットボットに渡す
+  //
+  
+  useEffect(()=>{
+    
+  },[props.parkLog])
 
   function handleChangeUserInput(event) {
     setUserInput(event.target.value);

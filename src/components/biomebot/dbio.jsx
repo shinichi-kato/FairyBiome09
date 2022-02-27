@@ -28,10 +28,12 @@
 */
 
 import Dexie from "dexie";
-import { reviver } from 'mathjs';
+import { number, reviver } from 'mathjs';
 
-function toArray(data){
-  return typeof data === 'string' ? [data] : data; 
+const RE_NEW_PART = /^new ?([0-9]+)$/i;
+
+function toArray(data) {
+  return typeof data === 'string' ? [data] : data;
 }
 
 class dbio {
@@ -227,17 +229,20 @@ class dbio {
   async addPart(botId) {
     // パートの追加
     // ユニークな名前を生成
-    const lastNew = await this.db.parts
-      .where('name')
-      .startswith('New')
-      .sortBy('name')
-      .last()
-      .slice(4)
+    const parts = await this.db.parts
+      .where('[botId+name]')
+      .between([botId, Dexie.minKey], [botId, Dexie.maxKey])
+      .toArray();
 
-    const newName = `New ${Number(lastNew) + 1}`;
+    const news = parts
+      .map(part => part.name)
+      .filter(x => x.match(RE_NEW_PART))
+      .map(x => x.replace(RE_NEW_PART, "$1"))
+      .map(x => Number(x));
+    news.push(0);
+    const newName = `New ${Math.max(...news) + 1}`;
 
-
-    await this.db.parts.put({
+    const newPart = {
       botId: botId,
       name: newName,
       kind: "knowledge",
@@ -249,11 +254,13 @@ class dbio {
       scriptTimestamp: null,
       cacheTimestamp: null,
       featureWights: null,
-    });
+    }
+
+    await this.db.parts.put(newPart);
 
     // 追加したパート用にスクリプトが必要だが、
     // 空のスクリプトが作れないので編集時に先送り
-
+    return { name: newName, data: newPart };
   }
 
   async load(botId) {
@@ -285,9 +292,9 @@ class dbio {
         .where('[botId+key]')
         .between([botId, Dexie.minKey], [botId, Dexie.maxKey])
         .each(item => {
-          if (item.key in main){
+          if (item.key in main) {
             main[item.key].push(item.val);
-          }else{
+          } else {
             main[item.key] = [item.val];
           }
         });
@@ -306,7 +313,7 @@ class dbio {
     return null;
   }
 
-  async isExist(botId){
+  async isExist(botId) {
     const config = await this.db.config.where({ botId: botId }).first();
     if (config) {
       return true;
@@ -336,21 +343,21 @@ class dbio {
     //     [botId, partName, Dexie.minKey],
     //     [botId, partName, Dexie.maxKey])
     //   .toArray();
-    
-    let src=[];
-    let id=0;
+
+    let src = [];
+    let id = 0;
 
     do {
       let line = await this.db.scripts.where({
-        id:id,
-        botId:botId,
-        partName:partName
+        id: id,
+        botId: botId,
+        partName: partName
       }).limit(1).first();
       src.push(line);
       id = line.next;
-  
-    } while(id !== -1)
-        
+
+    } while (id !== -1)
+
     return src;
   }
 
@@ -365,8 +372,8 @@ class dbio {
       .delete();
 
     let data = [];
-    let i,l=script.length;
-    for (i=0; i<l; i++) {
+    let i, l = script.length;
+    for (i = 0; i < l; i++) {
       data.push({
         id: i,
         botId: botId, // compound key
@@ -377,7 +384,7 @@ class dbio {
       });
     }
 
-    data[i-1].next = -1;
+    data[i - 1].next = -1;
 
     await this.db.scripts.bulkAdd(data);
   }

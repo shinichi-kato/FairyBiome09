@@ -6,7 +6,7 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 
 1. チャットルーム
-* queueが無限になる。sleepy周りが変
+* sleepy周りが変
 * {positive},{negative}が未実装
 
 
@@ -15,7 +15,8 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 * 公園で全員の吹き出しが白い
 
 2. エディタ
-* パートエディタで対応するsvgがあるかヒントを表示（ここから）
+
+
 　参照：https://qiita.com/m3816/items/56b9b6b6f340265cbfab
 * スクリプトをdbio.loadScriptでnextの順に並べてデータ取得
 * どんな{}が展開されるのかユーザにわからない
@@ -23,10 +24,13 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 * json形式でのエクスポート
 
 3. create
+* チャットボットを新規作成しても前のが消えてない＜ーここから
 * systemのボットとfirestoreのボットの区別
 
 
 4. 他
+* auth画面の背景をsvgにして前景を白透過に<ーここから
+  cssのfilter: blur(5px);style={{ filter: showDIalog ? "blur(3px)" : "none" }}
 * landing画面でユーザとボットのアバター表示
 * AuthDialogでサインアップができない
 
@@ -36,6 +40,7 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 
 # 以下対応済み
+* パートエディタで対応するsvgがあるかヒントを表示
 * 表情の変化が怪しい→script=part=アバター
 * ボットの精神パワー実装
 * ユーザ名が展開されてない -> triggerにユーザ名を入れる変更 ->初回は展開されてない？

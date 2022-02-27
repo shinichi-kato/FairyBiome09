@@ -66,14 +66,14 @@ export function execute(state, work, message, sendMessage) {
   let newTopPart = null;
 
   if (!isWake) {
-    if (topPart === 'sleepy') {
+    if (topPart === 'sleepy' && 'sleep' in work.partOrder) {
       newTopPart = 'sleep';
 
-    } else if (topPart !== 'sleep') {
+    } else if (topPart !== 'sleep' && 'sleepy' in work.partOrder) {
       newTopPart = 'sleepy';
     }
   } else {
-    if (topPart === 'sleepy' || topPart === 'sleep') {
+    if ((topPart === 'sleepy' || topPart === 'sleep') && 'wake' in work.partOrder) {
       newTopPart = 'wake';
     }
   }
@@ -237,7 +237,7 @@ export function execute(state, work, message, sendMessage) {
     .replace('{bot}', state.displayNmae)
     .replace('{user}', message.name || state.main.CREATOR_NAME || 'ユーザーさん');
   // ecosystemにはmessage.nameがない。そのような返答は起きるべきでないが、
-  // fallbacktとして作成者名を使用。
+  // fallbackとして作成者名を使用。
 
   sendMessage(new Message(
     'speech',

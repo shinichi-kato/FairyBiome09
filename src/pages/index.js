@@ -8,7 +8,7 @@
   
 */
 
-import React, { useState, useEffect, useRef,useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { graphql, navigate } from "gatsby";
 
 import Landing from '../components/Landing/Landing';
@@ -131,6 +131,7 @@ export default function IndexPage({ data }) {
   const [parkLog, setParkLog] = useState([]);
   const [forestLog, setForestLog] = useState([]);
   const [roomLog, setRoomLog] = useState([]);
+  const [parkSpeech, setParkSpeech] = useState(); // parkで外から入ってきた発言
   const unsubscribeRef = useRef();
 
   const config = data.site.siteMetadata.chatbot;
@@ -164,9 +165,9 @@ export default function IndexPage({ data }) {
       initializeFirebaseApp();
     };
 
-    return (()=>{
+    return (() => {
       console.log("unsubscribing")
-      if(unsubscribeRef.current) { unsubscribeRef.current(); }
+      if (unsubscribeRef.current) { unsubscribeRef.current(); }
     })
   }, []);
 
@@ -176,17 +177,33 @@ export default function IndexPage({ data }) {
         orderBy('timestamp'), limit(100));
 
       unsubscribeRef.current = onSnapshot(q, (snap) => {
-        let arr = [];
-        snap.forEach((doc) => {
-          let m = new Message(doc.data());
-          m.id = doc.id;
-          arr.push(m)
-        });
-        setParkLog(arr);
+        if (parkLog.length === 0) {
+          // 起動時は一括取得
+          let log = [];
+          snap.forEach(doc => {
+            let m = new Message(doc.data());
+            m.id = doc.id;
+            log.push(m);
+          })
+          setParkLog(log);
+
+        } else {
+
+          // 以降は都度取得
+          snap.docChanges().forEach((change) => {
+            if (change.type === 'added') {
+              let m = new Message(change.doc.data());
+              m.id = change.doc.id;
+              setParkLog(prev=>[...prev,m]);
+              // ここでチャットボット学習用のログを取る
+            }
+          }
+          )
+        }
       });
     }
 
-  }, [appState])
+  }, [appState]);
 
 
   const handleWriteLog = useCallback(message => {
@@ -209,7 +226,7 @@ export default function IndexPage({ data }) {
           throw new Error(`invalid site ${message.site}`)
       }
     })()
-  },[]);
+  }, []);
 
   function handleBotFound() { setAppState('continue'); }
   function handleBotNotFound() { setAppState('new'); }
@@ -220,13 +237,13 @@ export default function IndexPage({ data }) {
     setAppState('authOk');
     navigate('/create/');
   }
-  
+
   return (
 
     <AuthProvider
       firebase={firebaseApp}
       firestore={firestore}
-      handleAuthOk={()=>setAppState('authOk')}
+      handleAuthOk={() => setAppState('authOk')}
     >
       <EcosystemProvider
         writeLog={handleWriteLog}
