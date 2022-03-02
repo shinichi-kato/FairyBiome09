@@ -60,7 +60,7 @@ function reducer(state, action) {
   }
 }
 
-export default function Editor({avatarDictSnap}) {
+export default function Editor({ avatarDictSnap }) {
   /* 
     チャットボットエディタのフレームワーク
 
@@ -91,8 +91,8 @@ export default function Editor({avatarDictSnap}) {
       const path = bot.state.config.avatarPath;
       const list = [];
 
-      for(let node of avatarDictSnap){
-        if(node.relativeDirectory === path){
+      for (let node of avatarDictSnap) {
+        if (node.relativeDirectory === path) {
           list.push(node.name);
         }
       }
@@ -105,14 +105,14 @@ export default function Editor({avatarDictSnap}) {
   // json I/O
   //
 
-  function handleImport(){
-    
+  function handleImport() {
+
   }
 
-  function handleExport(){
+  function handleExport() {
     (async () => {
       const json = bot.exportJson();
-      const blob = new Blob([json],{type:'application/json'});
+      const blob = new Blob([json], { type: 'application/json' });
       const href = await URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = href;
@@ -139,7 +139,11 @@ export default function Editor({avatarDictSnap}) {
   }
 
   function handleAddNewPart() {
-    bot.addNewPart();
+    bot.editPart({ type: 'addNew' });
+  }
+
+  function handleDeletePart(partName) {
+    bot.editPart({ type: 'delete', partName: partName });
   }
 
   return (
@@ -198,6 +202,7 @@ export default function Editor({avatarDictSnap}) {
               photoURL={bot.photoURL}
               handleChangePage={handleChangePage}
               handleAddNewPart={handleAddNewPart}
+              handleDeletePart={handleDeletePart}
               handleExport={handleExport}
               handleImpoirt={handleImport}
             />
@@ -230,7 +235,7 @@ export default function Editor({avatarDictSnap}) {
           }
         </Box>
         <Box
-          sx={{alignSelf:"center"}}
+          sx={{ alignSelf: "center" }}
         >
           <FooterSvg />
         </Box>

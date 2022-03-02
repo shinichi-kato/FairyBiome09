@@ -28,7 +28,7 @@
 */
 
 import Dexie from "dexie";
-import { number, reviver } from 'mathjs';
+import { reviver } from 'mathjs';
 
 const RE_NEW_PART = /^new ?([0-9]+)$/i;
 
@@ -261,6 +261,20 @@ class dbio {
     // 追加したパート用にスクリプトが必要だが、
     // 空のスクリプトが作れないので編集時に先送り
     return { name: newName, data: newPart };
+  }
+
+  async deletePart(botId, partName){
+    // scriptの削除
+    await this.db.scripts.where('[botId+partName+id]')
+      .between(
+        [botId, partName, Dexie.minKey],
+        [botId, partName, Dexie.maxKey])
+      .delete();
+
+    // partの削除
+    await this.db.parts
+      .where({ botId: botId, name: partName })
+      .delete();
   }
 
   async load(botId) {

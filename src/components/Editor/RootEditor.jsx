@@ -7,6 +7,9 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
+import { ListItemSecondaryAction } from "@mui/material";
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 
 import Fab from '@mui/material/Fab';
 
@@ -19,6 +22,8 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import BodyPartIcon from '@mui/icons-material/AccessibilityNew';
 import EmotionPartIcon from '@mui/icons-material/FavoriteBorder';
 import MindPartIcon from '@mui/icons-material/Sms';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 
 import { FabContainerBox } from './StyledWigets';
 
@@ -40,16 +45,19 @@ const menus = [
     icon: <EmojiPeopleIcon style={{ color: "#8fd2eb" }} />,
     title: "基本設定",
     page: "config",
+    deletable: false,
   },
   {
     icon: <FlashOnIcon style={{ color: "#cfaf70" }} />,
     title: "作業記憶",
     page: "work",
+    deletable: false,
   },
   {
     icon: <MenuBookIcon style={{ color: "#946ecc" }} />,
     title: "メイン辞書",
     page: "main",
+    deletable: false,
   },
 ];
 
@@ -76,17 +84,26 @@ export default function RootEditor(props) {
   const [message, setMessage] = useState("");
 
   const memorizedParts = useMemo(() => {
+    let initPO = {};
+    for (let p of props.state.config.initialPartOrder) {
+      initPO[p] = true;
+    }
+
+    console.log("initPo", initPO)
     let parts = [];
-    for (let part in props.state.parts){
+    for (let part in props.state.parts) {
       parts.push({
-      icon: part in partIconDict ? partIconDict[part] : <MindPartIcon />,
-      title: part,
-      page: "part",
-      part: part,
-    })}
+        icon: part in partIconDict ? partIconDict[part] : <MindPartIcon />,
+        title: part,
+        page: "part",
+        part: part,
+        isInPartOrder: part in initPO,
+        deletable: true,
+      })
+    }
     return parts;
   }
-  , [props.state.parts]);
+    , [props.state.parts, props.state.config.initialPartOrder]);
 
   function lister(items) {
     return items.map(item =>
@@ -96,8 +113,24 @@ export default function RootEditor(props) {
         <ListItemIcon>
           {item.icon}
         </ListItemIcon>
-        <ListItemText primary={item.title} />
+        <ListItemText
+          primary={item.title}
+          secondary={
+            item.isInPartOrder == false &&
+            <Typography variant="body2" sx={(theme) => ({ color: theme.palette.error.main })}>
+              基本設定の「初期のパート順」に含まれていません
+            </Typography>
+          } />
         <ArrowForwardIcon />
+        {item.deletable &&
+          <ListItemSecondaryAction>
+            <IconButton edge="end" aria-label="delete"
+              onClick={() => props.handleDeletePart(item.part)}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </ListItemSecondaryAction>
+        }
       </ListItem>
     )
 
@@ -208,6 +241,9 @@ export default function RootEditor(props) {
             onClick={props.handleAddNewPart}
             sx={{ backgroundColor: theme => theme.palette.primary }}
           >
+            <ListItemIcon>
+              <AddIcon/>
+            </ListItemIcon>
             <ListItemText primary="パートの追加" />
           </ListItem>
         </List>

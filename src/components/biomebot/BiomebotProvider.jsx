@@ -410,21 +410,40 @@ function reducer(state, action) {
       }
     }
 
-    case 'addPart': {
-      const {name, data} = action.data;
+    case 'addNewPart': {
+      const { name, data } = action.data;
 
       let partOrder = [...state.config.initialPartOrder, name];
-
+      console.log("name", name, "data", data)
       return {
         ...state,
         config: {
           ...state.config,
-          partOrder:partOrder,
+          initialPartOrder: partOrder,
         },
         parts: {
           ...state.parts,
           [name]: data,
         }
+      }
+    }
+
+    case 'deletePart': {
+      let partOrder = [...state.config.initialPartOrder];
+      partOrder.splice(partOrder.indexOf(action.partName), 1);
+
+      let newParts = new Object();
+      for (let p of partOrder) {
+        newParts[p] = {...state.parts[p]};
+      }
+
+      return {
+        ...state,
+        state: {
+          ...state.config,
+          initialPartOrder:partOrder,
+        },
+        parts: newParts,
       }
     }
 
@@ -442,7 +461,7 @@ function reducer(state, action) {
     }
 
     default:
-      throw new Error(`invalid action ${action}`);
+      throw new Error(`invalid action ${action.type}`);
   }
 }
 
@@ -570,7 +589,7 @@ export default function BiomebotProvider(props) {
     // 外部からの入力を受付け、必要な場合返答を送出する。
     // deploy完了前に呼び出された場合はqueueに積む
 
-    console.log("message text",message.text)
+    console.log("message text", message.text)
     if (state.status !== 'ready') {
       setWork(prev => ({
         ...prev,
@@ -589,11 +608,33 @@ export default function BiomebotProvider(props) {
     }
   }
 
-  async function addNewPart() {
-    const newPart = await db.addPart(state.botId);
-    // partOrder末尾に新パート追加
-    dispatch({type:'addPart',...newPart});
-    // 空のスクリプトを追加<ーここから
+  async function editPart(action) {
+    switch (action.type) {
+      case 'addNew':
+        const newPart = await db.addPart(state.botId);
+        // partOrder末尾に新パート追加
+        dispatch({
+          type: 'addNewPart',
+          data: {
+            name: newPart.name,
+            data: newPart.data
+          }
+        }
+        );
+        // 空のスクリプトを追加<ーここから
+        break;
+
+      case 'delete':
+        const partName = action.partName;
+        await db.deletePart(state.botId, partName)
+        dispatch({
+          type: 'deletePart',
+          partName: partName
+        });
+        break;
+
+      default: throw new Error(`invalid type ${action.type}`)
+    }
 
   }
 
@@ -654,7 +695,7 @@ export default function BiomebotProvider(props) {
           mentalLevel: parseInt(snapWork.mentalLevel),
           moment: parseInt(snapWork.moment),
           partOrder: [...snapWork.partOrder],
-          queue: [...prev.queue,...snapWork.queue],
+          queue: [...prev.queue, ...snapWork.queue],
           site: site,
           updatedAt: snapWork.updatedAt,
           futurePosting: [],
@@ -687,8 +728,8 @@ export default function BiomebotProvider(props) {
 
       case 'work': {
         await db.saveWork(state.botId, obj);
-        setWork(prev=>({
-          key: prev.key+1,
+        setWork(prev => ({
+          key: prev.key + 1,
           ...obj
         }));
         return;
@@ -723,10 +764,10 @@ export default function BiomebotProvider(props) {
 
   }
 
-  function exportJson(){
+  function exportJson() {
     // db上のデータをjson形式で出力
     return {}
-  } 
+  }
 
   const topPart = work.partOrder[0];
   const currentPart = state.parts[topPart];
@@ -739,7 +780,7 @@ export default function BiomebotProvider(props) {
         execute: handleExecute,
         generate: generate,
         save: save,
-        addNewPart: addNewPart,
+        editPart: editPart,
         loadScript: loadScript,
         load: load,
         exportJson: exportJson,
