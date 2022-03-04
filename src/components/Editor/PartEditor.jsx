@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect,useCallback } from "react";
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -51,13 +51,13 @@ export default function PartEditor(props) {
 
   }
 
-  function handleSetPartName(name){
+  const handleSetPartName = useCallback((name)=>{
     setPartName(name);
     if (props.partName !== name) {
       setNameDuplicated(name in bot.state.parts);
     }
 
-  }
+  },[props.partName,bot.state.parts]);
 
   const handleChangeKind = event => setKind(event.target.value);
   const handleChangeAvatar = x => setAvatar(x);

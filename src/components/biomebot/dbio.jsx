@@ -111,6 +111,9 @@ class dbio {
     /* 各partのデータのうちscript以外を記憶
        scriptは以下で別途記憶
     */
+    
+       // Partを一旦全削除
+    await this.deleteAllPart(botId);
     await this.savePart(botId, obj.parts);
     /* scriptはidをこちらで与え、next,prevも設定する */
 
@@ -274,6 +277,13 @@ class dbio {
     // partの削除
     await this.db.parts
       .where({ botId: botId, name: partName })
+      .delete();
+  }
+
+  async deleteAllPart(botId){
+    await this.db.parts
+      .where('[botId+name]')
+      .between([botId,Dexie.minKey],[botId,Dexie.maxKey])
       .delete();
   }
 

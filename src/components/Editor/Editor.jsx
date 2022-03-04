@@ -21,7 +21,7 @@ import { AuthContext } from "../Auth/AuthProvider";
 import FooterSvg from './footer.inline.svg';
 
 const initialState = {
-  page: "root",
+  page: "unload",
   part: null
 };
 
@@ -55,6 +55,12 @@ function reducer(state, action) {
         part: action.part || state.part,
       }
     }
+    case 'connect': {
+      return {
+        page: 'root',
+        part: null,
+      }
+    }
     default:
       throw new Error(`invalid action ${action.type}`);
   }
@@ -83,11 +89,12 @@ export default function Editor({ avatarDictSnap }) {
   // ------------------------------------------------------------------
   // botが読み込まれていなければindexDBから読み込む
   //
-
+  
   useEffect(() => {
     if (bot.state.status === 'unload') {
       bot.load(auth.uid);
     } else {
+      dispatch({type: 'connect'});
       const path = bot.state.config.avatarPath;
       const list = [];
 
@@ -98,7 +105,7 @@ export default function Editor({ avatarDictSnap }) {
       }
       setAvatarList(list);
     }
-  }, [bot, auth.uid, avatarDictSnap]);
+  }, [bot.state.status, bot, auth.uid, avatarDictSnap]);
 
   // ------------------------------------------------------------------------------------
   //
@@ -194,6 +201,9 @@ export default function Editor({ avatarDictSnap }) {
         }}
       >
         <Box >
+          {
+            state.page === 'unload' && "ロードできていない"
+          }
           {
             state.page === 'root' &&
             <RootEditor

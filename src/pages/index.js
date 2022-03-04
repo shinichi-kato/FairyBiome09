@@ -77,7 +77,7 @@ async function readLocalLog(site, number, offset) {
 }
 
 async function writeLog(message) {
-  const site = message.site;
+  const site = message?.site;
   if (site === 'forest' || site === 'room') {
 
     let id = await db[site].add(message);
@@ -93,6 +93,8 @@ async function writeLog(message) {
     }
     const d = await addDoc(collection(firestore, "parklog"), data);
     message.id = d.id;
+  } else {
+    console.log('invalid message',message)
   }
 
   return message;

@@ -116,7 +116,7 @@ export default function RootEditor(props) {
         <ListItemText
           primary={item.title}
           secondary={
-            item.isInPartOrder == false &&
+            item.isInPartOrder === false &&
             <Typography variant="body2" sx={(theme) => ({ color: theme.palette.error.main })}>
               基本設定の「初期のパート順」に含まれていません
             </Typography>
