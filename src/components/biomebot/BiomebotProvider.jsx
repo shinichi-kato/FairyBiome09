@@ -294,6 +294,17 @@ export const defaultSettings = {
   }
 }
 
+const initialScript = [
+  {
+    "in": ["{on_enter_part}"],
+    "out": ["こんにちは！"]
+  },
+  {
+    "in": ["{NOT_FOUND}"],
+    "out": ["そうなんですか？"]
+  },
+];
+
 // 更新頻度は低くdbには保存しないデータ
 const initialState = {
   status: "unload",
@@ -434,14 +445,14 @@ function reducer(state, action) {
 
       let newParts = new Object();
       for (let p of partOrder) {
-        newParts[p] = {...state.parts[p]};
+        newParts[p] = { ...state.parts[p] };
       }
 
       return {
         ...state,
         state: {
           ...state.config,
-          initialPartOrder:partOrder,
+          initialPartOrder: partOrder,
         },
         parts: newParts,
       }
@@ -609,23 +620,26 @@ export default function BiomebotProvider(props) {
   }
 
   async function editPart(action) {
+    let partName;
     switch (action.type) {
       case 'addNew':
         const newPart = await db.addPart(state.botId);
+        partName = newPart.name;
         // partOrder末尾に新パート追加
         dispatch({
           type: 'addNewPart',
           data: {
-            name: newPart.name,
+            name: partName,
             data: newPart.data
           }
         }
         );
-        // 空のスクリプトを追加<ーここから
+        // 空のスクリプトを追加
+        await db.saveScript(state.botId, partName, initialScript);
         break;
 
       case 'delete':
-        const partName = action.partName;
+        partName = action.partName;
         await db.deletePart(state.botId, partName)
         dispatch({
           type: 'deletePart',

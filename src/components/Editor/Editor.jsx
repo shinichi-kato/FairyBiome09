@@ -89,12 +89,12 @@ export default function Editor({ avatarDictSnap }) {
   // ------------------------------------------------------------------
   // botが読み込まれていなければindexDBから読み込む
   //
-  
+
   useEffect(() => {
     if (bot.state.status === 'unload') {
       bot.load(auth.uid);
     } else {
-      dispatch({type: 'connect'});
+      dispatch({ type: 'connect' });
       const path = bot.state.config.avatarPath;
       const list = [];
 
@@ -202,14 +202,20 @@ export default function Editor({ avatarDictSnap }) {
       >
         <Box >
           {
-            state.page === 'unload' && "ロードできていない"
+            state.page === 'unload' &&
+            <Box sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center'
+            }}>
+              <Box>
+                <Typography>ロード中</Typography>
+              </Box>
+            </Box>
           }
           {
             state.page === 'root' &&
             <RootEditor
-              state={bot.state}
-              work={bot.work}
-              photoURL={bot.photoURL}
               handleChangePage={handleChangePage}
               handleAddNewPart={handleAddNewPart}
               handleDeletePart={handleDeletePart}

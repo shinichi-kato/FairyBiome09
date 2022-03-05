@@ -9,7 +9,13 @@ import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 import { ListItemSecondaryAction } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
+import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 import Fab from '@mui/material/Fab';
 
@@ -82,16 +88,31 @@ export default function RootEditor(props) {
   const auth = useContext(AuthContext);
   const bot = useContext(BiomebotContext);
   const [message, setMessage] = useState("");
+  const [partToDelete, setPartToDelete] = useState(false);
+
+
+  function handleClickDeleteButton(partName) {
+    setPartToDelete(partName);
+  }
+
+  function handleClose() {
+    setPartToDelete(false);
+  }
+
+  function handleDeletePart() {
+    props.handleDeletePart(partToDelete);
+    setPartToDelete(false);
+  }
+
 
   const memorizedParts = useMemo(() => {
     let initPO = {};
-    for (let p of props.state.config.initialPartOrder) {
+    for (let p of bot.state.config.initialPartOrder) {
       initPO[p] = true;
     }
 
-    console.log("initPo", initPO)
     let parts = [];
-    for (let part in props.state.parts) {
+    for (let part in bot.state.parts) {
       parts.push({
         icon: part in partIconDict ? partIconDict[part] : <MindPartIcon />,
         title: part,
@@ -103,7 +124,7 @@ export default function RootEditor(props) {
     }
     return parts;
   }
-    , [props.state.parts, props.state.config.initialPartOrder]);
+    , [bot.state.parts, bot.state.config.initialPartOrder]);
 
   function lister(items) {
     return items.map(item =>
@@ -125,7 +146,7 @@ export default function RootEditor(props) {
         {item.deletable &&
           <ListItemSecondaryAction>
             <IconButton edge="end" aria-label="delete"
-              onClick={() => props.handleDeletePart(item.part)}
+              onClick={() => handleClickDeleteButton(item.part)}
             >
               <DeleteIcon />
             </IconButton>
@@ -188,9 +209,6 @@ export default function RootEditor(props) {
   }
 
 
-
-
-
   useEffect(() => {
     let id;
     if (message !== "") {
@@ -200,6 +218,8 @@ export default function RootEditor(props) {
       clearTimeout(id);
     }
   }, [message]);
+
+  const open = partToDelete !== false;
 
   return (
     <Box
@@ -242,7 +262,7 @@ export default function RootEditor(props) {
             sx={{ backgroundColor: theme => theme.palette.primary }}
           >
             <ListItemIcon>
-              <AddIcon/>
+              <AddIcon />
             </ListItemIcon>
             <ListItemText primary="パートの追加" />
           </ListItem>
@@ -261,6 +281,29 @@ export default function RootEditor(props) {
           <CloudUploadIcon sx={{ marginRight: theme => theme.spacing(1), }} />保存{message}
         </Fab>
       </FabContainerBox>
+
+      <Box>
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="confirm-delete"
+          aria-describedby="confirm-delete-description"
+        >
+          <DialogTitle id="confirm-delete">
+            パート{partToDelete} を削除します
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="confirm-delete-description">
+              パートとスクリプトを削除します。削除後はもとに戻せません。
+            </DialogContentText>
+            <DialogActions>
+              <Button onClick={handleClose}>取り消す</Button>
+              <Button onClick={handleDeletePart} >削除する</Button>
+            </DialogActions>
+          </DialogContent>
+        </Dialog>
+      </Box>
+
 
     </Box>
   )

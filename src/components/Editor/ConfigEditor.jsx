@@ -22,6 +22,23 @@ const hourMarks = [
   { value: 23, label: '23時' }
 ]
 
+function checkPartsAndOrder(partOrder, parts) {
+  let partsList = {};
+  let newPartOrder = [...partOrder];
+
+
+  for (let p in parts) {
+    partsList[p] = true;
+    
+  }
+
+  // initialPartOrderにあってpartsにないパートが見つかったら削除
+
+
+
+  // partsにあってinitialPartOrderにないパートが見つかったら末尾に加える
+
+}
 
 export default function ConfigEditor() {
   /* config Editor
@@ -51,6 +68,10 @@ export default function ConfigEditor() {
           "retention": 0.4
       }
     },
+
+        partsにあってinitialPartOrderにないパートが見つかったら末尾に加え、
+      initialPartOrderにあってpartsにないパートが見つかったら削除する。
+
    */
 
   const bot = useContext(BiomebotContext);
@@ -92,7 +113,7 @@ export default function ConfigEditor() {
   }
 
   function handleChangeKeepAlive(value) {
-      setKeepAlive(value);
+    setKeepAlive(value);
   }
 
   function handleSave() {
@@ -230,6 +251,7 @@ export default function ConfigEditor() {
         </Box>
         <Box>
           <PartOrder
+            parts={bot.state.parts}
             items={initialPartOrder}
             handleChange={handleChangeInitialPartOrder}
           />

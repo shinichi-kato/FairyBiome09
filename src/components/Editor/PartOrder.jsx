@@ -61,6 +61,8 @@ export default function PartOrder(props) {
 			],
 			props.part : partOrderリスト
 			props.handleChangePartOrder: 変更メソッド
+
+
 		*/
 	return (
 		<List>
