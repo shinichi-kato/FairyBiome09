@@ -663,6 +663,9 @@ export default function BiomebotProvider(props) {
     // displayNameを復元
     obj.displayName = obj.main.NAME;
 
+    // partOrderのヌケモレをなくす
+    obj.config.initialPartOrder = fitOrderToParts(obj.config.initialPartOrder,obj.parts);
+    
     // indexDBへの書き込み
     await db.generate(obj, id);
 
@@ -814,4 +817,25 @@ function nums(len, num) {
     x[i] = num;
   }
   return x;
+}
+
+
+function fitOrderToParts(partOrder, parts) {
+  // initialPartOrderにあってpartsにないパートが見つかったら削除
+  // partsにあってinitialPartOrderにないパートが見つかったら末尾に加える
+  let newPartOrder = [...partOrder];
+
+  for (let po of partOrder) {
+    if (!(po in parts)) {
+      let pos = newPartOrder.indexOf(po);
+      newPartOrder.splice(pos, 1);
+    }
+  }
+
+  for (let p of Object.keys(parts)) {
+    if (newPartOrder.indexOf(p) === -1) {
+      newPartOrder.push(p);
+    }
+  }
+  return newPartOrder;
 }

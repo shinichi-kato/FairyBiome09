@@ -90,6 +90,7 @@ class dbio {
     const botId = obj.botId || uid;
 
     console.log("generate")
+
     /* config */
     await this.db.config.put({
       ...obj.config,
@@ -150,6 +151,7 @@ class dbio {
         "keepAlive": 10
     },
     */
+
 
     await this.db.config.put({
       ...config,
@@ -492,4 +494,7 @@ function dict2data(botId, dict) {
 
   return data;
 }
+
+
+
 

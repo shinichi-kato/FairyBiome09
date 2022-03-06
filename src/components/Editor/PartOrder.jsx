@@ -7,8 +7,17 @@ import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import IconButton from '@mui/material/IconButton';
 import DownIcon from '@mui/icons-material/KeyboardArrowDown';
 import UpIcon from '@mui/icons-material/KeyboardArrowUp';
-import PartIcon from '@mui/icons-material/RecordVoiceOver';
+import BodyPartIcon from '@mui/icons-material/AccessibilityNew';
+import EmotionPartIcon from '@mui/icons-material/FavoriteBorder';
+import MindPartIcon from '@mui/icons-material/Sms';
 
+const partIconDict = {
+	'sleep': <BodyPartIcon />,
+	'sleepy': <BodyPartIcon />,
+	'wake': <BodyPartIcon />,
+	'cheer': <EmotionPartIcon />,
+	'down': <EmotionPartIcon />,
+};
 
 
 function Part(props) {
@@ -36,7 +45,7 @@ function Part(props) {
 	return (
 		<ListItem key={props.item} className={props.partStyle}>
 			<ListItemIcon>
-				<PartIcon />
+				{props.item in partIconDict ? partIconDict[props.item] : <MindPartIcon />}
 			</ListItemIcon>
 			<ListItemText primary={props.item} />
 			<ListItemSecondaryAction>

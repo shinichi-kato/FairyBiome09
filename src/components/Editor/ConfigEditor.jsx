@@ -22,23 +22,6 @@ const hourMarks = [
   { value: 23, label: '23時' }
 ]
 
-function checkPartsAndOrder(partOrder, parts) {
-  let partsList = {};
-  let newPartOrder = [...partOrder];
-
-
-  for (let p in parts) {
-    partsList[p] = true;
-    
-  }
-
-  // initialPartOrderにあってpartsにないパートが見つかったら削除
-
-
-
-  // partsにあってinitialPartOrderにないパートが見つかったら末尾に加える
-
-}
 
 export default function ConfigEditor() {
   /* config Editor
