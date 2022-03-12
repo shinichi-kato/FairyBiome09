@@ -246,7 +246,7 @@ export default function RootEditor(props) {
         </Box>
         <Box alignSelf="center">
           <BotMonitor
-            photoURL={props.photoURL}
+            photoURL={bot.photoURL}
             state={bot.state}
             work={bot.work}
           />

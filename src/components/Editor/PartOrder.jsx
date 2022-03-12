@@ -38,7 +38,7 @@ function Part(props) {
 		let poped = items.splice(pos, 1);
 		items.splice(pos + 1, 0, poped[0]);
 
-		props.handleChange(items);
+		props.handleChange(items); 
 
 	}
 

@@ -45,6 +45,9 @@ export default function BotMonitor(props) {
 					alt={props.photoURL} />
 			</Box>
 			<Box>
+				<Typography variant="body2">現在のパート：{props.work.partOrder[0]}</Typography>
+			</Box>
+			<Box>
 				<Typography variant="h4">{props.state.displayName}</Typography>
 			</Box>
 			<Box

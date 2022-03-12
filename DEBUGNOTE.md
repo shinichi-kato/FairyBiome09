@@ -16,7 +16,7 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 2. エディタ
 
-* part削除時の確認UI
+
 * 「初期のパート順」に含まれない場合の自動修正
 　参照：https://qiita.com/m3816/items/56b9b6b6f340265cbfab
 * スクリプトをdbio.loadScriptでnextの順に並べてデータ取得
@@ -41,6 +41,7 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 
 # 以下対応済み
+* part削除時の確認UI
 * パートエディタで対応するsvgがあるかヒントを表示
 * 表情の変化が怪しい→script=part=アバター
 * ボットの精神パワー実装
