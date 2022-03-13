@@ -6,6 +6,7 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 
 1. チャットルーム
+* queue消費が一瞬。少しはディレイを入れる
 * sleepy周りが変
 * {positive},{negative}が未実装
 

@@ -68,6 +68,17 @@ export function retrieve(message, cache, coeffs) {
   }
 
   console.log("textScore=",textScore)
+
+  // bugfixで入れたが本当に必要か？↓
+  if(textScore.size()[0] === 1){
+    let cand = cache.index[0];
+    console.log("候補が一つのみ：",cand)
+    return {
+      score: 1,
+      index: cand[randomInt(cand.length)]
+    };
+  }
+
   // --------------------------------------------------------
   //
   // messageに含まれるその他の特徴量の類似度

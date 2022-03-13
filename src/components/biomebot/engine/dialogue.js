@@ -78,7 +78,7 @@ export function execute(state, work, message, sendMessage) {
     }
   }
 
-  if(newTopPart){
+  if (newTopPart) {
     console.log(`queueing {enter_${newTopPart}}`)
     // work.queue.push(
     //   {
@@ -97,7 +97,7 @@ export function execute(state, work, message, sendMessage) {
   const now = new Date();
   if (work.userLastAccess + state.config.keepAlive * 60 * 1000 < now.getTime()) {
     // 会話を新規にスタート
-    console.log("restarting chat. ")
+    console.log("restarting chat.")
     work = {
       key: work.key + 1,
       mentalLevel: work.mentalLevel,
@@ -123,22 +123,23 @@ export function execute(state, work, message, sendMessage) {
   // phase 3. 外部トリガによるパート遷移
   let match = message.text.match(/^{enter_([^}]+)}$/);
   let partName = "";
-  if(match){
-    partName=match[1];
-    if (partName in state.parts){
+  if (match) {
+    partName = match[1];
+    if (partName in state.parts) {
       hoist(partName, work.partOrder);
       message.text = "{on_enter_part}"
+      console.log(`entering part ${partName}, order=`, work.partOrder)
     }
   }
-  
+
   // (廃止)moodと同名のpartがあればそれをpartOrder先頭に移動
   // hoist(work.mood, work.partOrder);
-  
+
   // phase 4. partが返答するかチェック
-  message.text = textToInternalRepr(segmenter.segment(message.text));
+  const segmentedText = textToInternalRepr(segmenter.segment(message.text));
 
   let part;
-  for ( partName of work.partOrder) {
+  for (partName of work.partOrder) {
     part = state.parts[partName];
 
     // moment値+0~9のランダム値がmomentUpperとmomentLowerの
@@ -146,15 +147,16 @@ export function execute(state, work, message, sendMessage) {
 
     const moment = work.moment + randomInt(9);
     console.log("part", partName, "moment", moment, "l", part.momentLower, "u", part.momentUpper)
-    if (part.momentLower >= moment || moment > part.momentUpper) {
+    if (moment <= part.momentLower || part.momentUpper < moment) {
       continue;
     }
 
     // 辞書の一致チェック
-    const result = retrieve(message, state.cache[partName], part.coeffs);
+    const result = retrieve({ ...message, text: segmentedText }, state.cache[partName], part.coeffs);
 
     console.log("retrieve", result, "precision", part.precision)
     if (result.score < part.precision) continue;
+
 
     // スピーチの生成
     const botMessageText = replier[part.kind](partName, state, work, result);
@@ -203,34 +205,40 @@ export function execute(state, work, message, sendMessage) {
   drop(reply.drop, work.partOrder);
   hoist(reply.hoist, work.partOrder);
 
-  console.log("reply", reply,"part",part)
+  console.log("reply", reply, "part", part)
   let replyText = reply.text;
 
-  if (reply.text === null && message.text.match(/^{[A-Za-z_]+}$/)) {
+  if (reply.text === null) {
     // NOT_FOUNDの生成
     // 入力文字列がトリガ /^{[a-z_]+}$/ の場合は null を返す。
-    // そうでなければ以下の処理を行う。
-    // 各partの辞書にNOT_FOUNDを置くことができ、partOrderの
-    // 順にpartの辞書を探し、見つかったらそれをレンダリング。
-    // すべてのパートに見つからなければmainのNOT_FOUNDを
-    // レンダリング
 
-    for (let partName of work.partOrder) {
-      const part = state.parts[partName];
+    if (message.text.match(/^{[A-Za-z_]+}$/)) {
+      replyText = null;
+      
+    } else {
+      // そうでなければ以下の処理を行う。
+      // 各partの辞書にNOT_FOUNDを置くことができ、partOrderの
+      // 順にpartの辞書を探し、見つかったらそれをレンダリング。
+      // すべてのパートに見つからなければmainのNOT_FOUNDを
+      // レンダリング
 
-      replyText = renderer[part.kind](
-        partName,
-        state,
-        work,
-        "{NOT_FOUND}");
+      for (let partName of work.partOrder) {
+        const part = state.parts[partName];
 
-      if (replyText !== "{NOT_FOUND}") break;
+        replyText = renderer[part.kind](
+          partName,
+          state,
+          work,
+          "{NOT_FOUND}");
+
+        if (replyText !== "{NOT_FOUND}") break;
+      }
+
+      if (replyText === "{NOT_FOUND}") {
+        replyText = render("{NOT_FOUND}", state.main);
+      }
+      console.log("state.main", state.main)
     }
-
-    if (replyText === "{NOT_FOUND}") {
-      replyText = render("{NOT_FOUND}", state.main);
-    }
-    console.log("state.main", state.main)
   }
 
   replyText = replyText
@@ -253,7 +261,7 @@ export function execute(state, work, message, sendMessage) {
   ));
 
   work.userLastAccess = now.getTime();
-  work.moment += work.moment<work.mentalLevel ? 1 : 0;
+  work.moment += work.moment < work.mentalLevel ? 1 : 0;
   work.mentalLevel += work.moment === 10 ? 1 : 0;
   console.log("returning", work)
 
@@ -295,7 +303,7 @@ function render(tag, dict) {
 function getTriggerMessage(data) {
   // チャットボットに対してトリガーを入力。
   // 入力文字列はinternalReprに変換を行う
-  let message = new Message("trigger",{
+  let message = new Message("trigger", {
     name: data.name,
     text: data.text
   });
