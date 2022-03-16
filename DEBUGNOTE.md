@@ -6,20 +6,16 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 
 1. チャットルーム
-* queue消費が一瞬。少しはディレイを入れる
+* 一旦サインアウトしたらログインできない
 * sleepy周りが変
 * {positive},{negative}が未実装
 
 
-* ボットの返答にディレイをかける
 * ボットを新しくしてもローカルのログが残る
 * 公園で全員の吹き出しが白い
 
 2. エディタ
 
-
-* 「初期のパート順」に含まれない場合の自動修正
-　参照：https://qiita.com/m3816/items/56b9b6b6f340265cbfab
 * スクリプトをdbio.loadScriptでnextの順に並べてデータ取得
 * どんな{}が展開されるのかユーザにわからない
 * json形式でのインポート
@@ -42,6 +38,8 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 
 # 以下対応済み
+* 「初期のパート順」に含まれない場合の自動修正
+* queue消費が一瞬。少しはディレイを入れる
 * part削除時の確認UI
 * パートエディタで対応するsvgがあるかヒントを表示
 * 表情の変化が怪しい→script=part=アバター

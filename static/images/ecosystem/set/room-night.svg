@@ -5,7 +5,6 @@
    <cc:Work rdf:about="">
     <dc:format>image/svg+xml</dc:format>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:title/>
    </cc:Work>
   </rdf:RDF>
  </metadata>
@@ -14,7 +13,7 @@
    <stop stop-color="#fff3bb" offset="0"/>
    <stop stop-color="#fff" stop-opacity="0" offset="1"/>
   </linearGradient>
-  <filter id="filter903" x="-1.944e-5" y="-1.897e-5" width="1" height="1" color-interpolation-filters="sRGB">
+  <filter id="filter903" x="-1.9489e-5" y="-1.6301e-5" width="1" height="1" color-interpolation-filters="sRGB">
    <feGaussianBlur stdDeviation="0.00071872469"/>
   </filter>
   <radialGradient id="radialGradient923" cx="54.9" cy="117.8" r="54.9" gradientTransform="matrix(1.0056 0 0 .55987 -3.0689e-6 75.931)" gradientUnits="userSpaceOnUse">
@@ -33,10 +32,8 @@
   <rect x="69.182" y="84.996" width="9.1439" height="59.497" fill="#f8f3c7" stroke-width=".73623" style="paint-order:stroke markers fill"/>
   <rect x="87.3" y="84.996" width="9.1439" height="59.614" fill="#f8f3c7" stroke-width=".73696" style="paint-order:stroke markers fill"/>
   <rect x="103.31" y="84.996" width="6.8618" height="60.521" fill="#eef3e3" stroke-width=".64324" style="paint-order:stroke markers fill"/>
- </g>
- <rect y="141.27" width="110.41" height="61.469" fill="url(#radialGradient923)" stroke-linecap="round" stroke-linejoin="round" stroke-opacity=".5367" stroke-width=".77478" style="paint-order:stroke markers fill"/>
- <path d="m34.207 0.24645 13.83 0.1875s38.4 82.97 41.48 87.07c-24.09 26.62-72.32 23.39-88.51-1.958 9.514-25.6 33.2-85.3 33.2-85.3z" fill="url(#linearGradient2920)" filter="url(#filter903)" stroke-linecap="round" stroke-linejoin="round" stroke-opacity=".5367" stroke-width="1.663" style="paint-order:stroke markers fill"/>
- <g stroke-linecap="round" stroke-linejoin="round" stroke-opacity=".5367">
+  <rect y="141.27" width="110.41" height="61.469" fill="url(#radialGradient923)" stroke-width=".77478" style="paint-order:stroke markers fill"/>
+  <path d="m34.207 0.24645 13.83 0.1875s38.4 82.97 41.48 87.07c-24.09 26.62-72.32 23.39-88.51-1.958 9.514-25.6 33.2-85.3 33.2-85.3z" fill="url(#linearGradient2920)" filter="url(#filter903)" stroke-width="1.663" style="paint-order:stroke markers fill"/>
   <rect x="52.038" y=".24621" width="9.1439" height="26.883" fill="#eef3e3" stroke-width=".49489" style="paint-order:stroke markers fill"/>
   <rect x="69.182" y=".24621" width="9.1439" height="26.9" fill="#f8f3c7" stroke-width=".49505" style="paint-order:stroke markers fill"/>
   <rect x="87.3" y=".24621" width="9.1439" height="26.953" fill="#f8f3c7" stroke-width=".49554" style="paint-order:stroke markers fill"/>

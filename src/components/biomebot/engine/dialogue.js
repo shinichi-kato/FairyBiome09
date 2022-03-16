@@ -43,6 +43,11 @@ let segmenter = new TinySegmenter();
 const RE_ENTER = /{enter_([A-Za-z][a-zA-Z_]*)}/;
 const RE_TAG = /{[a-zA-Z][a-zA-Z0-9_]*}/g;
 
+/* 発言は一定時間のディレイをかけて出力する。ディレイの長さは出力する文字列の
+長さで変化し、以下の式に従う。
+delay = coeff*length^exp
+*/
+const MESSAGE_DELAY = { coeff: 100.0, exp:2.0};
 
 const replier = {
   knowledge: knowledge.reply,
@@ -247,7 +252,8 @@ export function execute(state, work, message, sendMessage) {
   // ecosystemにはmessage.nameがない。そのような返答は起きるべきでないが、
   // fallbackとして作成者名を使用。
 
-  sendMessage(new Message(
+  // 文字列の長さに応じてディレイをかける
+  setTimeout(()=>sendMessage(new Message(
     'speech',
     {
       text: replyText,
@@ -258,7 +264,7 @@ export function execute(state, work, message, sendMessage) {
       mood: part.avatar,
       site: work.site,
     }
-  ));
+  )),MESSAGE_DELAY.coeff * replyText.length ^ MESSAGE_DELAY.exp);
 
   work.userLastAccess = now.getTime();
   work.moment += work.moment < work.mentalLevel ? 1 : 0;

@@ -34,16 +34,30 @@ export default function AuthDialog(props) {
 
   */
 
-  const emailRef = useRef();
-  const passwordRef = useRef();
-  const displayNameRef = useRef();
-
   const page = props.state.page;
   const user = props.state.user;
   const authState = props.state.authState;
 
+  const [email, setEmail] = useState(user.email);
+  const [password, setPassword] = useState(user.password);
+  const [displayName, setDisplayName] = useState(user.displayName);
+
+
+
   const [backgroundColor, setBackgroundColor] = useState(props.state.backgroundColor);
   const [photoURL, setPhotoURL] = useState(user.photoURL || "");
+
+  function handleChangeEmail(e){
+    setEmail(e.target.value);
+  }
+
+  function handleChangePassword(event){
+    setPassword(event.target.value);
+  }
+
+  function handleChangeDisplayName(event){
+    setDisplayName(event.target.value);
+  }
 
   function handleChangeBackgroundColor(c) {
     setBackgroundColor(c);
@@ -60,23 +74,19 @@ export default function AuthDialog(props) {
   let isButtonValid = false;
   switch (page) {
     case 'signUp':
-      if (emailRef.current?.value !== ""
-        && passwordRef.current?.value !== ""){
+      if (email !== "" && password !== "") {
         isButtonValid = true;
       }
       break;
 
     case 'signIn':
-      if (emailRef.current?.value !== ""
-        && passwordRef.current?.value !== ""
-        ) {
+      if (email !== "" && password !== "") {
         isButtonValid = true;
       }
       break;
 
     case 'update':
-      if (photoURL !== ""
-        && displayNameRef.current?.value !== "") {
+      if (photoURL !== "" && displayName !== "") {
         isButtonValid = true;
       }
       break;
@@ -88,25 +98,15 @@ export default function AuthDialog(props) {
   function handleClick() {
     switch (page) {
       case 'signIn': {
-        props.authenticate(
-          emailRef.current.value,
-          passwordRef.current.value);
+        props.authenticate(email, password);
         return
       }
       case 'signUp': {
-        props.createUser(
-          emailRef.current.value,
-          passwordRef.current.value,
-          displayNameRef.current.value,
-          photoURL,
-          backgroundColor);
+        props.createUser(email, password, displayName, photoURL, backgroundColor);
         return;
       }
       case 'update': {
-        props.updateUserInfo(
-          displayNameRef.current.value,
-          photoURL,
-          backgroundColor);
+        props.updateUserInfo(displayName, photoURL, backgroundColor);
         return;
       }
       default:
@@ -129,7 +129,6 @@ export default function AuthDialog(props) {
           backgroundColor: alpha('#ffffff', 0.2)
         },
         width: "100%",
-        backgroundColor: '#78c73c',
       }}
       container
       direction="column"
@@ -137,7 +136,8 @@ export default function AuthDialog(props) {
       alignItems="center"
       spacing={4}
     >
-      <Grid item xs={12}>
+      <Grid item xs={12}
+      >
         <Typography variant="h4">
           {TITLE[page]}
         </Typography>
@@ -148,8 +148,8 @@ export default function AuthDialog(props) {
           required
           placeholder="メールアドレス"
           disabled={page === 'update'}
-          defaultValue={user.email}
-          inputRef={emailRef}
+          value={email}
+          onChange={handleChangeEmail}
           variant="outlined"
           InputProps={{
             startAdornment: (
@@ -164,9 +164,9 @@ export default function AuthDialog(props) {
         <TextField
           type="password"
           placeholder="パスワード"
-          defaultValue={user.password}
           disabled={page === 'update'}
-          inputRef={passwordRef}
+          value={password}
+          onChange={handleChangePassword}
           fullWidth
           required
           variant="outlined"
@@ -191,8 +191,8 @@ export default function AuthDialog(props) {
             <Grid item xs={12}>
               <TextField
                 placeholder="名前"
-                defaultValue={user.displayName}
-                inputRef={displayNameRef}
+                value={displayName}
+                onChange={handleChangeDisplayName}
                 fullWidth
                 required
                 variant="outlined"
