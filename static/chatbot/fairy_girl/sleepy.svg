@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="600" height="800" version="1.1" viewBox="0 0 158.8 211.7" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <metadata>
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <path d="m4.341 99.18c-0.2564 4e-3 -0.3912 0.0225-0.3912 0.0225 4.625 8.586-5.415 27.67 7.624 46.26 11.2 15.97 19.1 27.43 24.92 33.51l6.978-3.285 9.708-4.108c-3.696-8.876-7.88-21.5-14.08-37.2-13.36-33.81-32.29-35.22-34.76-35.19z" fill="#78f991" fill-opacity=".4179" stroke-width=".1701"/>
+ <path d="m153.9 210.8c-1.016-2.032-7.496-17.08-14.22-22.86s-24.14-10.33-24.14-10.33l-62.35-6.011s-24.68 0.6594-30.69 7.76-4.828 31.36-4.828 31.36" fill="#efefef"/>
+ <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <circle r="0" stroke="#c53822" stroke-width="2.257" style="paint-order:stroke markers fill"/>
+  <g stroke="#924019">
+   <circle r="0" stroke-width="1.288" style="paint-order:stroke markers fill"/>
+   <circle transform="scale(1,-1)" r="0" stroke-width="3.595" style="paint-order:stroke markers fill"/>
+   <circle transform="scale(1,-1)" r="0" stroke-width="3.595" style="paint-order:stroke markers fill"/>
+  </g>
+  <circle transform="scale(1,-1)" r="0" stroke="#4d4320" stroke-width="4.378" style="paint-order:stroke markers fill"/>
+  <circle transform="scale(1,-1)" r="0" stroke="#4d4320" stroke-width="3.52" style="paint-order:stroke markers fill"/>
+ </g>
+ <path d="m154.5 100.1c-2.479-0.0329-23.94-1.671-37.3 32.14-6.731 17.04-9.446 33.51-12.36 42.44l3.846 1.304 12.67 3.636c5.919-5.915 14.07-16.35 25.92-33.25 13.04-18.59 2.998-37.67 7.624-46.26 0 0-0.1348-0.0187-0.3912-0.0222z" fill="#78f991" fill-opacity=".4179" stroke-width=".1701"/>
+ <path d="m96.14 144.8s-1.636 14.26 1.847 20.32 17.54 12.47 17.54 12.47l-23.09 17.54-39.26-23.56s7.887-2.461 11.54-8.313 4.618-26.78 4.618-26.78z" fill="#f9bb78" stroke-width="1.222"/>
+ <ellipse transform="matrix(.9935 -.1139 .119 .9929 0 0)" cx="21.82" cy="124.8" rx="16.32" ry="23.14" fill="#924019" stroke-width="1.222" style="paint-order:stroke markers fill"/>
+ <path d="m156.8 75.68c-2.9 29.98-8.726 37.7-63.83 31.91-34.78-3.657-69.2-6.394-69.98-36.5-1.692-64.75 36.58-73.52 71.4-70.15 34.8 3.367 65.33 44.76 62.43 74.74z" fill="#924019" stroke-width="1.222" style="paint-order:stroke markers fill"/>
+ <path d="m139.2 93.39c-4.705 22.06-7.991 32.3-10.72 35.96-3.224 4.322-27.2 18.9-34.43 18.79-24.8-0.3608-55.15-22.93-51.17-64.07 4.357-45.04 24.84-55.66 62.91-51.81 26.15 2.641 38.39 11.22 33.43 61.13z" fill="#f9bb78" stroke-width="1.222" style="paint-order:stroke markers fill"/>
+ <g stroke-width="1.222">
+  <path d="m106.4 38.29c37.05 17.63 32.75 55.1 32.75 55.1s32.24-57.51-3.036-72.74c-35.27-15.22-38.26-7.518-38.26-7.518z" fill="#924019"/>
+  <path d="m116.5 35.52c-37.95 37.87-65.28 46.58-70.91 42.33-5.62-4.256-17.54-24.9-5.311-36.23 12.23-11.35 31.56-19.51 46.53-20.55 14.98-1.041 29.68 14.47 29.68 14.47z" fill="#924019"/>
+  <path d="m49.3 92.65c-14.07-15.54-20.38-27.49-21.93-18.19-1.549 9.302 1.612 26.94 7.57 29.09 5.958 2.151 11.31 0.4641 11.31 0.4641" fill="#f9bb78"/>
+ </g>
+ <path d="m112.4 106.1a1.245 1.245 0 0 0-0.1914-4e-3 1.245 1.245 0 0 0-1.179 1.308s-0.0833 2.508-1.214 3.236c-1.395 0.8984-3.716 0.6211-3.716 0.6211a1.245 1.245 0 0 0-1.436 1.019 1.245 1.245 0 0 0 1.021 1.437s2.987 0.6208 5.477-0.983c2.755-1.774 2.355-5.459 2.355-5.459a1.245 1.245 0 0 0-1.116-1.175z" color="#000000" color-rendering="auto" dominant-baseline="auto" fill="#7f3816" image-rendering="auto" shape-rendering="auto" solid-color="#000000" stop-color="#000000" style="font-feature-settings:normal;font-variant-alternates:normal;font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal;font-variant-position:normal;font-variation-settings:normal;inline-size:0;isolation:auto;mix-blend-mode:normal;shape-margin:0;shape-padding:0;text-decoration-color:#000000;text-decoration-line:none;text-decoration-style:solid;text-indent:0;text-orientation:mixed;text-transform:none;white-space:normal"/>
+ <ellipse transform="matrix(.9816 -.1908 .2342 .9722 0 0)" cx="20.34" cy="152.1" rx="17.17" ry="22.31" fill="#924019" stroke-width="1.222" style="paint-order:stroke markers fill"/>
+ <g fill="none" stroke-linecap="round">
+  <path d="m137.3 75.41s-6.019-6.999-19.31-6.632" stroke="#924019" stroke-width="3.731"/>
+  <path d="m69.75 74.98s6.056-6.967 19.34-6.53" stroke="#924019" stroke-width="3.731"/>
+  <path d="m117.6 91.47s4.89 4.803 15.11 0.9524" stroke="#5e2910" stroke-width="3.413"/>
+  <path d="m90.84 91.23s-5.536 4.041-15.09-1.254" stroke="#5e2910" stroke-width="3.413"/>
+ </g>
+ <path d="m84.68 166.9c0.8743-12.08 7.921-12.57 11.47-22.06 2.917-4.155 4.569-6.394 6.824-9.361 3.594-4.729 4.763-10.43 5.872-10.17 5.683 2.38-0.9116 15.69-0.9116 15.69l-8.748 8.673s31.54-33.28 36.25-28.49c0.0579 2.651-20.08 23.44-20.08 23.44s12.15-6.503 18.58-11.29c6.381-4.749 12.5-7.999 14.15-5.721-3.991 7.591-28.28 24.8-28.28 24.8s9.693-4.725 15.66-9.644c5.972-4.919 9.724-7.528 11.9-5.19-2.382 6.661-24.43 21.88-24.43 21.88s6.923-1.013 11.01-2.244c4.092-1.231 8.049-7.745 11.96-5.872-2.295 5.285-3.231 4.817-10.28 10.88-11.06 2.512-34.63 17.14-34.63 17.14-4.95 14.49-2.688 20.57-6.157 29.96-8.907 0.4261-14.8-0.2887-24.88-0.6194 1.433-15.09 14.12-36.64 14.71-41.81z" fill="#f9bb78" stroke="#e6936b" stroke-width="1.018"/>
+ <rect x="43.57" y="208.2" width="35.66" height="2.518" fill="#efefef"/>
+ <g transform="matrix(.7197 .07925 -.08009 .7274 -39.47 42.65)">
+  <path d="m212.5 97.15c-0.5868 5.359-3.656 8.367-10.54 8.88-5.611 0.4185-11.45-2.506-11.1-8.128 0.3441-5.622 4.247-14.35 12.93-14.05 9.04 0.319 9.25 8.403 8.714 13.29z" fill="#dc4d72" style="paint-order:stroke markers fill"/>
+  <path d="m210.7 101.3c-0.0594 1.053-1.826 4.171-8.708 4.685-5.611 0.4185-9.954-2.532-10.34-4.959-0.4687-2.927 7.285-3.941 10.96-4.048 3.427-0.09933 8.369-0.5904 8.091 4.322z" fill="#f68aa7" style="paint-order:stroke markers fill"/>
+ </g>
+</svg>
