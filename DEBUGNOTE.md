@@ -22,22 +22,21 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 * json形式でのエクスポート
 
 3. create
-* チャットボットを新規作成しても前のが消えてない＜ーここから
+
 * systemのボットとfirestoreのボットの区別
 
 
 4. 他
-* auth画面の背景をsvgにして前景を白透過に<ーここから
-  cssのfilter: blur(5px);style={{ filter: showDIalog ? "blur(3px)" : "none" }}
-* landing画面でユーザとボットのアバター表示
-* AuthDialogでサインアップができない
 
-* etimatorがconfig内に書かれてindexDBに保存されている。要除去
+* landing画面でユーザとボットのアバター表示
+* estimatorがconfig内に書かれてindexDBに保存されている。要除去
 * /editを直でアクセスすると真っ白ー＞BiomebotProviderでhandleBotFound()が呼ばれてるかチェックすること
 
 
 
 # 以下対応済み
+* AuthDialogでサインアップができない
+* チャットボットを新規作成しても前のが消えてない
 * 「初期のパート順」に含まれない場合の自動修正
 * queue消費が一瞬。少しはディレイを入れる
 * part削除時の確認UI
