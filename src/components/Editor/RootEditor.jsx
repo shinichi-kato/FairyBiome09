@@ -6,8 +6,10 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import ListItemButton from '@mui/material/ListItemButton';
 import ListSubheader from '@mui/material/ListSubheader';
 import { ListItemSecondaryAction } from "@mui/material";
+import Input from '@mui/material/Input';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -34,7 +36,6 @@ import AddIcon from '@mui/icons-material/Add';
 import { FabContainerBox } from './StyledWigets';
 
 import BotMonitor from './BotMonitor';
-import ToolMenu from './ToolMenu';
 
 import { AuthContext } from "../Auth/AuthProvider";
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
@@ -237,13 +238,6 @@ export default function RootEditor(props) {
           flexDirection: "column"
         }}
       >
-        <Box
-          sx={{ alignSelf: "flex-end" }}>
-          <ToolMenu
-            handleImport={props.handleImport}
-            handleExport={props.handleExport}
-          />
-        </Box>
         <Box alignSelf="center">
           <BotMonitor
             photoURL={bot.photoURL}
@@ -266,8 +260,20 @@ export default function RootEditor(props) {
             </ListItemIcon>
             <ListItemText primary="パートの追加" />
           </ListItem>
-        </List>
 
+          <ListSubheader>ファイル</ListSubheader>
+          <ListItem key="import">
+            <Input accept="application/json" multiple type="file" />
+            <ListItemButton >
+              <ListItemText primary="アップロード" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem button key="export"
+            onClick={props.handleExport}
+          >
+            <ListItemText primary="ダウンロード" />
+          </ListItem>
+        </List>
       </ItemPaper>
 
 
