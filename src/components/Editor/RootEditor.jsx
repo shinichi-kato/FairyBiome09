@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useMemo } from "react";
+import React, { useState, useContext, useEffect, useMemo, useRef } from "react";
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -9,7 +9,6 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListSubheader from '@mui/material/ListSubheader';
 import { ListItemSecondaryAction } from "@mui/material";
-import Input from '@mui/material/Input';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -40,6 +39,10 @@ import BotMonitor from './BotMonitor';
 import { AuthContext } from "../Auth/AuthProvider";
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
 import { fbio } from '../../firebase';
+
+const Input = styled('input')({
+  display: 'none',
+});
 
 export const ItemPaper = styled(Paper)(({ theme }) => ({
   marginBottom: theme.spacing(2),
@@ -90,6 +93,7 @@ export default function RootEditor(props) {
   const bot = useContext(BiomebotContext);
   const [message, setMessage] = useState("");
   const [partToDelete, setPartToDelete] = useState(false);
+  const fileInputRef = useRef();
 
 
   function handleClickDeleteButton(partName) {
@@ -222,6 +226,10 @@ export default function RootEditor(props) {
 
   const open = partToDelete !== false;
 
+  function handleUpload() {
+    props.handleImport(fileInputRef.current.files[0])
+  }
+
   return (
     <Box
       display="flex"
@@ -263,15 +271,25 @@ export default function RootEditor(props) {
 
           <ListSubheader>ファイル</ListSubheader>
           <ListItem key="import">
-            <Input accept="application/json" multiple type="file" />
-            <ListItemButton >
-              <ListItemText primary="アップロード" />
-            </ListItemButton>
+            <label htmlFor="upload-button">
+              <Input
+                accept="application/json"
+                id="upload-button"
+                type="file"
+                ref={fileInputRef}
+                onChange={handleUpload}
+              />
+              <ListItemButton type="submit">
+                <ListItemText primary="アップロード" />
+              </ListItemButton>
+            </label>
           </ListItem>
-          <ListItem button key="export"
+          <ListItem key="export"
             onClick={props.handleExport}
           >
-            <ListItemText primary="ダウンロード" />
+            <ListItemButton>
+              <ListItemText primary="ダウンロード" />
+            </ListItemButton>
           </ListItem>
         </List>
       </ItemPaper>

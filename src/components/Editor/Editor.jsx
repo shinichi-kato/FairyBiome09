@@ -113,8 +113,10 @@ export default function Editor({ avatarDictSnap }) {
   // json I/O
   //
 
-  function handleImport() {
-
+  function handleImport(file) {
+    let reader = new FileReader();
+    let data = reader.readAsText(file);
+    console.log("data",data)
   }
 
   function handleExport() {
@@ -221,7 +223,7 @@ export default function Editor({ avatarDictSnap }) {
               handleAddNewPart={handleAddNewPart}
               handleDeletePart={handleDeletePart}
               handleExport={handleExport}
-              handleImpoirt={handleImport}
+              handleImport={handleImport}
             />
           }
           {
