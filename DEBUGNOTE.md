@@ -15,7 +15,7 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 * 公園で全員の吹き出しが白い
 
 2. エディタ
-
+* インポートしたjsonのvalidation
 * スクリプトをdbio.loadScriptでnextの順に並べてデータ取得
 * どんな{}が展開されるのかユーザにわからない
 * json形式でのインポート

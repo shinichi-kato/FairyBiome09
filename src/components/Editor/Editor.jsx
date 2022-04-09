@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, { useContext, useEffect, useReducer, useState, useRef } from "react";
 import { navigate } from 'gatsby';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -85,7 +85,8 @@ export default function Editor({ avatarDictSnap }) {
   const bot = useContext(BiomebotContext);
   const [avatarList, setAvatarList] = useState([]);
 
-  const [state, dispatch] = useReducer(reducer, initialState)
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const fileReaderRef = useRef(new FileReader());
 
   // ------------------------------------------------------------------
   // botが読み込まれていなければindexDBから読み込む
@@ -114,9 +115,11 @@ export default function Editor({ avatarDictSnap }) {
   //
 
   function handleImport(file) {
-    let reader = new FileReader();
-    let data = reader.readAsText(file);
-    console.log("data",data)
+    fileReaderRef.current.onload = event => {
+      console.log("data",event.target.result);
+    }
+
+    fileReaderRef.current.readAsText(file);
   }
 
   function handleExport() {

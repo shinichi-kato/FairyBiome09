@@ -659,15 +659,21 @@ export default function BiomebotProvider(props) {
     // 使われる場合、useEffectの内容が非同期的に処理されても適切に
     // アップデートされた状態に保つためuseCallback化する。それにより
     // 利用側コンポーネントのuseEffectでdepsに含める必要がなくなる。 
+    //
+    // 内容にエラーがあった場合falseを返す
 
     // displayNameを復元
+
     obj.displayName = obj.main.NAME;
 
     // partOrderのヌケモレをなくす
     obj.config.initialPartOrder = fitOrderToParts(obj.config.initialPartOrder,obj.parts);
     
     // indexDBへの書き込み
-    await db.generate(obj, id);
+    let r = await db.generate(obj, id);
+    if(!r){
+      return false;
+    }
 
     // stateへの書き込み
     dispatch({ type: 'connect', snap: obj });
@@ -687,6 +693,7 @@ export default function BiomebotProvider(props) {
         botId: id,
         userLastAccess: 0
       }));
+    return true;
   }, []);
 
   const load = useCallback(async (botId, site) => {

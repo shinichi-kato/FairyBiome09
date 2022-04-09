@@ -78,6 +78,7 @@ export default function CreateFairy(props) {
   );
   const [botName, setBotName] = useState('');
   const [backgroundColor, setBackgroundColor] = useState('#eeeeee');
+  const [message, setMessage] = useState('');
 
   const appStateByName = props.appState;
 
@@ -181,8 +182,12 @@ export default function CreateFairy(props) {
       obj.main.NAME = botName;
       obj.main.CREATOR_NAME = auth.displayName;
 
-      await bot.generate(obj, id);
-      props.handleMove('done');
+      const isOk = await bot.generate(obj, id);
+      if (isOk){
+        props.handleMove('done');
+      } else {
+        setMessage('データが破損しています')
+      }
 
     })();
   }
@@ -190,6 +195,16 @@ export default function CreateFairy(props) {
   function handleReturn() {
     navigate('/');
   }
+
+  useEffect(() => {
+    let id
+    if (message !== "") {
+      id = setTimeout(() => setMessage(""), 3000);
+    }
+    return () => {
+      clearTimeout(id);
+    }
+  }, [message]);
 
   return (
     <>
@@ -241,6 +256,7 @@ export default function CreateFairy(props) {
             color={backgroundColor}
             handleChangeColor={handleChangeBackgroundColor}
             handleGenerate={handleGenerate}
+            message={message}
             handlePrev={() => props.handleMove('exec')}
           />
         }

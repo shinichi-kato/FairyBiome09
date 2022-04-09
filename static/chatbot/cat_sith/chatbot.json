@@ -113,7 +113,7 @@
             "retention": 0.3,
             "scriptTimestamp": null,
             "cacheTimestamp": null,
-            "featureWights": null,
+            "featureWeights": null,
             "script": [
                 {
                     "in": [
@@ -165,7 +165,7 @@
             "retention": 0.2,
             "scriptTimestamp": null,
             "cacheTimestamp": null,
-            "featureWights": null,
+            "featureWeights": null,
             "script": [
                 {
                     "in": "{on_enter_part}",
@@ -195,7 +195,7 @@
             "retention": 0.2,
             "scriptTimestamp": null,
             "cacheTimestamp": null,
-            "featureWights": null,
+            "featureWeights": null,
             "script": [
                 {
                     "in": "{on_enter_part}",

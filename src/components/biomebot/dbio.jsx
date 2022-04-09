@@ -29,6 +29,7 @@
 
 import Dexie from "dexie";
 import { reviver } from 'mathjs';
+import { schema } from 'schema';
 
 const RE_NEW_PART = /^new ?([0-9]+)$/i;
 
@@ -87,6 +88,13 @@ class dbio {
       独立に管理される。
       */
 
+    const {err,_} = schema.validate(obj)
+
+    if(err){
+      console.log("chatbot script validation error",err);
+      return false;
+    }
+
     const botId = obj.botId || uid;
 
     console.log("generate")
@@ -99,6 +107,7 @@ class dbio {
       site: 'room',
     });
 
+    
     /* work */
     await this.db.work.put({
       ...obj.work,
@@ -122,6 +131,8 @@ class dbio {
       const script = obj.parts[partName].script;
       await this.saveScript(botId, partName, script);
     }
+
+    return true;
   }
 
 
@@ -258,7 +269,7 @@ class dbio {
       retention: 0.2,
       scriptTimestamp: null,
       cacheTimestamp: null,
-      featureWights: null,
+      featureWeights: null,
     }
 
     await this.db.parts.put(newPart);

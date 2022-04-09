@@ -11,6 +11,7 @@ import FairyPanel from '../Panel/FairyPanel';
 export default function SettingsStep(props) {
   const color = props.color;
   const photoURL = props.botIdentifier.avatarPath;
+  const message = props.message;
 
   return (
     <Box
@@ -66,6 +67,7 @@ export default function SettingsStep(props) {
           onClick={props.handleGenerate}>
           OK
         </Button>
+        {message}
       </Box>
       <Box>
         <Button
