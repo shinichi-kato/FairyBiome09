@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect,useCallback } from "react";
+import React, { useState, useContext, useEffect, useCallback } from "react";
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -51,13 +51,13 @@ export default function PartEditor(props) {
 
   }
 
-  const handleSetPartName = useCallback((name)=>{
+  const handleSetPartName = useCallback((name) => {
     setPartName(name);
     if (props.partName !== name) {
       setNameDuplicated(name in bot.state.parts);
     }
 
-  },[props.partName,bot.state.parts]);
+  }, [props.partName, bot.state.parts]);
 
   const handleChangeKind = event => setKind(event.target.value);
   const handleChangeAvatar = x => setAvatar(x);
@@ -134,7 +134,7 @@ export default function PartEditor(props) {
             パートの名前は変更できます。他のパートと同じ名前は使えません。
             以下のパート名にするとチャットボットの状態に対応して動作します。
           </Typography>
-          <SpecialPartTags handleSetPartName={handleSetPartName}/>
+          <SpecialPartTags handleSetPartName={handleSetPartName} />
         </Box>
       </ItemPaper>
       <ItemPaper elevation={0}>

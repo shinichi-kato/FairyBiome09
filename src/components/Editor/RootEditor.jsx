@@ -40,6 +40,8 @@ import { AuthContext } from "../Auth/AuthProvider";
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
 import { fbio } from '../../firebase';
 
+import { schema } from '../biomebot/schema';
+
 const Input = styled('input')({
   display: 'none',
 });
@@ -92,8 +94,10 @@ export default function RootEditor(props) {
   const auth = useContext(AuthContext);
   const bot = useContext(BiomebotContext);
   const [message, setMessage] = useState("");
+  const [validateMessage, setValidateMessage] = useState("");
   const [partToDelete, setPartToDelete] = useState(false);
   const fileInputRef = useRef();
+  const fileReaderRef = useRef(new FileReader());
 
 
   function handleClickDeleteButton(partName) {
@@ -226,9 +230,57 @@ export default function RootEditor(props) {
 
   const open = partToDelete !== false;
 
+
+  // -----------------------------------------------------------
+  //
+  //  json I/O
+  //
+  // -------------------------------------------------------------
+
   function handleUpload() {
-    props.handleImport(fileInputRef.current.files[0])
+    setValidateMessage("");
+    const file = fileInputRef.current.files[0];
+    fileReaderRef.current.onload = event => {
+      let obj;
+      try {
+        obj = JSON.parse(event.target.result);
+      }
+      catch (error) {
+        setValidateMessage(`${file.name}は有効なJSON形式ではありません`);
+        return;
+      }
+
+      const { err, _ } = schema.validate(obj);
+
+      if (err) {
+        setValidateMessage(`${file.name}は破損しています。${err}`);
+        return;
+      }
+
+      (async () => {
+        await bot.generate(obj, auth.uid);
+      })();
+    };
+
+    fileReaderRef.current.readAsText(file);
+
   }
+
+  function handleDownload() {
+    // 現在のbotのデータをjsonファイルに書き出す
+    (async () => {
+      const json = await bot.toJson();
+      const blob = new Blob([json], { type: 'application/json' });
+      const href = await URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = href;
+      link.download = "chatbot.json";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    })();
+  }
+
 
   return (
     <Box
@@ -280,15 +332,18 @@ export default function RootEditor(props) {
                 onChange={handleUpload}
               />
               <ListItemButton type="submit">
-                <ListItemText primary="アップロード" />
+                <ListItemText
+                  primary="アップロード"
+                  secondary={validateMessage}
+                />
               </ListItemButton>
             </label>
           </ListItem>
           <ListItem key="export"
-            onClick={props.handleExport}
+            onClick={handleDownload}
           >
             <ListItemButton>
-              <ListItemText primary="ダウンロード" />
+              <ListItemText primary="保存済みデータのダウンロード" />
             </ListItemButton>
           </ListItem>
         </List>

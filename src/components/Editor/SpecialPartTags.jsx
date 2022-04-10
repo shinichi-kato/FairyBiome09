@@ -47,7 +47,8 @@ export default function SpecialPartTags({handleSetPartName}) {
       key={part.name}
     />
     )
-    , [])
+    , []);
+    
   return (
     <Box
       sx={{

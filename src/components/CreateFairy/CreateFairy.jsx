@@ -20,6 +20,8 @@ import DoneStep from './DoneStep';
 import { BiomebotContext } from '../biomebot/BiomebotProvider';
 import { AuthContext } from "../Auth/AuthProvider";
 
+import { schema } from '../biomebot/schema';
+
 
 const STATE_TABLE = {
   'new': 0,
@@ -182,11 +184,13 @@ export default function CreateFairy(props) {
       obj.main.NAME = botName;
       obj.main.CREATOR_NAME = auth.displayName;
 
-      const isOk = await bot.generate(obj, id);
-      if (isOk){
+      const {err, _} = schema.validate(obj);
+      if(err){
+        setMessage(`${id}のデータが破損しています`)
+      }
+      else{
+        await bot.generate(obj, id);
         props.handleMove('done');
-      } else {
-        setMessage('データが破損しています')
       }
 
     })();

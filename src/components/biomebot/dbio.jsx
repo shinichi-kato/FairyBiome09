@@ -29,7 +29,7 @@
 
 import Dexie from "dexie";
 import { reviver } from 'mathjs';
-import { schema } from 'schema';
+
 
 const RE_NEW_PART = /^new ?([0-9]+)$/i;
 
@@ -87,13 +87,6 @@ class dbio {
       なお、firestoreに一度保存されたデータにはfsBotIdが付与されるが、botIdとは
       独立に管理される。
       */
-
-    const {err,_} = schema.validate(obj)
-
-    if(err){
-      console.log("chatbot script validation error",err);
-      return false;
-    }
 
     const botId = obj.botId || uid;
 

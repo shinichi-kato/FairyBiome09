@@ -660,8 +660,7 @@ export default function BiomebotProvider(props) {
     // アップデートされた状態に保つためuseCallback化する。それにより
     // 利用側コンポーネントのuseEffectでdepsに含める必要がなくなる。 
     //
-    // 内容にエラーがあった場合falseを返す
-
+    // 
     // displayNameを復元
 
     obj.displayName = obj.main.NAME;
@@ -670,10 +669,8 @@ export default function BiomebotProvider(props) {
     obj.config.initialPartOrder = fitOrderToParts(obj.config.initialPartOrder,obj.parts);
     
     // indexDBへの書き込み
-    let r = await db.generate(obj, id);
-    if(!r){
-      return false;
-    }
+    await db.generate(obj, id);
+   
 
     // stateへの書き込み
     dispatch({ type: 'connect', snap: obj });
@@ -788,9 +785,20 @@ export default function BiomebotProvider(props) {
 
   }
 
-  function exportJson() {
+  async function toJson() {
     // db上のデータをjson形式で出力
-    return {}
+    let obj = await db.load(state.botId);
+    for (let partName of obj.parts){
+      obj.parts[partName].script = await db.loadScript(state.botId,partName);
+    }
+    return {
+      botId: state.botId,
+      config: obj.config,
+      work: obj.work,
+      main: obj.main,
+      parts: obj.parts,
+
+    }
   }
 
   const topPart = work.partOrder[0];
@@ -807,7 +815,7 @@ export default function BiomebotProvider(props) {
         editPart: editPart,
         loadScript: loadScript,
         load: load,
-        exportJson: exportJson,
+        toJson: toJson,
         state: state,
         work: work,
         photoURL: photoURL,

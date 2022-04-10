@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer, useState, useRef } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 import { navigate } from 'gatsby';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -86,7 +86,7 @@ export default function Editor({ avatarDictSnap }) {
   const [avatarList, setAvatarList] = useState([]);
 
   const [state, dispatch] = useReducer(reducer, initialState);
-  const fileReaderRef = useRef(new FileReader());
+
 
   // ------------------------------------------------------------------
   // botが読み込まれていなければindexDBから読み込む
@@ -108,33 +108,6 @@ export default function Editor({ avatarDictSnap }) {
       setAvatarList(list);
     }
   }, [bot.state.status, bot, auth.uid, avatarDictSnap]);
-
-  // ------------------------------------------------------------------------------------
-  //
-  // json I/O
-  //
-
-  function handleImport(file) {
-    fileReaderRef.current.onload = event => {
-      console.log("data",event.target.result);
-    }
-
-    fileReaderRef.current.readAsText(file);
-  }
-
-  function handleExport() {
-    (async () => {
-      const json = bot.exportJson();
-      const blob = new Blob([json], { type: 'application/json' });
-      const href = await URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = href;
-      link.download = "chatbot.json";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    })();
-  }
 
 
   function handleChangePage(page, part) {
@@ -225,8 +198,6 @@ export default function Editor({ avatarDictSnap }) {
               handleChangePage={handleChangePage}
               handleAddNewPart={handleAddNewPart}
               handleDeletePart={handleDeletePart}
-              handleExport={handleExport}
-              handleImport={handleImport}
             />
           }
           {
