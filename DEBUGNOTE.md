@@ -4,8 +4,10 @@ debug note
 参考リンク
 https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updated-in-the-nested-function
 
+joi-browserをjoiに変更
 
 1. チャットルーム
+* dialogue.js:252でreplyTextがnullになる
 * 一旦サインアウトしたらログインできない
 * sleepy周りが変
 * {positive},{negative}が未実装
@@ -15,11 +17,10 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 * 公園で全員の吹き出しが白い
 
 2. エディタ
-* インポートしたjsonのvalidation
+* episodeモードで入力が増えると最新行が見切れる
 * スクリプトをdbio.loadScriptでnextの順に並べてデータ取得
 * どんな{}が展開されるのかユーザにわからない
-* json形式でのインポート
-* json形式でのエクスポート
+
 
 3. create
 
@@ -35,6 +36,9 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 
 
 # 以下対応済み
+* json形式でのインポート
+* json形式でのエクスポート
+* インポートしたjsonのvalidation
 * AuthDialogでサインアップができない
 * チャットボットを新規作成しても前のが消えてない
 * 「初期のパート順」に含まれない場合の自動修正

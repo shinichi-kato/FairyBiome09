@@ -51,10 +51,12 @@ const MESSAGE_DELAY = { coeff: 100.0, exp:2.0};
 
 const replier = {
   knowledge: knowledge.reply,
+  episode: knowledge.reply,
 };
 
 const renderer = {
   knowledge: knowledge.render,
+  episode: knowledge.render,
 };
 
 

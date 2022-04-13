@@ -64,29 +64,34 @@ const isBlank = str => str.match(/^(|[ 　]+)$/) !== null;
 function rows2obj(rows, kind) {
 
   let obj = [];
-  obj.length = rows.length;
 
 
   if (kind === 'episode') {
     // episode記憶の場合は前行のOUTを今の行のINにする
-    if (rows[0].in === "") {
-      obj[0].in = '{NOP}';
-      obj[0].out = rows[0].out;
+    for (let i = 0, l = rows.length; i < l; i++) {
+      obj[i] = {
+        in: rows[i].in === "" ? rows[i - 1].out : rows[i].in,
+        out: rows[i].out
+      };
     }
 
-    for (let i = 1, l = obj.length; i < l; i++) {
-      obj[i].in = rows[i].in === "" ? rows[i - 1].out : rows[i].in;
-      obj[i].out = rows[i].out
+    if (rows[0].in === "") {
+      obj[0] = {
+        in: '{NOP}',
+        out: rows[0].out
+      };
     }
+
   } else {
     // 他のkindではコピー
-    for (let i = 0, l = obj.length; i < l; ++i) {
+    for (let i = 0, l = rows.length; i < l; ++i) {
       obj[i] = { in: rows[i].in, out: rows[i].out }
     }
   }
 
   // 全てのkindで空文字やスペースのみは許可しない
   for (let i = 0, l = obj.length; i < l; i++) {
+
     if (isBlank(obj[i].in)) {
       return {
         state: 'error',
@@ -142,7 +147,7 @@ export default function ScriptEditor({ partName }) {
   //
   // スクリプトのロード
   //
-  
+
   useEffect(() => {
 
     (async () => {
@@ -180,6 +185,7 @@ export default function ScriptEditor({ partName }) {
 
       const result = rows2obj(newRows, part.kind);
       if (result.state === 'ok') {
+        console.log("result.obj",result.obj)
 
         await bot.save('script', result.obj, partName);
         setMessage("ok");

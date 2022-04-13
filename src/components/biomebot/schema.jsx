@@ -12,7 +12,7 @@ Joi.object({
   botId: Joi.string().allow(null).required(),
   config: Joi.object({
     description: Joi.string().min(0).max(200).required(),
-    backgroundColor: Joi.string().pattern(/^#[0-9a-fA-F]{6}$/).required(),
+    backgroundColor: Joi.string().regex(/^#[0-9a-fA-F]{6}$/).required(),
     circadian: Joi.object({
       wake: Joi.number().integer().min(0).max(23).required(),
       sleep: Joi.number().integer().min(0).max(23).required(),
