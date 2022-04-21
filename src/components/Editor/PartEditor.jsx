@@ -172,8 +172,9 @@ export default function PartEditor(props) {
           <form>
             <RadioGroup aria-label="kind" name="kind" value={kind} onChange={handleChangeKind}>
               <FormControlLabel value="knowledge" control={<Radio />} label="【辞書型】用意した辞書にある言葉に対して決まった返事を返す" />
-              <FormControlLabel value="curiosity" control={<Radio />} label="【好奇心型】知らない言葉を言われたらそれを聞き返して覚える" />
               <FormControlLabel value="episode" control={<Radio />} label="【エピソード型】昔のやり取りをなぞって返答する" />
+              <FormControlLabel value="curiosity" control={<Radio disabled/>} label="【好奇心型】知らない言葉を言われたらそれを聞き返して覚える" />
+
             </RadioGroup>
           </form>
         </Box>

@@ -7,7 +7,8 @@ https://stackoverflow.com/questions/64259890/react-usecontext-value-is-not-updat
 joi-browserをjoiに変更
 
 1. チャットルーム
-* dialogue.js:252でreplyTextがnullになる
+* dialogue.js:252でreplyTextがnullになることがある
+* episodeモードでの学習を考える。専用のパートを作るか？
 * 一旦サインアウトしたらログインできない
 * sleepy周りが変
 * {positive},{negative}が未実装
@@ -17,7 +18,9 @@ joi-browserをjoiに変更
 * 公園で全員の吹き出しが白い
 
 2. エディタ
+* パワーゲージが・・・なのを変更
 * episodeモードで入力が増えると最新行が見切れる
+* episodeモードで{user}とかが展開されるか確認
 * スクリプトをdbio.loadScriptでnextの順に並べてデータ取得
 * どんな{}が展開されるのかユーザにわからない
 
