@@ -1,51 +1,247 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="600" height="800" version="1.1" viewBox="0 0 159 212" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
- <metadata>
-  <rdf:RDF>
-   <cc:Work rdf:about="">
-    <dc:format>image/svg+xml</dc:format>
-    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-   </cc:Work>
-  </rdf:RDF>
- </metadata>
- <path d="m90.5 115-3.34 10.6 71.8 84.3v-53.3l-68.4-41.6z" fill="#6fc835" fill-opacity=".361" stroke-width=".265"/>
- <path d="m86.7 129-0.596 9.12s40.5 55.1 53.3 73.4h6.25c1.93-8.72 3.44-24.8-2.09-35.2-9.75-12.8-57-47.4-57-47.4z" fill="#6fc835" fill-opacity=".361" stroke-width=".265"/>
- <path d="m70.8 18.8c-41.3-2.96-35.2 62.8-35.2 62.8-6.3 24.2-14.5 58.4-14.3 77.2s7.01 33.8 7.01 33.8l30.5-9.49 17.9 4.19 19.3-72.8 5.93-63.5 11.1-15.1s-0.366-23.7-42.1-17.1z" fill="#71c837"/>
- <path d="m64.7 133-55.4 36.3c-4.29 2.29-7.31 12.3-9.35 22.7v20.4h1.38l63.3-68.9-0.197-10.8z" fill="#6fc835" fill-opacity=".361" stroke-width=".265"/>
- <path d="m97.8 137-50.6 0.517-8.72 29.4s-20.8 10.2-22.6 19.7c-1.63 8.74-4.29 22.9-4.74 25.3h87.4l-12.1-23.5-3.87-12.6 14.5-12.9 0.374-25.9z" fill="#a8dc71" stroke-width=".265"/>
- <path transform="scale(.265)" d="m240 429-240 152v165l246-271-6.15-46.2z" fill="#6fc835" fill-opacity=".361"/>
- <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <circle r="0" stroke="#c53822" stroke-width="2.26" style="paint-order:stroke markers fill"/>
-  <g stroke="#924019">
-   <circle r="0" stroke-width="1.29" style="paint-order:stroke markers fill"/>
-   <circle transform="scale(1,-1)" r="0" stroke-width="3.6" style="paint-order:stroke markers fill"/>
-   <circle transform="scale(1,-1)" r="0" stroke-width="3.6" style="paint-order:stroke markers fill"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="600"
+   height="800"
+   version="1.1"
+   viewBox="0 0 159 212"
+   id="svg1664"
+   sodipodi:docname="peace.svg"
+   inkscape:version="1.1.2 (1:1.1+202202050942+0a00cf5339)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs1668" />
+  <sodipodi:namedview
+     id="namedview1666"
+     pagecolor="#ffffff"
+     bordercolor="#999999"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:snap-global="false"
+     inkscape:zoom="0.449375"
+     inkscape:cx="-350.48679"
+     inkscape:cy="72.32267"
+     inkscape:window-width="1920"
+     inkscape:window-height="940"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1664" />
+  <metadata
+     id="metadata1588">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <path
+     d="m90.5 115-3.34 10.6 71.8 84.3v-53.3l-68.4-41.6z"
+     fill="#6fc835"
+     fill-opacity=".361"
+     stroke-width=".265"
+     id="path1590" />
+  <path
+     d="m86.7 129-0.596 9.12s40.5 55.1 53.3 73.4h6.25c1.93-8.72 3.44-24.8-2.09-35.2-9.75-12.8-57-47.4-57-47.4z"
+     fill="#6fc835"
+     fill-opacity=".361"
+     stroke-width=".265"
+     id="path1592" />
+  <path
+     d="m70.8 18.8c-41.3-2.96-35.2 62.8-35.2 62.8-6.3 24.2-14.5 58.4-14.3 77.2s7.01 33.8 7.01 33.8l30.5-9.49 17.9 4.19 19.3-72.8 5.93-63.5 11.1-15.1s-0.366-23.7-42.1-17.1z"
+     fill="#71c837"
+     id="path1594" />
+  <path
+     d="m64.7 133-55.4 36.3c-4.29 2.29-7.31 12.3-9.35 22.7v20.4h1.38l63.3-68.9-0.197-10.8z"
+     fill="#6fc835"
+     fill-opacity=".361"
+     stroke-width=".265"
+     id="path1596" />
+  <path
+     d="m97.8 137-50.6 0.517-8.72 29.4s-20.8 10.2-22.6 19.7c-1.63 8.74-4.29 22.9-4.74 25.3h87.4l-12.1-23.5-3.87-12.6 14.5-12.9 0.374-25.9z"
+     fill="#a8dc71"
+     stroke-width=".265"
+     id="path1598" />
+  <path
+     transform="scale(.265)"
+     d="m240 429-240 152v165l246-271-6.15-46.2z"
+     fill="#6fc835"
+     fill-opacity=".361"
+     id="path1600" />
+  <g
+     fill="none"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     id="g1616">
+    <circle
+       r="0"
+       stroke="#c53822"
+       stroke-width="2.26"
+       style="paint-order:stroke markers fill"
+       id="circle1602" />
+    <g
+       stroke="#924019"
+       id="g1610">
+      <circle
+         r="0"
+         stroke-width="1.29"
+         style="paint-order:stroke markers fill"
+         id="circle1604" />
+      <circle
+         transform="scale(1,-1)"
+         r="0"
+         stroke-width="3.6"
+         style="paint-order:stroke markers fill"
+         id="circle1606" />
+      <circle
+         transform="scale(1,-1)"
+         r="0"
+         stroke-width="3.6"
+         style="paint-order:stroke markers fill"
+         id="circle1608" />
+    </g>
+    <circle
+       transform="scale(1,-1)"
+       r="0"
+       stroke="#4d4320"
+       stroke-width="4.38"
+       style="paint-order:stroke markers fill"
+       id="circle1612" />
+    <circle
+       transform="scale(1,-1)"
+       r="0"
+       stroke="#4d4320"
+       stroke-width="3.52"
+       style="paint-order:stroke markers fill"
+       id="circle1614" />
   </g>
-  <circle transform="scale(1,-1)" r="0" stroke="#4d4320" stroke-width="4.38" style="paint-order:stroke markers fill"/>
-  <circle transform="scale(1,-1)" r="0" stroke="#4d4320" stroke-width="3.52" style="paint-order:stroke markers fill"/>
- </g>
- <path d="m40.1 161-4.34 3-5.34 9.45 20.3 17 20 3.95 15.1-11.9-0.0212-8.34-12.5 3.58-16.9-6.99z" fill="#598e24"/>
- <path d="m71.8 88.7c0-3e-6 -2.78 11.9-6.78 15.3-4 3.44-14.5 3.84-14.5 3.84-21.8 6.2-22.2 25.6-22.2 25.6 4.4 22.9 6.15 36.6 9.22 54.9l7.84 23.7h19.4l-6.62-28.1-6.57-36 30.2-9.04 14.1 7.42s-3.98 25.5-4.88 36.8c-0.822 10.5-1.16 26.3-1.22 28.9l17.5 8e-3c0.228-4.53 1.26-27.3-2e-3 -41.4l5.04-27.6c4.4-13.1 9.33-36-21.4-36.3-2.46-3.37 0.31-8.16 0.31-8.16l-19.4-10.4z" fill="#f2c7b0" stroke-width=".265"/>
- <path d="m70.3 90.8-1.98 7.71 3.86 9.91s12.1-0.238 12.8-0.516 4.57-4.65 4.57-4.65l-0.215-7.2z" fill="#b7a68d"/>
- <path d="m115 48.5-1.91 23c2.02 20.5-9.65 34.4-13.8 34.6-4.13 0.226-27.3-9.4-31.3-11.6 0 0-19.6-12.9-23-23.7s-3.2-48.5 32.5-48.6c35.7-0.0827 37.4 26.3 37.4 26.3z" fill="#f2c7b0"/>
- <path d="m112 70.7c0 3.59-1.9 4.95-2.82 4.95-0.919 0-2.85-0.976-2.85-4.57 0-3.59 1.99-5.78 2.91-5.78 0.919 0 2.76 1.8 2.76 5.39z" fill="#80b617" stroke-width="1.46"/>
- <path d="m111 70.8c0 1.66-0.895 2.29-1.33 2.29-0.433 0-1.34-0.452-1.34-2.11 0-1.66 0.938-2.67 1.37-2.67 0.433 0 1.3 0.833 1.3 2.49z" fill="#4b6a0d" stroke-width=".682"/>
- <path d="m106 68.5c0.169-2.85 4.93-4.74 4.93-4.74l4.39-0.0593s-2.39 1.15-2.5 2.79c-1.11-2-2.81-1.33-6.82 2.01z" fill="#8e6224"/>
- <ellipse cx="87.5" cy="73" rx="5.06" ry="6.15" fill="#80b617"/>
- <path d="m94.1 72.2c-4.04-6.81-12.2-5.74-15.9 1.59-0.589-2.45-3.75-3.09-3.75-3.09l3.46-1.07c7.03-6.03 15.5-2.24 16.2 2.57z" fill="#8e6224"/>
- <g transform="translate(-1.85 .194)">
-  <path d="m103 93.4 2.65-0.607-2.5 1.93-4.98-1.2z" fill="#faeeec"/>
-  <path d="m104 92.4-9.76-0.483s7.83 1.66 9.54 1.62c1.66-0.128 3.35-2.23 3.35-2.23s-2.3 1.1-3.13 1.1z" fill="#c9766c"/>
- </g>
- <path d="m103 82.6 2.43 1.93-2.38 3.43z" fill="#b7a68d"/>
- <path d="m94.1 105 8.82 1.87 9.63 3.46-12.2 27.5-3.68 22.4-9.14 7.8-35.1-16.4-15.7-41.1 16-3.31 9.18-5.27 3.69 17 20.4 5.51 8.72-9.18z" fill="#a8dc71"/>
- <ellipse cx="111" cy="68.9" rx=".891" ry="1.41" fill="#fff"/>
- <path d="m69.6 68.7s3.05 8.67 2.46 13-3.08 14.5-3.08 14.5l-30.3-4.89 13.8-26.6z" fill="#71c837"/>
- <path d="m83.7 54.2c-3.37 0.341-6.81 1.84-9.04 5.05l1.32 0.966c1.9-2.74 4.85-4.04 7.87-4.35 3.02-0.306 6.09 0.439 7.95 1.66l0.869-1.4c-2.27-1.48-5.62-2.25-8.99-1.91z" color="#000000" fill="#845816" stroke-width="1.38" style="-inkscape-stroke:none"/>
- <path d="m111 51.6c-1.67 0.341-3.38 1.84-4.49 5.05l0.654 0.966c0.944-2.74 2.41-4.04 3.91-4.35 1.5-0.306 3.02 0.439 3.95 1.66l0.431-1.4c-1.13-1.48-2.79-2.25-4.46-1.91z" color="#000000" fill="#845816" stroke-width=".971" style="-inkscape-stroke:none"/>
- <path d="m107 30.3c-2.27 5.68-19.5 26.1-28.5 33.1-14 9.8-29.3 15.6-46 16.3 7.2-25.4 21.1-54.5 21.1-54.5 31.1-7.03 41-7.73 53.4 5.04z" fill="#71c837"/>
- <path d="m94.1 35.7s14.7 12.3 18.3 18.3 4.83 15.3 4.83 15.3c1.51-9.1 7.41-23.5 0.258-33.3 1.6 0.541 4.5 3.9 6.46 7.56 1.39-11.7-6.75-22.3-17.4-20.5-2.09-2.31-15.4-8.97-17.1-4.58z" fill="#71c837"/>
- <path d="m61.1 70.3c-0.131-4.39-31.8-14.2-31.8-14.2 0.318 9.29 20.5 20.1 20.5 20.1-0.367 8.09 7.18 8.07 10.3 7.96z" fill="#f2c7b0"/>
- <ellipse cx="88.4" cy="73.3" rx="2.2" ry="2.83" fill="#4b6a0d" stroke-width="1.31"/>
- <ellipse transform="rotate(-6.64)" cx="81.9" cy="81.1" rx=".891" ry="1.41" fill="#fff"/>
+  <path
+     d="m40.1 161-4.34 3-5.34 9.45 20.3 17 20 3.95 15.1-11.9-0.0212-8.34-12.5 3.58-16.9-6.99z"
+     fill="#598e24"
+     id="path1618" />
+  <path
+     d="m71.8 88.7c0-3e-6 -2.78 11.9-6.78 15.3-4 3.44-14.5 3.84-14.5 3.84-21.8 6.2-22.2 25.6-22.2 25.6 4.4 22.9 6.15 36.6 9.22 54.9l7.84 23.7h19.4l-6.62-28.1-6.57-36 30.2-9.04 14.1 7.42s-3.98 25.5-4.88 36.8c-0.822 10.5-1.16 26.3-1.22 28.9l17.5 8e-3c0.228-4.53 1.26-27.3-2e-3 -41.4l5.04-27.6c4.4-13.1 9.33-36-21.4-36.3-2.46-3.37 0.31-8.16 0.31-8.16l-19.4-10.4z"
+     fill="#f2c7b0"
+     stroke-width=".265"
+     id="path1620" />
+  <path
+     d="m70.3 90.8-1.98 7.71 3.86 9.91s12.1-0.238 12.8-0.516 4.57-4.65 4.57-4.65l-0.215-7.2z"
+     fill="#b7a68d"
+     id="path1622" />
+  <path
+     d="m 115,48.5 -1.91,23 c 2.02,20.5 -9.65,34.4 -13.8,34.6 C 95.16,106.326 69.829244,97.013408 68.756986,92.582636 68.756986,92.582636 48.39,81.6 44.99,70.8 41.59,60 41.79,22.3 77.49,22.2 c 35.7,-0.0827 37.4,26.3 37.4,26.3 z"
+     fill="#f2c7b0"
+     id="path1624"
+     sodipodi:nodetypes="ccccsccc" />
+  <path
+     d="m112 70.7c0 3.59-1.9 4.95-2.82 4.95-0.919 0-2.85-0.976-2.85-4.57 0-3.59 1.99-5.78 2.91-5.78 0.919 0 2.76 1.8 2.76 5.39z"
+     fill="#80b617"
+     stroke-width="1.46"
+     id="path1626" />
+  <path
+     d="m111 70.8c0 1.66-0.895 2.29-1.33 2.29-0.433 0-1.34-0.452-1.34-2.11 0-1.66 0.938-2.67 1.37-2.67 0.433 0 1.3 0.833 1.3 2.49z"
+     fill="#4b6a0d"
+     stroke-width=".682"
+     id="path1628" />
+  <path
+     d="m106 68.5c0.169-2.85 4.93-4.74 4.93-4.74l4.39-0.0593s-2.39 1.15-2.5 2.79c-1.11-2-2.81-1.33-6.82 2.01z"
+     fill="#8e6224"
+     id="path1630" />
+  <ellipse
+     cx="87.5"
+     cy="73"
+     rx="5.06"
+     ry="6.15"
+     fill="#80b617"
+     id="ellipse1632" />
+  <path
+     d="M 94.1,72.2 C 90.982282,66.703741 81.9,66.46 78.2,73.79 77.611,71.34 74.45,70.7 74.45,70.7 l 3.46,-1.07 c 7.03,-6.03 15.5,-2.24 16.2,2.57 -0.479426,0.393475 -0.01,0 -0.01,0 z"
+     fill="#8e6224"
+     id="path1634"
+     sodipodi:nodetypes="cccccc" />
+  <g
+     transform="translate(-1.85 .194)"
+     id="g1640">
+    <path
+       d="m103 93.4 2.65-0.607-2.5 1.93-4.98-1.2z"
+       fill="#faeeec"
+       id="path1636" />
+    <path
+       d="m104 92.4-9.76-0.483s7.83 1.66 9.54 1.62c1.66-0.128 3.35-2.23 3.35-2.23s-2.3 1.1-3.13 1.1z"
+       fill="#c9766c"
+       id="path1638" />
+  </g>
+  <path
+     d="m103 82.6 2.43 1.93-2.38 3.43z"
+     fill="#b7a68d"
+     id="path1642" />
+  <path
+     d="m94.1 105 8.82 1.87 9.63 3.46-12.2 27.5-3.68 22.4-9.14 7.8-35.1-16.4-15.7-41.1 16-3.31 9.18-5.27 3.69 17 20.4 5.51 8.72-9.18z"
+     fill="#a8dc71"
+     id="path1644" />
+  <ellipse
+     cx="111"
+     cy="68.9"
+     rx=".891"
+     ry="1.41"
+     fill="#fff"
+     id="ellipse1646" />
+  <path
+     d="m69.6 68.7s3.05 8.67 2.46 13-3.08 14.5-3.08 14.5l-30.3-4.89 13.8-26.6z"
+     fill="#71c837"
+     id="path1648" />
+  <path
+     d="m83.7 54.2c-3.37 0.341-6.81 1.84-9.04 5.05l1.32 0.966c1.9-2.74 4.85-4.04 7.87-4.35 3.02-0.306 6.09 0.439 7.95 1.66l0.869-1.4c-2.27-1.48-5.62-2.25-8.99-1.91z"
+     color="#000000"
+     fill="#845816"
+     stroke-width="1.38"
+     style="-inkscape-stroke:none"
+     id="path1650" />
+  <path
+     d="m111 51.6c-1.67 0.341-3.38 1.84-4.49 5.05l0.654 0.966c0.944-2.74 2.41-4.04 3.91-4.35 1.5-0.306 3.02 0.439 3.95 1.66l0.431-1.4c-1.13-1.48-2.79-2.25-4.46-1.91z"
+     color="#000000"
+     fill="#845816"
+     stroke-width=".971"
+     style="-inkscape-stroke:none"
+     id="path1652" />
+  <path
+     d="m107 30.3c-2.27 5.68-19.5 26.1-28.5 33.1-14 9.8-29.3 15.6-46 16.3 7.2-25.4 21.1-54.5 21.1-54.5 31.1-7.03 41-7.73 53.4 5.04z"
+     fill="#71c837"
+     id="path1654" />
+  <path
+     d="m94.1 35.7s14.7 12.3 18.3 18.3 4.83 15.3 4.83 15.3c1.51-9.1 7.41-23.5 0.258-33.3 1.6 0.541 4.5 3.9 6.46 7.56 1.39-11.7-6.75-22.3-17.4-20.5-2.09-2.31-15.4-8.97-17.1-4.58z"
+     fill="#71c837"
+     id="path1656" />
+  <path
+     d="M 61.1,70.3 C 60.969,65.91 29.3,56.1 29.3,56.1 c 0.318,9.29 20.5,20.1 20.5,20.1 3.339456,8.09 7.18,8.07 10.3,7.96 z"
+     fill="#f2c7b0"
+     id="path1658"
+     sodipodi:nodetypes="ccccc" />
+  <ellipse
+     cx="88.4"
+     cy="73.3"
+     rx="2.2"
+     ry="2.83"
+     fill="#4b6a0d"
+     stroke-width="1.31"
+     id="ellipse1660" />
+  <ellipse
+     transform="rotate(-6.64)"
+     cx="81.9"
+     cy="81.1"
+     rx=".891"
+     ry="1.41"
+     fill="#fff"
+     id="ellipse1662" />
 </svg>
