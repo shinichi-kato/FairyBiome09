@@ -7,7 +7,7 @@ export default function UserPanel(props) {
   const width = props.panelWidth;
   const height = width * 1.5;
   const backgroundColor = user.backgroundColor;
-  const photoURL = user.photoURL;
+  const photoURL = `${user.photoURL}/peace.svg`;
 
   return (
     <Box
@@ -40,7 +40,7 @@ export default function UserPanel(props) {
             width: width,
             height: height,
           }}
-          src={`/avatar/${photoURL}`}
+          src={`/user/${photoURL}`}
           alt={photoURL} />
       </Box>
 

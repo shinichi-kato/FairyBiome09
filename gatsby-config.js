@@ -66,8 +66,8 @@ module.exports = {
     {
       resolve: "gatsby-source-filesystem",
       options: {
-        path: `${__dirname}/static/avatar/`,
-        name: "avatar",
+        path: `${__dirname}/static/user/`,
+        name: "user",
         ignore: ["**/\.*"],
       },
     },

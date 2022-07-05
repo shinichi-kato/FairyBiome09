@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100mm" height="100mm" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <linearGradient id="linearGradient7273" x1="87.2" x2="83.8" y1="67.8" y2="58.9" gradientTransform="matrix(1.31 0 0 1.31 -161 26.6)" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient7521"/>
+  <linearGradient id="linearGradient7521">
+   <stop stop-color="#e69000" offset="0"/>
+   <stop stop-color="#f07c00" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient7281" x1="34.1" x2="35.3" y1="70" y2="51.2" gradientTransform="matrix(1.31 0 0 1.31 -161 26.6)" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient7521"/>
+  <linearGradient id="linearGradient6113" x1="126" x2="128" y1="58" y2="99.3" gradientTransform="matrix(1.31 0 0 1.31 -161 26.6)" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#f0711c" offset="0"/>
+   <stop stop-color="#e69000" offset="1"/>
+  </linearGradient>
+ </defs>
+ <g transform="matrix(.653 0 0 .653 84 -33.4)">
+  <path d="m-91.7 53.6 14 4.69-9.87 14.5 2 18.2-19.7-5.19 11.2-13.5z" fill="#f00"/>
+  <g>
+   <path d="m-26.5 70.2c30.2 23 20.8 62.2 20.8 62.2-4.97 19.7-21.7 42.5-43.4 42.6l-51.9-2.39-6 7.03s-7.41-12.4-7.54-16l-4.07 3.3s-1.22-17.6 2.13-24.6c0 0-4.28-20.7-2.98-26.3l-0.676-32.9s5.17-13.3 13.7-16.6c6.91-2.92 9.73 2.63 9.73 2.63 16.6-12 70.2 1.04 70.2 1.04z" fill="#f07c00"/>
+   <path d="m-114 108 2.2 29.3c-0.426 6.14-1.11 24.5-1.11 24.5 0.417 4.7 9.23 22.8 18.2 24.7 14.4 2.4 43-9.6 49.1-23.6 9.94 5.48 40.1-24.5 20.9-23.8 0.618-7.89 12.1-29.2 12.1-29.2 8.27-48.7-106-66.7-101-1.93z" fill="#ffc7a0"/>
+   <path d="m-85.2 143c-0.767-7.3 5.5-9.03 10.9-8.45 5.44 0.577 8.96 7.12 8.96 7.12 0.925-3.73 3.17-3.31 4.86-4.83-2.67-0.163-5.45-4.33-13.3-4.59-10.2-0.326-13.6 3.58-11.4 10.8z" fill="#351c04"/>
+   <ellipse cx="-77.3" cy="142" rx="6.36" ry="8.76" fill="#351c04" style="paint-order:stroke fill markers"/>
+   <path d="m-122 119 15.4 6.93s0.412-16.8 6.44-23.9c-3.73 11.1-2.22 17.4-1.89 23.7 7.29 2.36 22.9 2.54 28.3 0.838 0.496-6.41 0.543-11.3 2.64-18.7 0.185 7.7 0.667 13.8 0.621 18.9 8.78 9e-3 28.4-0.946 28.4-0.946 3.78 16.2 2.17 12.2 7.06 17.3 9.87-2.56 25.3-24.1 25.3-24.1 19.7-40.9-45.5-71.7-55.3-51.8-5.82-13.9-79.9-6.82-57 51.8z" fill="#f07c00"/>
+  </g>
+  <path d="m-65.1 65.8" fill="none"/>
+  <g>
+   <path d="m-59.8 88s11.3 50.2 5.41 66.2c10.9-15.4 14.4-44 2.88-68.1z" fill="url(#linearGradient7273)"/>
+   <ellipse cx="-107" cy="136" rx="3.26" ry="7.43" fill="#351c04" style="paint-order:stroke fill markers"/>
+   <path d="m-102 142c-0.173-3.06-2.21-12.2-4.96-12.2-2.43 0-4.88 1.75-4.34 4.03 0 0-1.07-1.96-3.38-2.53 2.25-0.205 4.09-3.03 8.13-3.17 4.87 1.22 5.16 9.63 4.55 13.9z" fill="#351c04"/>
+  </g>
+  <path d="m-104 155 2.34 0.151 2.23 3.92-4.93-0.759c0.184-1.01 0.0953-2.32 0.362-3.31z" fill="#4d4d4d" fill-opacity=".283"/>
+  <path d="m-115 90.4 8.13 1.65s-10.8 21-7.77 57c-12.7-38.3-5.98-50.2-0.359-58.7z" fill="url(#linearGradient7281)"/>
+  <path d="m-87.9 177c6.1 0.028 10.2-4.88 10.2-8.46-8.75 1.17-19.6 0.568-24.6-0.42 4.06 4.47 6.28 8.84 14.3 8.88z" fill="#f57d9d" style="paint-order:stroke markers fill"/>
+  <path d="m-77.7 168c-0.0071 0.922-0.285 1.94-0.799 2.92-0.774-2.16-4.09-1.86-12-1.76-4.47 0.0583-7.03 1.07-8.41 2.26-1.08-1.2-2.13-2.52-3.34-3.84 4.89 0.986 15.8 1.59 24.6 0.42z" fill="#ef2e61" style="paint-order:stroke markers fill"/>
+  <path d="m-28.4 77.7 10.8-10.1 8.06 15.5 17 6.86-13.9 14.9-6.56-16.3z" fill="#f00"/>
+  <g>
+   <path d="m-12.5 81.5c16-17.9 38.7 2.37 33.8 28.8-4.36 17.6-2.35 58.1-2.35 58.1 2.3 6.34-0.889 24.7-0.889 24.7s-2.65-17.5-5.99-20.3c1.34 16.6-5.37 22-14.7 28.9 8.11-9.66 7.51-21.5 5.32-29.7-0.273 10.3-5.69 12.3-11.1 17.1 8.88-11.3 7.36-29 7.36-29s-3.42-32.2-6.01-54.3c0.547-4.21-11.1-0.36-10.2-14.1z" fill="url(#linearGradient6113)"/>
+   <ellipse cx="-64.2" cy="156" rx="5.25" ry="3.36" fill="#ffa3a3" style="paint-order:stroke fill markers"/>
+   <ellipse cx="-74.9" cy="138" rx="1.67" ry="1.95" fill="#fff" style="paint-order:stroke fill markers"/>
+   <ellipse cx="-107" cy="134" rx="1.67" ry="1.95" fill="#fff" style="paint-order:stroke fill markers"/>
+  </g>
+ </g>
+</svg>
