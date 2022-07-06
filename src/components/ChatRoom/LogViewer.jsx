@@ -60,7 +60,7 @@ function RightBalloon(props) {
   const avatarSrc = message.person === 'bot' ?
     `/chatbot/${message.avatarPath}/avatar.svg`
     :
-    `/avatar/${message.avatarPath}`;
+    `/user/${message.avatarPath}/avatar.svg`;
   const backgroundColor = message.backgroundColor || "#FFFFFFBB";
 
   return (

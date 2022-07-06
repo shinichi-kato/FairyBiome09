@@ -21,7 +21,7 @@ export default function UserAccount() {
       avatar={
         <Avatar
           aria-label="user"
-          src={`../../avatar/${auth.photoURL}/avatar.svg`} 
+          src={`../../user/${auth.photoURL}/avatar.svg`} 
           alt={auth.photoURL}
           sx={{ backgroundColor: readBackgroundColor() }} />
       }

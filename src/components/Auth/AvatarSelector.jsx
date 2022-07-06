@@ -16,6 +16,7 @@ query {
 
 export default function AvatarSelector(props) {
   const data = useStaticQuery(query);
+  const dirs = data.allFile.nodes.map(node=>(node.relativeDirectory));
 
   return (
     <>
@@ -30,14 +31,15 @@ export default function AvatarSelector(props) {
         }}>
         <ImageList
           sx={{
-            width: 500,
-            height: 500,
+            width: 480,
+            height: 200,
             // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
             transform: 'translateZ(0)',
           }}
-          cols={3}
+          rowHeight={180}
+          cols={4}
         >
-          {data.allFile.nodes.map((dir, index) => (
+          {dirs.map((dir, index) => (
             <ImageListItem key={index}
               onClick={() => { props.handleChangePhotoURL(dir) }}
               sx={{
@@ -47,7 +49,8 @@ export default function AvatarSelector(props) {
             >
               <img src={`../../user/${dir}/peace.svg`}
                 style={{
-                  width: 200,
+                  width: 120,
+                  height: 180,
                 }}
                 alt={dir}
               />
